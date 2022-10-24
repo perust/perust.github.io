@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"  />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
     <title>ok_showching</title>
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/main.css" />
@@ -18,10 +18,10 @@
       </header>
       <div class="main-content">
         <div class="container">
-            <p class="main-content__slogan">
+            <p class="main-content__slogan pc">
               <strong class="slogan-strong1">기업</strong>은<strong class="slogan-strong2">매<span class="text-deco-ellipse"></span></strong><strong class="slogan-strong3">출<span class="text-deco-ellipse"></span></strong>을<strong class="slogan-strong4">쇼호스트</strong>는<strong>일<span class="text-deco-ellipse"></span></strong><strong>자<span class="text-deco-ellipse"></span></strong><strong>리<span class="text-deco-ellipse"></span></strong>를
             </p>
-            <div class="main-content__head-box">
+            <div class="main-content__head-box pc-flex">
               <div class="main-content__head-left">
                 <p class="main-content__header1">라이브커머스</p>
                 <p class="main-content__header2">쇼호스트매칭플랫폼</p>
@@ -30,7 +30,10 @@
                 <h2 class="main-content__name">쇼칭</h2>
               </div>
             </div>
-            <div class="main-content__ment-box">
+            <div class="main-content__mobile-slogan mobile">
+              <img src="./img/main-content__head-box.png" alt="">
+            </div>
+            <div class="main-content__ment-box pc-flex">
               <img src="/img/leaf_L.png" alt="월계수 모양 왼쪽" />
               <p>
                 스마트필터로 원하는 쇼호스트를<br />
@@ -38,6 +41,9 @@
                 스케줄 관리까지 도와주는 플랫폼입니다.
               </p>
               <img src="/img/leaf_R.png" alt="월계수 모양 오른쪽" />
+            </div>
+            <div class="main-content__mobile-ment mobile">
+              <img src="./img/main-content__ment-box.png" alt="">
             </div>
             <div class="download-box">
               <a
@@ -61,13 +67,16 @@
             <img class="main-visual--man mobile" src="/img/smartphone_man.png" alt="" />
             <img class="main-visual--woman" src="/img/smartphone_woman.png" alt="" />
         </div>
-        <div class="main_line-banner">
+        <div class="main_line-banner pc-flex">
           <p><strong>쇼칭</strong>만의 3<strong>가지</strong></p>
           <p><strong>스마트시스템</strong>으로 <strong>한큐에 매칭!</strong></p>
         </div>
+        <div class="main_line-banner-mobile mobile">
+          <img src="./img/line-banner.png" alt="">
+        </div>
         <div class="main_service">
           <div class="container">
-            <ul>
+            <ul class="pc">
               <li>
                 <img src="/img/point_1.png" alt="스마트 검색 시스템" />
                 <strong>스마트 검색 시스템</strong>
@@ -95,12 +104,17 @@
                 </p>
               </li>
             </ul>
+            <ul class="mobile">
+              <li><img src="./img/service_point_1.png" alt=""></li>
+              <li><img src="./img/service_point_2.png" alt=""></li>
+              <li><img src="./img/service_point_3.png" alt=""></li>
+            </ul>
           </div>
         </div>
         <div class="main_press">
           <div class="container">
             <h3>언론보도</h3>
-            <ul>
+            <ul class="pc-flex">
               <li>
                 <h4>
                   매경바이어스가이드-지유아이엔씨, 글로벌 진출 위한 MOU 체결
@@ -136,6 +150,17 @@
                   쇼칭을 다각도로 활용할 계획이다.
                 </p>
                 <img src="/img/news_logo3.png" alt="데일리시큐" />
+              </li>
+            </ul>
+            <ul class="mobile">
+              <li>
+                <img src="./img/press_1.png" alt="">
+              </li>
+              <li>
+                <img src="./img/press_2.png" alt="">
+              </li>
+              <li>
+                <img src="./img/press_3.png" alt="">
               </li>
             </ul>
           </div>
