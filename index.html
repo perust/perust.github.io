@@ -1,90 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>seungwoo page nav</title>
-    <link href="index.css" rel="stylesheet">
-</head>
-<body>
-    <div>
-        <h3>About</h3>
-        <p>
-            이름 : 임승우<br>
-            생년월일 : 1991.03.08<br>
-            거주지 : 부산시 강서구 명지동<br>
-            경력 : 
-            2021.02.01 ~ 웹퍼블리셔
-        </p>
-        <p>
-            안녕하세요. 웹퍼블리셔 임승우입니다.<br>
-        </p>
-    </div>
-    <div class="works">
-        <h3>Works</h3>
-        <p>홈페이지 퍼블리싱 작업물입니다.</p>
-        <div><a href="flower/index.html" target="_blank">
-            플라워가든 페이지
-            <p class="link_guide">
-                (Resposive)
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"  />
+    <title>ok_showching</title>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/common.css" />
+  </head>
+  <body>
+    <div class="wrap main">
+      <header>
+        <h1 class="header__logo">
+          <img src="/img/top.png" alt="" />
+        </h1>
+      </header>
+      <div class="main-content">
+        <div class="container">
+            <p class="main-content__slogan">
+              <strong class="slogan-strong1">기업</strong>은<strong class="slogan-strong2">매<span class="text-deco-ellipse"></span></strong><strong class="slogan-strong3">출<span class="text-deco-ellipse"></span></strong>을<strong class="slogan-strong4">쇼호스트</strong>는<strong>일<span class="text-deco-ellipse"></span></strong><strong>자<span class="text-deco-ellipse"></span></strong><strong>리<span class="text-deco-ellipse"></span></strong>를
             </p>
-        </a></div>
-        <div><a href="gyobo/index.html" target="_blank" onClick="window.open(this.href, '', 'width=400, height=700'); return false;">
-            교보문고 페이지
-            <p class="link_guide">
-                (Mobile)
-            </p>
-        </a></div>
-        <div><a href="thefaceshop/index.html" target="_blank" onClick="window.open(this.href, '', 'width=400, height=700'); return false;">
-            더페이스샵 페이지
-            <p class="link_guide">
-                (Mobile)
-            </p>
-        </a></div>
-        <div><a href="tous/index.html" target="_blank">
-            뚜레주르 페이지
-            <p class="link_guide">
-                (PC)
-            </p>
-        </a></div>
-        <div>
-            <a href="3z/index.html" target="_blank">
-                삼진어묵 메인 페이지
-                <p class="link_guide">
-                    (PC)
-                </p>
-            </a><br>
-            <a href="3z/sub.html" target="_blank">
-                삼진어묵 서브 페이지
-                <p class="link_guide">
-                    (PC)
-                </p>
-            </a>
+            <div class="main-content__head-box">
+              <div class="main-content__head-left">
+                <p class="main-content__header1">라이브커머스</p>
+                <p class="main-content__header2">쇼호스트매칭플랫폼</p>
+              </div>
+              <div class="main-content__head-right">
+                <h2 class="main-content__name">쇼칭</h2>
+              </div>
+            </div>
+            <div class="main-content__ment-box">
+              <img src="/img/leaf_L.png" alt="월계수 모양 왼쪽" />
+              <p>
+                스마트필터로 원하는 쇼호스트를<br />
+                간편하게 찾아 계약하고 라이브 방송<br />
+                스케줄 관리까지 도와주는 플랫폼입니다.
+              </p>
+              <img src="/img/leaf_R.png" alt="월계수 모양 오른쪽" />
+            </div>
+            <div class="download-box">
+              <a
+                href="https://play.google.com/store/apps/details?id=com.showching.android"
+              >
+                <img
+                  src="/img/btn_googleplay.png"
+                  alt="쇼칭 안드로이드 다운로드 링크"
+              /></a>
+              <a
+                href="https://apps.apple.com/ko/app/%EC%87%BC%EC%B9%AD/id1642267143"
+              >
+                <img
+                  src="/img/btn_appstore.png"
+                  alt="쇼칭 아이폰 다운로드 링크"
+                />
+              </a>
+              <p class="download--ment">위 버튼을 클릭하면 다운로드 페이지로 연결됩니다.</p>
+            </div>
+            <img class="main-visual--man pc" src="/img/smartphone_man_pc.png" alt="" />
+            <img class="main-visual--man mobile" src="/img/smartphone_man.png" alt="" />
+            <img class="main-visual--woman" src="/img/smartphone_woman.png" alt="" />
         </div>
-    </div>
-    <div>
-        <h3>Practice</h3>
-        <p>스터디 관련 정리 및 작업물입니다.</p>
-        <ul>
+        <div class="main_line-banner">
+          <p><strong>쇼칭</strong>만의 3<strong>가지</strong></p>
+          <p><strong>스마트시스템</strong>으로 <strong>한큐에 매칭!</strong></p>
+        </div>
+        <div class="main_service">
+          <div class="container">
+            <ul>
+              <li>
+                <img src="/img/point_1.png" alt="스마트 검색 시스템" />
+                <strong>스마트 검색 시스템</strong>
+                <p>
+                  스마트필터로 원하는 쇼호스트를<br />
+                  간편하게 찾아 계약하고 라이브 방송<br />스케줄 관리까지
+                  도와주는 플랫폼
+                </p>
+              </li>
+              <li>
+                <img src="/img/point_2.png" alt="계약부터 스케줄까지" />
+                <strong>계약부터 스케줄까지</strong>
+                <p>
+                  쇼호스트를 찾는 사장님은 스마트 필터로<br />원하는 쇼호스트와
+                  간편하게 계약하고, 찾고<br />계약 스케줄 관리까지 할 수 있는
+                  앱입니다.
+                </p>
+              </li>
+              <li>
+                <img src="/img/point_3.png" alt="ALL in One" />
+                <strong>ALL in One</strong>
+                <p>
+                  쇼호스트는 쇼호스트 옷부터 스튜디오,<br />헤어샵 정보로 라이브
+                  방송을 위한<br />모든 정보를 얻을 수 있어요.
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="main_press">
+          <div class="container">
+            <h3>언론보도</h3>
+            <ul>
+              <li>
+                <h4>
+                  매경바이어스가이드-지유아이엔씨, 글로벌 진출 위한 MOU 체결
+                </h4>
+                <p>
+                  이번 협약은 수출 바우처 수행기관인 매경과 라이브커머스
+                  전문기업이자 글로벌 쇼호스트 매칭 플랫폼 '쇼칭' (showching)을
+                  런칭하는 GIU가 글로벌 진출을 하고자 하는 기업을 위해 손을
+                  잡았으며, 이를 통해 다양하고 퀄리티 높은 서비스를 제공할
+                  예정이다. GIU는 매경과의 협력을 통하여 수출 바우처를 통한...
+                </p>
+                <img src="/img/news_logo1.png" alt="문화뉴스" />
+              </li>
+              <li>
+                <h4>지유아이엔씨, 쇼칭 플랫폼 런칭 위해 공동사업 투자 유치</h4>
+                <p>
+                  컨텐츠 유통 마케팅 전문기업 지유아이엔씨(이하 'GUI' )가 글로벌
+                  라이브커머스 쇼호스트 매칭 서비스 쇼칭(SHOWCHING) 서비스
+                  런칭에 앞서 안정적인 서비스 제공을 위한 공동사업 투자를
+                  유치했다...
+                </p>
+                <img src="/img/news_logo2.png" alt="비욘드포스트" />
+              </li>
+              <li>
+                <h4>
+                  글로벌 진출 위한 MOU 체결, 지유아이엔씨 & 매경바이어스가이드
+                </h4>
+                <p>
+                  매경바이어스가이드(이하 매경)와 지유아이엔씨(이하 GIU)가
+                  업무협약을 체결했다고 25일 밝혔다. 지유아이엔씨는 매경과의
+                  협력을 통하여 수출 바우처를 통한 라이브 커머스와 해외바이어를
+                  위한 컨텐츠 제작 및 해외 온라인 홍보에 GIU의 글로벌 플랫폼인
+                  쇼칭을 다각도로 활용할 계획이다.
+                </p>
+                <img src="/img/news_logo3.png" alt="데일리시큐" />
+              </li>
+            </ul>
+          </div>
+        </div>
+      </main>
+      <!-- #container -->
+      <footer id="footer">
+        <div id="footerIn">
+          <ul class="fmenu cf">
+            <li><a href="#">이용약관</a></li>
+            <li><a href="#">개인정보 취급방침</a></li>
+          </ul>
+          <ul class="flogo">
             <li>
-                <a href="responsive-web-design2017/index.html" target="_blank">
-                    1. Do it! 반응형 웹 만들기 (도서, 2017, 김운아, 이지스퍼블리싱)
-                </a>
-                <p>2022.09.11 ~ 진행중</p>
+              <img src="/img/logo_showching.png" alt="쇼칭" />
             </li>
-        </ul>
+            <li>
+              <img src="/img/logo_giu.png" alt="giu" />
+            </li>
+          </ul>
+        </div>
+        <!-- #footerIn -->
+      </footer>
+      <!-- #footer -->
     </div>
-    <div>
-        <h3>Today I Learned</h3>
-        <p>
-            <a href="./til/index.html" target="_self">바로가기</a>
-        </p>
-        <p>준비중입니다.</p>
-    </div>
-    <div>
-        <h3>Footer</h3>
-        <p>
-            copyright 임승우
-        </p>
-    </div>
-</body>
+  </body>
 </html>

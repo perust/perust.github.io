@@ -1,0 +1,608 @@
+@import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+@font-face {
+  font-family: 'GmarketSansMedium';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+.pc {
+  display: none;
+}
+
+.wrap {
+  width: 100%;
+}
+
+.header__logo {
+  text-align: center;
+  margin: 0;
+}
+
+.main-content {
+  padding-top: 66px;
+  overflow: hidden;
+}
+
+.main-content > .container {
+  position: relative;
+}
+
+.main-content__slogan {
+  letter-spacing: 0.17em;
+  font-size: 26.48rem;
+  line-height: 1.2;
+  margin: 0;
+  background: linear-gradient(to right, #440806, #232323);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+
+.main-content__slogan strong {
+  position: relative;
+  display: inline-block;
+  line-height: 1.8;
+  background: linear-gradient(to right, #232323, #232323);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+
+.main-content__slogan .slogan-strong1 {
+  background: linear-gradient(to right, #9c3a35, #6d312f);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+.main-content__slogan .slogan-strong2 {
+  background: linear-gradient(to right, #472a29, #382726);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+.main-content__slogan .slogan-strong3 {
+  background: linear-gradient(to right, #332625, #2a2424);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+.main-content__slogan .slogan-strong4 {
+  background: linear-gradient(to right, #242323, #232323);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+
+.text-deco-ellipse {
+  position: absolute;
+  top: 0;
+  right: 50%;
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #000;
+}
+.main-content__head-box {
+  display: flex;
+  align-items: center;
+  padding-bottom: 40px;
+}
+
+.main-content__header1 {
+  font-size: 48.02rem;
+  line-height: 1.2;
+  font-weight: bold;
+  margin: 0;
+  background: linear-gradient(to right, #93332f, #232323);
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-stroke: 1px;
+}
+
+.main-content__header2 {
+  font-size: 31.96rem;
+  line-height: 1.2;
+  font-weight: bold;
+  margin: 0;
+  background: linear-gradient(to right, #93332f, #232323);
+  color: transparent;
+  -webkit-background-clip: text;
+}
+
+.main-content__name {
+  font-size: 94.58rem;
+  line-height: 1.2;
+  margin-bottom: 0;
+  color: #ef4a42;
+  font-weight: bold;
+  -webkit-text-stroke: 2px;
+}
+
+.main-content__ment-box {
+  font-size: 18.44rem;
+  line-height: 1.2;
+  display: flex;
+  width: auto;
+  height: 120px;
+}
+
+.main-content__ment-box img {
+  width: 52px;
+  height: fit-content;
+}
+
+.main-content__ment-box p {
+  padding: 0;
+  margin: 4px 0;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.download-box {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-end;
+  padding-top: 190px;
+  padding-bottom: 40px;
+}
+
+.download-box img {
+  height: auto;
+  width: 370px;
+}
+
+.download--ment {
+  width: 370px;
+  margin: 4px;
+  font-family: NanumSquare;
+  font-size: 16.74rem;
+  font-weight: bold;
+  letter-spacing: -0.02em;
+}
+
+.main-visual--man {
+  height: 550px;
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-left: 240px;
+}
+
+.main-visual--woman {
+  height: 524px;
+  position: absolute;
+  top: 366px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-left: -190px;
+}
+
+/* 가로 띠 배너 */
+.main_line-banner {
+  height: 220px;
+  width: 100%;
+  background-color: #ef4a42;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.main_line-banner p {
+  font-family: NanumSquare;
+  display: flex;
+  justify-content: center;
+  font-size: 40rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #fff;
+  font-weight: bold;
+  margin: 0;
+}
+
+.banner--deco-line {
+  background-color: #fff;
+  width: 100%;
+  height: 5px;
+  position: absolute;
+}
+
+/* 메인 서비스 소개 */
+.main_service ul {
+  display: flex;
+  flex-flow: column;
+  padding-bottom: 90px;
+}
+
+.main_service ul li {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  padding-top: 90px;
+}
+
+.main_service img {
+  width: 330px;
+}
+
+.main_service strong {
+  color: #ef4a42;
+  font-size: 44.38rem;
+  letter-spacing: -0.05em;
+}
+
+.main_service p {
+  font-size: 25.47rem;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+#container .container {
+  width: 660px;
+  margin: 0 auto;
+}
+/* main_press 720 */
+.main_press {
+  background-color: #f0f0f0;
+}
+.main_press {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 38px;
+}
+.main_press h3 {
+  text-align: center;
+  font-size: 50rem;
+}
+
+.main_press h4 {
+  font-size: 31.6rem;
+  text-align: start;
+  /* 여러줄 말줄임하기 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.main_press p {
+  font-size: 22.11rem;
+  text-align: start;
+  margin-bottom: 30px;
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.main_press li:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.main_press li img {
+  float: right;
+}
+
+.main_press ul li {
+  flex: 1;
+  background-color: #fff;
+  /* width: 554px; */
+  border-radius: 8px;
+  padding: 40px;
+  margin-bottom: 40px;
+  text-align: end;
+}
+
+/* footer720 */
+#footer {
+  font-size: 20rem;
+  margin-top: 57px;
+  padding-bottom: 30px;
+}
+#footerIn {
+  position: relative;
+  margin: 0 auto;
+  border-top: 1px solid #f0f0f0;
+  padding: 60px 15px 0;
+}
+.fmenu li {
+  float: left;
+  margin-right: 0;
+  padding: 0;
+}
+
+.fmenu li a {
+  padding: 0 15px;
+}
+.fmenu li:last-child {
+  border-right: 0;
+}
+
+.fmenu li:first-child a {
+  border-right: 1px solid #232323;
+}
+.flogo {
+  position: absolute;
+  right: 0;
+  top: 50px;
+}
+.flogo li {
+  float: left;
+  margin-left: 55px;
+}
+
+/* 모바일 720--------- */
+@media screen and (max-width: 720px) {
+  .header__logo img {
+    width: 122px;
+  }
+
+  .main-content__slogan {
+    letter-spacing: 0.085em;
+    margin: 0;
+  }
+
+  .text-deco-ellipse {
+    width: 3px;
+    height: 3px;
+  }
+
+  .main-content__head-box {
+    padding-bottom: 20px;
+  }
+
+  .main-content__header1 {
+  }
+
+  .main-content__header2 {
+  }
+
+  .main-content__name {
+  }
+
+  .main-content__ment-box {
+  }
+
+  .main-content__ment-box img {
+    width: 29px;
+    height: max-content;
+  }
+
+  .main-visual--man {
+    height: 275px;
+    top: -6px;
+    margin-left: 132px;
+  }
+
+  .main-visual--woman {
+    height: 262px;
+    top: 183px;
+    margin-left: -95px;
+  }
+  .download-box {
+    padding-top: 46px;
+  }
+
+  .download-box img {
+    width: 185px;
+  }
+
+  .download--ment {
+    /* font-size: 7pt; */
+    width: 100%;
+    text-align: end;
+    letter-spacing: -0.1em;
+  }
+
+  .main_line-banner {
+    height: 110px;
+  }
+
+  .main_line-banner p {
+  }
+
+  .main_service img {
+    width: 165px;
+  }
+
+  .main_service p {
+    /* font-size: 10pt; */
+    margin: 0;
+  }
+
+  .main_press ul li {
+    width: auto;
+    height: 250px;
+    padding: 20px;
+  }
+
+  .main_press h3 {
+    /* font-size: 24pt; */
+  }
+
+  .main_press h4 {
+    font-family: NanumSquare;
+    height: 60px;
+    margin: 0;
+    font-weight: 800;
+  }
+
+  .main_press p {
+    font-family: NanumSquare;
+    /* height: 112px; */
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .main_press li img {
+    height: 28px;
+  }
+
+  #footer {
+    margin-top: 30px;
+    padding-bottom: 15px;
+  }
+
+  #footerIn {
+    width: auto;
+    padding-top: 30px;
+  }
+
+  .fmenu li {
+    margin-right: 0;
+    font-family: NanumSquare;
+    letter-spacing: -0.02em;
+  }
+
+  .fmenu li a {
+    /* font-size: 10pt; */
+    padding: 0 8px;
+  }
+
+  .flogo {
+    top: 12px;
+  }
+
+  .flogo li {
+    margin-left: 20px;
+  }
+
+  .flogo li img {
+    width: 50px;
+  }
+}
+
+/* PC 1250--------- */
+@media screen and (min-width: 960px) {
+  .pc {
+    display: block;
+  }
+
+  .mobile {
+    display: none;
+  }
+
+  .container {
+    max-width: 1250px;
+  }
+
+  .main-content {
+    padding-top: 120px;
+  }
+
+  .main-visual--man {
+    width: auto;
+    height: auto;
+    top: -110px;
+    margin-left: 260px;
+  }
+
+  .main-visual--woman {
+    height: auto;
+    top: 0;
+    left: 100%;
+    margin-left: -140px;
+  }
+
+  .download-box {
+    flex-flow: row;
+    padding-top: 60px;
+    padding-bottom: 136px;
+    flex-wrap: wrap;
+    max-width: 560px;
+  }
+
+  .download-box img {
+    height: auto;
+    width: 280px;
+  }
+
+  .download--ment {
+    width: 100%;
+    text-align: center;
+  }
+
+  .main_service ul {
+    flex-flow: row;
+    justify-content: space-around;
+  }
+
+  .main_service ul li {
+    padding: 90px 15px 0;
+  }
+
+  .main_service img {
+    width: auto;
+  }
+
+  .main_service strong {
+    font-size: 36.33rem;
+    white-space: nowrap;
+  }
+
+  .text-deco-ellipse {
+    width: 8px;
+    height: 8px;
+  }
+
+  .main_service p {
+    font-size: 20.85rem;
+    white-space: nowrap;
+  }
+
+  #container .container {
+    max-width: 1250px;
+    margin: 0 auto;
+  }
+  .main_press {
+    padding: 93px 0 84px;
+  }
+
+  .main_press ul {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .main_press ul li {
+    position: relative;
+    margin-right: 23px;
+  }
+  .main_press ul li:last-child {
+    margin-right: 0;
+  }
+  .main_press h3 {
+    margin-bottom: 35px;
+    text-align: center;
+  }
+  .main_press h4 {
+    font-size: 24rem;
+    font-weight: 600;
+    text-align: left;
+    /* height: 88px; */
+    /* overflow: hidden; */
+  }
+  .main_press p {
+    font-size: 16rem;
+    /* min-height: 190px; */
+    margin-bottom: 20px;
+  }
+
+  /* footer */
+  #footer {
+    margin-top: 56px;
+  }
+  #footerIn {
+    width: 1250px;
+    padding-top: 61px;
+  }
+  .fmenu li {
+    float: left;
+    margin-right: 19px;
+    /* font-size: 20pt; */
+  }
+
+  .flogo li {
+    margin-left: 45px;
+  }
+}
