@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* CSS Document */
+#mainSlider{width:100%; background:#808088;}
+#msIn{width:1200px; height:521px; margin:0 auto 49px auto; background:url(../images/mainSilder.jpg) no-repeat 0 0;}
+
+#container{width:100%;}
+#container .cont1{width:980px; margin:0 auto; position:relative; margin-bottom:48px;}
+#container .cont1 .title{margin-bottom:36px;}
+#container .cont1 ul:after{content:""; display:block; clear:both;}
+#container .cont1 ul li{float:left; margin-right:17px;}
+#container .cont1 ul .pr3{margin-right:0;}
+#container .cont1 ul li p{text-align:center;}
+#container .cont1 .more{position:absolute; top:0; right:0;}
+
+#container .cont2{width:100%; background:#f3f3f3; margin-bottom:84px;}
+#container .cont2 .inner{width:980px; margin:0 auto; padding:67px 0;}
+#container .cont2 .title{margin-bottom:51px; text-align:center;}
+#container .cont2 ul{margin-left:134px;}
+#container .cont2 ul:after{content:""; display:block; clear:both;}
+#container .cont2 ul li{float:left; margin-right:24px;}
+#container .cont2 ul li .photo{margin-bottom:18px;}
+#container .cont2 ul li .name{text-align:center;}
+
+#container .cont3{width:980px; margin:0 auto; padding-bottom:80px;}
+#container .cont3 ul{margin-left:116px;}
+#container .cont3 ul:after{content:""; display:block; clear:both;}
+#container .cont3 ul li{float:left; margin-right:15px;}
+#container .cont3 ul li p{text-align:center;}
+

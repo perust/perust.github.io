@@ -1,0 +1,20 @@
+@charset "utf-8";
+/* CSS Document */
+/*글로벌 영역*/
+#wrap{min-width: 1200px}
+.inner_wrap{width:1200px; margin:0 auto; position:relative;}
+/*헤더 영역*/
+#header{width:100%; height:90px; background-color:rgba(13,70,51,0.7); position:fixed; top:0; left:0; z-index:999;}
+#header .inner_wrap{padding-top:30px;}
+.logo {width:269px; height:37px; background-image:url(../img/logo.png); text-indent:-9999px;}
+
+#header ul:after{content:""; display:block; clear:both;}
+#header li {float:left;}
+
+.utill {position:absolute; right:37px; top:16px;}
+.utill li {margin-left:30px;}
+.utill li a {font-size:14px; font-weight:500;}
+
+.gnb {position:absolute; right:37px; top:55px;}
+.gnb li {margin-left:50px;}
+.gnb li a {font-size:18px; font-weight:500;}

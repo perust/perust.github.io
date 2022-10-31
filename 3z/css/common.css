@@ -1,0 +1,21 @@
+@charset "utf-8";
+/* CSS Document */
+/*헤더영역*/
+#warp{width:1200px; margin:0 auto;}
+#header{width:980px; height:90px; margin:0 auto; padding-top:44px; position:relative;}
+.logo{position:absolute; top:28px; left:0;}
+.gnb{margin-left:214px;}
+.gnb ul:after{content:""; display:block; clear:both;}
+.gnb ul li{float:left; margin-right:37px;}
+.utill{position:absolute; top:43px; right:0;}
+.utill ul li{float:left; margin-left:5px;}
+
+/*푸터영역*/
+#footer{width:100%; background:#121212; padding:48px 0 60px;}
+#footerIn{width:980px; margin:0 auto; position:relative;}
+.flogo{position:absolute; left:0; top:0;}
+.finfo{margin-left:159px;}
+.finfo ul{margin-bottom:7px;}
+.finfo ul:after{content:""; display:block; clear:both;}
+.finfo ul li{float:left; margin-right:10px;}
+.fas{position:absolute; right:12px; top:0;}

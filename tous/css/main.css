@@ -1,0 +1,82 @@
+@charset "utf-8";
+/* CSS Document */
+
+#main_slider {height:800px; overflow: hidden; position:relative;}
+#main_slider .left{width:100%; height:800px; background:url(../img/miti-NVM2SGwz7uQ-unsplash.jpg) no-repeat center 20%; background-size:cover; margin-left:-45%; /*position:absolute; top:0; right:40%;*/}
+#main_slider .right{width:50%; height:800px; background:#0d4633 no-repeat 0 0; position:absolute; top:0; left:50%; z-index:998; max-width:960px;}
+#main_slider .right h2 {display:block; width:216px; height:268px; background-image:url(../img/main_logo.png); position:absolute; top:224px; left:210px; text-indent:-9999px;}
+#main_slider .right p {font-size:18px; line-height:30px; color:#fff; text-align:center; position:absolute; top:515px; left:178px; font-weight:300;}
+
+#main_slider .pager {position:absolute; top:50%; left:550px; margin-top:-114px;}
+#main_slider .pager ul li {padding:6px 0;}
+#main_slider .pager ul li a{display:block; width:17px; height:17px; border-radius:50%; background-color:rgba(170,170,170,0.8); text-indent:-9999px; line-height:16px;}
+#main_slider .pager ul .on a {width:21px; height:21px; margin-left:-2px; background-color:#fff;}
+
+.movie {width:100%; background-color:#121212;}
+.movie video {width:1200px; height:800px;}
+
+.cont_menu .menu_left {width:280px; padding-top:123px;}
+.cont_menu {width:100%; height:800px; background:url(../img/menu_back.jpg) no-repeat 0 0;}
+.cont_menu .inner_wrap {width:1200px; height:800px; background:url(../img/menu_product_off.png) no-repeat 294px 0;}
+
+.cont_menu .menu_list .pr0 .on {width:906px; height:800px; background:url(../img/menu_product_on.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr0:hover .on {display:block}
+.cont_menu .menu_list .pr1 .on {width:906px; height:800px; background:url(../img/pr_hover_01.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr1:hover .on {display:block}
+.cont_menu .menu_list .pr2 .on {width:906px; height:800px; background:url(../img/pr_hover_02.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr2:hover .on {display:block}
+.cont_menu .menu_list .pr3 .on {width:906px; height:800px; background:url(../img/pr_hover_03.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr3:hover .on {display:block}
+.cont_menu .menu_list .pr4 .on {width:906px; height:800px; background:url(../img/pr_hover_04.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr4:hover .on {display:block}
+.cont_menu .menu_list .pr5 .on {width:906px; height:800px; background:url(../img/pr_hover_05.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr5:hover .on {display:block}
+.cont_menu .menu_list .pr6 .on {width:906px; height:800px; background:url(../img/pr_hover_06.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr6:hover .on {display:block}
+.cont_menu .menu_list .pr7 .on {width:906px; height:800px; background:url(../img/pr_hover_07.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr7:hover .on {display:block}
+.cont_menu .menu_list .pr8 .on {width:906px; height:800px; background:url(../img/pr_hover_08.png) no-repeat 0 0; position:absolute; top:0; left:294px; display:none;}
+.cont_menu .menu_list .pr8:hover .on {display:block}
+
+
+
+.cont_menu .menu_list a {display:block; width:100%;}
+.cont_menu .menu_left {text-align:center; color:#fff;}
+.cont_menu .title_store {font-size:30px; line-height:38px; font-weight:500;}
+.cont_menu .title {font-size:55px; line-height:55px; font-weight:700; margin-bottom:25px;}
+.cont_menu .text {font-size:14px; line-height:20px; font-weight:300; margin-bottom:11px;}
+.cont_menu .menu_list a {font-size:24px; line-height:43px; font-weight:500;}
+
+.store {width:100%; height:850px; background-image:url(../img/store_back.jpg); background-size:cover; text-align:center; color:#fff;}
+.store .inner_wrap h4 {font-size:33px; line-height:65px;}
+.store .inner_wrap p {font-size:24px; line-height:29px;}
+.store .finder {width:1200px; padding-top:192px; padding-bottom:92px;}
+.finder h4 {font-size:36px; line-height:36px; font-weight:700;}
+.finder p {line-height:60px; font-size:24px; font-weight:400px;}
+.finder > div {width:378px; height:50px; background-color:#fff; position:relative; margin:0 auto;}
+.finder .icon {display:block; width:50px; height:50px; background-color:#0d4633; position:absolute; top:0; right:0;}
+.finder .icon .search {width:27px; height:27px; background-image:url(../img/search.png); position:absolute; top:12px; left:12px;}
+
+.inner_wrap:after{content:""; display:block; clear:both;}
+.founded {float:left;}
+.founded a {display:block; width:600px; height:350px; border:1px solid #fff; background-image:url(../img/store_banner1.jpg); padding-top:105px;}
+.hire {float:left;}
+.hire a {display:block; width:600px; height:350px; border:1px solid #fff; background-image:url(../img/store_banner2.jpg); padding-top:105px;}
+
+/*cont4 SNS 영역*/
+.cont_sns {height:500px; width:100%; background-color:#0d4633 ;position:relative; padding-top:86px; }
+/*.cont_sns .inner_wrap h3 {display:block; width:276px; position:absolute; top:150px; left:3px;}*/
+.cont_sns h3 {display:block; position:absolute; top:50px; left:20px; }
+.cont_sns h3 p {text-align:center; color:#fff;}
+.cont_sns .title_store {font-size:18px;}
+.cont_sns .title {font-size:48px; font-weight:900; line-height:86px;}
+.cont_sns .text {font-size:24px; line-height:28px;}
+.cont_sns ul{margin-left:282px;}
+.cont_sns ul:after{content:""; display:block; clear: both;}
+.cont_sns li {float:left; width:276px; height:280px; background-color:#103126; border:1px solid #fff; margin-right:30px; text-align:center;}
+.cont_sns li .img1 {width:72px; height:72px; background-image: url(../img/sns1_facebook.png);}
+.cont_sns li .img2 {width:72px; height:72px; background-image: url(../img/sns2_blog.png);}
+.cont_sns li .img3 {width:72px; height:72px; background-image: url(../img/sns3_insta.png);}
+.cont_sns .name {font-size:36px; line-height:36px; font-weight:bold; margin-top:55px;}
+.cont_sns .name_eng {font-size:24px; line-height:36px; margin-bottom:15px;}
+.cont_sns li div {margin-left:107px;}
