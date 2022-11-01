@@ -66,19 +66,36 @@
       const $input = document.querySelector('input');
       const $word = document.querySelector('#word');
       const $order = document.querySelector('#order');
+      const checkWord = /[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]|/g;
+      const checkKor = /^[가-힣]+$/;
+      const checkNum = /^[0-9]+$/;
       let number = '';
       let word; // 제시어
       let newWord; // 새로 입력한 단어
 
       const onStartButton = () => {
-        document.getElementById('ready-container').classList.add('d-none');
-        document.getElementById('game-container').classList.remove('d-none');
         number = Number(prompt('몇 명이 참가하나요?'));
+        if (checkNum.test(number)) {
+          document.getElementById('ready-container').classList.add('d-none');
+          document.getElementById('game-container').classList.remove('d-none');
+        } else {
+          console.log('검증 실패');
+          onStartButton();
+        }
       };
 
       const onClickButton = () => {
         // 제시어가 비어있는가?
-        if (!word || word[word.length - 1] === newWord[0]) {
+        console.log('number 검증', number);
+        console.log('number typeof 검증', typeof number);
+        console.log('word 검증', word);
+        console.log('word typeof 검증', typeof word);
+        console.log('newWord 검증', newWord);
+        console.log('newWord typeof 검증', typeof newWord);
+        if (!checkKor.test(newWord)) {
+          alert('올바르지 않은 단어입니다.');
+          return 0;
+        } else if (!word || word[word.length - 1] === newWord[0]) {
           // 비어있다.
           word = newWord; // 입력한 단어가 제시어가 된다.
           $word.textContent = word;
@@ -88,17 +105,21 @@
           } else {
             $order.textContent = order + 1;
           }
+        } else if (word && word[word.length - 1] !== newWord[0]) {
+          const order = Number($order.textContent);
+          alert('끝말잇기 실패!\n' + order + '번째 참가자가 실패했습니다.');
+          document.getElementById('game-container').classList.add('d-none');
+          document.getElementById('ready-container').classList.remove('d-none');
         } else {
-          // 비어있지 않다.
           alert('올바르지 않은 단어입니다.');
         }
         $input.value = '';
         $input.focus();
       };
+
       const onInput = (event) => {
-        regexp = /[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g;
         newWord = event.target.value.replace(/(\s*)/g, '');
-        newWord = event.target.value.replace(regexp, '');
+        newWord = event.target.value.replace(checkWord, '');
         $input.value = newWord;
         console.log(newWord);
       };
