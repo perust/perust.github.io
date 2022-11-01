@@ -4,50 +4,80 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+      crossorigin="anonymous"
+    />
     <title>끝말잇기</title>
   </head>
 
   <body>
-    <div><span id="order">1</span>번째 참가자</div>
-    <div>제시어: <span id="word"></span></div>
-    <input type="text" />
-    <button>입력</button>
-    <script>
-      const number = Number(prompt('몇 명이 참가하나요?'));
-      const $button = document.querySelector('button');
-      const $input = document.querySelector('input');
-      const $word = document.querySelector('#word');
-      const $order = document.querySelector('#order');
-      let word; // 제시어
-      let newWord; // 새로 입력한 단어
+    <div class="container">
+      <h1 class="py-5">🤔🤔 끝말잇기 🕶</h1>
+      <div class="row">
+        <div class="col-12">
+          <h2 class="py-3"><span id="order">1</span>번째 참가자</h2>
+        </div>
+        <div class="col-xs-12 col-sm-8">
+          <h6 for="suggestion-input" class="form-label">
+            제시어
+            <h4 id="word"></h4>
+          </h6>
+          <input
+            type="text"
+            class="form-control my-2"
+            id="suggestion-input"
+            placeholder="단어를 입력하세요"
+          />
+        </div>
+        <div class="col-xs-12 col-sm-4">
+          <button type="button" class="btn btn-primary w-100 h-100">
+            입력
+          </button>
+        </div>
+      </div>
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"
+      ></script>
+      <script>
+        const number = Number(prompt('몇 명이 참가하나요?'));
+        const $button = document.querySelector('button');
+        const $input = document.querySelector('input');
+        const $word = document.querySelector('#word');
+        const $order = document.querySelector('#order');
+        let word; // 제시어
+        let newWord; // 새로 입력한 단어
 
-      const onClickButton = () => {
-        // 제시어가 비어있는가?
-        if (!word || [word.length - 1] === newWorld[0]) {
-          // 비어있다.
-          word = newWord; // 입력한 단어가 제시어가 된다.
-          $word.textContent = word;
-          const order = Number($order.textContent); // 현재 순서
-          if (order + 1 > number) {
-            $order.textContent = 1;
+        const onClickButton = () => {
+          // 제시어가 비어있는가?
+          if (!word || word[word.length - 1] === newWord[0]) {
+            // 비어있다.
+            word = newWord; // 입력한 단어가 제시어가 된다.
+            $word.textContent = word;
+            const order = Number($order.textContent); // 현재 순서
+            if (order + 1 > number) {
+              $order.textContent = 1;
+            } else {
+              $order.textContent = order + 1;
+            }
           } else {
-            $order.textContent = order + 1;
+            // 비어있지 않다.
+            alert('올바르지 않은 단어입니다.');
           }
           $input.value = '';
           $input.focus();
-        } else {
-          // 비어있지 않다.
-          alert('올바르지 않은 단어입니다.');
-          $input.value = '';
-          $input.focus();
-        }
-      };
-      const onInput = (event) => {
-        newWord = event.target.value;
-      };
+        };
+        const onInput = (event) => {
+          newWord = event.target.value;
+        };
 
-      $button.addEventListener('click', onClickButton);
-      $input.addEventListener('input', onInput);
-    </script>
+        $button.addEventListener('click', onClickButton);
+        $input.addEventListener('input', onInput);
+      </script>
+    </div>
   </body>
 </html>
