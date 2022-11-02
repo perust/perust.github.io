@@ -73,6 +73,14 @@
       #game-container .description {
         font-size: 14px;
       }
+
+      #game-container #word {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 10px 4px;
+        font-weight: 600;
+        font-size: 32px;
+      }
     </style>
   </head>
   <body>
@@ -188,7 +196,7 @@
         <div id="result-container__log-box">
           <h4 class="py-3">투닥투닥 흔적📃</h4>
         </div>
-        <p style="padding-top: 100px">함께 해주셔서 감사합니다.</p>
+        <p style="padding-top: 100px"></p>
       </div>
     </div>
     <script>
@@ -207,7 +215,7 @@
       const checkNum = /^[0-9]+$/;
       let limitWord = '';
       let number = '';
-      let word; // 제시어
+      let word = ''; // 제시어
       let newWord; // 새로 입력한 단어
       let alreadyWord = [];
 
