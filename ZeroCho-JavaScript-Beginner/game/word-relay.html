@@ -221,6 +221,15 @@
 
       $start.focus();
 
+      const resetDate = () => {
+        limitWord = '';
+        number = '';
+        word = ''; // 제시어
+        newWord = ''; // 새로 입력한 단어
+        alreadyWord = [];
+        $word.textContent = word;
+      };
+
       const onLimitNon = () => {
         btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
         btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
@@ -289,6 +298,7 @@
         } else if (checkNum.test(number)) {
           document.getElementById('ready-container').classList.add('d-none');
           document.getElementById('game-container').classList.remove('d-none');
+          resetDate();
           $input.focus();
         } else {
           onStartButton();
@@ -296,10 +306,7 @@
       };
 
       const onReplayButton = () => {
-        number = '';
-        word = '';
-        newWord = '';
-        alreadyWord = [];
+        resetDate();
         document.getElementById('result-container').classList.add('d-none');
         document.getElementById('ready-container').classList.remove('d-none');
         $start.focus();
@@ -341,7 +348,7 @@
 
           $start.focus();
         } else if (!word || word[word.length - 1] === newWord[0]) {
-          // 비어있다.
+          // 제시어가 비어있음 OR 끝글자와 첫글자가 같음
           word = newWord; // 입력한 단어가 제시어가 된다.
           $word.textContent = word;
           alreadyWord.push(word);
