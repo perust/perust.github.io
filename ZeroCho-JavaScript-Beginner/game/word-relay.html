@@ -292,7 +292,9 @@
 
       const onStartButton = () => {
         number = Number(prompt('몇 명이 참가하세요?'));
-        if (!number) {
+        if (isNaN(number)) {
+          alert('😭 숫자만 입력해주세요');
+        } else if (!number) {
           return 0;
         } else if (checkNum.test(number)) {
           document.getElementById('ready-container').classList.add('d-none');
