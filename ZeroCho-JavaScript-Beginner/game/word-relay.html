@@ -91,7 +91,7 @@
             <button
               type="button"
               id="limit-btn-non"
-              class="btn btn-outline-primary w-100 h-100"
+              class="btn btn-primary w-100 h-100"
             >
               무제한
             </button>
@@ -100,7 +100,7 @@
             <button
               type="button"
               id="limit-btn-two"
-              class="btn btn-light w-100 h-100"
+              class="btn btn-outline-secondary w-100 h-100"
             >
               2 자
             </button>
@@ -109,7 +109,7 @@
             <button
               type="button"
               id="limit-btn-three"
-              class="btn btn-light w-100 h-100"
+              class="btn btn-outline-secondary w-100 h-100"
             >
               3 자
             </button>
@@ -118,7 +118,7 @@
             <button
               type="button"
               id="limit-btn-four"
-              class="btn btn-light w-100 h-100"
+              class="btn btn-outline-secondary w-100 h-100"
             >
               4 자
             </button>
@@ -214,11 +214,14 @@
       $start.focus();
 
       const onLimitNon = () => {
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.add('btn-outline-primary');
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-primary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-outline-secondary');
         limitWord = '';
         document.getElementById('limit-description').innerText =
           limitWord + '글자수에 제한이 없어요.';
@@ -226,11 +229,14 @@
         console.log('limitWord', limitWord);
       };
       const onLimitTwo = () => {
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitTwo.classList.add('btn-outline-primary');
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-primary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-outline-secondary');
         limitWord = 2;
         document.getElementById('limit-description').innerText =
           limitWord + ' 자로 된 단어만 쓸 수 있어요';
@@ -238,11 +244,14 @@
         console.log('limitWord', limitWord);
       };
       const onLimitThree = () => {
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitThree.classList.add('btn-outline-primary');
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-primary');
+        btnLimitFour.classList.add('btn-outline-secondary');
         limitWord = 3;
         document.getElementById('limit-description').innerText =
           limitWord + ' 자로 된 단어만 쓸 수 있어요';
@@ -250,11 +259,14 @@
         console.log('limitWord', limitWord);
       };
       const onLimitFour = () => {
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitFour.classList.add('btn-outline-primary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-primary');
         limitWord = 4;
         document.getElementById('limit-description').innerText =
           limitWord + ' 자로 된 단어만 쓸 수 있어요';
