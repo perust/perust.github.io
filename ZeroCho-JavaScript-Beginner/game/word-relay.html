@@ -293,8 +293,8 @@
 
       const onStartButton = () => {
         number = Number(prompt('몇 명이 참가하세요?'));
-        if (number == '') {
-          alert('아무것도 입력하지 않았어요!');
+        if (!number) {
+          return 0;
         } else if (checkNum.test(number)) {
           document.getElementById('ready-container').classList.add('d-none');
           document.getElementById('game-container').classList.remove('d-none');
