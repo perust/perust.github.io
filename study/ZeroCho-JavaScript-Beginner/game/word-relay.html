@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>끝말잇기</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
       crossorigin="anonymous"
     />
-    <title>끝말잇기</title>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
@@ -73,6 +73,14 @@
       #game-container .description {
         font-size: 14px;
       }
+
+      #game-container #word {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 10px 4px;
+        font-weight: 600;
+        font-size: 32px;
+      }
     </style>
   </head>
   <body>
@@ -91,7 +99,7 @@
             <button
               type="button"
               id="limit-btn-non"
-              class="btn btn-outline-primary w-100 h-100"
+              class="btn btn-primary w-100 h-100"
             >
               무제한
             </button>
@@ -100,7 +108,7 @@
             <button
               type="button"
               id="limit-btn-two"
-              class="btn btn-light w-100 h-100"
+              class="btn btn-outline-secondary w-100 h-100"
             >
               2 자
             </button>
@@ -109,7 +117,7 @@
             <button
               type="button"
               id="limit-btn-three"
-              class="btn btn-light w-100 h-100"
+              class="btn btn-outline-secondary w-100 h-100"
             >
               3 자
             </button>
@@ -118,7 +126,7 @@
             <button
               type="button"
               id="limit-btn-four"
-              class="btn btn-light w-100 h-100"
+              class="btn btn-outline-secondary w-100 h-100"
             >
               4 자
             </button>
@@ -188,7 +196,7 @@
         <div id="result-container__log-box">
           <h4 class="py-3">투닥투닥 흔적📃</h4>
         </div>
-        <p style="padding-top: 100px">함께 해주셔서 감사합니다.</p>
+        <p style="padding-top: 100px"></p>
       </div>
     </div>
     <script>
@@ -207,18 +215,28 @@
       const checkNum = /^[0-9]+$/;
       let limitWord = '';
       let number = '';
-      let word; // 제시어
+      let word = ''; // 제시어
       let newWord; // 새로 입력한 단어
       let alreadyWord = [];
 
       $start.focus();
 
+      const resetDate = () => {
+        word = ''; // 제시어
+        newWord = ''; // 새로 입력한 단어
+        alreadyWord = [];
+        $word.textContent = word;
+      };
+
       const onLimitNon = () => {
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.add('btn-outline-primary');
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-primary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-outline-secondary');
         limitWord = '';
         document.getElementById('limit-description').innerText =
           limitWord + '글자수에 제한이 없어요.';
@@ -226,11 +244,14 @@
         console.log('limitWord', limitWord);
       };
       const onLimitTwo = () => {
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitTwo.classList.add('btn-outline-primary');
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-primary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-outline-secondary');
         limitWord = 2;
         document.getElementById('limit-description').innerText =
           limitWord + ' 자로 된 단어만 쓸 수 있어요';
@@ -238,11 +259,14 @@
         console.log('limitWord', limitWord);
       };
       const onLimitThree = () => {
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitThree.classList.add('btn-outline-primary');
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-primary');
+        btnLimitFour.classList.add('btn-outline-secondary');
         limitWord = 3;
         document.getElementById('limit-description').innerText =
           limitWord + ' 자로 된 단어만 쓸 수 있어요';
@@ -250,11 +274,14 @@
         console.log('limitWord', limitWord);
       };
       const onLimitFour = () => {
-        btnLimitFour.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitNon.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitTwo.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitThree.classList.remove('btn-outline-primary', 'btn-light');
-        btnLimitFour.classList.add('btn-outline-primary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-primary');
         limitWord = 4;
         document.getElementById('limit-description').innerText =
           limitWord + ' 자로 된 단어만 쓸 수 있어요';
@@ -264,11 +291,14 @@
 
       const onStartButton = () => {
         number = Number(prompt('몇 명이 참가하세요?'));
-        if (number == '') {
-          alert('아무것도 입력하지 않았어요!');
+        if (isNaN(number)) {
+          alert('😭 숫자만 입력해주세요');
+        } else if (!number) {
+          return 0;
         } else if (checkNum.test(number)) {
           document.getElementById('ready-container').classList.add('d-none');
           document.getElementById('game-container').classList.remove('d-none');
+          resetDate();
           $input.focus();
         } else {
           onStartButton();
@@ -276,10 +306,7 @@
       };
 
       const onReplayButton = () => {
-        number = '';
-        word = '';
-        newWord = '';
-        alreadyWord = [];
+        resetDate();
         document.getElementById('result-container').classList.add('d-none');
         document.getElementById('ready-container').classList.remove('d-none');
         $start.focus();
@@ -321,7 +348,7 @@
 
           $start.focus();
         } else if (!word || word[word.length - 1] === newWord[0]) {
-          // 비어있다.
+          // 제시어가 비어있음 OR 끝글자와 첫글자가 같음
           word = newWord; // 입력한 단어가 제시어가 된다.
           $word.textContent = word;
           alreadyWord.push(word);
