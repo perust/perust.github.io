@@ -120,14 +120,17 @@
         if (!operator) {
           numOne += innerNumber;
           $result.value += innerNumber;
+          $result.value = Number($result.value);
           return;
         }
         // 비어있지 않다
         if (!numTwo) {
           $result.value = '';
+          console.log('$result.value2', $result.value);
         }
         numTwo += innerNumber;
         $result.value += innerNumber;
+        $result.value = Number($result.value);
       };
       document.querySelector('#num-0').addEventListener('click', onClickNumber);
       document.querySelector('#num-1').addEventListener('click', onClickNumber);
