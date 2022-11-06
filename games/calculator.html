@@ -62,7 +62,7 @@
           type="text"
           name="operator"
           value=""
-          placeholder="="
+          placeholder="0"
           class="form-control d-inline"
         />
         <input
@@ -156,13 +156,13 @@
         .addEventListener('click', onClickOperator('+'));
       document
         .querySelector('#minus')
-        .addEventListener('click', onClickOperator('-'));
+        .addEventListener('click', onClickOperator('–'));
       document
         .querySelector('#divide')
-        .addEventListener('click', onClickOperator('/'));
+        .addEventListener('click', onClickOperator('÷'));
       document
         .querySelector('#multiply')
-        .addEventListener('click', onClickOperator('*'));
+        .addEventListener('click', onClickOperator('×'));
       document.querySelector('#calculate').addEventListener('click', () => {
         if (numTwo) {
           switch (operator) {
