@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>끝말잇기</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      @font-face {
+        font-family: 'KyoboHand';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff')
+          format('woff');
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      body {
+        font-family: 'KyoboHand', sans-serif;
+      }
+
+      input {
+        -ms-ime-mode: active;
+      }
+
+      .container {
+        padding-bottom: 100px;
+      }
+
+      .container h1 {
+        border-bottom: 1px solid #ddd;
+        padding: 80px 0 10px;
+        margin-bottom: 30px;
+      }
+
+      #ready-container .description {
+        font-size: 14px;
+      }
+
+      #ready-container .limit-box {
+        padding-bottom: 40px;
+      }
+
+      #ready-container .limit-box .description {
+        padding-top: 10px;
+      }
+
+      #ready-container .rule-box {
+        border: 1px solid #ddd;
+        margin: 30px 0;
+        padding: 20px 0;
+      }
+
+      #ready-container .rule-box h4 {
+        padding-bottom: 10px;
+      }
+
+      #ready-container ol {
+        width: max-content;
+        margin: 0 auto;
+      }
+
+      #game-container .description {
+        font-size: 14px;
+      }
+
+      #game-container #word {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 10px 4px;
+        font-weight: 600;
+        font-size: 32px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="py-5">🤔🤔 끝말잇기 🕶</h1>
+      <div id="ready-container" class="text-center">
+        <p class="description">
+          끝말잇기 : 여러 사람이 하는 말놀이의 하나. 한 사람이 먼저 한 낱말을
+          말하면 다음 사람이 그 말의 끝 음절을 첫소리로 하는 낱말을 말하는
+          식으로 다음 사람으로 계속 이어 가는 놀이. 예를 들어,
+          `장미-미인-인간성-성장…'과 같이 이어 가는 것.
+        </p>
+        <div class="row limit-box">
+          <div class="col-12"><h4>글자 수 제한</h4></div>
+          <div class="col-3">
+            <button
+              type="button"
+              id="limit-btn-non"
+              class="btn btn-primary w-100 h-100"
+            >
+              무제한
+            </button>
+          </div>
+          <div class="col-3">
+            <button
+              type="button"
+              id="limit-btn-two"
+              class="btn btn-outline-secondary w-100 h-100"
+            >
+              2 자
+            </button>
+          </div>
+          <div class="col-3">
+            <button
+              type="button"
+              id="limit-btn-three"
+              class="btn btn-outline-secondary w-100 h-100"
+            >
+              3 자
+            </button>
+          </div>
+          <div class="col-3">
+            <button
+              type="button"
+              id="limit-btn-four"
+              class="btn btn-outline-secondary w-100 h-100"
+            >
+              4 자
+            </button>
+          </div>
+          <div id="limit-description" class="col-12 description">
+            글자수에 제한이 없어요.
+          </div>
+        </div>
+        <button
+          id="start-button"
+          type="button"
+          class="btn btn-primary w-100 h-100 btn-lg"
+        >
+          시작!
+        </button>
+        <div class="rule-box">
+          <h4>📌규칙</h4>
+          <ol>
+            <li>
+              제시된 단어의 마지막 글자와 <br />
+              입력하는 단어의 첫 글자는 <br />
+              완전히 같아야 해요. (리 -> 이 ❌)
+            </li>
+            <li>한번 썼던 단어는 쓰면 안돼요.</li>
+          </ol>
+        </div>
+      </div>
+      <div id="game-container" class="d-none">
+        <div class="row">
+          <div class="col-12">
+            <h2 class="py-3"><span id="order">1</span>번째 참가자</h2>
+          </div>
+          <div class="col-xs-12 col-sm-8">
+            <h6 for="suggestion-input" class="form-label">
+              제시어
+              <h4 id="word"></h4>
+            </h6>
+            <input
+              type="text"
+              class="form-control my-2"
+              id="suggestion-input"
+              placeholder="단어를 입력하세요"
+              pattern="/^[가-힣]+$/"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-4">
+            <button
+              id="input-button"
+              type="button"
+              class="btn btn-primary w-100 h-100"
+            >
+              입력
+            </button>
+          </div>
+        </div>
+        <p class="description">한글로 입력해주세요</p>
+      </div>
+      <div id="result-container" class="d-none">
+        <h3 id="result-header">결과 페이지</h3>
+        <button
+          id="result-button"
+          type="button"
+          class="btn btn-primary w-100 h-100"
+        >
+          다시 한 번
+        </button>
+        <div id="result-container__log-box">
+          <h4 class="py-3">투닥투닥 흔적📃</h4>
+        </div>
+        <p style="padding-top: 100px"></p>
+      </div>
+    </div>
+    <script>
+      const $button = document.querySelector('#input-button');
+      const $start = document.querySelector('#start-button');
+      const $result = document.querySelector('#result-button');
+      const $input = document.querySelector('input');
+      const $word = document.querySelector('#word');
+      const $order = document.querySelector('#order');
+      const btnLimitNon = document.querySelector('#limit-btn-non');
+      const btnLimitTwo = document.querySelector('#limit-btn-two');
+      const btnLimitThree = document.querySelector('#limit-btn-three');
+      const btnLimitFour = document.querySelector('#limit-btn-four');
+      const checkWord = /[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]|/g;
+      const checkKor = /^[가-힣]+$/;
+      const checkNum = /^[0-9]+$/;
+      let limitWord = '';
+      let number = '';
+      let word = ''; // 제시어
+      let newWord; // 새로 입력한 단어
+      let alreadyWord = [];
+
+      $start.focus();
+
+      const resetDate = () => {
+        word = ''; // 제시어
+        newWord = ''; // 새로 입력한 단어
+        alreadyWord = [];
+        $word.textContent = word;
+      };
+
+      const onLimitNon = () => {
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-primary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-outline-secondary');
+        limitWord = '';
+        document.getElementById('limit-description').innerText =
+          limitWord + '글자수에 제한이 없어요.';
+        console.log('btnLimitTwo', btnLimitTwo);
+        console.log('limitWord', limitWord);
+      };
+      const onLimitTwo = () => {
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-primary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-outline-secondary');
+        limitWord = 2;
+        document.getElementById('limit-description').innerText =
+          limitWord + ' 자로 된 단어만 쓸 수 있어요';
+        console.log('btnLimitTwo', btnLimitTwo);
+        console.log('limitWord', limitWord);
+      };
+      const onLimitThree = () => {
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-primary');
+        btnLimitFour.classList.add('btn-outline-secondary');
+        limitWord = 3;
+        document.getElementById('limit-description').innerText =
+          limitWord + ' 자로 된 단어만 쓸 수 있어요';
+        console.log('btnLimitTwo', btnLimitTwo);
+        console.log('limitWord', limitWord);
+      };
+      const onLimitFour = () => {
+        btnLimitFour.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitTwo.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitThree.classList.remove('btn-primary', 'btn-outline-secondary');
+        btnLimitNon.classList.add('btn-outline-secondary');
+        btnLimitTwo.classList.add('btn-outline-secondary');
+        btnLimitThree.classList.add('btn-outline-secondary');
+        btnLimitFour.classList.add('btn-primary');
+        limitWord = 4;
+        document.getElementById('limit-description').innerText =
+          limitWord + ' 자로 된 단어만 쓸 수 있어요';
+        console.log('btnLimitTwo', btnLimitTwo);
+        console.log('limitWord', limitWord);
+      };
+
+      const onStartButton = () => {
+        number = Number(prompt('몇 명이 참가하세요?'));
+        if (isNaN(number)) {
+          alert('😭 숫자만 입력해주세요');
+        } else if (!number) {
+          return 0;
+        } else if (checkNum.test(number)) {
+          document.getElementById('ready-container').classList.add('d-none');
+          document.getElementById('game-container').classList.remove('d-none');
+          resetDate();
+          $input.focus();
+        } else {
+          onStartButton();
+        }
+      };
+
+      const onReplayButton = () => {
+        resetDate();
+        document.getElementById('result-container').classList.add('d-none');
+        document.getElementById('ready-container').classList.remove('d-none');
+        $start.focus();
+      };
+
+      const onClickButton = () => {
+        // 제시어가 비어있는가?
+        console.log('newWord', newWord);
+        console.log('alreadyWord', alreadyWord);
+        if (!newWord) {
+          alert('단어를 적어주세요.');
+        } else if (!checkKor.test(newWord)) {
+          alert('올바르지 않은 단어예요.');
+        } else if (newWord.length !== limitWord && limitWord !== '') {
+          alert('글자 수가 ' + limitWord + ' 자가 아니예요.');
+        } else if (alreadyWord.indexOf(newWord) !== -1) {
+          const order = Number($order.textContent); // 현재 순서
+          alert(
+            '끝말잇기 실패!\n' +
+              '이미 썼던 단어예요😭\n' +
+              order +
+              '번째 참가자가 졌어요!'
+          );
+          //졌을때 시나리오
+          document.querySelector('#result-header').innerHTML =
+            '😥' + order + '번 참가자가 졌어요.';
+
+          let new_log_line = document.createElement('p');
+          new_log_line.innerHTML = '🧨' + order + '번 참가자 : ' + newWord;
+          document
+            .querySelector('#result-container__log-box')
+            .appendChild(new_log_line);
+          console.log('new_log_line', new_log_line);
+
+          document.getElementById('game-container').classList.add('d-none');
+          document
+            .getElementById('result-container')
+            .classList.remove('d-none');
+
+          $start.focus();
+        } else if (!word || word[word.length - 1] === newWord[0]) {
+          // 제시어가 비어있음 OR 끝글자와 첫글자가 같음
+          word = newWord; // 입력한 단어가 제시어가 된다.
+          $word.textContent = word;
+          alreadyWord.push(word);
+          console.log(alreadyWord);
+          newWord = '';
+          const order = Number($order.textContent); // 현재 순서
+
+          let new_log_line = document.createElement('p');
+          new_log_line.innerHTML = order + '번 참가자 : ' + word;
+          document
+            .querySelector('#result-container__log-box')
+            .appendChild(new_log_line);
+          console.log('new_log_line', new_log_line);
+
+          if (order + 1 > number) {
+            $order.textContent = 1;
+          } else {
+            $order.textContent = order + 1;
+          }
+        } else if (word && word[word.length - 1] !== newWord[0]) {
+          const order = Number($order.textContent);
+          alert('끝말잇기 실패!\n' + order + '번째 참가자가 졌어요!');
+
+          //졌을때 시나리오
+          document.querySelector('#result-header').innerHTML =
+            '😥' + order + '번 참가자가 졌어요.';
+
+          let new_log_line = document.createElement('p');
+          new_log_line.innerHTML = '🧨' + order + '번 참가자 : ' + newWord;
+          document
+            .querySelector('#result-container__log-box')
+            .appendChild(new_log_line);
+          console.log('new_log_line', new_log_line);
+
+          document.getElementById('game-container').classList.add('d-none');
+          document
+            .getElementById('result-container')
+            .classList.remove('d-none');
+
+          $start.focus();
+        } else {
+          alert('올바르지 않은 단어예요.');
+        }
+        $input.value = '';
+        $input.focus();
+      };
+
+      const onInput = (event) => {
+        newWord = event.target.value.replace(/(\s*)/g, '');
+        newWord = event.target.value.replace(checkWord, '');
+        $input.value = newWord;
+      };
+
+      const inputEnter = (pressValue) => {
+        if (pressValue.key == 'Enter') {
+          let inputValue = $input.value;
+          onClickButton();
+        }
+      };
+
+      btnLimitNon.addEventListener('click', onLimitNon);
+      btnLimitTwo.addEventListener('click', onLimitTwo);
+      btnLimitThree.addEventListener('click', onLimitThree);
+      btnLimitFour.addEventListener('click', onLimitFour);
+      $start.addEventListener('click', onStartButton);
+      $button.addEventListener('click', onClickButton);
+      $result.addEventListener('click', onReplayButton);
+      $input.addEventListener('input', onInput);
+      $input.addEventListener('keypress', inputEnter);
+    </script>
+  </body>
+</html>
