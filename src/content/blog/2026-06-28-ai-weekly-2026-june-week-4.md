@@ -14,7 +14,7 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 
 이번 주 AI 이슈는 크게 여섯 가지 흐름으로 정리할 수 있다.
 
-1. OpenAI는 모델, 에이전트, 추론 칩, 보안 도구, 표준화까지 여러 분야의 발표를 이어갔다.
+1. OpenAI는 모델, 에이전트, 추론 칩, 보안 도구까지 여러 분야의 발표를 이어갔다.
 2. GitHub Copilot은 CLI, Jira, JetBrains, Desktop, 코드 리뷰, 모델 선택 등 개발 워크플로우 전반으로 기능을 확장했다.
 3. Anthropic은 Slack 안에서 Claude에게 업무를 위임하는 `Claude Tag`를 발표했다.
 4. n8n, AWS, NVIDIA, MIT 등에서는 AI 에이전트와 업무 자동화가 실제 운영·비용·데이터 구조 문제와 연결되는 사례가 나왔다.
@@ -23,60 +23,60 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 
 ## 주요 이슈 한눈에 보기
 
-<div class="issue-list">
-  <section class="issue-card">
+<ul class="issue-list">
+  <li class="issue-card">
     <h3>OpenAI, GPT-5.6 Sol 프리뷰 소개</h3>
     <p class="issue-meta">6월 26일 · 모델 · 출처: OpenAI 공식 RSS</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>OpenAI·Broadcom, LLM 추론용 칩 Jalapeño 공개</h3>
     <p class="issue-meta">6월 24일 · 인프라 · 출처: OpenAI 공식 RSS</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>OpenAI, Daybreak와 Patch the Planet 소개</h3>
     <p class="issue-meta">6월 22일 · 보안 · 출처: OpenAI 공식 RSS</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>Anthropic, Slack용 Claude Tag 발표</h3>
     <p class="issue-meta">6월 23일 · 협업 에이전트 · 출처: Anthropic 공식 발표</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>GitHub Copilot CLI, Jira, Desktop, JetBrains, 코드 리뷰 업데이트</h3>
     <p class="issue-meta">6월 22~26일 · AI 코딩 · 출처: GitHub Changelog</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>GitHub, MAI-Code-1-Flash를 Copilot Business/Enterprise에 GA</h3>
     <p class="issue-meta">6월 26일 · AI 코딩 · 출처: GitHub Changelog</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>GitHub, Copilot agentic harness 평가 글 공개</h3>
     <p class="issue-meta">6월 25일 · AI 코딩 · 출처: GitHub Blog</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>n8n, self-improving agent skill workflow와 AI maturity 글 공개</h3>
     <p class="issue-meta">6월 25~26일 · 자동화 · 출처: n8n Blog</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>MIT, AI agent workflow 비용·에너지 효율 개선 연구 소개</h3>
     <p class="issue-meta">6월 25일 · 에이전트 효율 · 출처: MIT News</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>AWS, agentic AI와 data mesh 전략 소개</h3>
     <p class="issue-meta">6월 25일 · 기업 AI · 출처: AWS Blog</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>Microsoft, 텍사스 Pecos AI 데이터센터 발표</h3>
     <p class="issue-meta">6월 22일 · AI 인프라 · 출처: Microsoft Blog</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>NVIDIA, 유럽 내 35개 AI/HPC 슈퍼컴퓨터 개발 발표</h3>
     <p class="issue-meta">6월 22일 · AI 인프라 · 출처: NVIDIA Newsroom</p>
-  </section>
-  <section class="issue-card">
+  </li>
+  <li class="issue-card">
     <h3>Praxen, Gaslight malware 등 에이전트·AI 분석 보안 이슈</h3>
     <p class="issue-meta">6월 24~25일 · AI 보안 · 출처: Help Net Security / BleepingComputer</p>
-  </section>
-</div>
+  </li>
+</ul>
 
 ## 1. AI 모델·인프라
 
