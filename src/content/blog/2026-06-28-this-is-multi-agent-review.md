@@ -1,7 +1,7 @@
 ---
 title: "이것이 멀티 에이전트다 리뷰"
 description: "헤르메스 에이전트와 클로드 코드를 써보며 궁금했던 멀티 에이전트, MCP, A2A 구조를 책으로 정리해본 후기."
-date: "2026-06-28"
+date: "2026-06-28T23:50:00+09:00"
 category: "Book Review"
 tags: ["AI", "Agent", "MCP", "A2A", "Book"]
 ---
