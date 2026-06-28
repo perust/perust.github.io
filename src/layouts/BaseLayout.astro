@@ -17,10 +17,10 @@ const {
 const site = Astro.site ?? new URL('https://perust.github.io');
 const canonicalUrl = new URL(canonical, site).toString();
 const navItems = [
-  ['/', 'Home'],
-  ['/blog/', 'Blog'],
-  ['/about/', 'About'],
-  ['/contact/', 'Contact'],
+  ['/', '홈'],
+  ['/blog/', '블로그'],
+  ['/about/', '소개'],
+  ['/contact/', '문의'],
 ];
 const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : Astro.url.pathname.startsWith(href);
 ---
