@@ -24,7 +24,7 @@ const categories = Array.from(new Set(posts.map((post) => post.category))).sort(
     <section class="section-shell blog-page" aria-label="블로그 글 목록">
       <div class="blog-main-list">
         {featuredPost && (
-          <a class="featured-post-card" href={`/blog/${featuredPost.slug}/`}>
+          <a class="featured-post-card blog-post-entry" data-category={featuredPost.category} href={`/blog/${featuredPost.slug}/`}>
             <div>
               <span class="category-chip">{featuredPost.category}</span>
               <time datetime={new Date(featuredPost.date).toISOString()}>{new Date(featuredPost.date).toLocaleDateString('ko-KR')}</time>
@@ -37,7 +37,7 @@ const categories = Array.from(new Set(posts.map((post) => post.category))).sort(
 
         <div class="post-list">
           {restPosts.map((post) => (
-            <a class="post-list-item" href={`/blog/${post.slug}/`}>
+            <a class="post-list-item blog-post-entry" data-category={post.category} href={`/blog/${post.slug}/`}>
               <div class="post-list-meta">
                 <span>{post.category}</span>
                 <time datetime={new Date(post.date).toISOString()}>{new Date(post.date).toLocaleDateString('ko-KR')}</time>
@@ -50,13 +50,15 @@ const categories = Array.from(new Set(posts.map((post) => post.category))).sort(
             </a>
           ))}
         </div>
+        <p class="empty-blog-message" hidden>선택한 카테고리에 글이 없습니다.</p>
       </div>
 
       <aside class="blog-sidebar" aria-label="블로그 분류">
         <div class="sidebar-card">
           <h2>카테고리</h2>
           <ul class="category-list">
-            {categories.map((category) => <li><span>{category}</span><strong>{posts.filter((post) => post.category === category).length}</strong></li>)}
+            <li><a class="category-filter is-active" href="/blog/" data-category="all"><span>전체</span><strong>{posts.length}</strong></a></li>
+            {categories.map((category) => <li><a class="category-filter" href={`/blog/?category=${encodeURIComponent(category)}`} data-category={category}><span>{category}</span><strong>{posts.filter((post) => post.category === category).length}</strong></a></li>)}
           </ul>
         </div>
         <div class="sidebar-card">
@@ -68,4 +70,41 @@ const categories = Array.from(new Set(posts.map((post) => post.category))).sort(
       </aside>
     </section>
   </main>
+  <script>
+    const entries = Array.from(document.querySelectorAll('.blog-post-entry'));
+    const filters = Array.from(document.querySelectorAll('.category-filter'));
+    const emptyMessage = document.querySelector('.empty-blog-message');
+
+    function applyCategory(category, pushState = true) {
+      let visibleCount = 0;
+      entries.forEach((entry) => {
+        const shouldShow = category === 'all' || entry.dataset.category === category;
+        entry.hidden = !shouldShow;
+        if (shouldShow) visibleCount += 1;
+      });
+      filters.forEach((filter) => {
+        filter.classList.toggle('is-active', filter.dataset.category === category);
+      });
+      if (emptyMessage) emptyMessage.hidden = visibleCount !== 0;
+      if (pushState) {
+        const url = category === 'all' ? '/blog/' : `/blog/?category=${encodeURIComponent(category)}`;
+        history.pushState({ category }, '', url);
+      }
+    }
+
+    filters.forEach((filter) => {
+      filter.addEventListener('click', (event) => {
+        event.preventDefault();
+        applyCategory(filter.dataset.category || 'all');
+      });
+    });
+
+    const initialCategory = new URLSearchParams(window.location.search).get('category') || 'all';
+    applyCategory(initialCategory, false);
+
+    window.addEventListener('popstate', () => {
+      const category = new URLSearchParams(window.location.search).get('category') || 'all';
+      applyCategory(category, false);
+    });
+  </script>
 </BaseLayout>
