@@ -23,46 +23,72 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 
 ## 주요 이슈 한눈에 보기
 
-모바일에서 읽기 쉽도록 날짜, 분야, 출처를 한 줄에 묶고 핵심 이슈를 아래에 정리했다.
+모바일에서 읽기 쉽도록 제목은 날짜와 분야만 남기고, 출처는 각 항목 아래에 따로 정리했다.
 
-### 6월 26일 · 모델 · OpenAI 공식 RSS
+### 6월 26일 · 모델
 OpenAI, GPT-5.6 Sol 프리뷰 소개
 
-### 6월 24일 · 인프라 · OpenAI 공식 RSS
+출처: OpenAI 공식 RSS
+
+### 6월 24일 · 인프라
 OpenAI·Broadcom, LLM 추론용 칩 Jalapeño 공개
 
-### 6월 22일 · 보안 · OpenAI 공식 RSS
+출처: OpenAI 공식 RSS
+
+### 6월 22일 · 보안
 OpenAI, Daybreak와 Patch the Planet 소개
 
-### 6월 23일 · 협업 에이전트 · Anthropic 공식 발표
+출처: OpenAI 공식 RSS
+
+### 6월 23일 · 협업 에이전트
 Anthropic, Slack용 Claude Tag 발표
 
-### 6월 22~26일 · AI 코딩 · GitHub Changelog
+출처: Anthropic 공식 발표
+
+### 6월 22~26일 · AI 코딩
 GitHub Copilot CLI, Jira, Desktop, JetBrains, 코드 리뷰 업데이트
 
-### 6월 26일 · AI 코딩 · GitHub Changelog
+출처: GitHub Changelog
+
+### 6월 26일 · AI 코딩
 GitHub, MAI-Code-1-Flash를 Copilot Business/Enterprise에 GA
 
-### 6월 25일 · AI 코딩 · GitHub Blog
+출처: GitHub Changelog
+
+### 6월 25일 · AI 코딩
 GitHub, Copilot agentic harness 평가 글 공개
 
-### 6월 25~26일 · 자동화 · n8n Blog
+출처: GitHub Blog
+
+### 6월 25~26일 · 자동화
 n8n, self-improving agent skill workflow와 AI maturity 글 공개
 
-### 6월 25일 · 에이전트 효율 · MIT News
+출처: n8n Blog
+
+### 6월 25일 · 에이전트 효율
 MIT, AI agent workflow 비용·에너지 효율 개선 연구 소개
 
-### 6월 25일 · 기업 AI · AWS Blog
+출처: MIT News
+
+### 6월 25일 · 기업 AI
 AWS, agentic AI와 data mesh 전략 소개
 
-### 6월 22일 · AI 인프라 · Microsoft Blog
+출처: AWS Blog
+
+### 6월 22일 · AI 인프라
 Microsoft, 텍사스 Pecos AI 데이터센터 발표
 
-### 6월 22일 · AI 인프라 · NVIDIA Newsroom
+출처: Microsoft Blog
+
+### 6월 22일 · AI 인프라
 NVIDIA, 유럽 내 35개 AI/HPC 슈퍼컴퓨터 개발 발표
 
-### 6월 24~25일 · AI 보안 · Help Net Security / BleepingComputer
+출처: NVIDIA Newsroom
+
+### 6월 24~25일 · AI 보안
 Praxen, Gaslight malware 등 에이전트·AI 분석 보안 이슈
+
+출처: Help Net Security / BleepingComputer
 
 ## 1. AI 모델·인프라
 
