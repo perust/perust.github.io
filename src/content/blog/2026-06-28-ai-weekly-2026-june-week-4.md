@@ -31,7 +31,7 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
     <span class="issue-badge">AI 코딩</span>
     <h3>GitHub Copilot, 개발 워크플로우 전반으로 확장</h3>
     <p class="issue-summary">GitHub는 Copilot CLI, Jira, JetBrains, Desktop, 코드 리뷰, 모델 선택 관련 업데이트를 한 주 동안 연속으로 공개했다.</p>
-    <p class="issue-meta">6월 22~26일 · 출처: GitHub Changelog · 확인 수준: 공식 변경 로그</p>
+    <p class="issue-meta">6월 22–26일 · 출처: GitHub Changelog · 확인 수준: 공식 변경 로그</p>
   </li>
   <li class="issue-card">
     <span class="issue-badge">협업 에이전트</span>
@@ -43,19 +43,19 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
     <span class="issue-badge">자동화</span>
     <h3>n8n, self-improving agent workflow와 AI maturity 글 공개</h3>
     <p class="issue-summary">n8n은 에이전트 스킬을 검토하고 수정안을 반영하는 workflow와 조직 AI 성숙도 프레임워크를 소개했다.</p>
-    <p class="issue-meta">6월 25~26일 · 출처: n8n Blog · 확인 수준: 벤더 블로그</p>
+    <p class="issue-meta">6월 25–26일 · 출처: n8n Blog · 확인 수준: 벤더 블로그</p>
   </li>
   <li class="issue-card">
     <span class="issue-badge">보안</span>
     <h3>OpenAI Daybreak, IBM 참여, Praxen, Gaslight malware까지 AI 보안 이슈 확대</h3>
     <p class="issue-summary">AI 보안은 취약점 탐지·검증·패치 도구와 에이전트 행동 검증, AI 분석 도구를 교란하는 악성코드 보도로 함께 다뤄졌다.</p>
-    <p class="issue-meta">6월 22~25일 · 출처: OpenAI, IBM, Help Net Security, BleepingComputer · 확인 수준: 기업 발표·보안 매체 보도</p>
+    <p class="issue-meta">6월 22–25일 · 출처: OpenAI, IBM, Help Net Security, BleepingComputer · 확인 수준: 기업 발표·보안 매체 보도</p>
   </li>
   <li class="issue-card">
     <span class="issue-badge">인프라</span>
     <h3>AI 인프라 경쟁: 추론 칩, 데이터센터, 슈퍼컴퓨터, 로봇 안전</h3>
     <p class="issue-summary">OpenAI·Broadcom의 추론 칩, Microsoft의 Pecos 데이터센터, NVIDIA의 유럽 AI/HPC 슈퍼컴퓨터와 로봇 안전 시스템 발표가 같은 주에 이어졌다.</p>
-    <p class="issue-meta">6월 22~24일 · 출처: OpenAI, Microsoft, NVIDIA 공식 발표 · 확인 수준: 기업 발표</p>
+    <p class="issue-meta">6월 22–24일 · 출처: OpenAI, Microsoft, NVIDIA 공식 발표 · 확인 수준: 기업 발표</p>
   </li>
 </ul>
 
@@ -77,7 +77,7 @@ GitHub는 이번 주 Copilot 관련 변경을 다수 공개했다. JetBrains IDE
 
 Cursor도 공식 changelog에서 `Customize Cursor` 업데이트를 통해 플러그인, skills, MCP, subagents, rules, commands, hooks를 user, team, workspace 단위로 관리할 수 있다고 설명했다. AI 코딩 도구가 단일 모델 호출을 넘어 팀 단위 규칙과 도구 연결까지 포함하는 방향으로 확장되는 흐름이다.
 
-운영 이슈도 있었다. GitHub Status에 따르면 6월 23일 22:45~23:29 UTC 동안 Copilot Completions와 Next Edit Suggestions가 degraded 상태였고, 평균 약 25%, 최대 약 27% 요청 실패가 있었다. Claude Status에도 6월 22~27일 사이 elevated error 관련 기록이 있었지만, Claude Code 전용 장애로 단정하지는 않는 것이 안전하다.
+운영 이슈도 있었다. GitHub Status에 따르면 6월 23일 22:45–23:29 UTC 동안 Copilot Completions와 Next Edit Suggestions가 degraded 상태였고, 평균 약 25%, 최대 약 27% 요청 실패가 있었다. Claude Status에도 6월 22–27일 사이 elevated error 관련 기록이 있었지만, Claude Code 전용 장애로 단정하지는 않는 것이 안전하다.
 
 ### 3. AI 에이전트는 협업툴과 자동화 도구 안으로 들어가고 있다
 
