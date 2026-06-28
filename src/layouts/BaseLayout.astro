@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonical?: string;
+  ogType?: 'website' | 'article';
+}
+
+const {
+  title = '임승우 · Seungwoo',
+  description = '아이디어를 제품으로 옮기는 메이커 임승우의 포트폴리오와 블로그.',
+  canonical = Astro.url.pathname,
+  ogType = 'website',
+} = Astro.props;
+const site = Astro.site ?? new URL('https://perust.github.io');
+const canonicalUrl = new URL(canonical, site).toString();
+const navItems = [
+  ['/', 'Home'],
+  ['/blog/', 'Blog'],
+  ['/about/', 'About'],
+  ['/contact/', 'Contact'],
+];
+const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : Astro.url.pathname.startsWith(href);
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="site-header" aria-label="사이트 헤더">
+      <a class="brand" href="/" aria-label="홈으로 이동">
+        <span class="brand-mark">SW</span>
+        <span>Seungwoo</span>
+      </a>
+      <nav class="nav" aria-label="주요 메뉴">
+        {navItems.map(([href, label]) => <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>{label}</a>)}
+      </nav>
+    </header>
+    <slot />
+    <footer class="footer">
+      <p>© 2026 임승우. Built with Astro on GitHub Pages.</p>
+      <div class="footer-links">
+        <a href="/privacy/">개인정보처리방침</a>
+        <a href="/contact/">문의</a>
+        <a href="/blog/">블로그</a>
+      </div>
+    </footer>
+  </body>
+</html>
