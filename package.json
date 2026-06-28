@@ -1,0 +1,20 @@
+{
+  "name": "perust.github.io",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Astro 기반 임승우 개인 홈페이지, 포트폴리오, 블로그.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro build"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
