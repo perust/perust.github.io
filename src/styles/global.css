@@ -778,13 +778,14 @@ h3 {
 .post-article blockquote { margin: 1.5rem 0; padding: 1rem 1.2rem; border-left: 4px solid var(--primary); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: rgba(37,99,235,.08); }
 .post-article .issue-list { display: grid; gap: 1rem; margin: 1.4rem 0 2.2rem; padding: 0; list-style: none; }
 .post-article .issue-card { min-width: 0; padding: 1rem 1.1rem; border: 1px solid rgba(15,23,42,.12); border-radius: var(--radius-sm); background: #fff; }
-.post-article .issue-card h3 { margin: 0 0 .38rem; color: var(--ink); font-size: clamp(1.08rem, 3vw, 1.28rem); line-height: 1.36; letter-spacing: -0.035em; overflow-wrap: anywhere; }
-.post-article .issue-meta { margin: 0; color: var(--muted); font-size: .88rem; font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
+.post-article .issue-badge { display: inline-flex; align-items: center; width: fit-content; margin-bottom: .55rem; padding: .18rem .55rem; border-radius: 999px; color: var(--primary); font-size: .78rem; font-weight: 800; background: rgba(37,99,235,.09); }
+.post-article .issue-card h3 { margin: 0 0 .45rem; color: var(--ink); font-size: clamp(1.08rem, 3vw, 1.28rem); line-height: 1.36; letter-spacing: -0.035em; overflow-wrap: anywhere; }
+.post-article .issue-summary { margin: 0 0 .5rem; color: #334155; font-size: .98rem; line-height: 1.55; overflow-wrap: anywhere; }
+.post-article .issue-meta { margin: 0; color: var(--muted); font-size: .86rem; font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
 .post-article code { padding: .12rem .3rem; border-radius: .35rem; background: rgba(15,23,42,.08); }
 .post-article pre { overflow-x: auto; padding: 1rem; border-radius: var(--radius-sm); background: #0f172a; color: white; }
 .sidebar-card { position: sticky; top: 6.5rem; padding: 1.1rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); box-shadow: var(--shadow); }
 .sidebar-card p { color: var(--muted); }
-.monetization-note { padding: 1rem; border: 1px dashed rgba(37,99,235,.35); border-radius: var(--radius-sm); background: rgba(37,99,235,.06); }
 .footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: .4rem; }
 .footer-links a { color: var(--muted); font-weight: 700; }
 @media (max-width: 900px) { .blog-grid, .blog-page, .post-layout, .post-list-item { grid-template-columns: 1fr; } .sidebar-card { position: static; } }
