@@ -23,8 +23,6 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 
 ## 주요 이슈 한눈에 보기
 
-모바일에서 읽기 쉽도록 핵심 이슈를 크게 두고, 날짜·분야·출처는 아래에 작은 정보로 정리했다.
-
 <div class="issue-list">
   <section class="issue-card">
     <h3>OpenAI, GPT-5.6 Sol 프리뷰 소개</h3>
