@@ -57,6 +57,7 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#0f172a" />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" type="application/rss+xml" title="slowave Blog RSS" href="/rss.xml" />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

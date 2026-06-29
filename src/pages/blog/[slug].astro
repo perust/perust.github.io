@@ -38,8 +38,21 @@ const blogPostingLd = {
   articleSection: category,
   ...(tags.length ? { keywords: tags.join(', ') } : {}),
 };
+
+// Home > Blog > category > post 순서의 BreadcrumbList.
+// 카테고리 전용 정적 페이지는 아직 없으므로 /blog/?category= 필터 URL을 가리킨다.
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '홈', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: '블로그', item: new URL('/blog/', site).toString() },
+    { '@type': 'ListItem', position: 3, name: category, item: new URL(`/blog/?category=${encodeURIComponent(category)}`, site).toString() },
+    { '@type': 'ListItem', position: 4, name: title, item: pageUrl },
+  ],
+};
 ---
-<BaseLayout title={`${title} · slowave 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={blogPostingLd} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags}>
+<BaseLayout title={`${title} · slowave 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={[blogPostingLd, breadcrumbLd]} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags}>
   <main class="post-layout">
     <article class="post-article">
       <p class="section-kicker">{category}</p>

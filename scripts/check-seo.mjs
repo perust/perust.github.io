@@ -5,7 +5,7 @@
 // 검사 대상은 Astro가 생성하는 주요 페이지와 블로그 글로 한정한다.
 // contents/, homepage/, study/ 아래의 레거시 정적 아카이브 HTML은
 // SEO 품질 게이트의 대상이 아니므로 스킵(경고)하고 실패시키지 않는다.
-import { readdir, readFile } from 'node:fs/promises';
+import { access, readdir, readFile } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
 
 const DIST = 'dist';
@@ -73,19 +73,29 @@ for (const file of files) {
   // 페이지 유형별로 반드시 있어야 하는 JSON-LD @type 을 검증한다.
   // - 홈(index.html): WebSite
   // - 블로그 인덱스(blog/index.html): Blog
-  // - 블로그 글 상세(blog/<slug>/index.html): BlogPosting
+  // - 블로그 글 상세(blog/<slug>/index.html): BlogPosting + BreadcrumbList
   const isPost = rel.startsWith('blog/') && rel !== 'blog/index.html' && rel.endsWith('index.html');
   if (rel === 'index.html' && !types.includes('WebSite')) {
     missing.push('WebSite JSON-LD');
   } else if (rel === 'blog/index.html' && !types.includes('Blog')) {
     missing.push('Blog JSON-LD');
-  } else if (isPost && !types.includes('BlogPosting')) {
-    missing.push('BlogPosting JSON-LD');
+  } else if (isPost) {
+    if (!types.includes('BlogPosting')) missing.push('BlogPosting JSON-LD');
+    if (!types.includes('BreadcrumbList')) missing.push('BreadcrumbList JSON-LD');
   }
 
   if (missing.length) failures += missing.length;
   const status = missing.length ? 'FAIL' : 'ok';
   console.log(`[${status}] ${rel}  jsonld=[${types.join(', ') || '-'}]${missing.length ? `  missing: ${missing.join(', ')}` : ''}`);
+}
+
+// RSS 피드(dist/rss.xml) 존재 여부를 확인한다. 없으면 실패시킨다.
+try {
+  await access(join(DIST, 'rss.xml'));
+  console.log('[ok] rss.xml  (RSS 피드 존재)');
+} catch {
+  failures += 1;
+  console.log('[FAIL] rss.xml  (RSS 피드 누락 — dist/rss.xml 없음. src/pages/rss.xml.ts 확인)');
 }
 
 console.log(`\n검사한 HTML: ${checked}개, 스킵(레거시): ${skipped}개, 문제: ${failures}건`);

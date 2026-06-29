@@ -63,10 +63,11 @@ tags: ["Astro", "GitHub Pages"]
 
 이 저장소는 아래를 자동 생성하므로 글마다 따로 손댈 필요는 없다.
 
-- `BaseLayout.astro`: canonical, robots, description, og(title/description/url/type/site_name/locale), twitter(card/title/description), generator.
-- `blog/[slug].astro`: `BlogPosting` JSON-LD(headline, description, datePublished, dateModified, author/publisher=slowave, mainEntityOfPage, articleSection, keywords, inLanguage=ko-KR).
+- `BaseLayout.astro`: canonical, robots, description, og(title/description/url/type/site_name/locale), twitter(card/title/description), generator, RSS alternate 링크(`/rss.xml`).
+- `blog/[slug].astro`: `BlogPosting` JSON-LD(headline, description, datePublished, dateModified, author/publisher=slowave, mainEntityOfPage, articleSection, keywords, inLanguage=ko-KR)와 `BreadcrumbList` JSON-LD(홈 > 블로그 > 카테고리 > 글).
 - `blog/index.astro`: `Blog` + `blogPost` JSON-LD. `index.astro`: `WebSite` JSON-LD.
 - `astro.config.mjs`의 sitemap 통합이 `sitemap-index.xml`을 만들고 `robots.txt`가 이를 가리킨다.
+- `src/pages/rss.xml.ts`가 블로그 글(title/description/pubDate/link/categories)을 모아 `/rss.xml` 피드를 만든다. 작성자는 `slowave`로만 표기한다.
 
 따라서 글쓴이는 **frontmatter를 정확히 채우는 것**이 곧 스키마 품질로 이어진다.
 
