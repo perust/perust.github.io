@@ -143,11 +143,11 @@ async function createComment(request: Request, env: Env, corsHeaders: HeadersIni
 
   const id = crypto.randomUUID();
   await env.DB.prepare(
-    `INSERT INTO comments (id, post_slug, nickname, body, ip_prefix, ip_hash, status)
-     VALUES (?, ?, ?, ?, ?, ?, 'pending')`
+    `INSERT INTO comments (id, post_slug, nickname, body, ip_prefix, ip_hash, status, approved_at)
+     VALUES (?, ?, ?, ?, ?, ?, 'approved', datetime('now'))`
   ).bind(id, postSlug, nickname, body, ipPrefix, ipHash).run();
 
-  return json({ ok: true, status: 'pending', message: '댓글이 저장되었습니다. 확인 후 공개됩니다.' }, 201, corsHeaders);
+  return json({ ok: true, status: 'approved', message: '댓글이 바로 공개되었습니다.' }, 201, corsHeaders);
 }
 
 async function adminUpdate(request: Request, env: Env, corsHeaders: HeadersInit) {
