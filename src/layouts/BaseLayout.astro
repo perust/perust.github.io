@@ -9,7 +9,7 @@ interface Props {
 }
 
 const {
-  title = 'zyqn',
+  title = 'slowave',
   description = '아이디어를 제품으로 옮기는 과정을 기록하는 개인 포트폴리오와 블로그.',
   canonical = Astro.url.pathname,
   ogType = 'website',
@@ -54,8 +54,8 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
   <body>
     <header class="site-header" aria-label="사이트 헤더">
       <a class="brand" href="/" aria-label="홈으로 이동">
-        <span class="brand-mark">Z</span>
-        <span>zyqn</span>
+        <span class="brand-mark">S</span>
+        <span>slowave</span>
       </a>
       <nav class="nav" aria-label="주요 메뉴">
         {navItems.map(([href, label]) => <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>{label}</a>)}
@@ -63,7 +63,7 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
     </header>
     <slot />
     <footer class="footer">
-      <p>© 2026 zyqn. Built with Astro on GitHub Pages.</p>
+      <p>© 2026 slowave. Built with Astro on GitHub Pages.</p>
       <div class="footer-links">
         <a href="/privacy/">개인정보처리방침</a>
         <a href="/contact/">문의</a>

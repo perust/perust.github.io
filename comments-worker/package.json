@@ -1,12 +1,12 @@
 {
-  "name": "zyqn-blog-comments-worker",
+  "name": "slowave-blog-comments-worker",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "db:apply": "wrangler d1 execute zyqn_blog_comments --file=./schema.sql"
+    "db:apply": "wrangler d1 execute slowave_blog_comments --file=./schema.sql"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260628.0",

@@ -1,4 +1,4 @@
-# zyqn blog comments
+# slowave blog comments
 
 Astro/GitHub Pages 블로그에 붙일 익명 댓글 API 초안입니다.
 
@@ -16,7 +16,7 @@ Astro/GitHub Pages 블로그에 붙일 익명 댓글 API 초안입니다.
 cd comments-worker
 npm install
 npx wrangler login
-npx wrangler d1 create zyqn_blog_comments
+npx wrangler d1 create slowave_blog_comments
 ```
 
 출력된 `database_id`를 `wrangler.toml`의 `REPLACE_WITH_D1_DATABASE_ID`에 넣습니다.
@@ -24,7 +24,7 @@ npx wrangler d1 create zyqn_blog_comments
 ## 2. DB 스키마 적용
 
 ```bash
-npx wrangler d1 execute zyqn_blog_comments --file=./schema.sql
+npx wrangler d1 execute slowave_blog_comments --file=./schema.sql
 ```
 
 ## 3. Secret 설정
@@ -48,7 +48,7 @@ npx wrangler deploy
 배포 후 Worker URL을 Astro 환경변수로 넣습니다.
 
 ```bash
-PUBLIC_COMMENTS_API_URL=https://zyqn-blog-comments.<your-subdomain>.workers.dev
+PUBLIC_COMMENTS_API_URL=https://slowave-blog-comments.<your-subdomain>.workers.dev
 PUBLIC_TURNSTILE_SITE_KEY=<turnstile-site-key>
 ```
 
