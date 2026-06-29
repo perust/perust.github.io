@@ -7,7 +7,7 @@ compatibility_date = "2026-06-28"
 [[d1_databases]]
 binding = "DB"
 database_name = "slowave_blog_comments"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "793d239e-a1d1-4360-a38e-6fd35e80acdf"
 
 [vars]
 ALLOWED_ORIGIN = "https://perust.github.io"
