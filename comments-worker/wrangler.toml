@@ -1,0 +1,17 @@
+name = "zyqn-blog-comments"
+main = "src/index.ts"
+compatibility_date = "2026-06-28"
+
+# 배포 전 Cloudflare에서 D1 DB를 만든 뒤 database_id를 채워야 합니다.
+# wrangler d1 create zyqn_blog_comments
+[[d1_databases]]
+binding = "DB"
+database_name = "zyqn_blog_comments"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+[vars]
+ALLOWED_ORIGIN = "https://perust.github.io"
+# Turnstile을 붙이면 실제 secret을 Cloudflare secret으로 넣으세요.
+# wrangler secret put TURNSTILE_SECRET_KEY
+# 댓글 관리용 토큰도 secret으로 넣으세요.
+# wrangler secret put ADMIN_TOKEN

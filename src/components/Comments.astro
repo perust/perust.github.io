@@ -1,0 +1,134 @@
+---
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const commentsApiUrl = import.meta.env.PUBLIC_COMMENTS_API_URL || '';
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
+---
+<section class="comments" data-comments-root data-post-slug={slug} data-api-url={commentsApiUrl} data-turnstile-site-key={turnstileSiteKey}>
+  <div class="comments-header">
+    <div>
+      <p class="section-kicker">Comments</p>
+      <h2>댓글</h2>
+    </div>
+    <p class="comments-note">익명으로 남길 수 있습니다. IP는 일부만 표시됩니다.</p>
+  </div>
+
+  <div class="comments-list" data-comments-list>
+    <p class="comments-empty">댓글을 불러오는 중입니다.</p>
+  </div>
+
+  <form class="comment-form" data-comment-form>
+    <label>
+      <span>닉네임</span>
+      <input name="nickname" maxlength="40" placeholder="익명" autocomplete="nickname" />
+    </label>
+    <label>
+      <span>댓글</span>
+      <textarea name="body" maxlength="800" rows="4" placeholder="댓글을 입력해 주세요." required></textarea>
+    </label>
+    {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>}
+    <button type="submit">댓글 남기기</button>
+    <p class="comment-form-message" data-comment-message></p>
+  </form>
+</section>
+
+{turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+<script>
+  const root = document.querySelector('[data-comments-root]');
+
+  if (root) {
+    const apiUrl = root.getAttribute('data-api-url') || '';
+    const postSlug = root.getAttribute('data-post-slug') || '';
+    const list = root.querySelector('[data-comments-list]');
+    const form = root.querySelector('[data-comment-form]');
+    const message = root.querySelector('[data-comment-message]');
+
+    const escapeHtml = (value) => String(value || '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+
+    const formatDate = (value) => {
+      try {
+        return new Date(value).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' });
+      } catch (_) {
+        return value;
+      }
+    };
+
+    const renderComments = (comments) => {
+      if (!list) return;
+      if (!comments.length) {
+        list.innerHTML = '<p class="comments-empty">아직 댓글이 없습니다.</p>';
+        return;
+      }
+      list.innerHTML = comments.map((comment) => `
+        <article class="comment-item">
+          <div class="comment-meta">
+            <strong>${escapeHtml(comment.nickname || '익명')}</strong>
+            <span>${escapeHtml(comment.ipPrefix || '')}</span>
+            <time>${escapeHtml(formatDate(comment.createdAt))}</time>
+          </div>
+          <p>${escapeHtml(comment.body).replaceAll('\n', '<br />')}</p>
+        </article>
+      `).join('');
+    };
+
+    const loadComments = async () => {
+      if (!apiUrl) {
+        if (list) list.innerHTML = '<p class="comments-empty">댓글 API 설정이 아직 연결되지 않았습니다.</p>';
+        if (form) form.setAttribute('hidden', 'true');
+        return;
+      }
+      try {
+        const response = await fetch(`${apiUrl.replace(/\/$/, '')}/comments?slug=${encodeURIComponent(postSlug)}`);
+        const data = await response.json();
+        renderComments(data.comments || []);
+      } catch (error) {
+        if (list) list.innerHTML = '<p class="comments-empty">댓글을 불러오지 못했습니다.</p>';
+      }
+    };
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!apiUrl) return;
+
+      const formData = new FormData(form);
+      const turnstileInput = form.querySelector('input[name="cf-turnstile-response"]');
+      const payload = {
+        postSlug,
+        nickname: formData.get('nickname') || '익명',
+        body: formData.get('body'),
+        turnstileToken: turnstileInput?.value || '',
+      };
+
+      if (message) message.textContent = '댓글을 저장하는 중입니다.';
+      const button = form.querySelector('button');
+      button?.setAttribute('disabled', 'true');
+      try {
+        const response = await fetch(`${apiUrl.replace(/\/$/, '')}/comments`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '댓글 저장에 실패했습니다.');
+        form.reset();
+        if (message) message.textContent = data.message || '댓글이 저장되었습니다.';
+        if (window.turnstile) window.turnstile.reset();
+        await loadComments();
+      } catch (error) {
+        if (message) message.textContent = error instanceof Error ? error.message : '댓글 저장에 실패했습니다.';
+      } finally {
+        button?.removeAttribute('disabled');
+      }
+    });
+
+    loadComments();
+  }
+</script>

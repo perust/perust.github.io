@@ -1,17 +1,22 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Comments from '../../components/Comments.astro';
 
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
-  return Object.entries(modules).map(([path, post]: [string, any]) => ({
-    params: { slug: path.split('/').pop()?.replace('.md', '') },
-    props: { post },
-  }));
+  return Object.entries(modules).map(([path, post]: [string, any]) => {
+    const slug = path.split('/').pop()?.replace('.md', '') || '';
+    return {
+      params: { slug },
+      props: { post, slug },
+    };
+  });
 }
 
-const { post } = Astro.props;
+const { post, slug } = Astro.props;
 const { Content } = post;
 const { title, description, date, category, tags = [] } = post.frontmatter;
+const commentsEnabled = Boolean(import.meta.env.PUBLIC_COMMENTS_API_URL);
 ---
 <BaseLayout title={`${title} · zyqn 블로그`} description={description} canonical={Astro.url.pathname} ogType="article">
   <main class="post-layout">
@@ -20,6 +25,7 @@ const { title, description, date, category, tags = [] } = post.frontmatter;
       <h1>{title}</h1>
       <p class="post-meta"><time datetime={new Date(date).toISOString()}>{new Date(date).toLocaleDateString('ko-KR')}</time></p>
       <Content />
+      {commentsEnabled && <Comments slug={slug} />}
     </article>
     <aside class="sidebar-card" aria-label="블로그 안내">
       <h2 style="font-size:1.2rem">zyqn Blog</h2>
