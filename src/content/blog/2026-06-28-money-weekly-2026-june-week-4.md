@@ -12,9 +12,9 @@ tags: ["경제", "재테크", "Money Weekly", "금리", "환율", "증시", "부
 
 1. 금리는 한국은행 기준금리 2.50%, 미국 연준 목표범위 3.50–3.75%라는 큰 틀에서 움직였다. 미국은 6월 FOMC 직후 주간이었고, 5월 PCE 물가가 다시 확인 포인트가 됐다.
 2. 원/달러 환율은 Yahoo Finance 일별 시세 기준 6월 22일 1,539.05원에서 6월 25일 1,546.48원으로 소폭 상승했다. 공식 서울외국환중개 종가가 아니라 시세 제공처 기준이라는 점은 유의해야 한다.
-3. 국내 증시는 확인한 시세 기준 KOSPI와 KOSDAQ 모두 주간 하락했다. 특히 KOSDAQ의 낙폭이 더 컸다.
+3. 국내 증시는 Yahoo Finance 시세 기준 KOSPI와 KOSDAQ 모두 주간 하락했다. 다만 한국거래소 공식 지수 데이터와 다를 수 있어 방향성 참고용으로 보는 것이 안전하다.
 4. 미국 증시는 S&P 500과 Nasdaq은 하락, Dow는 소폭 상승으로 엇갈렸다. 기술주 비중이 높은 지수의 변동성이 더 컸다.
-5. 코인과 원자재도 위험자산 선호 둔화와 가격 조정 흐름이 함께 보였다. 비트코인, 이더리움, WTI, 금 선물 모두 확인 기간 기준 하락했다.
+5. 코인과 원자재도 가격 조정 흐름을 보였다. 비트코인, 이더리움, WTI, 금 선물 모두 확인 기간 기준 하락했지만, 이를 투자심리 변화 하나로 단정하기는 어렵다.
 6. 부동산·대출은 이번 주 수치 원문 확인이 제한적이었다. 실수요자는 다음 주 한국부동산원 주간 아파트가격동향, 은행권 대출금리, 금융당국 발표를 함께 확인하는 것이 안전하다.
 
 ## 주요 이슈 한눈에 보기
@@ -40,9 +40,9 @@ tags: ["경제", "재테크", "Money Weekly", "금리", "환율", "증시", "부
   </li>
   <li class="issue-card">
     <span class="issue-badge">국내증시</span>
-    <h3>KOSPI -7.72%, KOSDAQ -12.08%</h3>
-    <p class="issue-summary">확인한 Yahoo Finance 일별 종가 기준 KOSPI는 6월 22일 9,114.55에서 6월 26일 8,411.21로, KOSDAQ은 968.40에서 851.37로 하락했다.</p>
-    <p class="issue-meta">6월 22–26일 · 출처: Yahoo Finance chart API · 확인 수준: 시세 제공처 기준</p>
+    <h3>Yahoo Finance 기준 KOSPI -7.72%, KOSDAQ -12.08%</h3>
+    <p class="issue-summary">확인한 Yahoo Finance 일별 종가 기준 KOSPI는 6월 22일 9,114.55에서 6월 26일 8,411.21로, KOSDAQ은 968.40에서 851.37로 하락했다. 한국거래소 공식값 확인 전까지는 방향성 참고용으로 보는 편이 안전하다.</p>
+    <p class="issue-meta">6월 22–26일 · 출처: Yahoo Finance chart API · 확인 수준: 시세 제공처 기준, KRX 공식값 미대조</p>
   </li>
   <li class="issue-card">
     <span class="issue-badge">미국증시</span>
@@ -54,7 +54,7 @@ tags: ["경제", "재테크", "Money Weekly", "금리", "환율", "증시", "부
     <span class="issue-badge">부동산·대출</span>
     <h3>주간 부동산·가계대출 수치는 원문 확인 필요</h3>
     <p class="issue-summary">이번 글 작성 시점에는 한국부동산원 주간 아파트가격동향과 금융당국의 주간 가계대출 관련 원문에서 6월 22–28일 주간 수치를 안정적으로 확인하지 못했다. 따라서 매매·전세 변동률이나 대출 증가액은 단정하지 않았다.</p>
-    <p class="issue-meta">6월 22–28일 · 출처: 한국부동산원·금융위/FSS 확인 시도 · 확인 수준: 원문 확인 제한</p>
+    <p class="issue-meta">6월 22–28일 · 출처: 한국부동산원·금융위/FSS · 확인 수준: 작성 시점 해당 주간 원문 미반영</p>
   </li>
   <li class="issue-card">
     <span class="issue-badge">코인·원자재</span>
@@ -82,9 +82,9 @@ Yahoo Finance KRW=X 일별 시세 기준 원/달러는 6월 22일 1,539.05원에
 
 환율은 해외주식 투자자, 달러 예금 보유자, 유학생·해외송금 수요자에게 바로 영향을 준다. 다만 환율은 거래소·은행·시세 제공처마다 기준 시점과 호가가 다르다. 이 글의 환율 수치는 공식 서울외국환중개 종가가 아니라 Yahoo Finance 시세 제공처 기준이므로, 실제 환전·송금 판단에는 이용 은행의 고시환율과 수수료를 따로 봐야 한다.
 
-### 3. 국내 증시: KOSPI와 KOSDAQ 모두 조정
+### 3. 국내 증시: Yahoo Finance 기준 KOSPI와 KOSDAQ 모두 조정
 
-확인한 Yahoo Finance 일별 종가 기준 KOSPI는 6월 22일 9,114.55에서 6월 26일 8,411.21로 -7.72% 하락했다. KOSDAQ은 같은 기간 968.40에서 851.37로 -12.08% 하락했다.
+확인한 Yahoo Finance 일별 종가 기준 KOSPI는 6월 22일 9,114.55에서 6월 26일 8,411.21로 -7.72% 하락했다. KOSDAQ은 같은 기간 968.40에서 851.37로 -12.08% 하락했다. 주간 기준으로는 큰 폭의 하락처럼 보이는 수치지만, 이 글에서는 한국거래소 공식 원자료가 아니라 시세 제공처 기준이라는 점을 전제로 다뤘다.
 
 이번 수치는 한국거래소 원자료가 아니라 시세 제공처 기준이므로, 지수 레벨과 등락률은 KRX 데이터로 재확인하는 것이 가장 좋다. 그래도 방향성만 보면 대형주보다 성장주·중소형주가 많은 KOSDAQ의 낙폭이 컸다는 점은 개인 투자자의 체감 변동성을 키웠을 가능성이 있다.
 
@@ -155,16 +155,16 @@ Yahoo Finance 기준 비트코인은 6월 22일 63,952.11달러에서 6월 28일
 
 ### 시장 시세
 
-- [Yahoo Finance chart API - KOSPI](https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11)
-- [Yahoo Finance chart API - KOSDAQ](https://query1.finance.yahoo.com/v8/finance/chart/%5EKQ11)
-- [Yahoo Finance chart API - USD/KRW](https://query1.finance.yahoo.com/v8/finance/chart/KRW=X)
-- [Yahoo Finance chart API - S&P 500](https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC)
-- [Yahoo Finance chart API - Nasdaq Composite](https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC)
-- [Yahoo Finance chart API - Dow Jones Industrial Average](https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI)
-- [Yahoo Finance chart API - Bitcoin](https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD)
-- [Yahoo Finance chart API - Ethereum](https://query1.finance.yahoo.com/v8/finance/chart/ETH-USD)
-- [Yahoo Finance chart API - WTI crude oil futures](https://query1.finance.yahoo.com/v8/finance/chart/CL=F)
-- [Yahoo Finance chart API - Gold futures](https://query1.finance.yahoo.com/v8/finance/chart/GC=F)
+- [Yahoo Finance chart API - KOSPI, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - KOSDAQ, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/%5EKQ11?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - USD/KRW, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/KRW=X?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - S&P 500, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - Nasdaq Composite, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - Dow Jones Industrial Average, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - Bitcoin, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - Ethereum, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/ETH-USD?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - WTI crude oil futures, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/CL=F?period1=1782086400&period2=1782691200&interval=1d)
+- [Yahoo Finance chart API - Gold futures, 2026-06-22–2026-06-28](https://query1.finance.yahoo.com/v8/finance/chart/GC=F?period1=1782086400&period2=1782691200&interval=1d)
 
 ### 부동산·대출 확인처
 
