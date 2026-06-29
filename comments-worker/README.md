@@ -48,7 +48,7 @@ npx wrangler deploy
 배포 후 Worker URL을 Astro 환경변수로 넣습니다.
 
 ```bash
-PUBLIC_COMMENTS_API_URL=https://slowave-blog-comments.<your-subdomain>.workers.dev
+PUBLIC_COMMENTS_API_URL=https://slowave-blog-comments.zyqn.workers.dev
 PUBLIC_TURNSTILE_SITE_KEY=<turnstile-site-key>
 ```
 
