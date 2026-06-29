@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS comments (
   post_slug TEXT NOT NULL,
   nickname TEXT NOT NULL,
   body TEXT NOT NULL,
+  delete_hash TEXT,
   ip_prefix TEXT NOT NULL,
   ip_hash TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),

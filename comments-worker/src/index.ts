@@ -10,7 +10,13 @@ type NewCommentPayload = {
   postSlug?: string;
   nickname?: string;
   body?: string;
+  deletePassword?: string;
   turnstileToken?: string;
+};
+
+type DeleteCommentPayload = {
+  id?: string;
+  deletePassword?: string;
 };
 
 const json = (data: unknown, status = 200, corsHeaders: HeadersInit = {}) =>
@@ -60,6 +66,11 @@ async function sha256(input: string) {
   const bytes = new TextEncoder().encode(input);
   const hash = await crypto.subtle.digest('SHA-256', bytes);
   return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+
+async function hashDeletePassword(id: string, password: string, env: Env) {
+  return sha256(`${id}:${password}:${env.IP_SALT || 'change-me'}`);
 }
 
 async function verifyTurnstile(token: string | undefined, request: Request, env: Env) {
@@ -125,9 +136,11 @@ async function createComment(request: Request, env: Env, corsHeaders: HeadersIni
   const postSlug = cleanText(payload.postSlug, '', 140);
   const nickname = cleanText(payload.nickname, '익명', 40) || '익명';
   const body = cleanText(payload.body, '', 800);
+  const deletePassword = cleanText(payload.deletePassword, '', 80);
 
   if (!postSlug) return json({ error: 'post slug is required' }, 400, corsHeaders);
   if (body.length < 2) return json({ error: '댓글을 2자 이상 입력해 주세요.' }, 400, corsHeaders);
+  if (deletePassword.length < 4) return json({ error: '삭제 비밀번호를 4자 이상 입력해 주세요.' }, 400, corsHeaders);
   if (hasTooManyLinks(body)) return json({ error: '링크는 2개까지만 넣을 수 있습니다.' }, 400, corsHeaders);
 
   const turnstileOk = await verifyTurnstile(payload.turnstileToken, request, env);
@@ -142,12 +155,32 @@ async function createComment(request: Request, env: Env, corsHeaders: HeadersIni
   }
 
   const id = crypto.randomUUID();
+  const deleteHash = await hashDeletePassword(id, deletePassword, env);
   await env.DB.prepare(
-    `INSERT INTO comments (id, post_slug, nickname, body, ip_prefix, ip_hash, status, approved_at)
-     VALUES (?, ?, ?, ?, ?, ?, 'approved', datetime('now'))`
-  ).bind(id, postSlug, nickname, body, ipPrefix, ipHash).run();
+    `INSERT INTO comments (id, post_slug, nickname, body, delete_hash, ip_prefix, ip_hash, status, approved_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'approved', datetime('now'))`
+  ).bind(id, postSlug, nickname, body, deleteHash, ipPrefix, ipHash).run();
 
   return json({ ok: true, status: 'approved', message: '댓글이 바로 공개되었습니다.' }, 201, corsHeaders);
+}
+
+async function deleteOwnComment(request: Request, env: Env, corsHeaders: HeadersInit) {
+  const payload = await request.json<DeleteCommentPayload>().catch(() => ({}));
+  const id = cleanText(payload.id, '', 80);
+  const deletePassword = cleanText(payload.deletePassword, '', 80);
+
+  if (!id || deletePassword.length < 4) return json({ error: '댓글 ID와 삭제 비밀번호가 필요합니다.' }, 400, corsHeaders);
+
+  const row = await env.DB.prepare("SELECT delete_hash AS deleteHash FROM comments WHERE id = ? AND status = 'approved'")
+    .bind(id)
+    .first<{ deleteHash: string | null }>();
+  if (!row || !row.deleteHash) return json({ error: '삭제할 수 없는 댓글입니다.' }, 404, corsHeaders);
+
+  const deleteHash = await hashDeletePassword(id, deletePassword, env);
+  if (deleteHash !== row.deleteHash) return json({ error: '삭제 비밀번호가 맞지 않습니다.' }, 403, corsHeaders);
+
+  await env.DB.prepare(`UPDATE comments SET status = 'rejected' WHERE id = ?`).bind(id).run();
+  return json({ ok: true, message: '댓글을 삭제했습니다.' }, 200, corsHeaders);
 }
 
 async function adminUpdate(request: Request, env: Env, corsHeaders: HeadersInit) {
@@ -175,6 +208,7 @@ export default {
     try {
       if (request.method === 'GET' && url.pathname === '/comments') return listComments(request, env, corsHeaders);
       if (request.method === 'POST' && url.pathname === '/comments') return createComment(request, env, corsHeaders);
+      if (request.method === 'POST' && url.pathname === '/comments/delete') return deleteOwnComment(request, env, corsHeaders);
       if (request.method === 'POST' && url.pathname === '/admin/comments') return adminUpdate(request, env, corsHeaders);
       return json({ error: 'not found' }, 404, corsHeaders);
     } catch (error) {

@@ -29,6 +29,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
       <span>댓글</span>
       <textarea name="body" maxlength="800" rows="4" placeholder="댓글을 입력해 주세요." required></textarea>
     </label>
+    <label>
+      <span>삭제 비밀번호</span>
+      <input name="deletePassword" type="password" minlength="4" maxlength="80" placeholder="댓글 삭제에 사용할 비밀번호" autocomplete="new-password" required />
+    </label>
     {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>}
     <button type="submit">댓글 남기기</button>
     <p class="comment-form-message" data-comment-message></p>
@@ -75,6 +79,13 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
             <time>${escapeHtml(formatDate(comment.createdAt))}</time>
           </div>
           <p>${escapeHtml(comment.body).replaceAll('\n', '<br />')}</p>
+          <details class="comment-delete">
+            <summary>삭제</summary>
+            <form data-delete-form data-comment-id="${escapeHtml(comment.id)}">
+              <input name="deletePassword" type="password" minlength="4" maxlength="80" placeholder="삭제 비밀번호" required />
+              <button type="submit">삭제하기</button>
+            </form>
+          </details>
         </article>
       `).join('');
     };
@@ -104,6 +115,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
         postSlug,
         nickname: formData.get('nickname') || '익명',
         body: formData.get('body'),
+        deletePassword: formData.get('deletePassword'),
         turnstileToken: turnstileInput?.value || '',
       };
 
@@ -124,6 +136,36 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
         await loadComments();
       } catch (error) {
         if (message) message.textContent = error instanceof Error ? error.message : '댓글 저장에 실패했습니다.';
+      } finally {
+        button?.removeAttribute('disabled');
+      }
+    });
+
+    list?.addEventListener('submit', async (event) => {
+      const deleteForm = event.target?.closest?.('[data-delete-form]');
+      if (!deleteForm || !apiUrl) return;
+      event.preventDefault();
+
+      const formData = new FormData(deleteForm);
+      const button = deleteForm.querySelector('button');
+      button?.setAttribute('disabled', 'true');
+      if (message) message.textContent = '댓글을 삭제하는 중입니다.';
+
+      try {
+        const response = await fetch(`${apiUrl.replace(/\/$/, '')}/comments/delete`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            id: deleteForm.getAttribute('data-comment-id'),
+            deletePassword: formData.get('deletePassword'),
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '댓글 삭제에 실패했습니다.');
+        if (message) message.textContent = data.message || '댓글을 삭제했습니다.';
+        await loadComments();
+      } catch (error) {
+        if (message) message.textContent = error instanceof Error ? error.message : '댓글 삭제에 실패했습니다.';
       } finally {
         button?.removeAttribute('disabled');
       }

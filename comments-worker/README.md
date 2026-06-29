@@ -9,6 +9,7 @@ Astro/GitHub Pages 블로그에 붙일 익명 댓글 API 초안입니다.
 - Cloudflare Turnstile: 봇 방지
 - IP 원문 저장 없음: `ip_hash`와 일부 마스킹된 `ip_prefix`만 저장
 - 기본 상태는 `approved`: 작성 즉시 공개
+- 작성자가 입력한 삭제 비밀번호의 해시를 저장해 본인 삭제를 지원
 
 ## 1. Cloudflare 준비
 
@@ -25,6 +26,12 @@ npx wrangler d1 create slowave_blog_comments
 
 ```bash
 npx wrangler d1 execute slowave_blog_comments --file=./schema.sql
+```
+
+이미 DB를 만든 뒤 삭제 비밀번호 기능을 추가하는 경우에는 D1 콘솔에서 아래 SQL을 한 번 실행합니다.
+
+```sql
+ALTER TABLE comments ADD COLUMN delete_hash TEXT;
 ```
 
 ## 3. Secret 설정
@@ -86,11 +93,23 @@ curl -X POST "$PUBLIC_COMMENTS_API_URL/admin/comments" \
   "postSlug": "2026-06-28-this-is-multi-agent-review",
   "nickname": "익명",
   "body": "댓글 내용",
+  "deletePassword": "삭제용 비밀번호",
   "turnstileToken": "..."
 }
 ```
 
-응답은 저장 성공과 승인 대기 메시지를 반환합니다.
+응답은 저장 성공과 즉시 공개 메시지를 반환합니다.
+
+### `POST /comments/delete`
+
+```json
+{
+  "id": "COMMENT_ID",
+  "deletePassword": "작성할 때 입력한 삭제용 비밀번호"
+}
+```
+
+비밀번호가 맞으면 댓글 상태를 `rejected`로 바꿔 목록에서 숨깁니다.
 
 ## 운영 메모
 

@@ -795,6 +795,11 @@ h3 {
 .comment-meta { display: flex; flex-wrap: wrap; gap: .45rem .65rem; align-items: center; color: var(--muted); font-size: .86rem; }
 .comment-meta strong { color: var(--ink); }
 .comment-item p { margin: .6rem 0 0; color: #334155; white-space: pre-wrap; }
+.comment-delete { margin-top: .75rem; color: var(--muted); font-size: .88rem; }
+.comment-delete summary { cursor: pointer; width: fit-content; font-weight: 800; }
+.comment-delete form { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .5rem; }
+.comment-delete input { min-width: 180px; flex: 1; padding: .55rem .65rem; border: 1px solid var(--line); border-radius: var(--radius-sm); font: inherit; }
+.comment-delete button { padding: .55rem .75rem; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); font-weight: 800; background: #fff; cursor: pointer; }
 .comment-form { display: grid; gap: .85rem; }
 .comment-form label { display: grid; gap: .35rem; color: var(--ink); font-weight: 800; }
 .comment-form input, .comment-form textarea { width: 100%; box-sizing: border-box; padding: .8rem .9rem; border: 1px solid var(--line); border-radius: var(--radius-sm); font: inherit; color: var(--ink); background: #fff; }
