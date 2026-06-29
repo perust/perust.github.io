@@ -12,8 +12,27 @@ const posts = Object.entries(modules)
 const featuredPost = posts[0];
 const restPosts = posts.slice(1);
 const categories = Array.from(new Set(posts.map((post) => post.category))).sort();
+
+const site = Astro.site ?? new URL('https://perust.github.io');
+const blogDescription = '프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 다루는 개인 블로그.';
+const blogLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'slowave 블로그',
+  description: blogDescription,
+  url: new URL('/blog/', site).toString(),
+  inLanguage: 'ko-KR',
+  publisher: { '@type': 'Organization', name: 'slowave', url: site.toString() },
+  blogPost: posts.map((post) => ({
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    datePublished: new Date(post.date).toISOString(),
+    url: new URL(`/blog/${post.slug}/`, site).toString(),
+  })),
+};
 ---
-<BaseLayout title="Blog · slowave" description="프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 다루는 개인 블로그.">
+<BaseLayout title="Blog · slowave" description={blogDescription} jsonLd={blogLd}>
   <main>
     <section class="section-shell blog-hero blog-hero-compact">
       <p class="section-kicker">Blog</p>

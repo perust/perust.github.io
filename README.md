@@ -48,6 +48,8 @@ npm run build
 
 빌드 결과는 `dist/`에 생성됩니다.
 
+배포 전 SEO/GEO/AEO 메타와 JSON-LD 누락을 한 번에 점검하려면 `npm run verify:seo`(빌드 후 `scripts/check-seo.mjs` 실행, 누락 시 종료 코드 1)를 실행합니다.
+
 ## 블로그 글 작성
 
 `src/content/blog/YYYY-MM-DD-slug.md` 파일을 추가합니다.
@@ -63,6 +65,8 @@ tags: ["Astro", "GitHub Pages"]
 
 본문을 Markdown으로 작성합니다.
 ```
+
+검색엔진(SEO)·생성형 검색(GEO)·답변엔진(AEO)에 잘 읽히도록 글을 쓰는 기준은 [`docs/blog-seo-geo-aeo-checklist.md`](docs/blog-seo-geo-aeo-checklist.md)에 정리해 두었습니다. 메타 태그와 JSON-LD 구조화 데이터는 레이아웃에서 자동 생성되므로, 글쓴이는 frontmatter를 정확히 채우는 데 집중하면 됩니다.
 
 ## 배포
 

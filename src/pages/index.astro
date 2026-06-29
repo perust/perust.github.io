@@ -14,8 +14,20 @@ const archiveItems = [
   ['Study', '2022', '렛츠기릿 자바스크립트', '자바스크립트 입문 · 강의 실습 모음', '/study/ZeroCho-JavaScript-Beginner/index.html'],
   ['Study', '2022', '반응형 웹 만들기', 'HTML/CSS 스터디 · 반응형 레이아웃', '/study/responsive-web-design2017/index.html'],
 ];
+
+const site = Astro.site ?? new URL('https://perust.github.io');
+const homeDescription = '개인 포트폴리오와 블로그. 아이디어를 제품으로 옮기는 과정, AI 자동화, 투자 데이터, 회고 시스템을 기록합니다.';
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'slowave',
+  url: site.toString(),
+  inLanguage: 'ko-KR',
+  description: homeDescription,
+  publisher: { '@type': 'Organization', name: 'slowave', url: site.toString() },
+};
 ---
-<BaseLayout description="개인 포트폴리오와 블로그. 아이디어를 제품으로 옮기는 과정, AI 자동화, 투자 데이터, 회고 시스템을 기록합니다.">
+<BaseLayout title="slowave · 메이커 포트폴리오와 블로그" description={homeDescription} jsonLd={websiteLd}>
   <main id="top">
     <section class="hero section-shell" aria-labelledby="hero-title">
       <div class="hero-copy">

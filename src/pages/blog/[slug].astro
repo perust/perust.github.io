@@ -15,15 +15,39 @@ export async function getStaticPaths() {
 
 const { post, slug } = Astro.props;
 const { Content } = post;
-const { title, description, date, category, tags = [] } = post.frontmatter;
+const { title, description, date, updated, category, tags = [] } = post.frontmatter;
 const commentsEnabled = Boolean(import.meta.env.PUBLIC_COMMENTS_API_URL);
+
+const site = Astro.site ?? new URL('https://perust.github.io');
+const pageUrl = new URL(Astro.url.pathname, site).toString();
+const publishedISO = new Date(date).toISOString();
+const modifiedISO = updated ? new Date(updated).toISOString() : publishedISO;
+
+const blogPostingLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  inLanguage: 'ko-KR',
+  datePublished: publishedISO,
+  dateModified: modifiedISO,
+  url: pageUrl,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+  author: { '@type': 'Person', name: 'slowave', url: site.toString() },
+  publisher: { '@type': 'Organization', name: 'slowave', url: site.toString() },
+  articleSection: category,
+  ...(tags.length ? { keywords: tags.join(', ') } : {}),
+};
 ---
-<BaseLayout title={`${title} · slowave 블로그`} description={description} canonical={Astro.url.pathname} ogType="article">
+<BaseLayout title={`${title} · slowave 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={blogPostingLd} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags}>
   <main class="post-layout">
     <article class="post-article">
       <p class="section-kicker">{category}</p>
       <h1>{title}</h1>
-      <p class="post-meta"><time datetime={new Date(date).toISOString()}>{new Date(date).toLocaleDateString('ko-KR')}</time></p>
+      <p class="post-meta">
+        <time datetime={publishedISO}>{new Date(date).toLocaleDateString('ko-KR')}</time>
+        {updated && <span> · 수정 <time datetime={modifiedISO}>{new Date(updated).toLocaleDateString('ko-KR')}</time></span>}
+      </p>
       <Content />
       {commentsEnabled && <Comments slug={slug} />}
     </article>
