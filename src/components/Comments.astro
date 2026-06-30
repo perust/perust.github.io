@@ -33,6 +33,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
       <span>삭제 비밀번호</span>
       <input name="deletePassword" type="password" minlength="4" maxlength="80" placeholder="댓글 삭제에 사용할 비밀번호" autocomplete="new-password" required />
     </label>
+    <label class="comment-private-option">
+      <input name="isPrivate" type="checkbox" />
+      <span>비공개 댓글로 남기기</span>
+    </label>
     {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>}
     <button type="submit">댓글 남기기</button>
     <p class="comment-form-message" data-comment-message></p>
@@ -116,6 +120,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
         nickname: formData.get('nickname') || '익명',
         body: formData.get('body'),
         deletePassword: formData.get('deletePassword'),
+        isPrivate: formData.get('isPrivate') === 'on',
         turnstileToken: turnstileInput?.value || '',
       };
 

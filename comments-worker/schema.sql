@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS comments (
   nickname TEXT NOT NULL,
   body TEXT NOT NULL,
   delete_hash TEXT,
+  is_private INTEGER NOT NULL DEFAULT 0,
   ip_prefix TEXT NOT NULL,
   ip_hash TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),

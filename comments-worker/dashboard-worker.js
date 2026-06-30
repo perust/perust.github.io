@@ -103,7 +103,7 @@ async function listComments(request, env, corsHeaders) {
   const rows = await env.DB.prepare(
     `SELECT id, post_slug AS postSlug, nickname, body, ip_prefix AS ipPrefix, created_at AS createdAt
      FROM comments
-     WHERE post_slug = ? AND status = 'approved'
+     WHERE post_slug = ? AND status = 'approved' AND COALESCE(is_private, 0) = 0
      ORDER BY created_at ASC`
   ).bind(postSlug).all();
 
@@ -116,6 +116,7 @@ async function createComment(request, env, corsHeaders) {
   const nickname = cleanText(payload.nickname, '익명', 40) || '익명';
   const body = cleanText(payload.body, '', 800);
   const deletePassword = cleanText(payload.deletePassword, '', 80);
+  const isPrivate = payload.isPrivate === true;
 
   if (!postSlug) return json({ error: 'post slug is required' }, 400, corsHeaders);
   if (body.length < 2) return json({ error: '댓글을 2자 이상 입력해 주세요.' }, 400, corsHeaders);
@@ -136,11 +137,16 @@ async function createComment(request, env, corsHeaders) {
   const id = crypto.randomUUID();
   const deleteHash = await hashDeletePassword(id, deletePassword, env);
   await env.DB.prepare(
-    `INSERT INTO comments (id, post_slug, nickname, body, delete_hash, ip_prefix, ip_hash, status, approved_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, 'approved', datetime('now'))`
-  ).bind(id, postSlug, nickname, body, deleteHash, ipPrefix, ipHash).run();
+    `INSERT INTO comments (id, post_slug, nickname, body, delete_hash, is_private, ip_prefix, ip_hash, status, approved_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'approved', datetime('now'))`
+  ).bind(id, postSlug, nickname, body, deleteHash, isPrivate ? 1 : 0, ipPrefix, ipHash).run();
 
-  return json({ ok: true, status: 'approved', message: '댓글이 바로 공개되었습니다.' }, 201, corsHeaders);
+  return json({
+    ok: true,
+    status: 'approved',
+    isPrivate,
+    message: isPrivate ? '비공개 댓글로 저장되었습니다.' : '댓글이 바로 공개되었습니다.',
+  }, 201, corsHeaders);
 }
 
 async function deleteOwnComment(request, env, corsHeaders) {

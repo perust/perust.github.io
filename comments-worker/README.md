@@ -10,6 +10,7 @@ Astro/GitHub Pages 블로그에 붙일 익명 댓글 API 초안입니다.
 - IP 원문 저장 없음: `ip_hash`와 일부 마스킹된 `ip_prefix`만 저장
 - 기본 상태는 `approved`: 작성 즉시 공개
 - 작성자가 입력한 삭제 비밀번호의 해시를 저장해 본인 삭제를 지원
+- 체크박스로 비공개 댓글을 선택하면 D1에는 저장하지만 공개 목록에는 표시하지 않음
 
 ## 1. Cloudflare 준비
 
@@ -32,6 +33,7 @@ npx wrangler d1 execute slowave_blog_comments --file=./schema.sql
 
 ```sql
 ALTER TABLE comments ADD COLUMN delete_hash TEXT;
+ALTER TABLE comments ADD COLUMN is_private INTEGER NOT NULL DEFAULT 0;
 ```
 
 ## 3. Secret 설정
@@ -94,11 +96,12 @@ curl -X POST "$PUBLIC_COMMENTS_API_URL/admin/comments" \
   "nickname": "익명",
   "body": "댓글 내용",
   "deletePassword": "삭제용 비밀번호",
+  "isPrivate": false,
   "turnstileToken": "..."
 }
 ```
 
-응답은 저장 성공과 즉시 공개 메시지를 반환합니다.
+응답은 저장 성공과 공개/비공개 처리 메시지를 반환합니다. `isPrivate`가 `true`이면 D1에는 저장되지만 공개 댓글 목록에는 표시하지 않습니다.
 
 ### `POST /comments/delete`
 
