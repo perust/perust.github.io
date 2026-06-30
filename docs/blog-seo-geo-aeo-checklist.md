@@ -19,8 +19,9 @@ tags: ["Astro", "GitHub Pages"]
 
 - `title`: 사람이 실제로 검색하는 표현을 우선한다. 110자 이내(JSON-LD `headline` 권장 한도). 브랜드명·날짜 나열로 늘리지 않는다.
 - `description`: 글의 결론을 압축한 1문장. 120~160자 권장. 본문 첫 문단과 의미가 일치해야 한다.
-- `updated`: 내용을 실제로 고쳤을 때만 추가한다. 형식적으로 날짜만 바꾸지 않는다.
+- `updated`: 내용을 실제로 고쳤을 때만 추가한다. 형식적으로 날짜만 바꾸지 않는다. `updated`(없으면 `date`)는 sitemap `lastmod`에도 그대로 반영된다.
 - `tags`: 글에 실제로 다룬 주제만. 4~8개 정도. 같은 단어 변형을 반복하지 않는다(키워드 스터핑 금지).
+- `image`(선택): OG 이미지를 글마다 직접 지정할 때만 쓴다. 생략하면 카테고리별 기본 OG 이미지(`public/og/`), 매칭되는 카테고리가 없으면 기본 이미지로 자동 대체된다.
 
 ## 2. 제목 (검색 제목)
 
@@ -68,6 +69,9 @@ tags: ["Astro", "GitHub Pages"]
 - `blog/index.astro`: `Blog` + `blogPost` JSON-LD. `index.astro`: `WebSite` JSON-LD.
 - `astro.config.mjs`의 sitemap 통합이 `sitemap-index.xml`을 만들고 `robots.txt`가 이를 가리킨다.
 - `src/pages/rss.xml.ts`가 블로그 글(title/description/pubDate/link/categories)을 모아 `/rss.xml` 피드를 만든다. 작성자는 `slowave`로만 표기한다.
+- OG 이미지: `BaseLayout`이 `og:image`·`twitter:image`를 frontmatter `image` → 카테고리 기본 → 기본 이미지 순으로 자동 연결한다.
+- 카테고리/태그: 글에 쓴 값마다 `/blog/category/<slug>/`, `/blog/tag/<slug>/` 정적 목록 페이지가 생성되고(`CollectionPage` + `BreadcrumbList` JSON-LD 포함), 글·목록의 링크도 자동으로 걸린다.
+- 검증: `npm run verify:seo`(`scripts/check-seo.mjs`)가 og/twitter 이미지와 목록 페이지의 `CollectionPage`까지 점검한다.
 
 따라서 글쓴이는 **frontmatter를 정확히 채우는 것**이 곧 스키마 품질로 이어진다.
 

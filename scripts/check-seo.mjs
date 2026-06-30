@@ -33,8 +33,10 @@ const CHECKS = [
   ['og:description', /<meta[^>]+property="og:description"[^>]*>/i],
   ['og:url', /<meta[^>]+property="og:url"[^>]*>/i],
   ['og:site_name', /<meta[^>]+property="og:site_name"[^>]*>/i],
+  ['og:image', /<meta[^>]+property="og:image"[^>]*>/i],
   ['twitter:card', /<meta[^>]+name="twitter:card"[^>]*>/i],
   ['twitter:title', /<meta[^>]+name="twitter:title"[^>]*>/i],
+  ['twitter:image', /<meta[^>]+name="twitter:image"[^>]*>/i],
 ];
 
 const JSONLD_RE = /<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi;
@@ -73,12 +75,18 @@ for (const file of files) {
   // 페이지 유형별로 반드시 있어야 하는 JSON-LD @type 을 검증한다.
   // - 홈(index.html): WebSite
   // - 블로그 인덱스(blog/index.html): Blog
+  // - 카테고리/태그 목록(blog/category|tag/<slug>/index.html): CollectionPage + BreadcrumbList
   // - 블로그 글 상세(blog/<slug>/index.html): BlogPosting + BreadcrumbList
-  const isPost = rel.startsWith('blog/') && rel !== 'blog/index.html' && rel.endsWith('index.html');
+  const isCategory = rel.startsWith('blog/category/') && rel.endsWith('index.html');
+  const isTag = rel.startsWith('blog/tag/') && rel.endsWith('index.html');
+  const isPost = rel.startsWith('blog/') && rel !== 'blog/index.html' && rel.endsWith('index.html') && !isCategory && !isTag;
   if (rel === 'index.html' && !types.includes('WebSite')) {
     missing.push('WebSite JSON-LD');
   } else if (rel === 'blog/index.html' && !types.includes('Blog')) {
     missing.push('Blog JSON-LD');
+  } else if (isCategory || isTag) {
+    if (!types.includes('CollectionPage')) missing.push('CollectionPage JSON-LD');
+    if (!types.includes('BreadcrumbList')) missing.push('BreadcrumbList JSON-LD');
   } else if (isPost) {
     if (!types.includes('BlogPosting')) missing.push('BlogPosting JSON-LD');
     if (!types.includes('BreadcrumbList')) missing.push('BreadcrumbList JSON-LD');

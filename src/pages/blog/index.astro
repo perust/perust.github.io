@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { categoryPath, tagPath } from '../../utils/blog';
 
 const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
 const posts = Object.entries(modules)
@@ -12,6 +13,7 @@ const posts = Object.entries(modules)
 const featuredPost = posts[0];
 const restPosts = posts.slice(1);
 const categories = Array.from(new Set(posts.map((post) => post.category))).sort();
+const allTags = Array.from(new Set(posts.flatMap((post) => post.tags ?? []))).sort();
 
 const site = Astro.site ?? new URL('https://perust.github.io');
 const blogDescription = '프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 다루는 개인 블로그.';
@@ -77,7 +79,13 @@ const blogLd = {
           <h2>카테고리</h2>
           <ul class="category-list">
             <li><a class="category-filter is-active" href="/blog/" data-category="all"><span>전체</span><strong>{posts.length}</strong></a></li>
-            {categories.map((category) => <li><a class="category-filter" href={`/blog/?category=${encodeURIComponent(category)}`} data-category={category}><span>{category}</span><strong>{posts.filter((post) => post.category === category).length}</strong></a></li>)}
+            {categories.map((category) => <li><a class="category-filter" href={categoryPath(category)} data-category={category}><span>{category}</span><strong>{posts.filter((post) => post.category === category).length}</strong></a></li>)}
+          </ul>
+        </div>
+        <div class="sidebar-card">
+          <h2>태그</h2>
+          <ul class="tag-cloud">
+            {allTags.map((tag) => <li><a href={tagPath(tag)}>#{tag}</a></li>)}
           </ul>
         </div>
         <div class="sidebar-card">

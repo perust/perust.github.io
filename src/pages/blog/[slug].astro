@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
+import { categoryPath, tagPath, ogImageForPost } from '../../utils/blog';
 
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
@@ -15,13 +16,18 @@ export async function getStaticPaths() {
 
 const { post, slug } = Astro.props;
 const { Content } = post;
-const { title, description, date, updated, category, tags = [] } = post.frontmatter;
+const { title, description, date, updated, category, tags = [], image } = post.frontmatter;
 const commentsEnabled = Boolean(import.meta.env.PUBLIC_COMMENTS_API_URL);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
 const pageUrl = new URL(Astro.url.pathname, site).toString();
 const publishedISO = new Date(date).toISOString();
 const modifiedISO = updated ? new Date(updated).toISOString() : publishedISO;
+
+// 글 OG 이미지: frontmatter image가 있으면 우선, 없으면 카테고리 기본 이미지.
+const ogImage = ogImageForPost({ image, category });
+const ogImageUrl = new URL(ogImage, site).toString();
+const categoryUrl = new URL(categoryPath(category), site).toString();
 
 const blogPostingLd = {
   '@context': 'https://schema.org',
@@ -32,6 +38,7 @@ const blogPostingLd = {
   datePublished: publishedISO,
   dateModified: modifiedISO,
   url: pageUrl,
+  image: ogImageUrl,
   mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
   author: { '@type': 'Person', name: 'slowave', url: site.toString() },
   publisher: { '@type': 'Organization', name: 'slowave', url: site.toString() },
@@ -40,22 +47,22 @@ const blogPostingLd = {
 };
 
 // Home > Blog > category > post 순서의 BreadcrumbList.
-// 카테고리 전용 정적 페이지는 아직 없으므로 /blog/?category= 필터 URL을 가리킨다.
+// 카테고리는 전용 정적 페이지(/blog/category/<slug>/)를 가리킨다.
 const breadcrumbLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: '홈', item: site.toString() },
     { '@type': 'ListItem', position: 2, name: '블로그', item: new URL('/blog/', site).toString() },
-    { '@type': 'ListItem', position: 3, name: category, item: new URL(`/blog/?category=${encodeURIComponent(category)}`, site).toString() },
+    { '@type': 'ListItem', position: 3, name: category, item: categoryUrl },
     { '@type': 'ListItem', position: 4, name: title, item: pageUrl },
   ],
 };
 ---
-<BaseLayout title={`${title} · slowave 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={[blogPostingLd, breadcrumbLd]} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags}>
+<BaseLayout title={`${title} · slowave 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={[blogPostingLd, breadcrumbLd]} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags} image={ogImage}>
   <main class="post-layout">
     <article class="post-article">
-      <p class="section-kicker">{category}</p>
+      <p class="section-kicker"><a href={categoryPath(category)}>{category}</a></p>
       <h1>{title}</h1>
       <p class="post-meta">
         <time datetime={publishedISO}>{new Date(date).toLocaleDateString('ko-KR')}</time>
@@ -67,7 +74,7 @@ const breadcrumbLd = {
     <aside class="sidebar-card" aria-label="블로그 안내">
       <h2 style="font-size:1.2rem">slowave Blog</h2>
       <p>아이디어를 제품으로 만들며 배운 것을 기록합니다.</p>
-      <ul class="post-tags">{tags.map((tag: string) => <li>{tag}</li>)}</ul>
+      <ul class="tag-cloud">{tags.map((tag: string) => <li><a href={tagPath(tag)}>#{tag}</a></li>)}</ul>
     </aside>
   </main>
 </BaseLayout>

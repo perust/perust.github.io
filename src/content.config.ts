@@ -9,6 +9,8 @@ const blog = defineCollection({
     updated: z.coerce.date().optional(),
     category: z.string(),
     tags: z.array(z.string()).default([]),
+    // OG 이미지를 글마다 직접 지정할 때만 사용. 없으면 카테고리 기본 이미지로 대체된다.
+    image: z.string().optional(),
   }),
 });
 

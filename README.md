@@ -68,6 +68,8 @@ tags: ["Astro", "GitHub Pages"]
 
 검색엔진(SEO)·생성형 검색(GEO)·답변엔진(AEO)에 잘 읽히도록 글을 쓰는 기준은 [`docs/blog-seo-geo-aeo-checklist.md`](docs/blog-seo-geo-aeo-checklist.md)에 정리해 두었습니다. 메타 태그와 JSON-LD 구조화 데이터(`BlogPosting`·`BreadcrumbList` 포함), `/rss.xml` RSS 피드는 레이아웃과 엔드포인트에서 자동 생성되므로, 글쓴이는 frontmatter를 정확히 채우는 데 집중하면 됩니다.
 
+OG 이미지(`og:image`·`twitter:image`)와 카테고리·태그 목록도 자동으로 처리됩니다. frontmatter `image`는 선택이며, 생략하면 카테고리별 기본 OG 이미지(`public/og/`)로, 매칭되는 카테고리가 없으면 기본 이미지로 대체됩니다. 글에 쓴 카테고리·태그는 `/blog/category/<slug>/`, `/blog/tag/<slug>/` 정적 목록 페이지로 자동 생성되고, frontmatter `updated`(없으면 `date`)가 sitemap `lastmod`에 반영됩니다. `npm run verify:seo`는 위 og/twitter 이미지와 목록 페이지의 `CollectionPage` 구조화 데이터까지 함께 점검합니다.
+
 ## 배포
 
 GitHub Actions가 `main` 브랜치 push 시 Astro 사이트를 빌드하고 GitHub Pages에 배포합니다.

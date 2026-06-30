@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getAllPosts, slugify, tagPath, categoryPath, DEFAULT_OG } from '../../../utils/blog';
+
+// 글에 등장하는 태그마다 정적 페이지를 만든다. 한 글이 여러 태그에 속할 수 있다.
+export function getStaticPaths() {
+  const posts = getAllPosts();
+  const tags = new Map<string, { tag: string; posts: typeof posts }>();
+  for (const post of posts) {
+    for (const tag of post.tags ?? []) {
+      const key = slugify(tag);
+      if (!key) continue;
+      // 같은 슬러그의 첫 표기를 대표 이름으로 쓰고, 글을 모은다.
+      if (!tags.has(key)) tags.set(key, { tag, posts: [] });
+      tags.get(key)!.posts.push(post);
+    }
+  }
+  return Array.from(tags.entries()).map(([key, value]) => ({
+    params: { tag: key },
+    props: { tag: value.tag, posts: value.posts },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const site = Astro.site ?? new URL('https://perust.github.io');
+const path = tagPath(tag);
+const pageUrl = new URL(path, site).toString();
+
+const title = `#${tag} 글 모음 · slowave 블로그`;
+const description = `slowave 블로그에서 '${tag}' 태그가 달린 글 ${posts.length}편을 모았습니다. 최신 글부터 차례로 정리했습니다.`;
+
+const collectionLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `#${tag} · slowave 블로그`,
+  description,
+  url: pageUrl,
+  inLanguage: 'ko-KR',
+  isPartOf: { '@type': 'Blog', name: 'slowave 블로그', url: new URL('/blog/', site).toString() },
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: new URL(`/blog/${post.slug}/`, site).toString(),
+      name: post.title,
+    })),
+  },
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '홈', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: '블로그', item: new URL('/blog/', site).toString() },
+    { '@type': 'ListItem', position: 3, name: `#${tag}`, item: pageUrl },
+  ],
+};
+---
+<BaseLayout title={title} description={description} canonical={path} jsonLd={[collectionLd, breadcrumbLd]} image={DEFAULT_OG}>
+  <main>
+    <section class="section-shell blog-hero blog-hero-compact">
+      <p class="section-kicker"><a href="/blog/">블로그</a> · 태그</p>
+      <h1>#{tag}</h1>
+      <p class="hero-description">'{tag}' 태그가 달린 글 {posts.length}편입니다. 최신순으로 정리했습니다.</p>
+    </section>
+
+    <section class="section-shell blog-main-list" aria-label={`${tag} 태그 글 목록`} style="padding-top:0">
+      <div class="post-list">
+        {posts.map((post) => (
+          <a class="post-list-item" href={`/blog/${post.slug}/`}>
+            <div class="post-list-meta">
+              <span>{post.category}</span>
+              <time datetime={new Date(post.date).toISOString()}>{new Date(post.date).toLocaleDateString('ko-KR')}</time>
+            </div>
+            <div>
+              <h2>{post.title}</h2>
+              <p>{post.description}</p>
+              <ul class="post-tags">{post.tags?.map((t: string) => <li>{t}</li>)}</ul>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p style="margin-top:1.5rem"><a class="text-link" href="/blog/">← 블로그 전체 글 보기</a></p>
+    </section>
+  </main>
+</BaseLayout>
