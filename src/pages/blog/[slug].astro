@@ -1,7 +1,9 @@
 ---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
-import { categoryPath, tagPath, ogImageForPost } from '../../utils/blog';
+import { categoryPath, tagPath, ogImageForPost, getAllPosts, getRelatedPosts, getPrevNext } from '../../utils/blog';
 
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
@@ -24,10 +26,20 @@ const pageUrl = new URL(Astro.url.pathname, site).toString();
 const publishedISO = new Date(date).toISOString();
 const modifiedISO = updated ? new Date(updated).toISOString() : publishedISO;
 
-// 글 OG 이미지: frontmatter image가 있으면 우선, 없으면 카테고리 기본 이미지.
-const ogImage = ogImageForPost({ image, category });
+// 글 OG 이미지: frontmatter image > public/og/posts/<slug>.png(있을 때) > 카테고리 기본.
+// 빌드 시 글별 이미지가 실제로 있는지 확인해, 아직 생성 안 된 새 글에서도 깨지지 않게 한다.
+// (astro build의 cwd는 프로젝트 루트다.)
+const postImageExists = existsSync(join(process.cwd(), 'public', 'og', 'posts', `${slug}.png`));
+const ogImage = ogImageForPost({ image, category, slug }, postImageExists);
 const ogImageUrl = new URL(ogImage, site).toString();
 const categoryUrl = new URL(categoryPath(category), site).toString();
+
+// 본문 아래에 보여줄 관련 글과 이전/다음 글. 최신순 목록을 공유 헬퍼로 가져온다.
+const allPosts = getAllPosts();
+const currentPost = allPosts.find((post) => post.slug === slug);
+const relatedPosts = currentPost ? getRelatedPosts(currentPost, allPosts) : [];
+const { prev, next } = getPrevNext(slug, allPosts);
+const formatDate = (value: string | Date) => new Date(value).toLocaleDateString('ko-KR');
 
 const blogPostingLd = {
   '@context': 'https://schema.org',
@@ -69,6 +81,42 @@ const breadcrumbLd = {
         {updated && <span> · 수정 <time datetime={modifiedISO}>{new Date(updated).toLocaleDateString('ko-KR')}</time></span>}
       </p>
       <Content />
+
+      {relatedPosts.length > 0 && (
+        <section class="post-related" aria-label="관련 글">
+          <h2 class="post-related-title">관련 글</h2>
+          <ul class="related-grid">
+            {relatedPosts.map((related) => (
+              <li>
+                <a class="related-card" href={`/blog/${related.slug}/`} aria-label={`관련 글: ${related.title}`}>
+                  <span class="related-category">{related.category}</span>
+                  <time datetime={new Date(related.date).toISOString()}>{formatDate(related.date)}</time>
+                  <h3>{related.title}</h3>
+                  <p>{related.description}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {(prev || next) && (
+        <nav class="post-pager" aria-label="이전 다음 글 이동">
+          {prev ? (
+            <a class="post-pager-link is-prev" href={`/blog/${prev.slug}/`} rel="prev" aria-label={`이전 글: ${prev.title}`}>
+              <span class="post-pager-dir">← 이전 글</span>
+              <span class="post-pager-title">{prev.title}</span>
+            </a>
+          ) : <span class="post-pager-spacer" aria-hidden="true"></span>}
+          {next ? (
+            <a class="post-pager-link is-next" href={`/blog/${next.slug}/`} rel="next" aria-label={`다음 글: ${next.title}`}>
+              <span class="post-pager-dir">다음 글 →</span>
+              <span class="post-pager-title">{next.title}</span>
+            </a>
+          ) : <span class="post-pager-spacer" aria-hidden="true"></span>}
+        </nav>
+      )}
+
       {commentsEnabled && <Comments slug={slug} />}
     </article>
     <aside class="sidebar-card" aria-label="블로그 안내">

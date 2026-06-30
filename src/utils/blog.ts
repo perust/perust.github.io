@@ -64,7 +64,50 @@ export function ogImageForCategory(category?: string): string {
   return (category && CATEGORY_OG[category]) || DEFAULT_OG;
 }
 
-// 글의 OG 이미지: frontmatter image가 있으면 우선, 없으면 카테고리 기본값.
-export function ogImageForPost(post: Pick<PostFrontmatter, 'image' | 'category'>): string {
-  return post.image ?? ogImageForCategory(post.category);
+// 글 전용 OG 이미지 경로(루트 기준). scripts/generate-og.py가 public/og/posts/<slug>.png 로 생성한다.
+export function postOgPath(slug: string): string {
+  return `/og/posts/${slug}.png`;
+}
+
+// 글의 OG 이미지 우선순위:
+//   1) frontmatter image (직접 지정)
+//   2) public/og/posts/<slug>.png (글별 생성 이미지)  ※ postImageExists=true 일 때만
+//   3) 카테고리 기본 이미지(없으면 default)
+// 글별 이미지가 아직 없는 새 글에서도 깨지지 않도록, 존재 여부는 호출부(빌드 시 fs 확인)에서 넘긴다.
+export function ogImageForPost(
+  post: Pick<PostFrontmatter, 'image' | 'category'> & { slug?: string },
+  postImageExists = false,
+): string {
+  if (post.image) return post.image;
+  if (postImageExists && post.slug) return postOgPath(post.slug);
+  return ogImageForCategory(post.category);
+}
+
+// 현재 글과 관련 있는 글을 고른다.
+//   우선순위: 같은 category → tags 교집합이 많은 순 → 최신순(date 내림차순).
+// getAllPosts() 결과(최신순)를 넘기면 동점일 때 최신순이 자연스럽게 유지된다. 현재 글은 제외한다.
+export function getRelatedPosts(current: BlogPost, all: BlogPost[], limit = 3): BlogPost[] {
+  const currentTags = new Set(current.tags ?? []);
+  return all
+    .filter((post) => post.slug !== current.slug)
+    .map((post) => ({
+      post,
+      sameCategory: post.category === current.category ? 1 : 0,
+      sharedTags: (post.tags ?? []).filter((tag) => currentTags.has(tag)).length,
+    }))
+    .sort((a, b) => {
+      if (b.sameCategory !== a.sameCategory) return b.sameCategory - a.sameCategory;
+      if (b.sharedTags !== a.sharedTags) return b.sharedTags - a.sharedTags;
+      return new Date(b.post.date).valueOf() - new Date(a.post.date).valueOf();
+    })
+    .slice(0, limit)
+    .map((entry) => entry.post);
+}
+
+// 최신순 목록을 기준으로 한 이전/다음 글.
+//   목록이 최신순(date 내림차순)이므로, 더 오래된 글이 "이전 글", 더 최신 글이 "다음 글"이다.
+export function getPrevNext(slug: string, all: BlogPost[]): { prev?: BlogPost; next?: BlogPost } {
+  const index = all.findIndex((post) => post.slug === slug);
+  if (index === -1) return {};
+  return { prev: all[index + 1], next: all[index - 1] };
 }

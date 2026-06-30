@@ -90,6 +90,11 @@ for (const file of files) {
   } else if (isPost) {
     if (!types.includes('BlogPosting')) missing.push('BlogPosting JSON-LD');
     if (!types.includes('BreadcrumbList')) missing.push('BreadcrumbList JSON-LD');
+    // 글 상세의 og:image 는 글별(/og/posts/<slug>.png) 또는 카테고리(/og/<cat>.png) 이미지를 가리켜야 한다.
+    const ogImage = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]*)"[^>]*>/i)?.[1] ?? '';
+    if (!/\/og\/[^"']*\.png$/i.test(ogImage)) {
+      missing.push('og:image (/og/...png 아님)');
+    }
   }
 
   if (missing.length) failures += missing.length;
