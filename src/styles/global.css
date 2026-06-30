@@ -774,7 +774,16 @@ h3 {
 .empty-blog-message { padding: 1.2rem; border: 1px dashed var(--line); border-radius: var(--radius-md); color: var(--muted); background: var(--card); }
 .post-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 2rem; width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; padding: 4.5rem 0; align-items: start; }
 .post-article { min-width: 0; padding: 2rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: rgba(255,255,255,.78); box-shadow: var(--shadow); }
-.post-article h1 { font-size: clamp(2.2rem, 5vw, 4rem); }
+.post-article h1 {
+  max-width: 760px;
+  margin-bottom: 0.95rem;
+  font-size: clamp(2rem, 4.2vw, 3.35rem);
+  line-height: 1.14;
+  letter-spacing: -0.052em;
+  text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
 .post-article h2 { margin-top: 2.4rem; font-size: 1.8rem; }
 .post-article h3 { margin-top: 1.8rem; }
 .post-article p, .post-article li { color: #334155; font-size: 1.06rem; }
