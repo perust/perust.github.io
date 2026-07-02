@@ -9,6 +9,12 @@ slowave 블로그를 검색엔진과 답변엔진이 더 빨리 발견하도록 
 - RSS: `https://perust.github.io/rss.xml`
 - 블로그: `https://perust.github.io/blog/`
 
+## 현재 등록 상태
+
+- Google Search Console: 완료
+- Bing Webmaster Tools: 진행 필요
+- 네이버 서치어드바이저: 진행 필요
+
 ## 등록 전 확인
 
 ```bash
