@@ -28,6 +28,7 @@ const pageUrl = new URL(path, site).toString();
 
 const title = `#${tag} 글 모음 · slowave 블로그`;
 const description = `slowave 블로그에서 '${tag}' 태그가 달린 글 ${posts.length}편을 모았습니다. 최신 글부터 차례로 정리했습니다.`;
+const robots = posts.length >= 2 ? 'index, follow' : 'noindex, follow';
 
 const collectionLd = {
   '@context': 'https://schema.org',
@@ -59,7 +60,7 @@ const breadcrumbLd = {
   ],
 };
 ---
-<BaseLayout title={title} description={description} canonical={path} jsonLd={[collectionLd, breadcrumbLd]} image={DEFAULT_OG}>
+<BaseLayout title={title} description={description} canonical={path} robots={robots} jsonLd={[collectionLd, breadcrumbLd]} image={DEFAULT_OG}>
   <main>
     <section class="section-shell blog-hero blog-hero-compact">
       <p class="section-kicker"><a href="/blog/">블로그</a> · 태그</p>

@@ -1,7 +1,28 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const site = Astro.site ?? new URL('https://perust.github.io');
+const pageUrl = new URL('/about/', site).toString();
+const logoUrl = new URL('/icon-512.png', site).toString();
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'slowave',
+  url: site.toString(),
+  sameAs: ['https://github.com/perust'],
+  image: logoUrl,
+};
+const aboutPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'slowave 소개',
+  description: '아이디어를 제품으로 옮기는 과정과 작업 방식을 소개합니다.',
+  url: pageUrl,
+  inLanguage: 'ko-KR',
+  mainEntity: personLd,
+};
 ---
-<BaseLayout title="slowave 소개 · 제품 실험과 기록 방식" description="관심사, 작업 방식, 블로그 주제를 소개합니다.">
+<BaseLayout title="slowave 소개 · 제품 실험과 기록 방식" description="관심사, 작업 방식, 블로그 주제를 소개합니다." canonical="/about/" jsonLd={[aboutPageLd, personLd]}>
   <main class="content-page">
     <p class="section-kicker">About</p>
     <h1>아이디어를 제품으로 옮기는 사람.</h1>

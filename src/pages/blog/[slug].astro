@@ -53,7 +53,17 @@ const blogPostingLd = {
   image: ogImageUrl,
   mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
   author: { '@type': 'Person', name: 'slowave', url: site.toString() },
-  publisher: { '@type': 'Organization', name: 'slowave', url: site.toString() },
+  publisher: {
+    '@type': 'Organization',
+    name: 'slowave',
+    url: site.toString(),
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/icon-512.png', site).toString(),
+      width: 512,
+      height: 512,
+    },
+  },
   articleSection: category,
   ...(tags.length ? { keywords: tags.join(', ') } : {}),
 };

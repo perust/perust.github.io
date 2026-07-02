@@ -94,6 +94,13 @@ for (const file of files) {
   const isPost = rel.startsWith('blog/') && rel !== 'blog/index.html' && rel.endsWith('index.html') && !isCategory && !isTag;
   if (rel === 'index.html' && !types.includes('WebSite')) {
     missing.push('WebSite JSON-LD');
+  } else if (rel === 'about/index.html') {
+    if (!types.includes('AboutPage')) missing.push('AboutPage JSON-LD');
+    if (!types.includes('Person')) missing.push('Person JSON-LD');
+  } else if (rel === 'contact/index.html' && !types.includes('ContactPage')) {
+    missing.push('ContactPage JSON-LD');
+  } else if (rel === 'privacy/index.html' && !types.includes('WebPage')) {
+    missing.push('Privacy WebPage JSON-LD');
   } else if (rel === 'blog/index.html' && !types.includes('Blog')) {
     missing.push('Blog JSON-LD');
   } else if (isCategory || isTag) {
@@ -106,6 +113,9 @@ for (const file of files) {
     const ogImage = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]*)"[^>]*>/i)?.[1] ?? '';
     if (!/\/og\/[^"']*\.png$/i.test(ogImage)) {
       missing.push('og:image (/og/...png 아님)');
+    }
+    if (!html.includes('"logo"')) {
+      missing.push('publisher.logo JSON-LD');
     }
   }
 

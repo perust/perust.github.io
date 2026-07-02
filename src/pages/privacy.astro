@@ -1,7 +1,20 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const site = Astro.site ?? new URL('https://perust.github.io');
+const pageUrl = new URL('/privacy/', site).toString();
+const privacyPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: '개인정보처리방침 · slowave',
+  description: '개인 사이트와 블로그의 개인정보처리방침입니다.',
+  url: pageUrl,
+  inLanguage: 'ko-KR',
+  isPartOf: { '@type': 'WebSite', name: 'slowave', url: site.toString() },
+  about: { '@type': 'Thing', name: '개인정보처리방침' },
+};
 ---
-<BaseLayout title="개인정보처리방침 · slowave" description="개인 사이트와 블로그의 개인정보처리방침입니다.">
+<BaseLayout title="개인정보처리방침 · slowave" description="개인 사이트와 블로그의 개인정보처리방침입니다." canonical="/privacy/" jsonLd={privacyPageLd}>
   <main class="content-page">
     <p class="section-kicker">Privacy Policy</p>
     <h1>개인정보처리방침</h1>

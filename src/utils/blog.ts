@@ -52,7 +52,10 @@ export function tagPath(tag: string): string {
 // 카테고리별 전용 OG 이미지. 매칭되는 것이 없으면 default 를 쓴다.
 const CATEGORY_OG: Record<string, string> = {
   'Money Weekly': '/og/money-weekly.png',
+  Money: '/og/money-weekly.png',
+  Economy: '/og/money-weekly.png',
   'AI Weekly': '/og/ai-weekly.png',
+  AI: '/og/ai-weekly.png',
   'Book Review': '/og/book-review.png',
   'Build Note': '/og/build-note.png',
 };

@@ -1,7 +1,25 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const site = Astro.site ?? new URL('https://perust.github.io');
+const pageUrl = new URL('/contact/', site).toString();
+const contactPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'slowave 문의',
+  description: 'slowave 프로젝트, 글, 협업 관련 연락처입니다.',
+  url: pageUrl,
+  inLanguage: 'ko-KR',
+  mainEntity: {
+    '@type': 'Person',
+    name: 'slowave',
+    url: site.toString(),
+    email: 'mailto:zyqn@naver.com',
+    sameAs: ['https://github.com/perust'],
+  },
+};
 ---
-<BaseLayout title="slowave 문의 · 프로젝트와 글 연락처" description="연락처와 GitHub 작업물을 확인할 수 있는 페이지입니다.">
+<BaseLayout title="slowave 문의 · 프로젝트와 글 연락처" description="연락처와 GitHub 작업물을 확인할 수 있는 페이지입니다." canonical="/contact/" jsonLd={contactPageLd}>
   <main class="content-page">
     <p class="section-kicker">Contact</p>
     <h1>문의와 연락</h1>

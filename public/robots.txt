@@ -1,7 +1,13 @@
 User-agent: Yeti
+Disallow: /contents/
+Disallow: /homepage/
+Disallow: /study/
 Allow: /
 
 User-agent: *
+Disallow: /contents/
+Disallow: /homepage/
+Disallow: /study/
 Allow: /
 
 Sitemap: https://perust.github.io/sitemap-index.xml
