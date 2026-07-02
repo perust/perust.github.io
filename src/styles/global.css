@@ -787,6 +787,18 @@ h3 {
 .post-article h2 { margin-top: 2.4rem; font-size: 1.8rem; }
 .post-article h3 { margin-top: 1.8rem; }
 .post-article p, .post-article li { color: #334155; font-size: 1.06rem; }
+.post-article img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 1.6rem 0 .45rem;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.14);
+}
+.post-article p:has(> img:only-child) { margin: 0; }
+.post-article small { display: block; margin: 0 0 1.4rem; color: var(--muted); font-size: .86rem; line-height: 1.5; }
 .post-article blockquote { margin: 1.5rem 0; padding: 1rem 1.2rem; border-left: 4px solid var(--primary); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; background: rgba(37,99,235,.08); }
 .post-article .issue-list { display: grid; gap: 1rem; margin: 1.4rem 0 2.2rem; padding: 0; list-style: none; }
 .post-article .issue-card { min-width: 0; padding: 1rem 1.1rem; border: 1px solid rgba(15,23,42,.12); border-radius: var(--radius-sm); background: #fff; }
