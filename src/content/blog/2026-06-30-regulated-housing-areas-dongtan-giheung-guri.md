@@ -10,7 +10,7 @@ tags: ["부동산", "규제지역", "투기과열지구", "조정대상지역", 
 
 ![규제지역과 주택 대출 내용을 정리하는 사진 1](/images/posts/2026-06-30-regulated-housing-areas-dongtan-giheung-guri-01.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 핵심 요약
 
@@ -23,7 +23,7 @@ tags: ["부동산", "규제지역", "투기과열지구", "조정대상지역", 
 
 ![규제지역과 주택 대출 내용을 정리하는 사진 2](/images/posts/2026-06-30-regulated-housing-areas-dongtan-giheung-guri-02.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 주요 내용 한눈에 보기
 
@@ -56,7 +56,7 @@ tags: ["부동산", "규제지역", "투기과열지구", "조정대상지역", 
 
 ![규제지역과 주택 대출 내용을 정리하는 사진 3](/images/posts/2026-06-30-regulated-housing-areas-dongtan-giheung-guri-03.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 무엇이 새로 지정됐나
 
@@ -80,7 +80,7 @@ tags: ["부동산", "규제지역", "투기과열지구", "조정대상지역", 
 
 ![규제지역과 주택 대출 내용을 정리하는 사진 4](/images/posts/2026-06-30-regulated-housing-areas-dongtan-giheung-guri-04.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 투기과열지구와 조정대상지역이 되면 무엇이 달라지나
 
@@ -101,7 +101,7 @@ tags: ["부동산", "규제지역", "투기과열지구", "조정대상지역", 
 
 ![규제지역과 주택 대출 내용을 정리하는 사진 5](/images/posts/2026-06-30-regulated-housing-areas-dongtan-giheung-guri-05.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 청약과 세금도 같이 바뀐다
 

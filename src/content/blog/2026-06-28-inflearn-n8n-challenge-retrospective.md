@@ -18,7 +18,7 @@ faqs:
 
 ![n8n 자동화 흐름을 정리하는 작업 사진 1](/images/posts/2026-06-28-inflearn-n8n-challenge-retrospective-01.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 핵심 요약
 
@@ -34,7 +34,7 @@ n8n 초보자에게 인프런 `n8n이 다 해줌` 챌린지는 워크플로우, 
 
 ![n8n 자동화 흐름을 정리하는 작업 사진 2](/images/posts/2026-06-28-inflearn-n8n-challenge-retrospective-02.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 이 글에서 답하는 질문
 
@@ -45,7 +45,7 @@ n8n 초보자에게 인프런 `n8n이 다 해줌` 챌린지는 워크플로우, 
 
 ![n8n 자동화 흐름을 정리하는 작업 사진 3](/images/posts/2026-06-28-inflearn-n8n-challenge-retrospective-03.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## n8n 기본개념
 
@@ -55,7 +55,7 @@ n8n은 여러 서비스와 API를 노드로 연결해 반복 작업을 자동화
 
 ![n8n 자동화 흐름을 정리하는 작업 사진 4](/images/posts/2026-06-28-inflearn-n8n-challenge-retrospective-04.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 신청 전 상태
 
@@ -69,7 +69,7 @@ n8n은 여러 서비스와 API를 노드로 연결해 반복 작업을 자동화
 
 ![n8n 자동화 흐름을 정리하는 작업 사진 5](/images/posts/2026-06-28-inflearn-n8n-challenge-retrospective-05.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 자동화 흐름
 

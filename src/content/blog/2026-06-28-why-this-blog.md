@@ -10,7 +10,7 @@ tags: ["Portfolio", "Blog", "Astro"]
 
 ![포트폴리오를 블로그로 확장하는 작업 사진 1](/images/posts/2026-06-28-why-this-blog-01.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 포트폴리오만으로 부족한 것
 
@@ -18,7 +18,7 @@ tags: ["Portfolio", "Blog", "Astro"]
 
 ![포트폴리오를 블로그로 확장하는 작업 사진 2](/images/posts/2026-06-28-why-this-blog-02.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 이 블로그에 쌓을 것
 
@@ -33,7 +33,7 @@ tags: ["Portfolio", "Blog", "Astro"]
 
 ![포트폴리오를 블로그로 확장하는 작업 사진 3](/images/posts/2026-06-28-why-this-blog-03.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 먼저 중요한 것
 
@@ -41,7 +41,7 @@ tags: ["Portfolio", "Blog", "Astro"]
 
 ![포트폴리오를 블로그로 확장하는 작업 사진 4](/images/posts/2026-06-28-why-this-blog-04.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 핵심 정리
 
@@ -51,4 +51,4 @@ tags: ["Portfolio", "Blog", "Astro"]
 
 ![포트폴리오를 블로그로 확장하는 작업 사진 5](/images/posts/2026-06-28-why-this-blog-05.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>

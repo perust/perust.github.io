@@ -10,7 +10,7 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 
 ![AI 주간 이슈를 정리하는 작업 책상 사진 1](/images/posts/2026-06-28-ai-weekly-2026-june-week-4-01.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 이번 주 핵심 흐름
 
@@ -22,7 +22,7 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 
 ![AI 주간 이슈를 정리하는 작업 책상 사진 2](/images/posts/2026-06-28-ai-weekly-2026-june-week-4-02.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 주요 이슈 한눈에 보기
 
@@ -67,7 +67,7 @@ tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 
 ![AI 주간 이슈를 정리하는 작업 책상 사진 3](/images/posts/2026-06-28-ai-weekly-2026-june-week-4-03.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 자세히 볼 이슈
 
@@ -109,7 +109,7 @@ GitHub는 캘리포니아 AI 투명성법과 관련해 오픈소스를 보호하
 
 ![AI 주간 이슈를 정리하는 작업 책상 사진 4](/images/posts/2026-06-28-ai-weekly-2026-june-week-4-04.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 짧게 볼 소식
 
@@ -121,7 +121,7 @@ GitHub는 캘리포니아 AI 투명성법과 관련해 오픈소스를 보호하
 
 ![AI 주간 이슈를 정리하는 작업 책상 사진 5](/images/posts/2026-06-28-ai-weekly-2026-june-week-4-05.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 이번 주 정리
 

@@ -12,7 +12,7 @@ tags: ["Claude Fable 5", "Claude Code", "Usage Credits", "AI Coding", "Anthropic
 
 ![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 1](/images/posts/2026-07-02-claude-fable-5-usage-credits-01.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 핵심은 API 전용이 아니라 credits 전환
 
@@ -45,7 +45,7 @@ tags: ["Claude Fable 5", "Claude Code", "Usage Credits", "AI Coding", "Anthropic
 
 ![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 2](/images/posts/2026-07-02-claude-fable-5-usage-credits-02.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 7월 7일까지는 구독 한도에 포함
 
@@ -67,7 +67,7 @@ Anthropic의 [Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fa
 
 ![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 3](/images/posts/2026-07-02-claude-fable-5-usage-credits-03.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 7월 7일 이후는 구독 포함이 아니라 사용량 기반
 
@@ -92,7 +92,7 @@ Claude Code에서 선택 가능한 상위 모델
 
 ![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 4](/images/posts/2026-07-02-claude-fable-5-usage-credits-04.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## 구독제로 쓰던 일반인에게 어려워지는 지점
 
@@ -119,7 +119,7 @@ Fable 5를 선택한다
 
 ![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 5](/images/posts/2026-07-02-claude-fable-5-usage-credits-05.jpg)
 
-<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+<small>생성된 참고 이미지입니다.</small>
 
 ## API 사용과 usage credits는 같은 말이 아님
 
