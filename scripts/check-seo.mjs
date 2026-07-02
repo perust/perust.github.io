@@ -13,6 +13,10 @@ const DIST = 'dist';
 // 보존용 레거시 정적 아카이브 — 품질 게이트에서 제외하고 스킵한다.
 const LEGACY_PREFIXES = ['contents/', 'homepage/', 'study/'];
 
+// 검색엔진 소유권 확인용 루트 HTML 파일은 일부러 메타 태그가 없는 단문 파일이다.
+// Google/Bing/Naver 인증 파일은 SEO 품질 게이트 대상이 아니므로 스킵한다.
+const WEBMASTER_VERIFICATION_RE = /^(google[\w-]+|BingSiteAuth|naver[\w-]+)\.html$/i;
+
 const toPosix = (p) => p.split(sep).join('/');
 
 async function htmlFiles(dir) {
@@ -53,6 +57,12 @@ for (const file of files) {
   if (LEGACY_PREFIXES.some((prefix) => rel.startsWith(prefix))) {
     skipped += 1;
     console.log(`[skip] ${rel}  (레거시 아카이브 — SEO 게이트 제외)`);
+    continue;
+  }
+
+  if (WEBMASTER_VERIFICATION_RE.test(rel)) {
+    skipped += 1;
+    console.log(`[skip] ${rel}  (검색엔진 소유권 확인 파일 — SEO 게이트 제외)`);
     continue;
   }
 
