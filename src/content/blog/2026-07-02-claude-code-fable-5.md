@@ -11,6 +11,10 @@ Claude Code에서 Claude Fable 5, 즉 클로드 페이블5를 쓸 수 있다는 
 
 확인한 범위에서 핵심은 이렇다. 공식 Claude Code 문서는 `fable` alias를 Claude Fable 5로 안내하고, “Fable 5는 기본 모델이 아니며 `/model fable`로 선택한다”고 설명한다. Anthropic 모델 문서의 API 모델 ID는 `claude-fable-5`다. 다만 실제 사용 가능 여부는 Claude Code 버전, 계정 플랜, 조직 정책, zero data retention 설정, 예산 제한에 따라 달라질 수 있다.
 
+![Claude Code 모델 설정을 확인하는 노트북 작업 사진](/images/posts/2026-07-02-claude-code-fable-5-hero.jpg)
+
+<small>코딩 도구를 테스트하는 상황으로 생성한 참고 이미지입니다.</small>
+
 ## 핵심 요약
 
 <ul class="issue-list">
