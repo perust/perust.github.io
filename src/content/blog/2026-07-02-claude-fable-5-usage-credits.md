@@ -1,6 +1,6 @@
 ---
-title: "Claude Fable 5, 구독자가 계속 쓰기 어려워지는 이유"
-description: "Claude Fable 5는 7월 7일까지 일부 구독 한도에 포함되고 이후 usage credits 기반 사용으로 전환된다. 구독자와 바이브코더가 봐야 할 비용 구조를 정리했다."
+title: "Claude Fable 5, 7월 7일까지 구독 사용 허용과 이후 주의사항"
+description: "Claude Fable 5는 7월 7일까지 일부 구독 한도에 포함되고 이후 usage credits 기반 사용으로 전환된다. 구독자가 봐야 할 비용·API 키 주의사항을 정리했다."
 date: "2026-07-02T14:51:00+09:00"
 category: "AI"
 tags: ["Claude Fable 5", "Claude Code", "Usage Credits", "AI Coding", "Anthropic"]
