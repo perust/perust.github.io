@@ -10,6 +10,10 @@ tags: ["Claude Fable 5", "Claude Code", "Usage Credits", "AI Coding", "Anthropic
 
 사용자 입장에서는 차이가 꽤 크다. 월 구독료 안에서 “한도까지 써보는 모델”에 가까웠던 Fable 5가, 7월 7일 이후에는 사용량에 따라 비용을 의식해야 하는 고급 모델로 바뀌는 셈이다. Claude Code로 앱을 만들거나, 블로그를 고치거나, 자동화 작업을 맡기는 바이브코더라면 이 변화를 비용 구조로 이해하는 편이 정확하다.
 
+![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 1](/images/posts/2026-07-02-claude-fable-5-usage-credits-01.jpg)
+
+<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+
 ## 핵심은 API 전용이 아니라 credits 전환
 
 <ul class="issue-list">
@@ -39,6 +43,10 @@ tags: ["Claude Fable 5", "Claude Code", "Usage Credits", "AI Coding", "Anthropic
   </li>
 </ul>
 
+![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 2](/images/posts/2026-07-02-claude-fable-5-usage-credits-02.jpg)
+
+<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
+
 ## 7월 7일까지는 구독 한도에 포함
 
 Anthropic의 [Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5) 공지는 Fable 5가 7월 1일부터 Claude Platform, Claude.ai, Claude Code, Claude Cowork에서 다시 제공된다고 설명한다. 그리고 Pro, Max, Team, select Enterprise 플랜에 대해 중요한 조건을 붙였다.
@@ -56,6 +64,10 @@ Anthropic의 [Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fa
 ```
 
 여기서 중요한 표현은 “up to 50% of weekly usage limits”다. 구독자에게 Fable 5가 완전히 무제한으로 풀린 것이 아니라, 주간 사용량 한도의 일부로 포함됐다는 뜻이다. 그래도 사용자는 이 기간 동안 월 구독료 안에서 Fable 5를 체험할 수 있었다.
+
+![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 3](/images/posts/2026-07-02-claude-fable-5-usage-credits-03.jpg)
+
+<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
 
 ## 7월 7일 이후는 구독 포함이 아니라 사용량 기반
 
@@ -77,6 +89,10 @@ Claude Code에서 선택 가능한 상위 모델
 ```
 
 즉 “API로만 써야 한다”라고 단정하기보다는, “월 구독료만으로 부담 없이 쓰던 모델에서 credits 기반 고급 모델로 바뀐다”가 더 정확하다.
+
+![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 4](/images/posts/2026-07-02-claude-fable-5-usage-credits-04.jpg)
+
+<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
 
 ## 구독제로 쓰던 일반인에게 어려워지는 지점
 
@@ -100,6 +116,10 @@ Fable 5를 선택한다
 ```
 
 이 구조는 AI 도구에 익숙한 사람에게도 번거롭지만, 일반 사용자에게는 더 큰 장벽이다. 특히 Claude Code로 앱이나 자동화 작업을 빠르게 만들어보려는 사람은 모델 선택, credits, API key, 계정 정책을 매번 이해하기 어렵다.
+
+![Claude 사용량 크레딧과 비용을 확인하는 작업 사진 5](/images/posts/2026-07-02-claude-fable-5-usage-credits-05.jpg)
+
+<small>아이폰 13 12MP 스마트폰 기록사진 느낌으로 생성한 참고 이미지입니다.</small>
 
 ## API 사용과 usage credits는 같은 말이 아님
 
