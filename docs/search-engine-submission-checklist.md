@@ -74,6 +74,14 @@ https://perust.github.io/sitemap-index.xml
 https://perust.github.io/robots.txt
 ```
 
+5. 사이트 체크에서 다음 항목을 확인한다.
+
+- 등록 URL은 `https://perust.github.io/`로 통일한다. `http://`는 HTTPS로 리다이렉트되고, `www.perust.github.io`는 GitHub Pages 호스트가 아니므로 사용하지 않는다.
+- `robots.txt`는 루트에서 `200`과 `text/plain`으로 열려야 한다.
+- `robots.txt`에는 `User-agent: Yeti`와 `User-agent: *` 모두 `Allow: /`가 있어야 한다.
+- sitemap은 `https://perust.github.io/sitemap-index.xml`을 사용한다.
+- 파비콘은 루트의 `/favicon.ico`와 `<head>`의 favicon 링크로 노출된다.
+
 ## Daum/Kakao
 
 Daum 검색 등록은 운영 정책이 바뀔 수 있으므로, 현재 제공되는 등록/수집 요청 메뉴가 있는지 확인한다. 별도 등록 메뉴가 없으면 sitemap, RSS, 외부 링크, 정상적인 메타 태그를 유지하는 쪽이 기본 대응이다.

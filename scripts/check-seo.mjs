@@ -33,6 +33,8 @@ const CHECKS = [
   ['canonical', /<link[^>]+rel="canonical"[^>]*>/i],
   ['description', /<meta[^>]+name="description"[^>]*>/i],
   ['robots', /<meta[^>]+name="robots"[^>]*>/i],
+  ['favicon', /<link[^>]+rel="icon"[^>]+href="\/favicon\.ico"[^>]*>|<link[^>]+href="\/favicon\.ico"[^>]+rel="icon"[^>]*>/i],
+  ['manifest', /<link[^>]+rel="manifest"[^>]+href="\/site\.webmanifest"[^>]*>|<link[^>]+href="\/site\.webmanifest"[^>]+rel="manifest"[^>]*>/i],
   ['og:title', /<meta[^>]+property="og:title"[^>]*>/i],
   ['og:description', /<meta[^>]+property="og:description"[^>]*>/i],
   ['og:url', /<meta[^>]+property="og:url"[^>]*>/i],
@@ -119,6 +121,23 @@ try {
 } catch {
   failures += 1;
   console.log('[FAIL] rss.xml  (RSS 피드 누락 — dist/rss.xml 없음. src/pages/rss.xml.ts 확인)');
+}
+
+// 네이버 서치어드바이저 기본 체크: robots.txt, sitemap, favicon/manifest 정적 파일 존재.
+for (const [file, label] of [
+  ['robots.txt', 'robots.txt'],
+  ['sitemap-index.xml', 'sitemap-index.xml'],
+  ['favicon.ico', 'favicon.ico'],
+  ['favicon-32x32.png', 'favicon PNG'],
+  ['site.webmanifest', 'webmanifest'],
+]) {
+  try {
+    await access(join(DIST, file));
+    console.log(`[ok] ${file}  (${label} 존재)`);
+  } catch {
+    failures += 1;
+    console.log(`[FAIL] ${file}  (${label} 누락)`);
+  }
 }
 
 console.log(`\n검사한 HTML: ${checked}개, 스킵(레거시): ${skipped}개, 문제: ${failures}건`);
