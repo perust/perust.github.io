@@ -1,6 +1,6 @@
 {
-  "name": "slowave",
-  "short_name": "slowave",
+  "name": "lentoludens",
+  "short_name": "lentoludens",
   "icons": [
     { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
     { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },

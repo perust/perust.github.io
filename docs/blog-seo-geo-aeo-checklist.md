@@ -1,6 +1,6 @@
 # 블로그 글 SEO / GEO / AEO 체크리스트
 
-slowave 블로그에 새 글을 쓸 때 검색엔진(SEO), 생성형 검색(GEO), 답변엔진(AEO)에 잘 읽히도록 확인하는 기준이다. 한국어 글 작성을 전제로 한다. 수치·사실은 직접 확인한 것만 쓰고, 키워드를 억지로 채우지 않는다.
+lentoludens 블로그에 새 글을 쓸 때 검색엔진(SEO), 생성형 검색(GEO), 답변엔진(AEO)에 잘 읽히도록 확인하는 기준이다. 한국어 글 작성을 전제로 한다. 수치·사실은 직접 확인한 것만 쓰고, 키워드를 억지로 채우지 않는다.
 
 ## 1. frontmatter
 
@@ -65,10 +65,10 @@ tags: ["Astro", "GitHub Pages"]
 이 저장소는 아래를 자동 생성하므로 글마다 따로 손댈 필요는 없다.
 
 - `BaseLayout.astro`: canonical, robots, description, og(title/description/url/type/site_name/locale), twitter(card/title/description), generator, RSS alternate 링크(`/rss.xml`).
-- `blog/[slug].astro`: `BlogPosting` JSON-LD(headline, description, datePublished, dateModified, author/publisher=slowave, mainEntityOfPage, articleSection, keywords, inLanguage=ko-KR)와 `BreadcrumbList` JSON-LD(홈 > 블로그 > 카테고리 > 글).
+- `blog/[slug].astro`: `BlogPosting` JSON-LD(headline, description, datePublished, dateModified, author/publisher=lentoludens, mainEntityOfPage, articleSection, keywords, inLanguage=ko-KR)와 `BreadcrumbList` JSON-LD(홈 > 블로그 > 카테고리 > 글).
 - `blog/index.astro`: `Blog` + `blogPost` JSON-LD. `index.astro`: `WebSite` JSON-LD.
 - `astro.config.mjs`의 sitemap 통합이 `sitemap-index.xml`을 만들고 `robots.txt`가 이를 가리킨다.
-- `src/pages/rss.xml.ts`가 블로그 글(title/description/pubDate/link/categories)을 모아 `/rss.xml` 피드를 만든다. 작성자는 `slowave`로만 표기한다.
+- `src/pages/rss.xml.ts`가 블로그 글(title/description/pubDate/link/categories)을 모아 `/rss.xml` 피드를 만든다. 작성자는 `lentoludens`로만 표기한다.
 - OG 이미지는 `frontmatter.image`가 있으면 그 값을 쓰고, 없으면 글별 생성 이미지(`/public/og/posts/<slug>.png`)를, 없으면 카테고리 기본 이미지(`/public/og/`)를, 매칭되는 카테고리가 없으면 `/og/default.png`를 쓴다.
 - 글별 OG 이미지는 `python3 scripts/generate-og.py`로 생성한다. 새 글을 추가했다면 배포 전 이 스크립트를 한 번 실행해 `public/og/posts/`에 PNG가 생겼는지 확인한다.
 - 카테고리·태그는 `/blog/category/<slug>/`, `/blog/tag/<slug>/` 정적 페이지로 생성되고 `CollectionPage` + `BreadcrumbList` JSON-LD가 붙는다.
@@ -82,7 +82,7 @@ tags: ["Astro", "GitHub Pages"]
 
 - 키워드 스터핑(같은 단어 반복, 태그 남발).
 - 광고성·수익화 유도 문구, 과장 표현.
-- 공개 실명 노출. 글쓴이 표기는 브랜드명 `slowave`로 통일한다.
+- 공개 실명 노출. 글쓴이 표기는 브랜드명 `lentoludens`로 통일한다.
 - 기존 글의 수치·사실을 근거 없이 수정.
 
 ## 10. 발행 전 확인

@@ -20,11 +20,11 @@ const blogDescription = '프로젝트 제작기, AI 자동화, 투자 데이터,
 const blogLd = {
   '@context': 'https://schema.org',
   '@type': 'Blog',
-  name: 'slowave 블로그',
+  name: 'lentoludens 블로그',
   description: blogDescription,
   url: new URL('/blog/', site).toString(),
   inLanguage: 'ko-KR',
-  publisher: { '@type': 'Organization', name: 'slowave', url: site.toString() },
+  publisher: { '@type': 'Organization', name: 'lentoludens', url: site.toString() },
   blogPost: posts.map((post) => ({
     '@type': 'BlogPosting',
     headline: post.title,
@@ -34,7 +34,7 @@ const blogLd = {
   })),
 };
 ---
-<BaseLayout title="slowave 블로그 · AI, 자동화, 투자 데이터 기록" description={blogDescription} jsonLd={blogLd}>
+<BaseLayout title="lentoludens 블로그 · AI, 자동화, 투자 데이터 기록" description={blogDescription} jsonLd={blogLd}>
   <main>
     <section class="section-shell blog-hero blog-hero-compact">
       <p class="section-kicker">Blog</p>

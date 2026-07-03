@@ -16,7 +16,7 @@ interface Props {
 }
 
 const {
-  title = 'slowave · AI와 제품 실험을 기록하는 블로그',
+  title = 'lentoludens · AI와 제품 실험을 기록하는 블로그',
   description = '아이디어를 제품으로 옮기는 과정을 기록하는 개인 포트폴리오와 블로그.',
   canonical = Astro.url.pathname,
   ogType = 'website',
@@ -30,7 +30,7 @@ const {
 const site = Astro.site ?? new URL('https://perust.github.io');
 const canonicalUrl = new URL(canonical, site).toString();
 const ogImageUrl = new URL(image, site).toString();
-const siteName = 'slowave';
+const siteName = 'lentoludens';
 // JSON-LD를 단일 객체/배열 모두 허용하고, </script> 주입을 막기 위해 < 를 이스케이프한다.
 const structuredData = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 const serializeJsonLd = (data: Record<string, unknown>) =>
@@ -73,7 +73,7 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="alternate" type="application/rss+xml" title="slowave Blog RSS" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="lentoludens Blog RSS" href="/rss.xml" />
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -107,8 +107,8 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
   <body>
     <header class="site-header" aria-label="사이트 헤더">
       <a class="brand" href="/" aria-label="홈으로 이동">
-        <span class="brand-mark">S</span>
-        <span>slowave</span>
+        <span class="brand-mark">L</span>
+        <span>lentoludens</span>
       </a>
       <nav class="nav" aria-label="주요 메뉴">
         {navItems.map(([href, label]) => <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>{label}</a>)}
@@ -116,7 +116,7 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
     </header>
     <slot />
     <footer class="footer">
-      <p>© 2026 slowave. Built with Astro on GitHub Pages.</p>
+      <p>© 2026 lentoludens. Built with Astro on GitHub Pages.</p>
       <div class="footer-links">
         <a href="/privacy/">개인정보처리방침</a>
         <a href="/contact/">문의</a>

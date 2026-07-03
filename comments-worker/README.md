@@ -1,4 +1,4 @@
-# slowave blog comments
+# lentoludens blog comments
 
 Astro/GitHub Pages 블로그에 붙일 익명 댓글 API 초안입니다.
 

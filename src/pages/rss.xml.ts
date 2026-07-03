@@ -1,9 +1,9 @@
 // 블로그 RSS 2.0 피드. 외부 패키지 없이 표준 기능만으로 XML을 직접 생성한다.
 // 정적 빌드 시 dist/rss.xml 로 출력된다.
-// 실명은 노출하지 않으며 작성자는 브랜드명 slowave 로만 표기한다.
+// 실명은 노출하지 않으며 작성자는 브랜드명 lentoludens 로만 표기한다.
 import type { APIRoute } from 'astro';
 
-const FEED_TITLE = 'slowave Blog';
+const FEED_TITLE = 'lentoludens Blog';
 const FEED_DESCRIPTION = '프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 다루는 개인 블로그.';
 const FALLBACK_SITE = 'https://perust.github.io';
 
@@ -41,7 +41,7 @@ export const GET: APIRoute = ({ site }) => {
       <guid isPermaLink="true">${escapeXml(link)}</guid>
       <description>${escapeXml(post.description ?? '')}</description>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
-      <dc:creator>slowave</dc:creator>
+      <dc:creator>lentoludens</dc:creator>
 ${categories}
     </item>`;
     })

@@ -52,10 +52,10 @@ const blogPostingLd = {
   url: pageUrl,
   image: ogImageUrl,
   mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
-  author: { '@type': 'Person', name: 'slowave', url: site.toString() },
+  author: { '@type': 'Person', name: 'lentoludens', url: site.toString() },
   publisher: {
     '@type': 'Organization',
-    name: 'slowave',
+    name: 'lentoludens',
     url: site.toString(),
     logo: {
       '@type': 'ImageObject',
@@ -96,7 +96,7 @@ const faqLd = faqs.length ? {
 
 const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, breadcrumbLd];
 ---
-<BaseLayout title={`${title} · slowave 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={jsonLd} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags} image={ogImage}>
+<BaseLayout title={`${title} · lentoludens 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={jsonLd} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags} image={ogImage}>
   <main class="post-layout">
     <article class="post-article">
       <p class="section-kicker"><a href={categoryPath(category)}>{category}</a></p>
@@ -145,7 +145,7 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       {commentsEnabled && <Comments slug={slug} />}
     </article>
     <aside class="sidebar-card" aria-label="블로그 안내">
-      <h2 style="font-size:1.2rem">slowave Blog</h2>
+      <h2 style="font-size:1.2rem">lentoludens Blog</h2>
       <p>아이디어를 제품으로 만들며 배운 것을 기록합니다.</p>
       <ul class="tag-cloud">{tags.map((tag: string) => <li><a href={tagPath(tag)}>#{tag}</a></li>)}</ul>
     </aside>

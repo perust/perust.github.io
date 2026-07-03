@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""slowave 블로그 OG 이미지(1200x630 PNG) 생성기.
+"""lentoludens 블로그 OG 이미지(1200x630 PNG) 생성기.
 
-Pillow(PIL)만 사용한다. dark navy 배경 + 잔잔한 wave/gradient + slowave 워드마크 +
+Pillow(PIL)만 사용한다. dark navy 배경 + 잔잔한 wave/gradient + lentoludens 워드마크 +
 카테고리 라벨로 단순하고 차분한 카드를 만든다. 실명은 넣지 않는다.
 
 두 종류를 만든다.
@@ -33,7 +33,7 @@ BLOG_DIR = os.path.join(REPO_ROOT, "src", "content", "blog")
 
 # 카테고리/기본 카드: (파일명, 카테고리 라벨)
 CARDS = [
-    ("default.png", "slowave blog"),
+    ("default.png", "lentoludens blog"),
     ("money-weekly.png", "Money Weekly"),
     ("ai-weekly.png", "AI Weekly"),
     ("book-review.png", "Book Review"),
@@ -207,7 +207,7 @@ def base_card():
     img.paste(Image.alpha_composite(img.convert("RGBA"), glow).convert("RGB"), (0, 0))
     draw = ImageDraw.Draw(img, "RGBA")
 
-    # 3) 잔잔한 wave (slowave 모티프) — 하단에 낮은 투명도 사인 곡선 몇 줄
+    # 3) 잔잔한 wave (lentoludens 모티프) — 하단에 낮은 투명도 사인 곡선 몇 줄
     for i, (amp, base, alpha, step) in enumerate([
         (26, 470, 60, 6), (34, 520, 45, 6), (20, 560, 32, 6),
     ]):
@@ -237,14 +237,14 @@ def draw_pill(draw, label, px=90, py=92):
 
 
 def build_card(label):
-    """카테고리/기본 카드: 큰 slowave 워드마크가 주인공."""
+    """카테고리/기본 카드: 큰 lentoludens 워드마크가 주인공."""
     img, draw = base_card()
     draw_pill(draw, label)
 
-    # slowave 워드마크 (중앙 좌측, 큼직하게)
+    # lentoludens 워드마크 (중앙 좌측, 큼직하게)
     brand_font = font(132, bold=True)
     bx, by = 86, 250
-    draw.text((bx, by), "slowave", font=brand_font, fill=(245, 248, 255, 255))
+    draw.text((bx, by), "lentoludens", font=brand_font, fill=(245, 248, 255, 255))
 
     # 얇은 강조선 + 도메인 (하단)
     line_y = 432
@@ -307,14 +307,14 @@ def fit_title(draw, title, max_width, max_lines=3, start_size=80, min_size=46):
 
 
 def build_post_card(title, label):
-    """글별 카드: 카테고리 pill + 작은 slowave + 제목(2~3줄) + 도메인."""
+    """글별 카드: 카테고리 pill + 작은 lentoludens + 제목(2~3줄) + 도메인."""
     img, draw = base_card()
     draw_pill(draw, label)
 
-    # slowave 워드마크 (우상단, 작게 — 브랜드 워터마크)
+    # lentoludens 워드마크 (우상단, 작게 — 브랜드 워터마크)
     brand_font = font(46, bold=True)
-    brand_w = draw.textlength("slowave", font=brand_font)
-    draw.text((W - 90 - brand_w, 100), "slowave", font=brand_font, fill=(226, 232, 240, 235))
+    brand_w = draw.textlength("lentoludens", font=brand_font)
+    draw.text((W - 90 - brand_w, 100), "lentoludens", font=brand_font, fill=(226, 232, 240, 235))
 
     # 제목 (중앙 밴드, 흰색, 2~3줄 wrap)
     margin = 90
@@ -387,7 +387,7 @@ def generate_post_cards():
             sys.stderr.write(f"[warn] title을 못 읽어 건너뜀: {fname}\n")
             continue
         slug = fname[:-3]
-        label = meta.get("category") or "slowave blog"
+        label = meta.get("category") or "lentoludens blog"
         img = build_post_card(meta["title"], label)
         path = os.path.join(POSTS_OUT_DIR, slug + ".png")
         img.save(path, "PNG", optimize=True)

@@ -17,18 +17,18 @@ const site = Astro.site ?? new URL('https://perust.github.io');
 const path = categoryPath(category);
 const pageUrl = new URL(path, site).toString();
 
-const title = `${category} 글 모음 · slowave 블로그`;
-const description = `slowave 블로그의 ${category} 카테고리 글 ${posts.length}편을 모았습니다. 최신 글부터 차례로 정리했습니다.`;
+const title = `${category} 글 모음 · lentoludens 블로그`;
+const description = `lentoludens 블로그의 ${category} 카테고리 글 ${posts.length}편을 모았습니다. 최신 글부터 차례로 정리했습니다.`;
 
 // CollectionPage + ItemList JSON-LD. 답변엔진이 "이 카테고리의 글 목록"을 그대로 읽을 수 있게 한다.
 const collectionLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: `${category} · slowave 블로그`,
+  name: `${category} · lentoludens 블로그`,
   description,
   url: pageUrl,
   inLanguage: 'ko-KR',
-  isPartOf: { '@type': 'Blog', name: 'slowave 블로그', url: new URL('/blog/', site).toString() },
+  isPartOf: { '@type': 'Blog', name: 'lentoludens 블로그', url: new URL('/blog/', site).toString() },
   mainEntity: {
     '@type': 'ItemList',
     numberOfItems: posts.length,
