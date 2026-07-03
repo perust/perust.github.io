@@ -27,7 +27,7 @@ const categories = Array.from(new Set(posts.map((post) => post.category))).sort(
 const tags = Array.from(new Set(posts.flatMap((post) => post.tags ?? []))).slice(0, 10);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
-const homeDescription = 'AI 자동화, 회고 시스템, 생산성, 투자 데이터를 직접 써보며 정리하는 lentoludens 블로그.';
+const homeDescription = 'IT, AI, 경제, 재테크, 자기계발 등 관심 분야의 정보를 정리하고 직접 만들어보는 lentoludens 블로그.';
 const websiteLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -38,13 +38,13 @@ const websiteLd = {
   publisher: { '@type': 'Organization', name: 'lentoludens', url: site.toString() },
 };
 ---
-<BaseLayout title="lentoludens · AI와 제품 실험을 기록하는 블로그" description={homeDescription} jsonLd={websiteLd}>
+<BaseLayout title="lentoludens · 관심 분야를 정리하고 만들어보는 블로그" description={homeDescription} jsonLd={websiteLd}>
   <main id="top">
     <section class="hero section-shell" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">Curated Blog · Product Notes · AI Automation</p>
-        <h1 id="hero-title">직접 써보고,<br />다시 꺼내볼 글로 정리합니다.</h1>
-        <p class="hero-description">아이디어를 제품으로 옮기는 과정, AI 자동화, 회고 시스템, 투자 데이터 실험을 큐레이션해서 보여주는 홈입니다. 포트폴리오와 예전 작업은 <a class="inline-link" href="/work/">작업</a> 메뉴로 따로 모았습니다.</p>
+        <p class="eyebrow">IT · AI · Economy · Self-improvement</p>
+        <h1 id="hero-title">IT, AI, 경제, 재테크,<br />자기계발 등 관심 분야의 정보를 정리하고 직접 만들어봅니다.</h1>
+        <p class="hero-description">블로그 글은 홈에 모아두고, 포트폴리오와 예전 작업은 <a class="inline-link" href="/work/">작업</a> 메뉴에서 볼 수 있습니다.</p>
         <div class="hero-actions">
           <a class="button primary" href="#curated-posts">추천 글 보기</a>
           <a class="button secondary" href="/blog/">전체 글</a>
@@ -67,8 +67,8 @@ const websiteLd = {
     <section id="curated-posts" class="section-shell" aria-labelledby="curated-title">
       <div class="section-heading">
         <p class="section-kicker">Editor’s picks</p>
-        <h2 id="curated-title">지금 홈에서 보여주고 싶은 글</h2>
-        <p>최근 관심사와 실제 작업 흐름이 잘 드러나는 글을 먼저 골랐습니다.</p>
+        <h2 id="curated-title">지금 뜨는 글</h2>
+        <p>최근 글 중에서 먼저 읽기 좋은 글을 모았습니다.</p>
       </div>
       <div class="blog-grid home-curation-grid">
         {secondaryPosts.map((post) => (
