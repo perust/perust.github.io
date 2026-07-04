@@ -877,6 +877,18 @@ h3 {
 .post-article .issue-card h3 { margin: 0 0 .45rem; color: var(--ink); font-size: clamp(1.08rem, 3vw, 1.28rem); line-height: 1.36; letter-spacing: -0.035em; overflow-wrap: anywhere; }
 .post-article .issue-summary { margin: 0 0 .5rem; color: #334155; font-size: .98rem; line-height: 1.55; overflow-wrap: anywhere; }
 .post-article .issue-meta { margin: 0; color: var(--muted); font-size: .86rem; font-weight: 600; line-height: 1.45; overflow-wrap: anywhere; }
+.post-article .routine-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .9rem; margin: 1.3rem 0 1.8rem; }
+.post-article .routine-card { padding: 1rem 1.05rem; border: 1px solid rgba(15,23,42,.12); border-radius: var(--radius-sm); background: #fff; box-shadow: 0 10px 28px rgba(15,23,42,.05); }
+.post-article .routine-card h3 { margin: 0 0 .45rem; color: var(--ink); font-size: 1.05rem; line-height: 1.35; }
+.post-article .routine-card p { margin: .2rem 0; color: #334155; font-size: .98rem; line-height: 1.55; }
+.post-article .routine-card ul { margin: .45rem 0 0; padding-left: 1.15rem; }
+.post-article .routine-kv { display: grid; gap: .55rem; margin: 1.3rem 0 1.8rem; }
+.post-article .routine-kv div { display: grid; grid-template-columns: minmax(88px, .32fr) 1fr; gap: .75rem; align-items: start; padding: .75rem .9rem; border: 1px solid rgba(15,23,42,.1); border-radius: .9rem; background: rgba(248,250,252,.9); }
+.post-article .routine-kv dt { color: var(--muted); font-weight: 800; }
+.post-article .routine-kv dd { margin: 0; color: #334155; }
+.post-article .routine-template { margin: 1.3rem 0 1.8rem; padding: 1.05rem 1.1rem; border: 1px solid rgba(37,99,235,.18); border-radius: var(--radius-sm); background: rgba(37,99,235,.06); }
+.post-article .routine-template h3 { margin-top: 0; }
+.post-article .routine-template ol, .post-article .routine-template ul { margin-bottom: 0; padding-left: 1.2rem; }
 .post-article code { padding: .12rem .3rem; border-radius: .35rem; background: rgba(15,23,42,.08); }
 .post-article pre { overflow-x: auto; padding: 1rem; border-radius: var(--radius-sm); background: #0f172a; color: white; }
 .sidebar-card { position: sticky; top: 6.5rem; padding: 1.1rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); box-shadow: var(--shadow); }
