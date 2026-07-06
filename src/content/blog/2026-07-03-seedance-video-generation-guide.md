@@ -76,12 +76,12 @@ Seedance 2.0 문서에서 강조하는 기능은 단순한 텍스트 투 비디�
 
 예시는 이렇게 시작할 수 있다.
 
-```text
-Shot 1: 어두운 작업실 책상 위에 노트북과 커피가 놓여 있다. 카메라는 천천히 오른쪽으로 이동한다.
-Shot 2: 화면 속에서 AI 영상 편집 타임라인이 열리고, 짧은 클립들이 자동으로 이어진다.
-Shot 3: 마지막에는 완성된 세로형 쇼츠 영상이 스마트폰 화면에 재생된다.
-스타일은 현실적인 다큐멘터리 톤, 과한 네온 효과는 피한다.
-```
+<div class="routine-kv">
+  <div><dt>Shot 1</dt><dd>어두운 작업실 책상 위에 노트북과 커피가 놓여 있다. 카메라는 천천히 오른쪽으로 이동한다.</dd></div>
+  <div><dt>Shot 2</dt><dd>화면 속에서 AI 영상 편집 타임라인이 열리고, 짧은 클립들이 자동으로 이어진다.</dd></div>
+  <div><dt>Shot 3</dt><dd>마지막에는 완성된 세로형 쇼츠 영상이 스마트폰 화면에 재생된다.</dd></div>
+  <div><dt>스타일</dt><dd>현실적인 다큐멘터리 톤, 과한 네온 효과는 피한다.</dd></div>
+</div>
 
 공식 프롬프트 가이드는 복잡한 영상일수록 “0초부터 3초까지”처럼 시간을 강하게 고정하기보다 Shot 1, Shot 2, Shot 3 순서로 장면을 나누는 방식을 권한다. 모델이 정확한 초 단위 타이밍을 안정적으로 따르는 것은 어렵기 때문이다.
 
@@ -113,15 +113,17 @@ Seedance 2.0은 오디오도 참고 입력으로 받을 수 있다. 공식 문�
 
 BytePlus ModelArk 기준으로는 다음 순서다.
 
-```text
-1. BytePlus 계정 생성 및 로그인
-2. ModelArk 콘솔에서 API Key 생성
-3. Seedance 2.0 계열 모델 활성화
-4. 필요하면 Seedance 2.0 리소스팩 구매
-5. SDK 또는 REST API로 영상 생성 작업 생성
-6. 작업 상태를 폴링
-7. succeeded 상태가 되면 결과 영상 URL 다운로드
-```
+<div class="routine-template">
+<ol class="step-list">
+  <li>BytePlus 계정 생성 및 로그인</li>
+  <li>ModelArk 콘솔에서 API Key 생성</li>
+  <li>Seedance 2.0 계열 모델 활성화</li>
+  <li>필요하면 Seedance 2.0 리소스팩 구매</li>
+  <li>SDK 또는 REST API로 영상 생성 작업 생성</li>
+  <li>작업 상태를 폴링</li>
+  <li>succeeded 상태가 되면 결과 영상 URL 다운로드</li>
+</ol>
+</div>
 
 공식 튜토리얼은 Python 샘플을 중심으로 설명한다. API 키는 `ARK_API_KEY` 환경변수로 넣고, ModelArk SDK에서 `https://ark.ap-southeast.bytepluses.com/api/v3` 엔드포인트를 사용한다.
 
@@ -133,42 +135,44 @@ Seedance 프롬프트는 예쁜 문장보다 촬영 지시서에 가깝게 쓰�
 
 ### 좋은 기본 구조
 
-```text
-주체: 누가 또는 무엇이 나오는지
-장소: 어떤 공간과 배경인지
-행동: 무엇을 하는지
-카메라: 고정, 줌인, 패닝, 핸드헬드 등
-분위기: 조명, 색감, 장르, 속도감
-제약: 피할 것, 유지할 것, 바꾸지 말 것
-```
+<div class="routine-kv">
+  <div><dt>주체</dt><dd>누가 또는 무엇이 나오는지</dd></div>
+  <div><dt>장소</dt><dd>어떤 공간과 배경인지</dd></div>
+  <div><dt>행동</dt><dd>무엇을 하는지</dd></div>
+  <div><dt>카메라</dt><dd>고정, 줌인, 패닝, 핸드헬드 등</dd></div>
+  <div><dt>분위기</dt><dd>조명, 색감, 장르, 속도감</dd></div>
+  <div><dt>제약</dt><dd>피할 것, 유지할 것, 바꾸지 말 것</dd></div>
+</div>
 
 짧은 테스트라면 다음처럼 충분하다.
 
-```text
-Shot 1: 작은 카페 창가에 앉은 사람이 노트북으로 AI 영상 프롬프트를 작성한다. 카메라는 어깨 뒤에서 천천히 들어간다.
-Shot 2: 노트북 화면에 여러 장면 썸네일이 빠르게 생성된다. 화면은 현실적인 작업 장면처럼 보이고 과장된 SF 효과는 피한다.
-Shot 3: 스마트폰 세로 화면에서 완성된 8초짜리 제품 소개 영상이 재생된다. 자연광, 차분한 색감, 실제 촬영 같은 느낌.
-```
+<div class="routine-kv">
+  <div><dt>Shot 1</dt><dd>작은 카페 창가에 앉은 사람이 노트북으로 AI 영상 프롬프트를 작성한다. 카메라는 어깨 뒤에서 천천히 들어간다.</dd></div>
+  <div><dt>Shot 2</dt><dd>노트북 화면에 여러 장면 썸네일이 빠르게 생성된다. 화면은 현실적인 작업 장면처럼 보이고 과장된 SF 효과는 피한다.</dd></div>
+  <div><dt>Shot 3</dt><dd>스마트폰 세로 화면에서 완성된 8초짜리 제품 소개 영상이 재생된다. 자연광, 차분한 색감, 실제 촬영 같은 느낌.</dd></div>
+</div>
 
 ### 이미지나 영상 참조를 쓸 때
 
 참조 파일을 넣었다면 프롬프트에서 번호로 불러야 한다.
 
-```text
-Image 1의 제품 형태와 색상을 유지한다.
-Video 1의 손 움직임과 카메라 흔들림을 참고한다.
-Audio 1의 차분한 남성 내레이션 톤을 참고한다.
-```
+<div class="routine-template">
+<ul>
+  <li>Image 1의 제품 형태와 색상을 유지한다.</li>
+  <li>Video 1의 손 움직임과 카메라 흔들림을 참고한다.</li>
+  <li>Audio 1의 차분한 남성 내레이션 톤을 참고한다.</li>
+</ul>
+</div>
 
 Asset ID를 쓰더라도 프롬프트 안에서는 `Image 1`, `Video 1` 같은 방식으로 지칭해야 한다. 공식 문서는 모델이 Asset ID 자체를 참조 내용과 직접 연결해 이해하지 못하므로, 프롬프트에서는 입력 순서 기반 명칭을 쓰라고 안내한다.
 
 ### 피해야 할 방식
 
-```text
-0–2초: 사람이 걸어온다.
-2–3초: 컵을 든다.
-3–4초: 카메라가 줌인한다.
-```
+<div class="routine-kv">
+  <div><dt>0–2초</dt><dd>사람이 걸어온다.</dd></div>
+  <div><dt>2–3초</dt><dd>컵을 든다.</dd></div>
+  <div><dt>3–4초</dt><dd>카메라가 줌인한다.</dd></div>
+</div>
 
 이런 초 단위 통제는 잘 맞지 않을 수 있다. 장면 순서와 핵심 행동을 나눠 쓰되, 각 장면의 정확한 초 단위는 모델에 맡기는 쪽이 안정적이다.
 
@@ -176,10 +180,12 @@ Asset ID를 쓰더라도 프롬프트 안에서는 `Image 1`, `Video 1` 같은 �
 
 Seedance 비용은 “영상 1개에 얼마”라고만 보면 헷갈린다. 공식 가격 문서는 다음 공식을 제시한다.
 
-```text
-영상 가격 추정 = 토큰 단가 × 토큰 사용량
-토큰 사용량 = (입력 영상 길이 + 출력 영상 길이) × 출력 가로 × 출력 세로 × 프레임레이트 / 1024
-```
+<div class="routine-template">
+<ul>
+  <li>영상 가격 추정 = 토큰 단가 × 토큰 사용량</li>
+  <li>토큰 사용량 = (입력 영상 길이 + 출력 영상 길이) × 출력 가로 × 출력 세로 × 프레임레이트 / 1024</li>
+</ul>
+</div>
 
 여기서 입력 영상이 없는 텍스트·이미지 기반 생성과, 입력 영상이 있는 편집·연장 작업의 단가가 다를 수 있다. Seedance 2.0과 Seedance 2.0 Fast는 입력 영상이 있을 때 최소 토큰 사용량 제한도 있다. 실제 과금은 API 응답의 `usage.completion_tokens` 값을 기준으로 봐야 한다.
 
@@ -210,21 +216,23 @@ Seedance 비용은 “영상 1개에 얼마”라고만 보면 헷갈린다. 공
 
 확인된 리소스팩 예시는 다음과 같다.
 
-```text
-Dreamina Seedance 2.0
-1M tokens: 4.3달러, 최소 7개 구매 안내
-10M tokens: 43달러
-100M tokens: 430달러
-
-Dreamina Seedance 2.0 Fast
-1M tokens: 3.3달러, 최소 9개 구매 안내
-10M tokens: 33달러
-100M tokens: 330달러
-
-Dreamina Seedance 2.0 Mini
-10M tokens: 21달러, 최소 2개 구매 안내
-100M tokens: 210달러
-```
+<div class="routine-grid">
+  <section class="routine-card">
+    <h3>Dreamina Seedance 2.0</h3>
+    <p>1M tokens 4.3달러, 10M tokens 43달러, 100M tokens 430달러로 안내된다.</p>
+    <p>1M tokens는 최소 7개 구매 안내가 붙어 있다.</p>
+  </section>
+  <section class="routine-card">
+    <h3>Dreamina Seedance 2.0 Fast</h3>
+    <p>1M tokens 3.3달러, 10M tokens 33달러, 100M tokens 330달러로 안내된다.</p>
+    <p>1M tokens는 최소 9개 구매 안내가 붙어 있다.</p>
+  </section>
+  <section class="routine-card">
+    <h3>Dreamina Seedance 2.0 Mini</h3>
+    <p>10M tokens 21달러, 100M tokens 210달러로 안내된다.</p>
+    <p>10M tokens는 최소 2개 구매 안내가 붙어 있다.</p>
+  </section>
+</div>
 
 단, 리소스팩 문서는 페이지 표시 가격은 참고용이며 최종 결제 가격을 기준으로 보라고 적고 있다. 실사용 전에는 반드시 콘솔의 최신 가격, 지역, 세금, 계정 상태를 다시 확인해야 한다.
 
@@ -232,16 +240,16 @@ Dreamina Seedance 2.0 Mini
 
 정확한 비용은 공식 Price Calculator와 API 응답의 `usage.completion_tokens`로 확인하는 것이 맞다. 그래도 감을 잡기 위해 계산 구조만 보면 이렇다.
 
-```text
-짧은 480p 5초 테스트
-→ 출력 픽셀과 프레임 수가 작아 비용 확인용으로 적합
-
-720p 10초 영상
-→ 쇼츠나 제품 데모 초안에 현실적인 테스트 범위
-
-1080p 또는 4K
-→ 최종 후보 컷에만 사용 권장
-```
+<div class="routine-template">
+<ol class="step-list">
+  <li>짧은 480p 5초 테스트</li>
+  <li><span class="step-arrow">→</span> 출력 픽셀과 프레임 수가 작아 비용 확인용으로 적합</li>
+  <li>720p 10초 영상</li>
+  <li><span class="step-arrow">→</span> 쇼츠나 제품 데모 초안에 현실적인 테스트 범위</li>
+  <li>1080p 또는 4K</li>
+  <li><span class="step-arrow">→</span> 최종 후보 컷에만 사용 권장</li>
+</ol>
+</div>
 
 영상 AI는 재시도가 비용의 핵심이다. 한 번에 좋은 결과가 나오는 경우보다, 프롬프트를 바꾸고 참조 이미지를 바꾸고 모델을 바꾸며 여러 번 다시 뽑는 경우가 많다. 그래서 비용 관리는 “한 편의 최종 영상 가격”보다 “최종 영상 하나를 얻기까지 몇 번 실패할 것인가”로 봐야 한다.
 
@@ -255,15 +263,17 @@ Dreamina Seedance 2.0 Mini
 
 처음부터 자동화 앱에 붙이기보다 다음 순서가 낫다.
 
-```text
-1. 480p 또는 720p, 5–8초 영상으로 시작
-2. Seedance 2.0 Mini 또는 Fast로 프롬프트 테스트
-3. 마음에 드는 장면 구조를 Shot 단위로 정리
-4. 이미지·영상 참조가 필요한지 판단
-5. 최종 후보만 Seedance 2.0과 고해상도로 재생성
-6. API 응답의 usage.completion_tokens 기록
-7. 평균 실패 횟수까지 포함해 실제 제작 단가 계산
-```
+<div class="routine-template">
+<ol class="step-list">
+  <li>480p 또는 720p, 5–8초 영상으로 시작</li>
+  <li>Seedance 2.0 Mini 또는 Fast로 프롬프트 테스트</li>
+  <li>마음에 드는 장면 구조를 Shot 단위로 정리</li>
+  <li>이미지·영상 참조가 필요한지 판단</li>
+  <li>최종 후보만 Seedance 2.0과 고해상도로 재생성</li>
+  <li>API 응답의 usage.completion_tokens 기록</li>
+  <li>평균 실패 횟수까지 포함해 실제 제작 단가 계산</li>
+</ol>
+</div>
 
 블로그 쇼츠, 제품 소개, 앱 데모, 광고 초안처럼 반복 제작이 필요한 경우에는 결과 파일 URL을 바로 쓰지 말고 따로 저장하는 흐름도 필요하다. 공식 튜토리얼은 생성 결과 URL이 24시간만 유효한 예시를 언급하며, 실제 사용에서는 BytePlus TOS 같은 저장소로 옮겨 장기 보관하는 방식을 권한다.
 

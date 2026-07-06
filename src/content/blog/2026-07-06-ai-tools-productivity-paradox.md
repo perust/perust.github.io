@@ -1,6 +1,6 @@
 ---
 title: "AI 도구를 많이 써도 생산성이 오르지 않는 이유"
-description: "ChatGPT, Claude, Gemini 같은 AI 도구를 써도 일이 줄지 않는 이유를 업무 흐름, 검토 비용, 기준 부재, 조직 문화 관점에서 정리했습니다."
+description: "ChatGPT, Claude, Gemini 같은 AI 도구를 써도 일이 줄지 않는 이유를 업무 흐름, 검토 비용, 기준 부재, 조직 문화 관점에서 살펴봅니다."
 date: "2026-07-06"
 category: "AI"
 tags: ["AI", "생산성", "업무자동화", "ChatGPT", "Claude", "AI도구", "업무관리"]
