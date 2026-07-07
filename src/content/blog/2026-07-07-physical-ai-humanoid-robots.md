@@ -12,6 +12,8 @@ tags: ["AI", "피지컬AI", "로봇", "휴머노이드", "제조AI", "스마트�
 최근 국내 뉴스에서 피지컬 AI, 휴머노이드 로봇, 제조AI, AI 로봇 파운데이션 모델 같은 표현이 반복되는 이유도 여기에 있습니다.<br />
 AI 경쟁이 소프트웨어 화면을 넘어 제조업과 로봇 인프라로 옮겨가고 있기 때문입니다.
 
+![피지컬 AI의 흐름 요약 이미지](/images/posts/summary/2026-07-07-physical-ai-humanoid-robots-summary.svg)
+
 ## 핵심 요약
 
 <ul class="issue-list">

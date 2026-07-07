@@ -14,6 +14,8 @@ AI 데이터센터 이야기는 더 이상 “서버가 많이 필요하다”�
 핵심은 간단합니다.<br />
 AI 사용량이 늘수록 데이터센터가 커지고, 데이터센터가 커질수록 특정 지역의 전력망에 부담이 집중됩니다.
 
+![AI 데이터센터와 전력 문제 요약 이미지](/images/posts/summary/2026-07-07-ai-datacenter-power-demand-summary.svg)
+
 ## 핵심 요약
 
 <ul class="issue-list">

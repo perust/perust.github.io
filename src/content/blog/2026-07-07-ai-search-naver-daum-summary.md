@@ -11,6 +11,8 @@ tags: ["AI", "AI검색", "네이버AI탭", "다음AI요약", "검색엔진", "�
 최근 국내 검색 이슈에서 반복해서 보이는 키워드는 네이버 AI탭, AI 브리핑, 다음 AI 요약, 구글 AI 오버뷰입니다.<br />
 특히 네이버와 다음이 거의 같은 시기에 AI 검색 기능을 전면에 내세우면서, 한국 포털 검색도 링크 경쟁에서 답변 경쟁으로 넘어가는 분위기입니다.
 
+![AI 검색으로 바뀌는 포털 요약 이미지](/images/posts/summary/2026-07-07-ai-search-naver-daum-summary-summary.svg)
+
 ## 핵심 요약
 
 <ul class="issue-list">

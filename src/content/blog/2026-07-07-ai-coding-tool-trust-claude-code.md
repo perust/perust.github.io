@@ -10,6 +10,8 @@ AI 코딩 도구는 이제 “코드를 추천해주는 자동완성”을 넘�
 
 그래서 Claude Code를 둘러싼 성능 저하, 보안, 토큰 비용 논란은 특정 제품 하나의 문제가 아니라 AI 코딩 도구를 어디까지 믿고 맡길 수 있는지 묻는 신호입니다. 편해졌지만, 확인 없이 자동 승인하면 코드 품질·비용·정보 유출 위험이 함께 커집니다.
 
+![AI 코딩 도구 신뢰 문제 요약 이미지](/images/posts/summary/2026-07-07-ai-coding-tool-trust-claude-code-summary.svg)
+
 ## 핵심 요약
 
 <ul class="issue-list">

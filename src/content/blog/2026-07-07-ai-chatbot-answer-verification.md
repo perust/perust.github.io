@@ -11,6 +11,8 @@ AI 챗봇은 검색보다 빠르게 답을 정리해줍니다. 문제는 빠른 
 
 최근 국내 뉴스 검색에서도 AI 환각, 검색 요약 오류, 챗봇 건강 상담, RAG 기반 사실성 같은 표현이 반복됩니다. 관심이 커진 이유는 단순합니다. AI를 쓰는 사람이 많아질수록 답변 오류도 일상적인 문제로 바뀌기 때문입니다.
 
+![AI 답변 검증 습관 요약 이미지](/images/posts/summary/2026-07-07-ai-chatbot-answer-verification-summary.svg)
+
 ## 핵심 요약
 
 <ul class="issue-list">

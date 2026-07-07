@@ -11,6 +11,8 @@ Gemini 이미지 생성 무료 개방 소식에서 먼저 볼 부분은 “완�
 
 사용자 입장에서는 카드뉴스, 썸네일, 발표 자료용 시안, SNS 이미지 초안을 더 쉽게 만들 수 있습니다. 다만 상업적 사용, 저작권, 얼굴·개인정보, 지역별 제공 범위, 무료 한도는 따로 확인해야 합니다.
 
+![Gemini 이미지 생성 변화 요약 이미지](/images/posts/summary/2026-07-07-gemini-image-generation-free-summary.svg)
+
 ## 핵심 요약
 
 <ul class="issue-list">

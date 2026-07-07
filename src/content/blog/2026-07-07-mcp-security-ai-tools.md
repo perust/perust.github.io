@@ -10,6 +10,8 @@ MCP는 Model Context Protocol의 줄임말입니다. 쉽게 말하면 Claude, Ch
 
 검색창에 질문만 하던 AI가 이제는 파일을 읽고, 깃허브 이슈를 보고, 캘린더나 데이터베이스에 접근하고, 필요한 작업을 실행하는 방향으로 움직이고 있습니다. 그래서 MCP는 편리한 기술이지만 “연결해두면 알아서 해주겠지”로 접근하면 위험합니다. AI에게 연결한 도구는 곧 AI가 접근할 수 있는 권한이 되기 때문입니다.
 
+![MCP와 AI 도구 보안 요약 이미지](/images/posts/summary/2026-07-07-mcp-security-ai-tools-summary.svg)
+
 ## 핵심 요약
 
 <ul class="issue-list">
