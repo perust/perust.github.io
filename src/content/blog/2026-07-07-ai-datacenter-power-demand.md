@@ -171,7 +171,7 @@ AI 데이터센터 전력 수요가 커진다고 해서 모든 전력 관련 기
   <li class="issue-card"><h3>국내 검색·뉴스 흐름</h3><p class="issue-summary"><a href="https://news.google.com/search?q=AI%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%84%BC%ED%84%B0%20%EC%A0%84%EB%A0%A5%20%EC%88%98%EC%9A%94&hl=ko&gl=KR&ceid=KR%3Ako">AI 데이터센터 전력 수요 관련 국내 뉴스 검색</a>에서 전력망, 전력난, 전력기기, 냉각 이슈가 반복되는지 확인했습니다.</p></li>
 </ul>
 
-## 마무리
+## 마지막으로
 
 AI 데이터센터 전력 문제는 “AI가 전기를 많이 먹는다”는 단순한 이야기보다 넓습니다. 실제 쟁점은 전기를 언제, 어디서, 얼마나 안정적으로 공급할 수 있는지입니다.
 

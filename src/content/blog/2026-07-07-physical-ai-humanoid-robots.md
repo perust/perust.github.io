@@ -196,7 +196,7 @@ AI가 실제 생산라인에 들어가면 단순한 사무 자동화보다 생�
   <li class="issue-card"><h3>국내 뉴스 흐름</h3><p class="issue-summary"><a href="https://news.google.com/search?q=%ED%94%BC%EC%A7%80%EC%BB%AC%20AI%20%EB%A1%9C%EB%B4%87%20%EC%A0%9C%EC%A1%B0%EC%97%85&hl=ko&gl=KR&ceid=KR%3Ako">피지컬 AI·로봇·제조업 관련 국내 뉴스 검색</a>에서 경남·전북 메가프로젝트, 휴머노이드, 제조AI 키워드가 반복되는지 확인했습니다.</p></li>
 </ul>
 
-## 마무리
+## 마지막으로
 
 피지컬 AI는 “로봇이 사람처럼 움직인다”는 장면만으로 이해하기에는 넓은 주제입니다. 핵심은 AI가 실제 공간에서 센서를 보고, 장비를 움직이고, 현장의 문제를 해결하는 방향으로 확장된다는 점입니다.
 
