@@ -16,7 +16,7 @@
 <circle cx="1050" cy="110" r="230" fill="#8b5cf6" opacity="0.18"/>
 <circle cx="90" cy="650" r="210" fill="#8b5cf6" opacity="0.12"/>
 <rect x="70" y="64" width="1060" height="592" rx="42" fill="#0b1220" opacity="0.78" filter="url(#shadow)" stroke="#1f2937"/>
-<text x="112" y="136" class="font small" fill="#8b5cf6">slowave summary</text>
+<text x="112" y="136" class="font small" fill="#8b5cf6">lentoludens summary</text>
 <text x="112" y="205" class="font title">MCP와 AI 도구 보안</text>
 <text x="112" y="287" class="font sub">편리한 연결일수록 권한 범위를 작게 잡아야 합니다</text>
 <circle cx="170" cy="500" r="48" fill="#8b5cf6" opacity="0.95"/>

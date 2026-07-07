@@ -16,7 +16,7 @@
 <circle cx="1050" cy="110" r="230" fill="#22c55e" opacity="0.18"/>
 <circle cx="90" cy="650" r="210" fill="#22c55e" opacity="0.12"/>
 <rect x="70" y="64" width="1060" height="592" rx="42" fill="#0b1220" opacity="0.78" filter="url(#shadow)" stroke="#1f2937"/>
-<text x="112" y="136" class="font small" fill="#22c55e">slowave summary</text>
+<text x="112" y="136" class="font small" fill="#22c55e">lentoludens summary</text>
 <text x="112" y="205" class="font title">Gemini 이미지 생성 변화</text>
 <text x="112" y="287" class="font sub">무료 개방은 접근성을 높이지만 조건 확인이 필요합니다</text>
 <circle cx="170" cy="500" r="48" fill="#22c55e" opacity="0.95"/>

@@ -16,7 +16,7 @@
 <circle cx="1050" cy="110" r="230" fill="#f59e0b" opacity="0.18"/>
 <circle cx="90" cy="650" r="210" fill="#f59e0b" opacity="0.12"/>
 <rect x="70" y="64" width="1060" height="592" rx="42" fill="#0b1220" opacity="0.78" filter="url(#shadow)" stroke="#1f2937"/>
-<text x="112" y="136" class="font small" fill="#f59e0b">slowave summary</text>
+<text x="112" y="136" class="font small" fill="#f59e0b">lentoludens summary</text>
 <text x="112" y="205" class="font title">피지컬 AI의 흐름</text>
 <text x="112" y="287" class="font sub">AI가 센서와 로봇을 통해 현장으로 이동합니다</text>
 <circle cx="170" cy="500" r="48" fill="#f59e0b" opacity="0.95"/>

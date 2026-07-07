@@ -16,7 +16,7 @@
 <circle cx="1050" cy="110" r="230" fill="#eab308" opacity="0.18"/>
 <circle cx="90" cy="650" r="210" fill="#eab308" opacity="0.12"/>
 <rect x="70" y="64" width="1060" height="592" rx="42" fill="#0b1220" opacity="0.78" filter="url(#shadow)" stroke="#1f2937"/>
-<text x="112" y="136" class="font small" fill="#eab308">slowave summary</text>
+<text x="112" y="136" class="font small" fill="#eab308">lentoludens summary</text>
 <text x="112" y="205" class="font title">AI 답변 검증 습관</text>
 <text x="112" y="287" class="font sub">빠른 답보다 출처와 날짜 확인이 더 중요합니다</text>
 <circle cx="170" cy="500" r="48" fill="#eab308" opacity="0.95"/>

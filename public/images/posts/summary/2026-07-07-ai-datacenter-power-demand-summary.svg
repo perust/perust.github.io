@@ -16,7 +16,7 @@
 <circle cx="1050" cy="110" r="230" fill="#60a5fa" opacity="0.18"/>
 <circle cx="90" cy="650" r="210" fill="#60a5fa" opacity="0.12"/>
 <rect x="70" y="64" width="1060" height="592" rx="42" fill="#0b1220" opacity="0.78" filter="url(#shadow)" stroke="#1f2937"/>
-<text x="112" y="136" class="font small" fill="#60a5fa">slowave summary</text>
+<text x="112" y="136" class="font small" fill="#60a5fa">lentoludens summary</text>
 <text x="112" y="205" class="font title">AI 데이터센터와 전력 문제</text>
 <text x="112" y="287" class="font sub">전력망·냉각·전력기기가 함께 움직입니다</text>
 <circle cx="170" cy="500" r="48" fill="#60a5fa" opacity="0.95"/>

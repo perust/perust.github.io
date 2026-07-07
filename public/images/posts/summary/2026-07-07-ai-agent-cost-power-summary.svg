@@ -16,7 +16,7 @@
 <circle cx="1050" cy="110" r="230" fill="#38bdf8" opacity="0.18"/>
 <circle cx="90" cy="650" r="210" fill="#38bdf8" opacity="0.12"/>
 <rect x="70" y="64" width="1060" height="592" rx="42" fill="#0b1220" opacity="0.78" filter="url(#shadow)" stroke="#1f2937"/>
-<text x="112" y="136" class="font small" fill="#38bdf8">slowave summary</text>
+<text x="112" y="136" class="font small" fill="#38bdf8">lentoludens summary</text>
 <text x="112" y="205" class="font title">AI 에이전트의 숨은 비용</text>
 <text x="112" y="287" class="font sub">한 번의 답변 뒤에 검색·도구 실행·검증 비용이 붙습니다</text>
 <circle cx="170" cy="500" r="48" fill="#38bdf8" opacity="0.95"/>
