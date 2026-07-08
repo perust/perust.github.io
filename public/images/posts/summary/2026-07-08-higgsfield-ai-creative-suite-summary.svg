@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Higgsfield AI 기능 구조 요약</title>
+  <desc id="desc">Higgsfield AI가 이미지, 영상, 오디오 모델과 Supercomputer, MCP, Studio 워크플로를 연결하는 구조</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#070a12"/>
+      <stop offset="0.5" stop-color="#111827"/>
+      <stop offset="1" stop-color="#06111f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="58%" cy="36%" r="52%">
+      <stop offset="0" stop-color="#a855f7" stop-opacity="0.48"/>
+      <stop offset="0.45" stop-color="#22d3ee" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .brand{font:700 24px 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;letter-spacing:.08em;fill:#93c5fd}
+      .title{font:800 58px 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;fill:#f8fafc}
+      .sub{font:500 26px 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;fill:#cbd5e1}
+      .card{fill:#0f172a;stroke:#334155;stroke-width:1.5}
+      .accent{fill:#38bdf8}
+      .purple{fill:#c084fc}
+      .green{fill:#86efac}
+      .label{font:800 24px 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;fill:#f8fafc}
+      .body{font:500 18px 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;fill:#cbd5e1}
+      .small{font:500 16px 'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;fill:#94a3b8}
+    </style>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+  <g opacity="0.22" stroke="#64748b" stroke-width="1">
+    <path d="M80 160H1120M80 260H1120M80 360H1120M80 460H1120"/>
+    <path d="M220 115V555M420 115V555M620 115V555M820 115V555M1020 115V555"/>
+  </g>
+  <g transform="translate(76 70)">
+    <text class="brand" x="0" y="0">LENTOLUDENS · AI TOOLS</text>
+    <text class="title" x="0" y="78">Higgsfield AI</text>
+    <text class="sub" x="0" y="124">영상·이미지·에이전트 워크플로를 묶은 크리에이티브 스튜디오</text>
+  </g>
+  <g transform="translate(90 210)">
+    <rect class="card" x="380" y="35" width="260" height="150" rx="28"/>
+    <circle cx="430" cy="88" r="24" class="purple" opacity="0.9"/>
+    <text class="label" x="470" y="88">Supercomputer</text>
+    <text class="body" x="410" y="126">목표 설명 → 계획 → 모델 선택</text>
+    <text class="body" x="410" y="154">창작 흐름을 에이전트화</text>
+    <rect class="card" x="40" y="255" width="250" height="130" rx="24"/>
+    <circle cx="82" cy="304" r="20" class="accent"/>
+    <text class="label" x="116" y="309">Image</text>
+    <text class="body" x="70" y="346">제품컷 · 캐릭터 · 편집</text>
+    <rect class="card" x="385" y="255" width="250" height="130" rx="24"/>
+    <circle cx="427" cy="304" r="20" class="green"/>
+    <text class="label" x="461" y="309">Video</text>
+    <text class="body" x="415" y="346">숏폼 · 광고 · 시네마틱</text>
+    <rect class="card" x="730" y="255" width="250" height="130" rx="24"/>
+    <circle cx="772" cy="304" r="20" fill="#fbbf24"/>
+    <text class="label" x="806" y="309">MCP / CLI</text>
+    <text class="body" x="760" y="346">Claude · Hermes Agent 연동</text>
+    <path d="M510 185 C390 215 240 235 165 255" fill="none" stroke="#38bdf8" stroke-width="4" opacity="0.8"/>
+    <path d="M510 185 C510 220 510 235 510 255" fill="none" stroke="#86efac" stroke-width="4" opacity="0.8"/>
+    <path d="M510 185 C640 215 785 235 855 255" fill="none" stroke="#fbbf24" stroke-width="4" opacity="0.8"/>
+  </g>
+  <g transform="translate(76 565)">
+    <rect x="0" y="0" width="1048" height="58" rx="18" fill="#020617" opacity="0.72" stroke="#1e293b"/>
+    <text class="small" x="28" y="36">핵심 체크: 크레딧 비용 · 모델별 품질 차이 · 저작권/초상권 · 웹/MCP 기능 차이</text>
+  </g>
+</svg>
