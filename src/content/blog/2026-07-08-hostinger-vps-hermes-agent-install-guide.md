@@ -1,13 +1,13 @@
 ---
-title: "Hostinger VPS에 Hermes Agent 설치하기"
-description: "Hostinger VPS에서 Hermes Agent를 설치하고 모델, 도구, 게이트웨이, 예약 작업까지 운영하는 과정을 Ubuntu 기준으로 정리했습니다."
+title: "Hostinger VPS에서 Hermes Agent 원클릭 설치하기"
+description: "Hostinger VPS의 Application Catalog로 Hermes Agent를 배포하고, 모델·CLI·도구·게이트웨이·예약 작업까지 설정하는 방법을 정리했습니다."
 date: "2026-07-08"
 category: "AI"
 tags: ["HermesAgent", "Hostinger", "VPS", "AI에이전트", "자동화", "서버운영", "Slack"]
 ---
 
-Hermes Agent를 제대로 쓰려면 개인 PC보다 VPS가 더 편한 경우가 많습니다. PC를 꺼도 에이전트가 계속 살아 있어야 하고, Slack·Discord·Telegram 같은 메신저에서 부르고, 정해진 시간에 자동 보고서를 보내게 만들려면 24시간 켜져 있는 서버가 필요하기 때문입니다.<br />
-Hostinger VPS는 이런 용도로 시작하기 쉬운 선택지입니다. 일반 웹호스팅이 아니라 Ubuntu VPS를 만들고, 그 안에 Hermes Agent를 설치하면 개인용 AI 작업 서버처럼 쓸 수 있습니다.
+Hostinger VPS에서는 Hermes Agent를 처음부터 수동 설치할 필요가 없습니다. Hostinger가 Application Catalog에서 Hermes Agent 배포 옵션을 제공하기 때문에, VPS 대시보드에서 앱을 선택하면 Docker 컨테이너와 필요한 서비스가 기본으로 만들어지는 흐름입니다.<br />
+따라서 이 글의 핵심은 “Ubuntu 서버에 처음부터 직접 설치”가 아니라, Hostinger의 Hermes Agent 원클릭 배포를 먼저 쓰고 이후 CLI·모델 제공자·도구·Gateway·Cron을 어떻게 설정해 개인 AI 작업 서버로 운영할지입니다.
 
 ![Hostinger VPS에서 Hermes Agent를 운영하는 구조](/images/posts/summary/2026-07-08-hostinger-vps-hermes-agent-install-guide-summary.svg)
 
@@ -16,18 +16,18 @@ Hostinger VPS는 이런 용도로 시작하기 쉬운 선택지입니다. 일반
 <ul class="issue-list">
   <li class="issue-card">
     <span class="issue-badge">전제</span>
-    <h3>공유 호스팅이 아니라 VPS</h3>
-    <p class="issue-summary">Hermes Agent는 터미널 실행, 파일 접근, 백그라운드 게이트웨이, 예약 작업이 필요합니다. 따라서 일반 웹호스팅보다 Ubuntu VPS 환경이 맞습니다.</p>
+    <h3>Hostinger Application Catalog 사용</h3>
+    <p class="issue-summary">Hostinger VPS에는 Hermes Agent를 Application Catalog에서 배포하는 옵션이 있습니다. 앱을 선택하면 Docker 기반으로 Hermes Agent 컨테이너와 관련 서비스가 자동 생성됩니다.</p>
   </li>
   <li class="issue-card">
     <span class="issue-badge">설치</span>
-    <h3>공식 설치 스크립트로 시작</h3>
-    <p class="issue-summary">Linux 기준 설치 명령은 <code>curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash</code>입니다. 설치 후 <code>hermes setup</code> 또는 <code>hermes model</code>로 모델 제공자를 설정합니다.</p>
+    <h3>수동 설치보다 원클릭 배포 먼저</h3>
+    <p class="issue-summary">기본 흐름은 hPanel의 VPS 대시보드에서 Hermes Agent를 선택하고 관리자 계정, 모델/API 키 또는 Hostinger 제공 크레딧을 설정한 뒤 배포하는 것입니다.</p>
   </li>
   <li class="issue-card">
     <span class="issue-badge">운영</span>
-    <h3>Gateway와 Cron까지 연결</h3>
-    <p class="issue-summary">메신저에서 Hermes를 부르려면 <code>hermes gateway setup</code>을 사용합니다. 반복 보고서나 서버 점검은 <code>hermes cron</code>으로 예약할 수 있습니다.</p>
+    <h3>CLI에서 설정을 마무리</h3>
+    <p class="issue-summary">배포 후에는 Hostinger Docker Manager의 터미널에서 Hermes CLI를 열고, 첫 실행 설정·모델 제공자·도구·Gateway·Cron을 필요에 맞게 조정합니다.</p>
   </li>
 </ul>
 
@@ -83,111 +83,66 @@ Hermes Agent는 로컬 노트북에도 설치할 수 있습니다. 하지만 자
   <div><dt>선택 사항</dt><dd>Slack·Discord·Telegram 봇 토큰, 도메인, Webhook/API 서버용 리버스 프록시 설정입니다.</dd></div>
 </div>
 
-Hermes 공식 문서에 따르면 Linux 설치에서 핵심 전제는 Git이며, Linux에서는 `curl`과 `xz-utils`도 준비되어 있어야 합니다. Python, Node.js, ripgrep, ffmpeg 등은 설치 스크립트가 자동으로 처리합니다.
+Hostinger 공식 안내에 따르면 Hermes Agent는 Hostinger VPS의 Application Catalog를 통해 배포할 수 있습니다. 이 방식은 Docker 기반으로 Hermes Agent 컨테이너와 Traefik 같은 필요한 서비스를 자동 생성하므로, 일반적인 Linux 수동 설치보다 먼저 고려할 기본 경로입니다.
+
+<https://www.hostinger.com/support/how-to-get-started-with-hermes-agent-on-hostinger-vps/>
+
+수동 설치가 필요한 경우에는 Hermes 공식 설치 문서의 Linux 설치 명령을 사용할 수 있습니다. 다만 Hostinger VPS에서 새로 시작한다면 Application Catalog 배포가 더 단순합니다.
 
 <https://hermes-agent.nousresearch.com/docs/getting-started/installation>
 
 ## 전체 설치 흐름
 
-Hostinger VPS 기준 흐름은 아래와 같습니다.
+Hostinger VPS 기준 기본 흐름은 아래와 같습니다.
+
+<div class="routine-kv">
+  <div><dt>1단계</dt><dd>Hostinger hPanel에서 VPS를 만들고 대시보드로 이동합니다.</dd></div>
+  <div><dt>2단계</dt><dd>Application Catalog 또는 Docker Manager에서 Hermes Agent를 선택합니다.</dd></div>
+  <div><dt>3단계</dt><dd>배포 중 관리자 username/password를 정하고, nexos.ai·Oxylabs 크레딧 또는 직접 보유한 API 키를 입력합니다.</dd></div>
+  <div><dt>4단계</dt><dd>Deploy를 누르면 Hostinger가 Hermes Agent 컨테이너와 필요한 서비스를 자동으로 만들고 시작합니다.</dd></div>
+  <div><dt>5단계</dt><dd>Docker Manager에서 Hermes 프로젝트의 Terminal 버튼을 눌러 Hermes CLI를 엽니다.</dd></div>
+</div>
+
+이 방식이면 SSH로 서버에 접속해 처음부터 패키지를 설치하고 `curl` 설치 스크립트를 실행하는 과정이 기본 경로가 아닙니다. SSH 접속과 수동 설치는 커스텀 운영, 디버깅, 또는 Hostinger 기본 앱 배포를 쓰지 않을 때의 보조 경로로 보면 됩니다.
+
+## Hostinger에서 Hermes Agent 배포
+
+Hostinger 공식 지원 문서 기준으로 Hermes Agent는 VPS의 Application Catalog에서 선택해 배포합니다. 배포 중에는 관리자 계정 정보를 정하고, 필요하면 모델이나 웹 추출용 API 키를 넣습니다.
+
+<div class="routine-grid">
+  <section class="routine-card">
+    <h3>Application Catalog</h3>
+    <p>VPS 대시보드에서 Hermes Agent를 검색하고 배포합니다. Hostinger는 이 과정을 원클릭 앱 배포 흐름으로 제공합니다.</p>
+  </section>
+  <section class="routine-card">
+    <h3>Docker 기반 실행</h3>
+    <p>배포가 끝나면 Hermes Agent는 Docker 컨테이너 안에서 실행됩니다. Hostinger 안내에 따르면 필요한 서비스도 함께 생성됩니다.</p>
+  </section>
+  <section class="routine-card">
+    <h3>내장 크레딧 또는 직접 API 키</h3>
+    <p>nexos.ai 크레딧을 쓰면 Claude, Gemini, GPT 계열 모델을 단일 게이트웨이로 연결할 수 있고, Oxylabs 크레딧은 웹 검색·데이터 추출에 사용할 수 있습니다. 직접 보유한 API 키를 넣는 것도 가능합니다.</p>
+  </section>
+  <section class="routine-card">
+    <h3>터미널에서 CLI 접근</h3>
+    <p>배포 후 Docker Manager에서 Hermes 프로젝트 옆 Terminal 버튼을 눌러 CLI를 열고 첫 설정을 마무리합니다.</p>
+  </section>
+</div>
+
+## SSH와 수동 설치가 필요한 경우
+
+대부분은 Application Catalog 배포로 시작하면 됩니다. 그래도 직접 서버를 만지고 싶거나, 별도 사용자·디렉터리·서비스 구조로 운영하려면 SSH 접속 후 수동 설치를 선택할 수 있습니다.
 
 ```bash
 ssh root@YOUR_VPS_IP
 apt update && apt upgrade -y
 apt install -y curl git xz-utils sudo ca-certificates ufw
-adduser hermes
-usermod -aG sudo hermes
-su - hermes
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 source ~/.bashrc
 hermes setup
 hermes
 ```
 
-이 흐름만 끝내도 CLI에서 Hermes Agent를 사용할 수 있습니다. 이후 운영 목적에 따라 도구, 게이트웨이, 예약 작업, 방화벽, 도메인을 추가하면 됩니다.
-
-## SSH 접속
-
-Hostinger VPS를 만든 뒤에는 서버 IP로 접속합니다. 예시는 다음과 같습니다.
-
-```bash
-ssh root@YOUR_VPS_IP
-```
-
-SSH 키를 쓰는 경우에는 다음처럼 접속합니다.
-
-```bash
-ssh -i ~/.ssh/your-key.pem root@YOUR_VPS_IP
-```
-
-처음 접속한 뒤에는 서버 패키지를 업데이트합니다.
-
-```bash
-apt update && apt upgrade -y
-```
-
-기본 패키지를 설치합니다.
-
-```bash
-apt install -y curl git xz-utils sudo ca-certificates ufw
-```
-
-## 전용 사용자 생성
-
-root 계정으로 계속 운영하는 것보다 전용 사용자를 만드는 편이 안전합니다. 여기서는 사용자명을 `hermes`로 두겠습니다.
-
-```bash
-adduser hermes
-usermod -aG sudo hermes
-```
-
-이후 해당 사용자로 전환합니다.
-
-```bash
-su - hermes
-```
-
-앞으로는 가능하면 이 사용자로 접속합니다.
-
-```bash
-ssh hermes@YOUR_VPS_IP
-```
-
-## Hermes Agent 설치
-
-Hermes Agent의 Linux 설치 명령은 공식 문서 기준 다음과 같습니다.
-
-```bash
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-```
-
-설치가 끝나면 셸 설정을 다시 불러옵니다.
-
-```bash
-source ~/.bashrc
-```
-
-설치 확인은 다음으로 합니다.
-
-```bash
-hermes --version
-```
-
-문제가 있으면 진단 명령을 먼저 실행합니다.
-
-```bash
-hermes doctor
-```
-
-일반 사용자 설치 기준 주요 경로는 다음과 같습니다.
-
-<div class="routine-kv">
-  <div><dt>실행 파일</dt><dd><code>~/.local/bin/hermes</code></dd></div>
-  <div><dt>Hermes 데이터</dt><dd><code>~/.hermes/</code></dd></div>
-  <div><dt>설정 파일</dt><dd><code>~/.hermes/config.yaml</code></dd></div>
-  <div><dt>API 키 파일</dt><dd><code>~/.hermes/.env</code></dd></div>
-  <div><dt>로그</dt><dd><code>~/.hermes/logs/</code></dd></div>
-</div>
+수동 설치는 커스터마이징 자유도가 높지만, Hostinger가 제공하는 Docker Manager·원클릭 업데이트·컨테이너 로그 확인 흐름과는 운영 방식이 달라질 수 있습니다. 처음 쓰는 사용자에게는 Hostinger 기본 Hermes Agent 앱 배포가 더 맞습니다.
 
 ## 모델 제공자 설정
 
@@ -564,21 +519,17 @@ Hermes Agent를 Hostinger VPS에 올려 쓰는 방식은 단순한 설치 팁을
 
 ## 마지막으로
 
-Hostinger VPS에 Hermes Agent를 설치하면 개인용 AI 작업 서버를 비교적 쉽게 만들 수 있습니다. 처음에는 CLI에서 한 줄 질문으로 시작하고, 익숙해지면 Gateway와 Cron을 붙여 메신저 자동화 서버로 확장하면 됩니다.
+Hostinger VPS에서 Hermes Agent를 시작할 때는 수동 설치 명령부터 찾기보다, 먼저 Hostinger의 Application Catalog 배포 옵션을 확인하는 것이 맞습니다. 기본 배포는 Docker 컨테이너와 필요한 서비스를 만들어주고, 사용자는 Docker Manager의 터미널에서 Hermes CLI 설정을 이어가면 됩니다.
 
-가장 짧은 설치 흐름은 아래와 같습니다.
+정리하면 가장 짧은 흐름은 다음입니다.
 
-```bash
-ssh root@YOUR_VPS_IP
-apt update && apt upgrade -y
-apt install -y curl git xz-utils sudo ca-certificates ufw
-adduser hermes
-usermod -aG sudo hermes
-su - hermes
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
-source ~/.bashrc
-hermes setup
-hermes
-```
+<div class="routine-kv">
+  <div><dt>1</dt><dd>Hostinger VPS 구매 또는 생성</dd></div>
+  <div><dt>2</dt><dd>VPS 대시보드에서 Application Catalog 열기</dd></div>
+  <div><dt>3</dt><dd>Hermes Agent 선택 후 관리자 계정과 API 키·크레딧 설정</dd></div>
+  <div><dt>4</dt><dd>Deploy로 Docker 컨테이너 자동 생성</dd></div>
+  <div><dt>5</dt><dd>Docker Manager Terminal에서 Hermes CLI 실행</dd></div>
+  <div><dt>6</dt><dd>모델, 도구, Gateway, Cron을 목적에 맞게 조정</dd></div>
+</div>
 
-여기까지 끝나면 Hostinger VPS 위에서 Hermes Agent를 실행할 준비가 됩니다. 이후에는 모델 제공자, 도구, 메신저, 예약 작업을 하나씩 붙이면서 자신에게 맞는 개인 AI 운영 환경으로 키워가면 됩니다.
+수동 설치 명령은 커스텀 서버 구성이나 별도 운영 방식이 필요할 때의 대안입니다. 처음 쓰는 사용자라면 Hostinger 기본 Hermes Agent 앱 배포로 시작하고, 이후 메신저 연동과 예약 작업을 하나씩 붙이는 방식이 가장 덜 헷갈립니다.
