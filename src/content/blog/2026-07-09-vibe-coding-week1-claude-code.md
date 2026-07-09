@@ -16,19 +16,34 @@ tags: ["바이브코딩", "Claude", "ClaudeCode", "아티팩트", "프롬프트"
 
 <ul class="issue-list">
   <li class="issue-card">
-    <span class="issue-badge">기본 미션</span>
+    <span class="issue-badge">1주차 기본 미션</span>
     <h3>PROJECT 1. 나의 첫 웹페이지 만들고 캡처하기</h3>
     <p class="issue-summary">클로드 아티팩트에서 시작 홈페이지를 만들고, 날씨·뉴스·시계·검색바·할 일 목록까지 단계적으로 추가했습니다.</p>
   </li>
   <li class="issue-card">
-    <span class="issue-badge">기본 미션</span>
+    <span class="issue-badge">1주차 기본 미션</span>
     <h3>Ch 01-1, 01-2 확인 문제 풀이</h3>
     <p class="issue-summary">바이브 코딩, AI 코딩 도구 유형, 아티팩트, LLM 발전 과정, 게시와 사용자 지정 개념을 확인했습니다.</p>
   </li>
   <li class="issue-card">
-    <span class="issue-badge">추가 미션</span>
+    <span class="issue-badge">1주차 추가 미션</span>
     <h3>클로드 아티팩트 커스터마이즈</h3>
     <p class="issue-summary">생성된 웹페이지를 두 번 이상 수정하며, 단순 생성보다 반복 개선이 중요하다는 점을 확인했습니다.</p>
+  </li>
+  <li class="issue-card">
+    <span class="issue-badge">2주차 기본 미션</span>
+    <h3>p.66, p.80-81 확인 문제 풀이</h3>
+    <p class="issue-summary">좋은 프롬프트의 조건, 5W1H, PRD에서 중요한 질문, 4단계 제작 전략과 섹션 이름의 장점을 확인했습니다.</p>
+  </li>
+  <li class="issue-card">
+    <span class="issue-badge">2주차 실습 미션</span>
+    <h3>AI에게 디자인 수정 요청하고 캡처하기</h3>
+    <p class="issue-summary">포트폴리오 웹페이지에서 디자인 수정 요청을 진행하고, 결과 화면을 캡처했습니다.</p>
+  </li>
+  <li class="issue-card">
+    <span class="issue-badge">2주차 정리 미션</span>
+    <h3>웹페이지 구조 한 문단으로 정리</h3>
+    <p class="issue-summary">웹페이지는 뼈대, 기능, 디자인으로 이루어진 구조라고 이해했습니다.</p>
   </li>
 </ul>
 
@@ -155,6 +170,24 @@ Ch 01-2 확인 문제에서는 다음 내용을 확인했습니다.
   <li class="issue-card"><h3>AI 발전 흐름</h3><p class="issue-summary">뉴럴 넷 → 딥러닝 → 트랜스포머 → LLM</p></li>
   <li class="issue-card"><h3>CLI 모델 비용</h3><p class="issue-summary">CLI 모델은 별도 도구 비용보다 모델 사용료 중심으로 이해</p></li>
   <li class="issue-card"><h3>클로드 핵심 기능</h3><p class="issue-summary">아티팩트, 게시, 사용자 지정</p></li>
+</ul>
+
+2주차 확인 문제에서는 프롬프트와 PRD, 포트폴리오 웹사이트 제작 흐름을 다시 점검했습니다.
+
+<div class="routine-kv">
+  <div><dt>좋은 프롬프트의 조건이 아닌 것</dt><dd>창의성: 결과물이 놀라움을 주도록 요구한다.</dd></div>
+  <div><dt>프롬프트와 PRD의 공통 원칙</dt><dd>5W1H. Why, Who, What, When, Where, How 여섯 가지 질문으로 구성된다.</dd></div>
+  <div><dt>PRD에서 특히 강조할 질문</dt><dd>What, How. 무엇을 만들지와 어떻게 작동해야 하는지를 구체화해야 한다.</dd></div>
+  <div><dt>더 좋은 프롬프트</dt><dd>“오늘의 날씨와 주요 뉴스를 보여 주는 나만의 시작 홈페이지를 만들고 싶어.” 필요한 사항을 구체적으로 명시하고 있기 때문이다.</dd></div>
+</div>
+
+p.80-81 확인 문제에서는 4단계 전략과 단계별 요청의 중요성을 확인했습니다.
+
+<ul class="issue-list">
+  <li class="issue-card"><h3>4단계 전략의 순서</h3><p class="issue-summary">기본 틀 잡기 → 핵심 기능 넣기 → 디자인 입히기 → 완성도 점검</p></li>
+  <li class="issue-card"><h3>효과적인 프롬프트 작성 방법이 아닌 것</h3><p class="issue-summary">모든 기능을 한 번에 요청하여 시간을 절약한다.</p></li>
+  <li class="issue-card"><h3>섹션에 고유한 이름을 붙이는 이유</h3><p class="issue-summary">수정할 위치를 정확히 지정하기 위해서다. 자동으로 디자인이 개선되는 것은 아니다.</p></li>
+  <li class="issue-card"><h3>내가 이해한 웹페이지 구조</h3><p class="issue-summary">웹페이지는 뼈대, 기능, 디자인으로 이루어진 구조다.</p></li>
 </ul>
 
 ## 이번 주 느낀 점
