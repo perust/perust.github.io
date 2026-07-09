@@ -14,20 +14,20 @@ type WorkItem = {
 const activeProjects = [
   {
     meta: ['Product', 'Pre-public'],
-    title: '회고/리뷰 노트 제품',
-    desc: '하루와 선택을 돌아보고 패턴을 발견하는 기록 도구를 만들고 있습니다. 지금은 공개 전 단계라 핵심 흐름을 다듬고 있습니다.',
+    title: '회고/리뷰 노트 도구',
+    desc: '하루를 적는 데서 끝나지 않고, 나중에 내가 왜 그런 선택을 했는지 다시 볼 수 있는 도구를 만들고 있습니다. 아직은 공개 전입니다.',
     tags: ['React', 'Supabase', 'UX Writing'],
   },
   {
     meta: ['Data', 'Pre-public'],
     title: 'SOXL Analyzer',
-    desc: '감정 대신 데이터로 투자를 확인할 수 있도록 분석 화면을 만들고 있습니다. 실제 계좌 흐름과 방법론을 검증하는 중이라 아직 공개 전입니다.',
+    desc: 'SOXL 매매를 감으로만 보지 않으려고 만든 분석 도구입니다. 실제 계좌 흐름에 맞춰 계속 고치는 중이라 아직 공개 전입니다.',
     tags: ['Python', 'Streamlit', 'Decision support'],
   },
   {
     meta: ['Automation', 'Lab'],
     title: 'AI 업무 자동화 실험',
-    desc: 'n8n, Claude Code, Hermes Agent를 연결해 리서치·문서화·배포 흐름을 자동화하는 실험을 쌓고 있습니다.',
+    desc: '반복되는 리서치, 정리, 배포 일을 줄이려고 n8n과 AI 도구를 이것저것 연결해보고 있습니다.',
     tags: ['n8n', 'AI agents', 'Ops'],
   },
 ];
@@ -36,22 +36,22 @@ const workStack: WorkItem[] = [
   {
     type: 'Pre-public',
     year: '2026',
-    title: '회고/리뷰 노트 제품',
-    desc: '하루 기록을 다음 행동으로 이어지게 만드는 제품 실험. 공개 가능한 버전이 준비되면 이 자리에서 바로 연결합니다.',
+    title: '회고/리뷰 노트 도구',
+    desc: '하루 기록을 나중에 다시 꺼내볼 수 있게 만드는 도구입니다. 공개할 만한 버전이 되면 여기서 바로 연결해둘 예정입니다.',
     status: '공개 전',
   },
   {
     type: 'Pre-public',
     year: '2026',
     title: 'SOXL Analyzer',
-    desc: '투자 판단을 데이터로 확인하기 위한 분석 프로그램. 현재는 비공개 검증 중이며, 공개 가능한 산출물부터 순서대로 올립니다.',
+    desc: 'SOXL 매매를 데이터로 다시 확인하려고 만든 분석 프로그램입니다. 지금은 비공개로 검증하고 있습니다.',
     status: '공개 전',
   },
   {
     type: 'Lab',
     year: '2026',
     title: '제작 기록 블로그',
-    desc: '프로젝트 제작기, AI 자동화, 투자 데이터 실험을 글로 정리하는 공개 기록 공간입니다.',
+    desc: '만들어본 것, 막힌 것, 다시 써먹을 만한 내용을 블로그에 남기고 있습니다.',
     href: '/blog/',
     status: '연결됨',
   },
@@ -59,7 +59,7 @@ const workStack: WorkItem[] = [
     type: 'Profile',
     year: '2026',
     title: 'GitHub 작업 허브',
-    desc: '공개 저장소와 앞으로 공개될 프로그램 작업물을 이어서 확인할 수 있는 GitHub 프로필입니다.',
+    desc: '공개 저장소와 앞으로 열어둘 작업물을 이어서 볼 수 있는 GitHub 프로필입니다.',
     href: 'https://github.com/perust',
     external: true,
     status: 'GitHub',
@@ -157,7 +157,7 @@ const workStack: WorkItem[] = [
 const itemTarget = (item: WorkItem) => item.external || item.href?.startsWith('/homepage') || item.href?.startsWith('/study') ? '_blank' : undefined;
 const itemRel = (item: WorkItem) => itemTarget(item) ? 'noopener noreferrer' : undefined;
 const site = Astro.site ?? new URL('https://perust.github.io');
-const workDescription = 'lentoludens의 공개 전 제품 실험, GitHub 작업 허브, 예전 웹 퍼블리싱 작업까지 한 번에 쌓아보는 작업 아카이브.';
+const workDescription = '지금 만드는 프로그램, GitHub 작업물, 예전 웹 퍼블리싱 실습을 한곳에 모아둔 작업 아카이브.';
 const workLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -172,10 +172,10 @@ const workLd = {
     <section class="hero section-shell" aria-labelledby="work-hero-title">
       <div class="hero-copy">
         <p class="eyebrow">Work · Program · Archive</p>
-        <h1 id="work-hero-title">작업 중인 프로그램과<br />지난 작업을 한곳에 쌓습니다.</h1>
-        <p class="hero-description">주 작업물은 아직 공개 전입니다. 대신 이 페이지를 작업 허브로 두고, 공개 가능한 프로그램·기록·예전 실습물을 <strong>Archive &amp; lab</strong> 위에 계속 쌓아 전체 흐름을 볼 수 있게 정리합니다.</p>
+        <h1 id="work-hero-title">지금 만드는 것부터<br />예전 작업까지 한곳에 모아둡니다.</h1>
+        <p class="hero-description">아직 공개하지 못한 작업물이 많습니다. 공개할 수 있는 프로그램, 제작 기록, 예전 실습물부터 <strong>Archive &amp; Lab</strong>에 하나씩 올려두려고 합니다.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#stack">전체 작업 스택 보기</a>
+          <a class="button primary" href="#stack">작업물 전체 보기</a>
           <a class="button secondary" href="#projects">공개 전 작업 보기</a>
           <a class="button secondary" href="https://github.com/perust" target="_blank" rel="noopener noreferrer">GitHub 열기</a>
         </div>
@@ -183,24 +183,24 @@ const workLd = {
       <aside class="hero-card" aria-label="작업 허브 요약">
         <div class="status-pill"><span></span> 공개 전 작업 정리 중</div>
         <dl class="profile-list">
-          <div><dt>방향</dt><dd>아이디어 → 프로그램 → 기록</dd></div>
-          <div><dt>현재</dt><dd>주요 제품은 비공개 검증 단계</dd></div>
+          <div><dt>방향</dt><dd>아이디어를 실제로 써볼 수 있게 만들기</dd></div>
+          <div><dt>현재</dt><dd>주요 작업물은 공개 준비 중</dd></div>
           <div><dt>스택</dt><dd>React · Python · Supabase · Astro · AI-assisted build</dd></div>
         </dl>
       </aside>
     </section>
 
     <section id="focus" class="section-shell split-section" aria-labelledby="focus-title">
-      <div><p class="section-kicker">Current focus</p><h2 id="focus-title">요즘의 초점</h2></div>
+      <div><p class="section-kicker">Current focus</p><h2 id="focus-title">요즘 신경 쓰는 것</h2></div>
       <div class="focus-grid">
-        <article class="focus-card"><span class="card-index">01</span><h3>프로그램으로 연결되는 홈페이지</h3><p>블로그와 포트폴리오를 분리하지 않고, 실제로 작업 중인 프로그램과 공개 가능한 산출물을 이어서 보여줍니다.</p></article>
-        <article class="focus-card"><span class="card-index">02</span><h3>공개 전 작업도<br />흐름은 남기기</h3><p>아직 공개할 수 없는 핵심 작업물은 상태를 분명히 표시하고, 공개 가능한 기록과 GitHub 허브로 연결합니다.</p></article>
-        <article class="focus-card"><span class="card-index">03</span><h3>전체 작업을 쌓아보기</h3><p>예전 실습물 위에 현재의 제품 실험을 계속 올려, 시간이 지날수록 작업물 전체를 한눈에 볼 수 있게 만듭니다.</p></article>
+        <article class="focus-card"><span class="card-index">01</span><h3>소개에서 작업으로 이어지게</h3><p>홈페이지가 소개로만 끝나지 않고, 제가 실제로 만들고 있는 것들까지 이어졌으면 합니다.</p></article>
+        <article class="focus-card"><span class="card-index">02</span><h3>아직 못 보여줘도<br />자리는 남겨두기</h3><p>아직 보여주기 어려운 작업도 있지만, 나중에 올려둘 자리는 미리 만들어두려고 합니다.</p></article>
+        <article class="focus-card"><span class="card-index">03</span><h3>작업의 흐름 남겨두기</h3><p>예전 실습부터 지금 만드는 것까지 이어서 남겨두면, 시간이 지나도 전체 흐름이 보일 것 같습니다.</p></article>
       </div>
     </section>
 
     <section id="projects" class="section-shell" aria-labelledby="projects-title">
-      <div class="section-heading"><p class="section-kicker">Pre-public programs</p><h2 id="projects-title">현재 진행 중인 작업</h2><p>지금 주 작업물은 공개 전입니다. 완성도와 공개 범위를 정리한 뒤, 이 페이지에서 바로 들어갈 수 있게 연결해둘 예정입니다.</p></div>
+      <div class="section-heading"><p class="section-kicker">Pre-public programs</p><h2 id="projects-title">지금 만들고 있는 것들</h2><p>요즘 만들고 있는 것들은 아직 공개 전입니다. 공개해도 괜찮겠다 싶을 때, 여기에서 바로 볼 수 있게 연결해두려고 합니다.</p></div>
       <div class="project-grid">
         {activeProjects.map((project, index) => (
           <article class={`project-card ${index === 0 ? 'featured' : ''}`}>
@@ -214,7 +214,7 @@ const workLd = {
     </section>
 
     <section id="stack" class="section-shell" aria-labelledby="stack-title">
-      <div class="section-heading"><p class="section-kicker">Archive & lab</p><h2 id="stack-title">전체 작업 스택</h2><p>새 작업물을 위에 추가하고, 예전 웹 퍼블리싱·자바스크립트 실습은 아래에 그대로 남깁니다. 공개 전 작업은 상태를 표시하고, 공개된 작업은 바로 열 수 있게 연결했습니다.</p></div>
+      <div class="section-heading"><p class="section-kicker">Archive &amp; lab</p><h2 id="stack-title">작업물 전체 보기</h2><p>새로 만든 것은 위에 올리고, 예전에 만들었던 웹 퍼블리싱·자바스크립트 실습은 아래에 그대로 남겨둡니다. 공개 전 작업은 공개 전이라고 표시해두었습니다.</p></div>
       <div class="stack-list">
         {workStack.map((item) => {
           const card = <>
@@ -237,12 +237,12 @@ const workLd = {
     </section>
 
     <section id="principles" class="section-shell principles" aria-labelledby="principles-title">
-      <div class="section-heading compact"><p class="section-kicker">Principles</p><h2 id="principles-title">일하는 기준</h2></div>
-      <ol class="principle-list"><li><strong>명확하게 생각하기</strong><span>좋은 결과는 문제를 제대로 이름 붙이는 데서 시작한다고 믿습니다.</span></li><li><strong>작게 만들고 빠르게 배우기</strong><span>큰 계획보다 작동하는 첫 버전과 사용자 피드백을 우선합니다.</span></li><li><strong>효율은 자유를 만든다</strong><span>자동화와 도구화로 시간을 되찾고 더 중요한 선택에 에너지를 씁니다.</span></li><li><strong>기록으로 나를 업데이트하기</strong><span>생각, 감정, 결과를 남겨 다음 결정의 품질을 높입니다.</span></li></ol>
+      <div class="section-heading compact"><p class="section-kicker">Notes</p><h2 id="principles-title">작업할 때 자주 생각하는 것</h2></div>
+      <ol class="principle-list"><li><strong>일단 작게 만들기</strong><span>머릿속에만 두면 계속 흐려져서, 작은 화면이라도 먼저 만들어보려고 합니다.</span></li><li><strong>직접 써보면서 고치기</strong><span>처음부터 완벽하게 잡기보다 실제로 써보면서 부족한 부분을 찾는 편입니다.</span></li><li><strong>반복되는 일은 줄이기</strong><span>계속 반복하는 일은 자동화하거나 도구로 빼두려고 합니다.</span></li><li><strong>기록 남겨두기</strong><span>나중에 다시 봤을 때 왜 그렇게 만들었는지 알 수 있게 남겨두는 편이 좋습니다.</span></li></ol>
     </section>
 
     <section id="contact" class="section-shell contact" aria-labelledby="contact-title">
-      <div><p class="section-kicker">Contact</p><h2 id="contact-title">지금도 뭔가를 만들고 있습니다.</h2><p>공개 가능한 코드는 GitHub에, 제작 과정과 배운 점은 블로그에 계속 쌓고 있습니다. 협업, 피드백, 문의는 <a href="mailto:zyqn@naver.com">zyqn@naver.com</a>으로 연락해 주세요.</p></div>
+      <div><p class="section-kicker">Contact</p><h2 id="contact-title">계속 만들고 있습니다.</h2><p>공개할 수 있는 코드는 GitHub에 올리고, 만들면서 배운 것은 블로그에 남기고 있습니다. 피드백이나 문의는 <a href="mailto:zyqn@naver.com">zyqn@naver.com</a>으로 보내주세요.</p></div>
       <a class="button primary" href="mailto:zyqn@naver.com">이메일 보내기</a>
     </section>
   </main>

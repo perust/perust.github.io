@@ -27,7 +27,7 @@ const categories = Array.from(new Set(posts.map((post) => post.category))).sort(
 const tags = Array.from(new Set(posts.flatMap((post) => post.tags ?? []))).slice(0, 10);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
-const homeDescription = 'IT, AI, 경제, 재테크, 자기계발 등 관심 분야의 정보를 정리하고 직접 만들어보는 lentoludens 블로그.';
+const homeDescription = 'IT, AI, 경제, 재테크, 자기계발처럼 관심 있는 것을 정리하고 직접 만들어보는 lentoludens 블로그.';
 const websiteLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -38,15 +38,15 @@ const websiteLd = {
   publisher: { '@type': 'Organization', name: 'lentoludens', url: site.toString() },
 };
 ---
-<BaseLayout title="lentoludens · 관심 분야를 정리하고 만들어보는 블로그" description={homeDescription} jsonLd={websiteLd}>
+<BaseLayout title="lentoludens · 관심 있는 것을 정리하고 만들어보는 블로그" description={homeDescription} jsonLd={websiteLd}>
   <main id="top">
     <section class="hero section-shell" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow">IT · AI · Economy · Self-improvement</p>
-        <h1 id="hero-title">IT, AI, 경제, 재테크,<br />자기계발 등 관심 분야의 정보를 정리하고 직접 만들어봅니다.</h1>
-        <p class="hero-description">블로그 글은 홈에 모아두고, 포트폴리오와 예전 작업은 <a class="inline-link" href="/work/">작업</a> 메뉴에서 볼 수 있습니다.</p>
+        <h1 id="hero-title">관심 있는 IT, AI, 경제 이야기를 정리하고<br />직접 만들어본 것들도 함께 남깁니다.</h1>
+        <p class="hero-description">글은 홈과 블로그에 모아두고, 만들고 있는 프로그램과 예전 작업은 <a class="inline-link" href="/work/">작업</a> 메뉴에 쌓아두고 있습니다.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#curated-posts">추천 글 보기</a>
+          <a class="button primary" href="#curated-posts">먼저 읽어볼 글</a>
           <a class="button secondary" href="/blog/">전체 글</a>
           <a class="button secondary" href="/work/">작업 보기</a>
         </div>
@@ -67,8 +67,8 @@ const websiteLd = {
     <section id="curated-posts" class="section-shell" aria-labelledby="curated-title">
       <div class="section-heading">
         <p class="section-kicker">Editor’s picks</p>
-        <h2 id="curated-title">지금 뜨는 글</h2>
-        <p>최근 글 중에서 먼저 읽기 좋은 글을 모았습니다.</p>
+        <h2 id="curated-title">먼저 읽어볼 글</h2>
+        <p>최근 글 중에서 비교적 먼저 꺼내볼 만한 글을 모았습니다.</p>
       </div>
       <div class="blog-grid home-curation-grid">
         {secondaryPosts.map((post) => (
@@ -86,7 +86,7 @@ const websiteLd = {
       <div>
         <p class="section-kicker">Themes</p>
         <h2 id="themes-title">관심사별로 읽기</h2>
-        <p class="theme-note">블로그 전체를 훑기 전, 관심 있는 축부터 들어갈 수 있게 정리했습니다.</p>
+        <p class="theme-note">전체 글을 훑기 전에 관심 있는 주제부터 볼 수 있게 묶어두었습니다.</p>
       </div>
       <div class="focus-grid">
         {categories.slice(0, 3).map((category) => (
@@ -102,7 +102,7 @@ const websiteLd = {
     <section class="section-shell" aria-labelledby="recent-title">
       <div class="section-heading">
         <p class="section-kicker">Recent notes</p>
-        <h2 id="recent-title">최근에 더 쓴 글</h2>
+        <h2 id="recent-title">최근 글</h2>
       </div>
       <div class="post-list home-recent-list">
         {recentPosts.map((post) => (
