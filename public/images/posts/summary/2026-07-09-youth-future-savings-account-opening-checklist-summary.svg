@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">청년미래적금 심사와 계좌개설 흐름</title>
+  <desc id="desc">청년미래적금 신청 후 7월 24일 심사 결과, 7월 27일부터 8월 7일까지 계좌개설, 월 납입과 우대금리 확인 흐름을 정리한 lentoludens summary 이미지</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101827"/>
+      <stop offset="0.52" stop-color="#172554"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#020617" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="1010" cy="90" r="180" fill="#38bdf8" opacity="0.14"/>
+  <circle cx="160" cy="610" r="220" fill="#14b8a6" opacity="0.16"/>
+  <text x="76" y="86" fill="#a7f3d0" font-size="26" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif" font-weight="700">lentoludens summary</text>
+  <text x="76" y="145" fill="#f8fafc" font-size="48" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif" font-weight="800">청년미래적금</text>
+  <text x="76" y="204" fill="#f8fafc" font-size="48" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif" font-weight="800">신청 후 확인할 일정</text>
+  <text x="78" y="248" fill="#dbeafe" font-size="23" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">심사 결과 → 계좌개설 → 납입·우대금리 확인</text>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="318" width="314" height="210" rx="28" fill="#f8fafc" opacity="0.97"/>
+    <rect x="443" y="318" width="314" height="210" rx="28" fill="#f8fafc" opacity="0.97"/>
+    <rect x="814" y="318" width="314" height="210" rx="28" fill="#f8fafc" opacity="0.97"/>
+  </g>
+
+  <g font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">
+    <text x="104" y="370" fill="#0f766e" font-size="24" font-weight="800">7월 24일</text>
+    <text x="104" y="414" fill="#0f172a" font-size="31" font-weight="800">심사 결과</text>
+    <text x="104" y="458" fill="#334155" font-size="21">개별 안내 확인</text>
+    <text x="104" y="492" fill="#334155" font-size="21">소득·가구요건 결과</text>
+
+    <text x="475" y="370" fill="#2563eb" font-size="24" font-weight="800">7월 27일–8월 7일</text>
+    <text x="475" y="414" fill="#0f172a" font-size="31" font-weight="800">계좌개설</text>
+    <text x="475" y="458" fill="#334155" font-size="21">통과자만 개설</text>
+    <text x="475" y="492" fill="#334155" font-size="21">은행·우대조건 비교</text>
+
+    <text x="846" y="370" fill="#7c3aed" font-size="24" font-weight="800">개설 이후</text>
+    <text x="846" y="414" fill="#0f172a" font-size="31" font-weight="800">월 납입 관리</text>
+    <text x="846" y="458" fill="#334155" font-size="21">1천 원부터 50만 원</text>
+    <text x="846" y="492" fill="#334155" font-size="21">우대금리·신용점수</text>
+  </g>
+
+  <path d="M392 423H438" stroke="#bae6fd" stroke-width="10" stroke-linecap="round"/>
+  <path d="M763 423H809" stroke="#bae6fd" stroke-width="10" stroke-linecap="round"/>
+  <path d="M427 405l20 18-20 18" fill="none" stroke="#bae6fd" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M798 405l20 18-20 18" fill="none" stroke="#bae6fd" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <text x="76" y="604" fill="#cbd5e1" font-size="21" font-family="Noto Sans KR, Apple SD Gothic Neo, sans-serif">금융위원회 발표 기준 · 계좌개설 전 청년도약계좌 해지 주의</text>
+</svg>
