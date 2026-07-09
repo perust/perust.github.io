@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#F7F8FC" />
+<title>나의 시작 페이지</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%234F6DF5'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='white' stroke-width='6'/%3E%3Cpath d='M50 32 V50 L62 58' fill='none' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas-1:#F6F7FC; --canvas-2:#FDFEFF;
+    --surface:#FFFFFF; --line:#ECEEF5;
+    --ink:#1B1E28; --muted:#6B7385; --faint:#9AA1B2;
+    --accent:#4F6DF5; --accent-2:#6E5CF0;
+    --warm:#FF8A5B; --cool:#33B5C9;
+    --wx:var(--accent);
+    --shadow:0 1px 2px rgba(20,24,40,.04), 0 8px 24px rgba(20,24,40,.06);
+    --shadow-lg:0 2px 4px rgba(20,24,40,.05), 0 18px 48px rgba(20,24,40,.10);
+    --radius:22px; --radius-sm:14px;
+    --font:"Pretendard Variable","Pretendard",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:"Space Grotesk",var(--font);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font);
+    color:var(--ink);
+    min-height:100vh;
+    background:
+      radial-gradient(1200px 700px at 88% -8%, rgba(79,109,245,.07), transparent 60%),
+      radial-gradient(1000px 600px at -6% 108%, rgba(110,92,240,.06), transparent 60%),
+      linear-gradient(180deg, var(--canvas-1), var(--canvas-2));
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+
+  .wrap{
+    max-width:1060px;
+    margin:0 auto;
+    padding:clamp(28px,5vw,64px) clamp(18px,4vw,40px) 56px;
+    animation:rise .5s ease both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  .eyebrow{
+    font-size:12px; font-weight:700; letter-spacing:.09em;
+    color:var(--muted); text-transform:uppercase;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+  /* ---------- Hero ---------- */
+  .topbar{margin-bottom:clamp(22px,5vw,40px);}
+  .hero{margin-bottom:clamp(26px,4vw,38px);}
+  .greet{
+    font-size:clamp(1.05rem,2.4vw,1.4rem);
+    font-weight:600; margin:0 0 6px;
+    background:linear-gradient(92deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    width:fit-content;
+  }
+  .clock{
+    font-family:var(--mono);
+    font-weight:500;
+    font-size:clamp(3.6rem,11vw,7.2rem);
+    line-height:.9;
+    letter-spacing:-.01em;
+    font-feature-settings:"tnum" 1;
+    display:flex; align-items:baseline; gap:2px;
+    color:var(--ink);
+  }
+  .clock .colon{color:var(--accent);animation:blink 2s step-end infinite;padding:0 .02em;}
+  .clock .sec{
+    font-size:.34em; color:var(--faint); font-weight:500;
+    margin-left:.28em; align-self:flex-end; margin-bottom:.28em;
+    letter-spacing:.02em;
+  }
+  @keyframes blink{0%,55%{opacity:1;}56%,100%{opacity:.28;}}
+
+  .progress{margin-top:22px;display:flex;align-items:center;gap:14px;max-width:520px;}
+  .track{flex:1;height:4px;border-radius:99px;background:#E7E9F2;overflow:hidden;}
+  .fill{height:100%;transform-origin:left;transform:scaleX(0);
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    transition:transform .6s cubic-bezier(.4,0,.2,1);}
+  .progress .pct{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap;}
+
+  /* ---------- Search ---------- */
+  .search{margin-bottom:clamp(26px,4vw,40px);}
+  .segments{display:flex;justify-content:flex-end;gap:4px;margin-bottom:10px;}
+  .seg{
+    font-size:12.5px;font-weight:600;color:var(--muted);
+    padding:6px 12px;border-radius:99px;transition:.15s;
+  }
+  .seg:hover{color:var(--ink);background:rgba(79,109,245,.07);}
+  .seg[aria-pressed="true"]{color:#fff;background:var(--accent);box-shadow:0 4px 12px rgba(79,109,245,.28);}
+
+  .searchbar{
+    display:flex;align-items:center;gap:12px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:99px;
+    padding:14px 18px;
+    box-shadow:var(--shadow);
+    transition:box-shadow .2s, border-color .2s;
+  }
+  .searchbar:focus-within{border-color:rgba(79,109,245,.55);box-shadow:0 0 0 4px rgba(79,109,245,.12),var(--shadow-lg);}
+  .searchbar svg{flex:none;color:var(--faint);}
+  .searchbar input{
+    flex:1;border:none;outline:none;background:none;
+    font-size:clamp(15px,2vw,17px);color:var(--ink);font-family:inherit;
+  }
+  .searchbar input::placeholder{color:var(--faint);}
+  .go{
+    flex:none;font-size:13px;font-weight:600;color:#fff;
+    background:linear-gradient(92deg,var(--accent),var(--accent-2));
+    padding:9px 16px;border-radius:99px;transition:.15s;
+  }
+  .go:hover{filter:brightness(1.05);transform:translateY(-1px);}
+  .go:active{transform:translateY(0);}
+
+  /* ---------- Grid ---------- */
+  .board{display:flex;flex-direction:column;gap:clamp(14px,2vw,20px);margin-bottom:clamp(18px,3vw,26px);}
+  .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .sec-head .eyebrow{flex:none;}
+  .sec-spacer{flex:1;}
+  .drag{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:30px;color:#C4CAD8;cursor:grab;border-radius:8px;transition:.15s;touch-action:none;}
+  .drag:hover{color:var(--muted);background:#F2F4FA;}
+  .drag:active{cursor:grabbing;}
+  .drag:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .sec-tools{flex:none;display:flex;align-items:center;gap:2px;}
+  .reorder-controls{display:none;align-items:center;gap:2px;}
+  .board.reordering .reorder-controls{display:inline-flex;}
+  .board.reordering [data-act="reorder"]{color:var(--accent);background:rgba(79,109,245,.12);}
+  .icon-btn{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border-radius:8px;color:var(--muted);transition:.15s;}
+  .icon-btn:hover{color:var(--accent);background:rgba(79,109,245,.08);}
+  .icon-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .icon-btn svg{transition:transform .2s;}
+  .card.collapsed .collapse svg{transform:rotate(-90deg);}
+  .card.collapsed .sec-body{display:none;}
+  .card.dragging{opacity:.55;box-shadow:var(--shadow-lg);border-color:rgba(79,109,245,.5);}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px 22px 20px;
+    animation:rise .55s ease both;
+  }
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+
+  /* Weather */
+  .wx-loc{flex:1;text-align:right;font-size:13px;color:var(--muted);font-weight:500;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .wx-main{display:flex;align-items:center;gap:16px;margin:4px 0 14px;}
+  .wx-emoji{font-size:clamp(46px,7vw,58px);line-height:1;filter:drop-shadow(0 6px 12px rgba(20,24,40,.12));}
+  .wx-temp{font-family:var(--mono);font-size:clamp(2.6rem,6vw,3.4rem);font-weight:500;line-height:1;color:var(--wx);font-feature-settings:"tnum" 1;}
+  .wx-temp .deg{color:var(--faint);}
+  .wx-cond{font-size:14px;font-weight:600;color:var(--ink);}
+  .wx-sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .wx-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .chip{font-size:12px;color:var(--muted);background:#F5F6FB;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-weight:500;}
+  .chip b{color:var(--ink);font-weight:600;}
+  .wx-hours{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;border-top:1px solid var(--line);padding-top:14px;}
+  .hour{text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .hour .h{font-size:11.5px;color:var(--muted);font-weight:500;}
+  .hour .e{font-size:20px;line-height:1;}
+  .hour .t{font-family:var(--mono);font-size:13.5px;font-weight:500;color:var(--ink);}
+
+  /* News */
+  .refresh{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);padding:6px 10px;border-radius:99px;transition:.15s;}
+  .refresh:hover{color:var(--accent);background:rgba(79,109,245,.07);}
+  .refresh svg{transition:transform .2s;}
+  .refresh.spinning svg{animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .news-list{display:flex;flex-direction:column;}
+  .news-item{
+    display:block;padding:12px 10px;border-radius:12px;margin:0 -10px;
+    transition:background .15s;border-bottom:1px solid var(--line);
+  }
+  .news-list .news-item:last-child{border-bottom:none;}
+  .news-item:hover{background:#F5F6FB;}
+  .news-title{
+    font-size:14.5px;font-weight:600;line-height:1.45;color:var(--ink);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .news-item:hover .news-title{color:var(--accent);}
+  .news-meta{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:12px;color:var(--faint);}
+  .news-meta .src{color:var(--muted);font-weight:600;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .news-meta .sep{width:3px;height:3px;border-radius:50%;background:var(--faint);flex:none;}
+
+  /* skeleton + states */
+  .skel{background:linear-gradient(100deg,#EFF1F7 30%,#F7F8FC 50%,#EFF1F7 70%);background-size:200% 100%;animation:sh 1.3s infinite;border-radius:8px;}
+  @keyframes sh{to{background-position:-200% 0;}}
+  .skel-line{height:15px;margin:11px 0;}
+  .state{font-size:13.5px;color:var(--muted);line-height:1.6;padding:8px 2px;}
+  .state button{color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+
+  /* Quick links */
+  .links{display:flex;flex-wrap:wrap;gap:10px;}
+  .link{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--surface);border:1px solid var(--line);border-radius:99px;
+    padding:9px 15px 9px 13px;font-size:13.5px;font-weight:600;color:var(--ink);
+    box-shadow:var(--shadow);transition:.16s;
+  }
+  .link:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:rgba(79,109,245,.4);}
+  .link .ico{font-size:16px;line-height:1;}
+  .home-link{position:fixed;left:18px;bottom:18px;z-index:20;display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:99px;background:rgba(255,255,255,.82);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--muted);font-size:12.5px;font-weight:700;backdrop-filter:blur(14px);}
+  .home-link:hover{color:var(--accent);transform:translateY(-1px);box-shadow:var(--shadow-lg);}
+  .home-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  /* To-do */
+  .todo-add{display:flex;gap:8px;}
+  .todo-add input{flex:1;border:1px solid var(--line);background:#F8F9FD;border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--ink);outline:none;transition:.15s;}
+  .todo-add input:focus{border-color:rgba(79,109,245,.5);background:#fff;box-shadow:0 0 0 3px rgba(79,109,245,.1);}
+  .todo-add input::placeholder{color:var(--faint);}
+  .add-btn{flex:none;width:40px;border-radius:12px;background:linear-gradient(92deg,var(--accent),var(--accent-2));color:#fff;font-size:22px;font-weight:400;line-height:1;display:flex;align-items:center;justify-content:center;transition:.15s;}
+  .add-btn:hover{filter:brightness(1.05);transform:translateY(-1px);}
+  .add-btn:active{transform:translateY(0);}
+  .todo-list{display:flex;flex-direction:column;margin-top:6px;}
+  .todo-item{display:flex;align-items:center;gap:10px;padding:9px 6px;border-radius:10px;margin:0 -6px;transition:background .15s;}
+  .todo-item:hover{background:#F6F7FB;}
+  .check{flex:none;width:20px;height:20px;border-radius:50%;border:2px solid #CDD3E1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;}
+  .check:hover{border-color:var(--accent);}
+  .check:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .todo-item.done .check{background:var(--accent);border-color:var(--accent);}
+  .check svg{opacity:0;transition:opacity .15s;color:#fff;}
+  .todo-item.done .check svg{opacity:1;}
+  .todo-text{flex:1;font-size:14px;color:var(--ink);line-height:1.4;word-break:break-word;}
+  .todo-item.done .todo-text{color:var(--faint);text-decoration:line-through;}
+  .todo-del{flex:none;opacity:0;color:var(--faint);font-size:20px;line-height:1;padding:0 4px;border-radius:6px;transition:.15s;}
+  .todo-item:hover .todo-del,.todo-del:focus-visible{opacity:1;}
+  .todo-del:hover{color:#E5484D;background:rgba(229,72,77,.09);}
+  .todo-empty{font-size:13px;color:var(--faint);text-align:center;padding:16px 0 8px;}
+  .todo-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);}
+  .todo-foot:empty{display:none;}
+  .todo-foot button{font-size:12px;color:var(--muted);font-weight:600;padding:4px 8px;border-radius:8px;transition:.15s;}
+  .todo-foot button:hover{color:var(--accent);background:rgba(79,109,245,.07);}
+
+  /* sub-tasks */
+  .todo-item .badge{flex:none;font-size:11px;font-weight:600;color:var(--muted);background:#EEF0F7;border-radius:99px;padding:2px 8px;font-variant-numeric:tabular-nums;}
+  .todo-item.done .badge{color:#fff;background:var(--accent);}
+  .sub-add-btn{flex:none;opacity:0;color:var(--faint);font-size:17px;line-height:1;padding:1px 6px;border-radius:6px;transition:.15s;}
+  .todo-item:hover .sub-add-btn,.sub-add-btn:focus-visible{opacity:1;}
+  .sub-add-btn:hover{color:var(--accent);background:rgba(79,109,245,.09);}
+  .sub-wrap{margin:1px 0 4px 12px;padding-left:14px;border-left:2px solid #EBEEF6;display:flex;flex-direction:column;}
+  .sub-item{display:flex;align-items:center;gap:9px;padding:6px;border-radius:9px;margin:0 -6px;transition:background .15s;}
+  .sub-item:hover{background:#F6F7FB;}
+  .check.sm{width:16px;height:16px;}
+  .check.sm svg{width:9px;height:9px;}
+  .sub-text{flex:1;font-size:13px;color:var(--ink);line-height:1.4;word-break:break-word;}
+  .sub-item.done .sub-text{color:var(--faint);text-decoration:line-through;}
+  .todo-del.sm{font-size:17px;}
+  .sub-add{margin-top:2px;}
+  .sub-input{width:100%;border:1px solid var(--line);background:#F8F9FD;border-radius:9px;padding:7px 10px;font-size:12.5px;font-family:inherit;color:var(--ink);outline:none;transition:.15s;}
+  .sub-input:focus{border-color:rgba(79,109,245,.5);background:#fff;box-shadow:0 0 0 3px rgba(79,109,245,.1);}
+  .sub-input::placeholder{color:var(--faint);}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important;}
+    .fill{transition:none;}
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+
+    <div class="topbar"><span class="eyebrow"><span class="dot"></span><span id="date">불러오는 중…</span></span></div>
+
+    <section class="hero">
+      <p class="greet" id="greet">안녕하세요</p>
+      <div class="clock" aria-label="현재 시각">
+        <span id="hh">--</span><span class="colon">:</span><span id="mm">--</span><span class="sec" id="sec">--</span>
+      </div>
+      <div class="progress">
+        <div class="track"><div class="fill" id="progFill"></div></div>
+        <span class="pct" id="progPct"></span>
+      </div>
+    </section>
+
+    <section class="search">
+      <div class="segments" role="group" aria-label="검색 엔진">
+        <button class="seg" data-engine="google" aria-pressed="true">Google</button>
+        <button class="seg" data-engine="naver" aria-pressed="false">Naver</button>
+        <button class="seg" data-engine="youtube" aria-pressed="false">YouTube</button>
+      </div>
+      <div class="searchbar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="q" type="text" placeholder="검색어나 주소를 입력하세요" aria-label="검색" autocomplete="off" autofocus />
+        <button class="go" id="goBtn">검색</button>
+      </div>
+    </section>
+
+    <section class="board" id="board">
+
+      <!-- Weather -->
+      <div class="card section" id="wxCard" data-key="weather">
+        <div class="sec-head">
+          <span class="eyebrow"><span class="dot"></span>날씨</span>
+          <div class="wx-loc" id="wxLoc">위치 확인 중…</div>
+          <div class="sec-tools">
+            <span class="reorder-controls">
+              <button class="drag" data-act="drag" aria-label="드래그하여 이동" title="드래그하여 이동"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>
+              <button class="icon-btn" data-act="up" aria-label="위로 이동" title="위로 이동"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
+              <button class="icon-btn" data-act="down" aria-label="아래로 이동" title="아래로 이동"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
+            </span>
+            <button class="icon-btn reorder-toggle" data-act="reorder" aria-pressed="false" aria-label="순서 변경" title="순서 변경"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16"/><path d="m3 8 4-4 4 4"/><path d="M17 20V4"/><path d="m13 16 4 4 4-4"/></svg></button>
+            <button class="icon-btn collapse" data-act="collapse" aria-label="접기/펼치기" title="접기/펼치기" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          </div>
+        </div>
+        <div class="sec-body">
+          <div id="wxBody">
+            <div class="wx-main"><div class="skel" style="width:56px;height:56px;border-radius:14px"></div><div style="flex:1"><div class="skel skel-line" style="width:50%"></div><div class="skel skel-line" style="width:35%"></div></div></div>
+            <div class="skel skel-line" style="width:70%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- To-do -->
+      <div class="card section" id="todoCard" data-key="todo">
+        <div class="sec-head">
+          <span class="eyebrow"><span class="dot"></span>오늘의 할 일</span>
+          <span class="sec-spacer"></span>
+          <div class="sec-tools">
+            <span class="reorder-controls">
+              <button class="drag" data-act="drag" aria-label="드래그하여 이동" title="드래그하여 이동"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>
+              <button class="icon-btn" data-act="up" aria-label="위로 이동" title="위로 이동"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
+              <button class="icon-btn" data-act="down" aria-label="아래로 이동" title="아래로 이동"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
+            </span>
+            <button class="icon-btn reorder-toggle" data-act="reorder" aria-pressed="false" aria-label="순서 변경" title="순서 변경"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16"/><path d="m3 8 4-4 4 4"/><path d="M17 20V4"/><path d="m13 16 4 4 4-4"/></svg></button>
+            <button class="icon-btn collapse" data-act="collapse" aria-label="접기/펼치기" title="접기/펼치기" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          </div>
+        </div>
+        <div class="sec-body">
+          <div class="todo-add">
+            <input id="todoInput" type="text" placeholder="할 일을 입력하고 Enter" aria-label="할 일 추가" autocomplete="off" />
+            <button class="add-btn" id="addBtn" aria-label="추가">+</button>
+          </div>
+          <div class="todo-list" id="todoList"></div>
+          <div class="todo-foot" id="todoFoot"></div>
+        </div>
+      </div>
+
+      <!-- News -->
+      <div class="card section" id="newsCard" data-key="news">
+        <div class="sec-head">
+          <span class="eyebrow"><span class="dot"></span>기술 뉴스</span>
+          <span class="sec-spacer"></span>
+          <div class="sec-tools">
+            <button class="icon-btn refresh" id="refreshBtn" aria-label="뉴스 새로고침" title="새로고침"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></button>
+            <span class="reorder-controls">
+              <button class="drag" data-act="drag" aria-label="드래그하여 이동" title="드래그하여 이동"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>
+              <button class="icon-btn" data-act="up" aria-label="위로 이동" title="위로 이동"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>
+              <button class="icon-btn" data-act="down" aria-label="아래로 이동" title="아래로 이동"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
+            </span>
+            <button class="icon-btn reorder-toggle" data-act="reorder" aria-pressed="false" aria-label="순서 변경" title="순서 변경"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16"/><path d="m3 8 4-4 4 4"/><path d="M17 20V4"/><path d="m13 16 4 4 4-4"/></svg></button>
+            <button class="icon-btn collapse" data-act="collapse" aria-label="접기/펼치기" title="접기/펼치기" aria-expanded="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          </div>
+        </div>
+        <div class="sec-body">
+          <div class="news-list" id="newsBody">
+            <div class="skel skel-line" style="width:92%"></div>
+            <div class="skel skel-line" style="width:78%"></div>
+            <div class="skel skel-line" style="width:88%"></div>
+            <div class="skel skel-line" style="width:70%"></div>
+            <div class="skel skel-line" style="width:85%"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="links" id="links">
+      <a class="link" href="https://mail.google.com"><span class="ico">✉️</span>Gmail</a>
+      <a class="link" href="https://calendar.google.com"><span class="ico">📅</span>캘린더</a>
+      <a class="link" href="https://github.com"><span class="ico">🐙</span>GitHub</a>
+      <a class="link" href="https://www.notion.so"><span class="ico">📝</span>Notion</a>
+      <a class="link" href="https://www.youtube.com"><span class="ico">▶️</span>YouTube</a>
+      <a class="link" href="https://map.naver.com"><span class="ico">🗺️</span>지도</a>
+    </section>
+
+  </main>
+
+<script>
+(function(){
+  "use strict";
+  const $=(s,r=document)=>r.querySelector(s);
+  const pad=n=>String(n).padStart(2,"0");
+  const WEEK=["일","월","화","수","목","금","토"];
+
+  /* ---------------- Clock ---------------- */
+  function greeting(h){
+    if(h<5) return "고요한 새벽이에요";
+    if(h<12) return "좋은 아침이에요";
+    if(h<17) return "좋은 오후예요";
+    if(h<21) return "편안한 저녁이에요";
+    return "고요한 밤이에요";
+  }
+  const hh=$("#hh"),mm=$("#mm"),sec=$("#sec"),greet=$("#greet"),dateEl=$("#date"),fill=$("#progFill"),pct=$("#progPct");
+  function tick(){
+    const d=new Date();
+    hh.textContent=pad(d.getHours());
+    mm.textContent=pad(d.getMinutes());
+    sec.textContent=pad(d.getSeconds());
+    greet.textContent=greeting(d.getHours());
+    dateEl.textContent=`${WEEK[d.getDay()]}요일 · ${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+    const into=d.getHours()*3600+d.getMinutes()*60+d.getSeconds();
+    const p=into/86400;
+    fill.style.transform=`scaleX(${p})`;
+    pct.textContent=`하루의 ${Math.round(p*100)}%`;
+  }
+  tick(); setInterval(tick,1000);
+
+  /* ---------------- Search ---------------- */
+  const ENGINES={
+    google:"https://www.google.com/search?q=",
+    naver:"https://search.naver.com/search.naver?query=",
+    youtube:"https://www.youtube.com/results?search_query="
+  };
+  let engine="google";
+  const input=$("#q");
+  document.querySelectorAll(".seg").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      engine=btn.dataset.engine;
+      document.querySelectorAll(".seg").forEach(b=>b.setAttribute("aria-pressed", b===btn?"true":"false"));
+      input.focus();
+    });
+  });
+  function runSearch(){
+    const v=input.value.trim();
+    if(!v) return;
+    let url;
+    if(/^https?:\/\//i.test(v)) url=v;
+    else if(!/\s/.test(v) && /^[^\s]+\.[^\s]{2,}(\/.*)?$/.test(v)) url="https://"+v;
+    else url=ENGINES[engine]+encodeURIComponent(v);
+    window.location.href=url;
+  }
+  input.addEventListener("keydown",e=>{ if(e.key==="Enter" && !(e.isComposing||e.keyCode===229)) runSearch(); });
+  $("#goBtn").addEventListener("click",runSearch);
+
+  /* ---------------- Weather ---------------- */
+  const WMO={
+    0:["맑음","☀️"],1:["대체로 맑음","🌤️"],2:["부분적 흐림","⛅"],3:["흐림","☁️"],
+    45:["안개","🌫️"],48:["짙은 안개","🌫️"],
+    51:["약한 이슬비","🌦️"],53:["이슬비","🌦️"],55:["짙은 이슬비","🌧️"],
+    56:["어는 이슬비","🌧️"],57:["어는 이슬비","🌧️"],
+    61:["약한 비","🌦️"],63:["비","🌧️"],65:["강한 비","🌧️"],
+    66:["어는 비","🌧️"],67:["어는 비","🌧️"],
+    71:["약한 눈","🌨️"],73:["눈","🌨️"],75:["강한 눈","❄️"],77:["싸락눈","🌨️"],
+    80:["소나기","🌦️"],81:["소나기","🌧️"],82:["강한 소나기","🌧️"],
+    85:["소나기눈","🌨️"],86:["강한 소나기눈","❄️"],
+    95:["뇌우","⛈️"],96:["우박 뇌우","⛈️"],99:["강한 뇌우","⛈️"]
+  };
+  function wxInfo(code){ return WMO[code]||["알 수 없음","🌡️"]; }
+  function accentFor(code){
+    if(code===0||code===1) return "var(--warm)";
+    if(code===2) return "#EAA53C";
+    if(code===3||code===45||code===48) return "#7C8598";
+    if([71,73,75,77,85,86].includes(code)) return "var(--cool)";
+    return "var(--accent)";
+  }
+  function getPosition(){
+    return new Promise((res,rej)=>{
+      if(!navigator.geolocation) return rej();
+      navigator.geolocation.getCurrentPosition(
+        p=>res(p.coords),
+        ()=>rej(),
+        {enableHighAccuracy:false,timeout:6000,maximumAge:600000}
+      );
+    });
+  }
+  async function reverseName(lat,lon){
+    try{
+      const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=ko`);
+      const j=await r.json();
+      return j.city||j.locality||j.principalSubdivision||"현재 위치";
+    }catch(e){ return "현재 위치"; }
+  }
+  async function getWeather(){
+    let lat=37.5665, lon=126.9780, name="서울", usedFallback=true;
+    try{ const c=await getPosition(); lat=c.latitude; lon=c.longitude; usedFallback=false; }catch(e){}
+    try{
+      const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+        +`&current=temperature_2m,apparent_temperature,weather_code,is_day,relative_humidity_2m,wind_speed_10m`
+        +`&hourly=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1&wind_speed_unit=ms`;
+      const data=await (await fetch(url)).json();
+      if(!usedFallback){ name=await reverseName(lat,lon); }
+      renderWeather(data,name,usedFallback);
+    }catch(e){
+      $("#wxLoc").textContent="날씨";
+      $("#wxBody").innerHTML='<div class="state">날씨 정보를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.</div>';
+    }
+  }
+  function renderWeather(d,name,fallback){
+    const c=d.current;
+    const code=c.weather_code;
+    let [label,emoji]=wxInfo(code);
+    if(c.is_day===0 && (code===0||code===1)) emoji="🌙";
+    const accent=accentFor(code);
+    document.documentElement.style.setProperty("--wx",accent);
+    $("#wxLoc").textContent = name + (fallback ? " · 기본 위치" : "");
+
+    // next 5 hours
+    const now=new Date();
+    let start=0;
+    for(let i=0;i<d.hourly.time.length;i++){ if(new Date(d.hourly.time[i])>=now){ start=i; break; } }
+    let hoursHtml="";
+    for(let i=start;i<Math.min(start+5,d.hourly.time.length);i++){
+      const ht=new Date(d.hourly.time[i]);
+      const [,he]=wxInfo(d.hourly.weather_code[i]);
+      hoursHtml+=`<div class="hour"><span class="h">${ht.getHours()}시</span><span class="e">${he}</span><span class="t">${Math.round(d.hourly.temperature_2m[i])}°</span></div>`;
+    }
+
+    $("#wxBody").innerHTML=`
+      <div class="wx-main">
+        <div class="wx-emoji">${emoji}</div>
+        <div>
+          <div class="wx-temp">${Math.round(c.temperature_2m)}<span class="deg">°</span></div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div class="wx-cond">${label}</div>
+          <div class="wx-sub">체감 ${Math.round(c.apparent_temperature)}°</div>
+        </div>
+      </div>
+      <div class="wx-stats">
+        <span class="chip">최고 <b>${Math.round(d.daily.temperature_2m_max[0])}°</b></span>
+        <span class="chip">최저 <b>${Math.round(d.daily.temperature_2m_min[0])}°</b></span>
+        <span class="chip">💧 습도 <b>${c.relative_humidity_2m}%</b></span>
+        <span class="chip">🌬 바람 <b>${Math.round(c.wind_speed_10m)}m/s</b></span>
+      </div>
+      <div class="wx-hours">${hoursHtml}</div>`;
+  }
+
+  /* ---------------- Tech News ---------------- */
+  const FEED="https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=ko&gl=KR&ceid=KR:ko";
+  const PROXIES=[
+    u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+    u=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`
+  ];
+  function fetchText(url,ms){
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(),ms||9000);
+    return fetch(url,{signal:ctrl.signal}).then(r=>{
+      if(!r.ok) throw new Error("bad");
+      return r.text();
+    }).finally(()=>clearTimeout(t));
+  }
+  function parseRss(xml){
+    const doc=new DOMParser().parseFromString(xml,"text/xml");
+    if(doc.querySelector("parsererror")) return [];
+    return [...doc.querySelectorAll("item")].slice(0,8).map(it=>{
+      const raw=(it.querySelector("title")?.textContent||"").trim();
+      const link=it.querySelector("link")?.textContent||"#";
+      const pub=it.querySelector("pubDate")?.textContent||"";
+      let src=it.querySelector("source")?.textContent||"";
+      let title=raw;
+      const idx=raw.lastIndexOf(" - ");
+      if(idx>0){ title=raw.slice(0,idx); if(!src) src=raw.slice(idx+3); }
+      return {title,link,source:src,time:pub?Date.parse(pub):Date.now()};
+    });
+  }
+  async function hackerNews(){
+    const ids=await (await fetch("https://hacker-news.firebaseio.com/v0/topstories.json")).json();
+    const top=ids.slice(0,8);
+    const stories=await Promise.all(top.map(id=>
+      fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(r=>r.json()).catch(()=>null)
+    ));
+    return stories.filter(Boolean).map(s=>({
+      title:s.title, link:s.url||`https://news.ycombinator.com/item?id=${s.id}`,
+      source:"Hacker News", time:(s.time||Date.now()/1000)*1000
+    }));
+  }
+  function relTime(t){
+    const m=Math.floor((Date.now()-t)/60000);
+    if(m<1) return "방금";
+    if(m<60) return m+"분 전";
+    const h=Math.floor(m/60);
+    if(h<24) return h+"시간 전";
+    const day=Math.floor(h/24);
+    if(day<7) return day+"일 전";
+    const d=new Date(t);
+    return `${d.getMonth()+1}월 ${d.getDate()}일`;
+  }
+  function esc(s){ const p=document.createElement("span"); p.textContent=s; return p.innerHTML; }
+  function safeHref(url){
+    try{ const u=new URL(url, location.href); return /^https?:$/.test(u.protocol) ? u.href : "#"; }catch(e){ return "#"; }
+  }
+  function renderNews(items){
+    $("#newsBody").innerHTML=items.slice(0,8).map(n=>`
+      <a class="news-item" href="${esc(safeHref(n.link))}">
+        <div class="news-title">${esc(n.title)}</div>
+        <div class="news-meta">
+          ${n.source?`<span class="src">${esc(n.source)}</span><span class="sep"></span>`:""}
+          <span>${relTime(n.time)}</span>
+        </div>
+      </a>`).join("");
+  }
+  let loadingNews=false;
+  async function getNews(){
+    if(loadingNews) return;
+    loadingNews=true;
+    const btn=$("#refreshBtn"); btn.classList.add("spinning");
+    let items=null;
+    for(const make of PROXIES){
+      try{ const xml=await fetchText(make(FEED)); const p=parseRss(xml); if(p.length){ items=p; break; } }catch(e){}
+    }
+    if(!items){ try{ items=await hackerNews(); }catch(e){} }
+    if(items && items.length){ renderNews(items); }
+    else{
+      $("#newsBody").innerHTML='<div class="state">지금은 뉴스를 불러오지 못했어요. <button id="retryNews">다시 시도</button></div>';
+      const rn=$("#retryNews"); if(rn) rn.addEventListener("click",getNews);
+    }
+    btn.classList.remove("spinning");
+    loadingNews=false;
+  }
+  $("#refreshBtn").addEventListener("click",getNews);
+
+  /* ---------------- To-do list ---------------- */
+  const TODO_KEY="startpage.todos.v1";
+  const store={
+    get(k,f){ try{ const v=localStorage.getItem(k); return v==null?f:JSON.parse(v); }catch(e){ return f; } },
+    set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  };
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+  let todos=(store.get(TODO_KEY,[])||[]).map(t=>({
+    id:t.id||uid(), text:t.text||"", done:!!t.done,
+    subs:Array.isArray(t.subs)?t.subs.map(s=>({id:s.id||uid(),text:s.text||"",done:!!s.done})):[]
+  }));
+  let addingSubFor=null, focusSubFor=null;
+  const todoList=$("#todoList"), todoInput=$("#todoInput"), todoFoot=$("#todoFoot");
+  function saveTodos(){ store.set(TODO_KEY,todos); }
+  const CHK='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+
+  function findParent(id){ return todos.find(t=>t.id===id); }
+  function syncParent(t){ if(t.subs.length) t.done=t.subs.every(s=>s.done); }
+
+  function renderTodos(){
+    if(!todos.length){
+      todoList.innerHTML='<div class="todo-empty">오늘 할 일을 추가해 보세요.</div>';
+      todoFoot.innerHTML=""; return;
+    }
+    todoList.innerHTML=todos.map(t=>{
+      const total=t.subs.length, doneN=t.subs.filter(s=>s.done).length;
+      const subsHtml=t.subs.map(s=>`
+        <div class="sub-item ${s.done?"done":""}" data-id="${s.id}" data-parent="${t.id}">
+          <span class="check sm" data-act="subcheck" role="checkbox" aria-checked="${s.done}" tabindex="0" aria-label="완료 표시">${CHK}</span>
+          <span class="sub-text">${esc(s.text)}</span>
+          <button class="todo-del sm" data-act="subdel" aria-label="삭제">×</button>
+        </div>`).join("");
+      const inputHtml=addingSubFor===t.id
+        ? `<div class="sub-add"><input class="sub-input" data-parent="${t.id}" type="text" placeholder="하위 할 일을 입력하고 Enter" aria-label="하위 할 일 추가" autocomplete="off" /></div>`
+        : "";
+      const showWrap=total>0 || addingSubFor===t.id;
+      return `
+      <div class="todo-item ${t.done?"done":""}" data-id="${t.id}">
+        <span class="check" data-act="check" role="checkbox" aria-checked="${t.done}" tabindex="0" aria-label="완료 표시">${CHK}</span>
+        <span class="todo-text">${esc(t.text)}</span>
+        ${total?`<span class="badge">${doneN}/${total}</span>`:""}
+        <button class="sub-add-btn" data-act="addsub" aria-label="하위 할 일 추가" title="하위 할 일 추가">+</button>
+        <button class="todo-del" data-act="del" aria-label="삭제">×</button>
+      </div>
+      ${showWrap?`<div class="sub-wrap" data-parent="${t.id}">${subsHtml}${inputHtml}</div>`:""}`;
+    }).join("");
+
+    const remaining=todos.filter(t=>!t.done).length;
+    const done=todos.length-remaining;
+    todoFoot.innerHTML=`<span>${remaining}개 남음</span>${done?'<button id="clearDone">완료 지우기</button>':""}`;
+    const cd=$("#clearDone");
+    if(cd) cd.addEventListener("click",()=>{ todos=todos.filter(t=>!t.done); saveTodos(); renderTodos(); });
+
+    if(focusSubFor){
+      const el=todoList.querySelector('.sub-input[data-parent="'+focusSubFor+'"]');
+      if(el) el.focus();
+      focusSubFor=null;
+    }
+  }
+
+  function toggleParent(id){
+    const t=findParent(id); if(!t) return;
+    if(t.subs.length){ const target=!t.subs.every(s=>s.done); t.subs.forEach(s=>s.done=target); t.done=target; }
+    else t.done=!t.done;
+    saveTodos(); renderTodos();
+  }
+  function toggleSub(pid,sid){
+    const t=findParent(pid); if(!t) return;
+    const s=t.subs.find(x=>x.id===sid); if(!s) return;
+    s.done=!s.done; syncParent(t); saveTodos(); renderTodos();
+  }
+
+  todoList.addEventListener("click",e=>{
+    const btn=e.target.closest("[data-act]"); if(!btn) return;
+    const item=e.target.closest("[data-id]"); if(!item) return;
+    const act=btn.dataset.act, id=item.dataset.id, pid=item.dataset.parent;
+    if(act==="check") toggleParent(id);
+    else if(act==="del"){ todos=todos.filter(t=>t.id!==id); if(addingSubFor===id) addingSubFor=null; saveTodos(); renderTodos(); }
+    else if(act==="addsub"){ addingSubFor=id; focusSubFor=id; renderTodos(); }
+    else if(act==="subcheck") toggleSub(pid,id);
+    else if(act==="subdel"){ const t=findParent(pid); if(t){ t.subs=t.subs.filter(s=>s.id!==id); syncParent(t); saveTodos(); renderTodos(); } }
+  });
+
+  todoList.addEventListener("keydown",e=>{
+    const el=e.target;
+    if(el.classList && el.classList.contains("check") && (e.key==="Enter"||e.key===" ")){
+      e.preventDefault();
+      const item=el.closest("[data-id]"); if(!item) return;
+      if(el.classList.contains("sm")) toggleSub(item.dataset.parent,item.dataset.id);
+      else toggleParent(item.dataset.id);
+      return;
+    }
+    if(el.classList && el.classList.contains("sub-input")){
+      const pid=el.dataset.parent;
+      if(e.key==="Enter"){
+        if(e.isComposing||e.keyCode===229) return;
+        const v=el.value.trim();
+        if(v){ const t=findParent(pid); if(t){ t.subs.push({id:uid(),text:v,done:false}); syncParent(t); saveTodos(); focusSubFor=pid; renderTodos(); } }
+      } else if(e.key==="Escape"){ addingSubFor=null; renderTodos(); todoInput.focus(); }
+    }
+  });
+
+  todoList.addEventListener("blur",e=>{
+    const el=e.target;
+    if(!el.classList || !el.classList.contains("sub-input")) return;
+    const pid=el.dataset.parent;
+    setTimeout(()=>{
+      if(addingSubFor!==pid) return;
+      const cur=todoList.querySelector('.sub-input[data-parent="'+pid+'"]');
+      if(cur && document.activeElement===cur) return;
+      if(!cur || !cur.value.trim()){ addingSubFor=null; renderTodos(); }
+    },120);
+  },true);
+
+  function addTodo(){
+    const v=todoInput.value.trim(); if(!v) return;
+    todos.push({id:uid(), text:v, done:false, subs:[]});
+    todoInput.value=""; saveTodos(); renderTodos();
+  }
+  todoInput.addEventListener("keydown",e=>{ if(e.key==="Enter" && !(e.isComposing||e.keyCode===229)) addTodo(); });
+  $("#addBtn").addEventListener("click",addTodo);
+  renderTodos();
+
+  /* ---------------- Board: reorder + collapse ---------------- */
+  const board=$("#board");
+  const ORDER_KEY="startpage.order.v1", COLLAPSE_KEY="startpage.collapsed.v1";
+  function cardByKey(k){ return board.querySelector('[data-key="'+k+'"]'); }
+  function getOrder(){ return [...board.children].filter(c=>c.dataset&&c.dataset.key).map(c=>c.dataset.key); }
+  function saveOrder(){ store.set(ORDER_KEY,getOrder()); }
+
+  const savedOrder=store.get(ORDER_KEY,null);
+  if(Array.isArray(savedOrder)) savedOrder.forEach(k=>{ const c=cardByKey(k); if(c) board.appendChild(c); });
+  const savedCollapsed=store.get(COLLAPSE_KEY,{})||{};
+  Object.keys(savedCollapsed).forEach(k=>{
+    if(savedCollapsed[k]){ const c=cardByKey(k); if(c){ c.classList.add("collapsed"); const b=c.querySelector('[data-act="collapse"]'); if(b) b.setAttribute("aria-expanded","false"); } }
+  });
+
+  function moveCard(card,dir){
+    if(dir<0 && card.previousElementSibling) board.insertBefore(card,card.previousElementSibling);
+    else if(dir>0 && card.nextElementSibling) board.insertBefore(card.nextElementSibling,card);
+    saveOrder();
+  }
+  function toggleCollapse(card){
+    const collapsed=card.classList.toggle("collapsed");
+    const b=card.querySelector('[data-act="collapse"]'); if(b) b.setAttribute("aria-expanded",String(!collapsed));
+    const c=store.get(COLLAPSE_KEY,{})||{}; c[card.dataset.key]=collapsed; store.set(COLLAPSE_KEY,c);
+  }
+  function toggleReorder(){
+    const on=board.classList.toggle("reordering");
+    board.querySelectorAll('[data-act="reorder"]').forEach(b=>b.setAttribute("aria-pressed",String(on)));
+  }
+  board.addEventListener("click",e=>{
+    const btn=e.target.closest("[data-act]"); if(!btn) return;
+    const act=btn.dataset.act;
+    if(act==="reorder"){ toggleReorder(); return; }
+    const card=btn.closest(".card"); if(!card) return;
+    if(act==="up") moveCard(card,-1);
+    else if(act==="down") moveCard(card,1);
+    else if(act==="collapse") toggleCollapse(card);
+  });
+
+  let dragCard=null;
+  board.querySelectorAll(".card").forEach(card=>{
+    const handle=card.querySelector(".drag"); if(!handle) return;
+    const enable=()=>card.setAttribute("draggable","true");
+    handle.addEventListener("mousedown",enable);
+    handle.addEventListener("touchstart",enable,{passive:true});
+    card.addEventListener("dragstart",e=>{
+      dragCard=card; card.classList.add("dragging");
+      e.dataTransfer.effectAllowed="move";
+      try{ e.dataTransfer.setData("text/plain",card.dataset.key); }catch(_){}
+    });
+    card.addEventListener("dragend",()=>{
+      card.classList.remove("dragging"); card.removeAttribute("draggable"); dragCard=null; saveOrder();
+    });
+  });
+  function dragAfter(y){
+    const items=[...board.querySelectorAll(".card:not(.dragging)")];
+    let closest=null, closestOffset=-Infinity;
+    for(const c of items){ const box=c.getBoundingClientRect(); const offset=y-(box.top+box.height/2); if(offset<0 && offset>closestOffset){ closestOffset=offset; closest=c; } }
+    return closest;
+  }
+  board.addEventListener("dragover",e=>{
+    if(!dragCard) return; e.preventDefault();
+    const after=dragAfter(e.clientY);
+    if(after==null){ if(board.lastElementChild!==dragCard) board.appendChild(dragCard); }
+    else if(after!==dragCard){ board.insertBefore(dragCard,after); }
+  });
+  document.addEventListener("mouseup",()=>{
+    board.querySelectorAll('.card[draggable="true"]').forEach(c=>{ if(!c.classList.contains("dragging")) c.removeAttribute("draggable"); });
+  });
+
+  /* ---------------- Init + auto refresh ---------------- */
+  getWeather();
+  getNews();
+  setInterval(getWeather,15*60*1000);
+  setInterval(getNews,15*60*1000);
+})();
+</script>
+<a class="home-link" href="/work/" aria-label="작업 목록으로 돌아가기">← 작업 목록</a>
+</body>
+</html>
