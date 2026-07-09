@@ -68,6 +68,7 @@ h3 {
   top: 0;
   z-index: 10;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -108,13 +109,18 @@ h3 {
 }
 
 .nav {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 0.25rem;
+  min-width: 0;
   color: var(--muted);
   font-size: 0.92rem;
   font-weight: 700;
 }
 
 .nav a {
+  flex: 0 0 auto;
   padding: 0.62rem 0.78rem;
   border-radius: 999px;
   transition: 160ms ease;
@@ -830,6 +836,25 @@ h3 {
   .archive-grid .archive-card:last-child:nth-child(odd) {
     grid-column: 1 / -1;
     max-width: calc(50% - 0.5rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    justify-content: center;
+    border-radius: 26px;
+  }
+
+  .brand {
+    justify-content: center;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .nav {
+    justify-content: center;
+    width: 100%;
+    font-size: 0.86rem;
   }
 }
 
