@@ -1,22 +1,163 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const archiveItems = [
-  ['Contents', '2022', '끝말잇기 게임', 'JavaScript 게임 로직 · 순수 JS 구현', '/contents/word-relay.html'],
-  ['Contents', '2022', '계산기', 'JavaScript 연습 · 사칙연산 구현', '/contents/calculator.html'],
-  ['Contents', '2022', '숫자야구 게임', 'JavaScript 연습 · 게임 로직 구현', '/contents/number-baseball.html'],
-  ['Homepage', '2022', '플라워가든 페이지', 'HTML/CSS · 이미지 중심 레이아웃', '/homepage/flower/index.html'],
-  ['Homepage', '2022', '교보문고 모바일 리디자인', '모바일 UI 실습 · 반응형 리디자인', '/homepage/gyobo/index.html'],
-  ['Homepage', '2022', '더페이스샵 모바일 리디자인', '모바일 UI 실습 · 뷰티 브랜드 리디자인', '/homepage/thefaceshop/index.html'],
-  ['Homepage', '2022', '뚜레쥬르 PC 리디자인', 'PC UI 실습 · 브랜드 사이트 리디자인', '/homepage/tous/index.html'],
-  ['Homepage', '2022', '삼진어묵 메인', '웹 퍼블리싱 · 메인 페이지', '/homepage/3z/index.html'],
-  ['Homepage', '2022', '삼진어묵 서브', '웹 퍼블리싱 · 서브 페이지', '/homepage/3z/sub.html'],
-  ['Study', '2022', '렛츠기릿 자바스크립트', '자바스크립트 입문 · 강의 실습 모음', '/study/ZeroCho-JavaScript-Beginner/index.html'],
-  ['Study', '2022', '반응형 웹 만들기', 'HTML/CSS 스터디 · 반응형 레이아웃', '/study/responsive-web-design2017/index.html'],
+type WorkItem = {
+  type: string;
+  year: string;
+  title: string;
+  desc: string;
+  href?: string;
+  status?: string;
+  external?: boolean;
+};
+
+const activeProjects = [
+  {
+    meta: ['Product', 'Pre-public'],
+    title: '회고/리뷰 노트 제품',
+    desc: '하루와 선택을 돌아보고 패턴을 발견하는 기록 도구를 만들고 있습니다. 지금은 공개 전 단계라 핵심 흐름을 다듬고 있습니다.',
+    tags: ['React', 'Supabase', 'UX Writing'],
+  },
+  {
+    meta: ['Data', 'Pre-public'],
+    title: 'SOXL Analyzer',
+    desc: '감정 대신 데이터로 투자를 확인할 수 있도록 분석 화면을 만들고 있습니다. 실제 계좌 흐름과 방법론을 검증하는 중이라 아직 공개 전입니다.',
+    tags: ['Python', 'Streamlit', 'Decision support'],
+  },
+  {
+    meta: ['Automation', 'Lab'],
+    title: 'AI 업무 자동화 실험',
+    desc: 'n8n, Claude Code, Hermes Agent를 연결해 리서치·문서화·배포 흐름을 자동화하는 실험을 쌓고 있습니다.',
+    tags: ['n8n', 'AI agents', 'Ops'],
+  },
 ];
 
+const workStack: WorkItem[] = [
+  {
+    type: 'Pre-public',
+    year: '2026',
+    title: '회고/리뷰 노트 제품',
+    desc: '하루 기록을 다음 행동으로 이어지게 만드는 제품 실험. 공개 가능한 버전이 준비되면 이 자리에서 바로 연결합니다.',
+    status: '공개 전',
+  },
+  {
+    type: 'Pre-public',
+    year: '2026',
+    title: 'SOXL Analyzer',
+    desc: '투자 판단을 데이터로 확인하기 위한 분석 프로그램. 현재는 비공개 검증 중이며, 공개 가능한 산출물부터 순서대로 올립니다.',
+    status: '공개 전',
+  },
+  {
+    type: 'Lab',
+    year: '2026',
+    title: '제작 기록 블로그',
+    desc: '프로젝트 제작기, AI 자동화, 투자 데이터 실험을 글로 정리하는 공개 기록 공간입니다.',
+    href: '/blog/',
+    status: '연결됨',
+  },
+  {
+    type: 'Profile',
+    year: '2026',
+    title: 'GitHub 작업 허브',
+    desc: '공개 저장소와 앞으로 공개될 프로그램 작업물을 이어서 확인할 수 있는 GitHub 프로필입니다.',
+    href: 'https://github.com/perust',
+    external: true,
+    status: 'GitHub',
+  },
+  {
+    type: 'Contents',
+    year: '2022',
+    title: '끝말잇기 게임',
+    desc: 'JavaScript 게임 로직 · 순수 JS 구현',
+    href: '/contents/word-relay.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Contents',
+    year: '2022',
+    title: '계산기',
+    desc: 'JavaScript 연습 · 사칙연산 구현',
+    href: '/contents/calculator.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Contents',
+    year: '2022',
+    title: '숫자야구 게임',
+    desc: 'JavaScript 연습 · 게임 로직 구현',
+    href: '/contents/number-baseball.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Homepage',
+    year: '2022',
+    title: '플라워가든 페이지',
+    desc: 'HTML/CSS · 이미지 중심 레이아웃',
+    href: '/homepage/flower/index.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Homepage',
+    year: '2022',
+    title: '교보문고 모바일 리디자인',
+    desc: '모바일 UI 실습 · 반응형 리디자인',
+    href: '/homepage/gyobo/index.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Homepage',
+    year: '2022',
+    title: '더페이스샵 모바일 리디자인',
+    desc: '모바일 UI 실습 · 뷰티 브랜드 리디자인',
+    href: '/homepage/thefaceshop/index.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Homepage',
+    year: '2022',
+    title: '뚜레쥬르 PC 리디자인',
+    desc: 'PC UI 실습 · 브랜드 사이트 리디자인',
+    href: '/homepage/tous/index.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Homepage',
+    year: '2022',
+    title: '삼진어묵 메인',
+    desc: '웹 퍼블리싱 · 메인 페이지',
+    href: '/homepage/3z/index.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Homepage',
+    year: '2022',
+    title: '삼진어묵 서브',
+    desc: '웹 퍼블리싱 · 서브 페이지',
+    href: '/homepage/3z/sub.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Study',
+    year: '2022',
+    title: '렛츠기릿 자바스크립트',
+    desc: '자바스크립트 입문 · 강의 실습 모음',
+    href: '/study/ZeroCho-JavaScript-Beginner/index.html',
+    status: 'Archive',
+  },
+  {
+    type: 'Study',
+    year: '2022',
+    title: '반응형 웹 만들기',
+    desc: 'HTML/CSS 스터디 · 반응형 레이아웃',
+    href: '/study/responsive-web-design2017/index.html',
+    status: 'Archive',
+  },
+];
+
+const itemTarget = (item: WorkItem) => item.external || item.href?.startsWith('/homepage') || item.href?.startsWith('/study') ? '_blank' : undefined;
+const itemRel = (item: WorkItem) => itemTarget(item) ? 'noopener noreferrer' : undefined;
 const site = Astro.site ?? new URL('https://perust.github.io');
-const workDescription = 'lentoludens의 현재 제품 실험, 포트폴리오, 예전 웹 퍼블리싱 작업 아카이브.';
+const workDescription = 'lentoludens의 공개 전 제품 실험, GitHub 작업 허브, 예전 웹 퍼블리싱 작업까지 한 번에 쌓아보는 작업 아카이브.';
 const workLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -26,24 +167,24 @@ const workLd = {
   description: workDescription,
 };
 ---
-<BaseLayout title="lentoludens 작업 · 포트폴리오와 실험" description={workDescription} canonical="/work/" jsonLd={workLd}>
+<BaseLayout title="lentoludens 작업 · 프로그램과 아카이브" description={workDescription} canonical="/work/" jsonLd={workLd}>
   <main id="top">
     <section class="hero section-shell" aria-labelledby="work-hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">Work · Portfolio · Archive</p>
-        <h1 id="work-hero-title">만들고 있는 것과,<br />지나온 작업을 모았습니다.</h1>
-        <p class="hero-description">현재 제품 실험과 예전 GitHub Pages 작업을 한 곳에서 볼 수 있게 분리했습니다. 홈은 블로그 큐레이션을 중심으로 운영하고, 이 페이지는 포트폴리오와 작업 아카이브로 씁니다.</p>
+        <p class="eyebrow">Work · Program · Archive</p>
+        <h1 id="work-hero-title">작업 중인 프로그램과<br />지난 작업을 한곳에 쌓습니다.</h1>
+        <p class="hero-description">주 작업물은 아직 공개 전입니다. 대신 이 페이지를 작업 허브로 두고, 공개 가능한 프로그램·기록·예전 실습물을 <strong>Archive &amp; lab</strong> 위에 계속 쌓아 전체 흐름을 볼 수 있게 정리합니다.</p>
         <div class="hero-actions">
-          <a class="button primary" href="#projects">현재 작업</a>
-          <a class="button secondary" href="#archive">예전 작업</a>
-          <a class="button secondary" href="https://github.com/perust" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a class="button primary" href="#stack">전체 작업 스택 보기</a>
+          <a class="button secondary" href="#projects">공개 전 작업 보기</a>
+          <a class="button secondary" href="https://github.com/perust" target="_blank" rel="noopener noreferrer">GitHub 열기</a>
         </div>
       </div>
-      <aside class="hero-card" aria-label="프로필 요약">
-        <div class="status-pill"><span></span> 만들고 검증하는 중</div>
+      <aside class="hero-card" aria-label="작업 허브 요약">
+        <div class="status-pill"><span></span> 공개 전 작업 정리 중</div>
         <dl class="profile-list">
-          <div><dt>닉네임</dt><dd>lentoludens</dd></div>
-          <div><dt>관심사</dt><dd>아이디어 → 제품, 생산성, 투자 데이터, 회고 시스템</dd></div>
+          <div><dt>방향</dt><dd>아이디어 → 프로그램 → 기록</dd></div>
+          <div><dt>현재</dt><dd>주요 제품은 비공개 검증 단계</dd></div>
           <div><dt>스택</dt><dd>React · Python · Supabase · Astro · AI-assisted build</dd></div>
         </dl>
       </aside>
@@ -52,18 +193,46 @@ const workLd = {
     <section id="focus" class="section-shell split-section" aria-labelledby="focus-title">
       <div><p class="section-kicker">Current focus</p><h2 id="focus-title">요즘의 초점</h2></div>
       <div class="focus-grid">
-        <article class="focus-card"><span class="card-index">01</span><h3>생각을 제품으로 바꾸는 속도</h3><p>막연한 아이디어를 빠르게 화면으로 만들어 검증합니다. 먼저 작동하는 첫 버전을 만들고, 실제 사용에서 개선합니다.</p></article>
-        <article class="focus-card"><span class="card-index">02</span><h3>AI와 함께 만드는<br />개인 업무 자동화</h3><p>코딩, 문서화, 리서치에 AI를 연결해 반복 업무를 줄이고, 남는 시간은 더 중요한 판단에 씁니다.</p></article>
-        <article class="focus-card"><span class="card-index">03</span><h3>쌓아두는 기록 자산</h3><p>개발 과정과 시행착오를 검색 가능한 글로 남겨, 나중에 다시 꺼내볼 수 있는 자료로 만듭니다.</p></article>
+        <article class="focus-card"><span class="card-index">01</span><h3>프로그램으로 연결되는 홈페이지</h3><p>블로그와 포트폴리오를 분리하지 않고, 실제로 작업 중인 프로그램과 공개 가능한 산출물을 이어서 보여줍니다.</p></article>
+        <article class="focus-card"><span class="card-index">02</span><h3>공개 전 작업도<br />흐름은 남기기</h3><p>아직 공개할 수 없는 핵심 작업물은 상태를 분명히 표시하고, 공개 가능한 기록과 GitHub 허브로 연결합니다.</p></article>
+        <article class="focus-card"><span class="card-index">03</span><h3>전체 작업을 쌓아보기</h3><p>예전 실습물 위에 현재의 제품 실험을 계속 올려, 시간이 지날수록 작업물 전체를 한눈에 볼 수 있게 만듭니다.</p></article>
       </div>
     </section>
 
     <section id="projects" class="section-shell" aria-labelledby="projects-title">
-      <div class="section-heading"><p class="section-kicker">Projects & work</p><h2 id="projects-title">현재 진행 중인 작업</h2><p>지금 작업 중인 것들을 정리했습니다. 실제로 써보면서 개선하는 것을 중요하게 생각합니다.</p></div>
+      <div class="section-heading"><p class="section-kicker">Pre-public programs</p><h2 id="projects-title">현재 진행 중인 작업</h2><p>지금 주 작업물은 공개 전입니다. 완성도와 공개 범위를 정리한 뒤, 이 페이지에서 바로 들어갈 수 있게 연결해둘 예정입니다.</p></div>
       <div class="project-grid">
-        <article class="project-card featured"><div class="project-meta"><span>Product</span><span>Reflection</span></div><h3>회고/리뷰 노트 제품</h3><p>하루와 선택을 돌아보고 패턴을 발견하는 기록 도구를 만들고 있습니다. 단순 메모가 아니라 다음 행동으로 이어지는 리뷰 경험이 목표입니다.</p><ul class="tag-list" aria-label="사용 기술 및 키워드"><li>React</li><li>Supabase</li><li>UX Writing</li></ul></article>
-        <article class="project-card"><div class="project-meta"><span>Data</span><span>Investing</span></div><h3>SOXL Analyzer</h3><p>감정 대신 데이터로 투자를 확인할 수 있도록 분석 화면을 만들고 있습니다. 필요한 지표를 한눈에 볼 수 있게 하는 게 목표입니다.</p><ul class="tag-list" aria-label="사용 기술 및 키워드"><li>Python</li><li>Chart</li><li>Decision support</li></ul></article>
-        <article class="project-card"><div class="project-meta"><span>Writing</span><span>Blog</span></div><h3>제작 기록 블로그</h3><p>프로젝트 제작기, AI 자동화, 투자 데이터 실험을 글로 정리합니다. 직접 해본 것과 배운 점을 남기는 공간입니다.</p><a class="text-link" href="/blog/">블로그 보기 →</a></article>
+        {activeProjects.map((project, index) => (
+          <article class={`project-card ${index === 0 ? 'featured' : ''}`}>
+            <div class="project-meta">{project.meta.map((meta) => <span>{meta}</span>)}</div>
+            <h3>{project.title}</h3>
+            <p>{project.desc}</p>
+            <ul class="tag-list" aria-label="사용 기술 및 키워드">{project.tags.map((tag) => <li>{tag}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="stack" class="section-shell" aria-labelledby="stack-title">
+      <div class="section-heading"><p class="section-kicker">Archive & lab</p><h2 id="stack-title">전체 작업 스택</h2><p>새 작업물을 위에 추가하고, 예전 웹 퍼블리싱·자바스크립트 실습은 아래에 그대로 남깁니다. 공개 전 작업은 상태를 표시하고, 공개된 작업은 바로 열 수 있게 연결했습니다.</p></div>
+      <div class="stack-list">
+        {workStack.map((item) => {
+          const card = <>
+            <div class="stack-marker" aria-hidden="true"></div>
+            <div class="stack-card-header">
+              <span class={`archive-tag ${item.type.toLowerCase().replace('pre-public', 'prepublic')}`}>{item.type}</span>
+              <span class="archive-date">{item.year}</span>
+            </div>
+            <h3 class="archive-title">{item.title}</h3>
+            <p class="archive-desc">{item.desc}</p>
+            <span class={`stack-status ${item.href ? 'is-linked' : 'is-muted'}`}>{item.href ? item.status ?? '보기' : item.status ?? '공개 전'}</span>
+          </>;
+          return item.href ? (
+            <a class="stack-card" href={item.href} target={itemTarget(item)} rel={itemRel(item)}>{card}</a>
+          ) : (
+            <article class="stack-card is-disabled">{card}</article>
+          );
+        })}
       </div>
     </section>
 
@@ -72,15 +241,8 @@ const workLd = {
       <ol class="principle-list"><li><strong>명확하게 생각하기</strong><span>좋은 결과는 문제를 제대로 이름 붙이는 데서 시작한다고 믿습니다.</span></li><li><strong>작게 만들고 빠르게 배우기</strong><span>큰 계획보다 작동하는 첫 버전과 사용자 피드백을 우선합니다.</span></li><li><strong>효율은 자유를 만든다</strong><span>자동화와 도구화로 시간을 되찾고 더 중요한 선택에 에너지를 씁니다.</span></li><li><strong>기록으로 나를 업데이트하기</strong><span>생각, 감정, 결과를 남겨 다음 결정의 품질을 높입니다.</span></li></ol>
     </section>
 
-    <section id="archive" class="section-shell" aria-labelledby="archive-title">
-      <div class="section-heading"><p class="section-kicker">Archive & lab</p><h2 id="archive-title">예전 작업과 실험실</h2><p>예전 GitHub Pages 페이지들은 그대로 두었습니다. 지금 보면 부족한 것도 많지만, 출발점으로 남겨두고 싶었습니다.</p></div>
-      <div class="archive-grid">
-        {archiveItems.map(([type, year, title, desc, href]) => <a class="archive-card" href={href} target={href.startsWith('/homepage') || href.startsWith('/study') ? '_blank' : undefined} rel="noopener noreferrer"><div class="archive-card-header"><span class={`archive-tag ${type.toLowerCase()}`}>{type}</span><span class="archive-date">{year}</span></div><h3 class="archive-title">{title}</h3><p class="archive-desc">{desc}</p></a>)}
-      </div>
-    </section>
-
     <section id="contact" class="section-shell contact" aria-labelledby="contact-title">
-      <div><p class="section-kicker">Contact</p><h2 id="contact-title">지금도 뭔가를 만들고 있습니다.</h2><p>작업과 코드는 GitHub에 올려두고 있습니다. 협업, 피드백, 문의는 <a href="mailto:zyqn@naver.com">zyqn@naver.com</a>으로 연락해 주세요.</p></div>
+      <div><p class="section-kicker">Contact</p><h2 id="contact-title">지금도 뭔가를 만들고 있습니다.</h2><p>공개 가능한 코드는 GitHub에, 제작 과정과 배운 점은 블로그에 계속 쌓고 있습니다. 협업, 피드백, 문의는 <a href="mailto:zyqn@naver.com">zyqn@naver.com</a>으로 연락해 주세요.</p></div>
       <a class="button primary" href="mailto:zyqn@naver.com">이메일 보내기</a>
     </section>
   </main>

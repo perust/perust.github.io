@@ -636,6 +636,113 @@ h3 {
   background: rgba(217, 119, 6, 0.1);
 }
 
+.archive-tag.prepublic {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.1);
+}
+
+.archive-tag.lab {
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.1);
+}
+
+.archive-tag.profile {
+  color: #0f172a;
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.stack-list {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+}
+
+.stack-list::before {
+  position: absolute;
+  top: 1rem;
+  bottom: 1rem;
+  left: 1.05rem;
+  width: 2px;
+  content: "";
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.32), rgba(15, 23, 42, 0.08));
+}
+
+.stack-card {
+  position: relative;
+  display: grid;
+  gap: 0.65rem;
+  min-height: 0;
+  margin-left: 2.5rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: inherit;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  transition: 180ms ease;
+}
+
+.stack-card:hover,
+.stack-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: 0 20px 56px rgba(37, 99, 235, 0.13);
+}
+
+.stack-card:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.stack-card.is-disabled {
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.stack-card.is-disabled:hover {
+  transform: none;
+  border-color: var(--line);
+  box-shadow: var(--shadow);
+}
+
+.stack-marker {
+  position: absolute;
+  top: 1.35rem;
+  left: -2.05rem;
+  width: 0.72rem;
+  height: 0.72rem;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.13);
+}
+
+.stack-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.stack-status {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.25rem;
+  padding: 0.34rem 0.62rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.stack-status.is-linked {
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.09);
+}
+
+.stack-status.is-muted {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.1);
+}
+
 .archive-date {
   color: var(--muted);
   font-size: 0.78rem;
