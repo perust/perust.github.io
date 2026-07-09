@@ -1,0 +1,201 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+type Card = {
+  meta: string[];
+  title: string;
+  desc: string;
+  tags: string[];
+};
+
+type CaseStudy = {
+  metric: string;
+  title: string;
+  problem: string;
+  solution: string;
+  impact: string;
+};
+
+const serviceCards: Card[] = [
+  {
+    meta: ['Recovery', 'Media'],
+    title: '영상 · 음성 · 문서 복구 도구 개발',
+    desc: '기존 복구 프로그램이 따라가지 못하는 신규 포맷, 파편화 데이터, 국내 문서 포맷 문제를 현장형 도구로 해결합니다.',
+    tags: ['Video', 'Audio', 'HWP', 'Custom tooling'],
+  },
+  {
+    meta: ['Recovery', 'Storage'],
+    title: 'HDD · 외장 · 서버 · NAS 복구 지원',
+    desc: '소프트웨어 복구부터 하드웨어 진단, 서버·NAS·DB 복구까지 3년간 실제 현장에서 다뤄온 범위를 기반으로 지원합니다.',
+    tags: ['HDD', 'External HDD', 'Server', 'NAS', 'DB'],
+  },
+  {
+    meta: ['Automation', 'Ops'],
+    title: '반복 업무 자동화 도구 개발',
+    desc: '메일 작성, 파일 리스트 생성, 데이터 분류처럼 매일 반복되는 업무를 줄이는 사내 도구를 만듭니다.',
+    tags: ['Python', 'Workflow', 'Mail automation'],
+  },
+  {
+    meta: ['Consulting', 'Process'],
+    title: '복구 프로세스 정리 · 기술 자문',
+    desc: '현장 데이터를 분류하고 레퍼런스를 쌓아 복구 판단 속도와 정확도를 높이는 프로세스를 함께 설계합니다.',
+    tags: ['Diagnosis', 'Classification', 'Process'],
+  },
+];
+
+const recoveryCases: CaseStudy[] = [
+  {
+    metric: '복구율 +50%',
+    title: '영상 복구 프로그램',
+    problem: '카메라 제조사와 해상도별로 영상 포맷이 빠르게 분화되며 기존 복구 기술로 최신 포맷 복구가 어려워졌습니다.',
+    solution: '자사 영상 데이터를 카메라 포맷별로 분류하고 영상 복구 프로세스를 다시 정리했습니다.',
+    impact: '데이터가 완전히 소멸된 경우가 아니라면 복구 가능한 수준까지 끌어올렸습니다.',
+  },
+  {
+    metric: '불가 → 복구',
+    title: '음성 파일 복구 프로그램',
+    problem: '기존 프로그램으로 복구되지 않는 파편화된 음성 데이터가 있었습니다.',
+    solution: '흩어진 음성 데이터 조각을 재조립하는 방식으로 복구 흐름을 구현했습니다.',
+    impact: '기존에는 불가능하던 음성 파일 복구에 성공했습니다.',
+  },
+  {
+    metric: '국내 한글 특화',
+    title: '한글문서 복구 프로그램',
+    problem: '복구 프로그램 대부분이 해외산이라 국내 한글 파일 복구 지원이 부족했습니다.',
+    solution: '한글 문서 복구 프로그램을 자체 개발했습니다.',
+    impact: '기존 도구로 전혀 나오지 않던 데이터도 복구 가능한 범위로 만들었습니다.',
+  },
+  {
+    metric: '정확도·속도 +80%',
+    title: '손상 데이터 분류 프로그램',
+    problem: '정상 데이터인데 레퍼런스가 없어 손상 데이터로 오분류되는 사례가 늘었습니다.',
+    solution: '기존 데이터 기반 분류기를 만들고, 새 데이터가 들어올 때마다 분석·추가·업데이트해 레퍼런스를 축적했습니다.',
+    impact: '분류 정확도와 속도를 크게 높였습니다.',
+  },
+];
+
+const automationCases: CaseStudy[] = [
+  {
+    metric: '프로세스 최적화',
+    title: '파일 리스트 프로그램',
+    problem: '고객사 요청 대비 기존 파일 리스트 생성 도구의 기능이 부족했습니다.',
+    solution: '필요한 기능을 추가하고 자사 업무 프로세스에 맞게 최적화했습니다.',
+    impact: '다양한 요청에도 혼동 없이 작업할 수 있도록 지원했습니다.',
+  },
+  {
+    metric: '업무시간 −80%',
+    title: '업무 메일 서식 생성 프로그램',
+    problem: '매일 반복되는 업무 메일 작성이 시간을 잠식했고, 저연차일수록 야근으로 이어졌습니다.',
+    solution: '데이터 입력, 서식 작성, 발송까지 최소 입력과 확인만으로 처리되도록 자동화했습니다.',
+    impact: '관련 업무 시간을 대폭 줄이고 서식을 통일했습니다.',
+  },
+];
+
+const timeline = [
+  ['2023', '소프트웨어 데이터 복구 엔지니어'],
+  ['2024–2025', '하드웨어 데이터 복구 엔지니어'],
+  ['2026', '지점 책임 데이터 복구 엔지니어 · 영상 데이터 복구 엔지니어'],
+  ['현재', '독립 개발자 · 복구/자동화 도구 개발 의뢰 가능'],
+];
+
+const site = Astro.site ?? new URL('https://perust.github.io');
+const portfolioDescription = 'HDD·서버·NAS·영상·DB 데이터 복구와 현장 문제를 해결하는 복구/자동화 도구를 직접 개발하는 데이터 복구 엔지니어 포트폴리오.';
+const portfolioLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  name: 'lentoludens 포트폴리오 · 데이터 복구 엔지니어',
+  url: new URL('/portfolio/', site).toString(),
+  inLanguage: 'ko-KR',
+  description: portfolioDescription,
+};
+---
+<BaseLayout title="데이터 복구 엔지니어 포트폴리오 · lentoludens" description={portfolioDescription} canonical="/portfolio/" jsonLd={portfolioLd}>
+  <main id="top">
+    <section class="hero section-shell" aria-labelledby="portfolio-hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Portfolio · Data Recovery Engineer</p>
+        <h1 id="portfolio-hero-title">복구 현장에 필요한 도구를 직접 만드는 데이터 복구 엔지니어</h1>
+        <p class="hero-description">3년간 HDD·서버·NAS·영상·DB 복구를 수행하며, 기존 도구로 풀리지 않는 문제를 직접 프로그램으로 해결해 왔습니다. 지금은 독립 개발자로, 복구·자동화 도구 개발을 의뢰받고 있습니다.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="mailto:zyqn@naver.com">협업 문의하기</a>
+          <a class="button secondary" href="#case-studies">케이스 스터디 보기</a>
+          <a class="button secondary" href="/work/">다른 작업 보기</a>
+        </div>
+      </div>
+      <aside class="hero-card" aria-label="포트폴리오 요약">
+        <div class="status-pill"><span></span> 프리랜스 협업·의뢰 가능</div>
+        <dl class="profile-list">
+          <div><dt>경력</dt><dd>데이터 복구 3년</dd></div>
+          <div><dt>도구</dt><dd>자체 개발 도구 6종</dd></div>
+          <div><dt>범위</dt><dd>HDD · 외장 · 서버 · NAS · 영상 · DB</dd></div>
+          <div><dt>문의</dt><dd><a href="mailto:zyqn@naver.com">zyqn@naver.com</a></dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="section-shell split-section" aria-labelledby="experience-title">
+      <div><p class="section-kicker">Experience</p><h2 id="experience-title">포지션 변화</h2><p class="theme-note">소프트웨어 복구에서 하드웨어, 지점 책임까지 역할을 넓혀왔습니다.</p></div>
+      <ol class="principle-list">
+        {timeline.map(([year, role]) => <li><strong>{year}</strong><span>{role}</span></li>)}
+      </ol>
+    </section>
+
+    <section id="services" class="section-shell" aria-labelledby="services-title">
+      <div class="section-heading"><p class="section-kicker">Services</p><h2 id="services-title">의뢰 가능한 작업</h2><p>현장에서 검증된 복구 경험과 개발 역량을 바탕으로, 기존 도구로 해결되지 않는 문제를 위한 맞춤 도구와 프로세스를 만듭니다.</p></div>
+      <div class="project-grid">
+        {serviceCards.map((service) => (
+          <article class="project-card">
+            <div class="project-meta">{service.meta.map((meta) => <span>{meta}</span>)}</div>
+            <h3>{service.title}</h3>
+            <p>{service.desc}</p>
+            <ul class="tag-list" aria-label="관련 키워드">{service.tags.map((tag) => <li>{tag}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="case-studies" class="section-shell" aria-labelledby="case-title">
+      <div class="section-heading"><p class="section-kicker">Case Studies</p><h2 id="case-title">대표 케이스 스터디</h2><p>현장 문제를 코드로 해결한 6개 프로그램입니다. 문제, 해결, 임팩트 순서로 정리했습니다.</p></div>
+      <div class="project-grid">
+        {recoveryCases.map((item) => (
+          <article class="project-card">
+            <div class="project-meta"><span>{item.metric}</span><span>복구 프로그램</span></div>
+            <h3>{item.title}</h3>
+            <p><strong>문제</strong> · {item.problem}</p>
+            <p><strong>해결</strong> · {item.solution}</p>
+            <p><strong>임팩트</strong> · {item.impact}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section-shell" aria-labelledby="automation-title">
+      <div class="section-heading"><p class="section-kicker">Automation</p><h2 id="automation-title">업무 보조 프로그램</h2><p>복구 자체뿐 아니라 복구 업무를 둘러싼 반복 작업도 도구로 줄여왔습니다.</p></div>
+      <div class="project-grid">
+        {automationCases.map((item) => (
+          <article class="project-card">
+            <div class="project-meta"><span>{item.metric}</span><span>업무 자동화</span></div>
+            <h3>{item.title}</h3>
+            <p><strong>문제</strong> · {item.problem}</p>
+            <p><strong>해결</strong> · {item.solution}</p>
+            <p><strong>임팩트</strong> · {item.impact}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="capabilities" class="section-shell split-section" aria-labelledby="capabilities-title">
+      <div><p class="section-kicker">Capabilities</p><h2 id="capabilities-title">역량 · 기술 스택</h2></div>
+      <div class="focus-grid">
+        <article class="focus-card"><span class="card-index">01</span><h3>데이터 복구</h3><p>메인 데이터 복구 엔지니어와 지점 책임을 수행했습니다. HDD부터 서버·NAS·DB, 영상·음성·문서까지 폭넓은 매체를 다룹니다.</p></article>
+        <article class="focus-card"><span class="card-index">02</span><h3>현장 문제 해결형 개발</h3><p>기존 도구로 안 되는 문제를 직접 도구로 해결합니다. 복구율 +50%, 분류 정확도·속도 +80%, 메일 업무시간 −80%의 개선을 만들었습니다.</p></article>
+        <article class="focus-card"><span class="card-index">03</span><h3>웹 · 자동화 프로젝트</h3><p>복구 일 바깥에서도 React, Python, Supabase, Astro, n8n, AI 도구를 활용해 SOXL Analyzer와 회고/리뷰 노트 도구 같은 작업을 이어가고 있습니다.</p></article>
+      </div>
+    </section>
+
+    <section id="contact" class="section-shell contact" aria-labelledby="contact-title">
+      <div><p class="section-kicker">Contact</p><h2 id="contact-title">함께 일해요</h2><p>복구·자동화 도구 개발이나 기술 지원이 필요하면 장비 종류, 증상, 원하는 결과를 간단히 적어 <a href="mailto:zyqn@naver.com">zyqn@naver.com</a>으로 보내주세요.</p></div>
+      <a class="button primary" href="mailto:zyqn@naver.com">이메일 보내기</a>
+    </section>
+  </main>
+</BaseLayout>
