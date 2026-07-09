@@ -15,19 +15,19 @@ const activeProjects = [
   {
     meta: ['Product', 'Pre-public'],
     title: '회고/리뷰 노트 도구',
-    desc: '하루를 적는 데서 끝나지 않고, 나중에 내가 왜 그런 선택을 했는지 다시 볼 수 있는 도구를 만들고 있습니다. 아직은 공개 전입니다.',
+    desc: '타인과의 관계에서 혹은 스스로의 관계에서 더 나은 성찰과 앞으로의 계획을 세울 수 있도록 회고 노트를 만들고 있습니다.',
     tags: ['React', 'Supabase', 'UX Writing'],
   },
   {
     meta: ['Data', 'Pre-public'],
     title: 'SOXL Analyzer',
-    desc: 'SOXL 매매를 감으로만 보지 않으려고 만든 분석 도구입니다. 실제 계좌 흐름에 맞춰 계속 고치는 중이라 아직 공개 전입니다.',
+    desc: 'SOXL 매매를 감으로만 보지 않으려고 만든 분석 도구입니다. 실제 계좌 테스트와 함께 개선 작업 진행 중입니다.',
     tags: ['Python', 'Streamlit', 'Decision support'],
   },
   {
     meta: ['Automation', 'Lab'],
     title: 'AI 업무 자동화 실험',
-    desc: '반복되는 리서치, 정리, 배포 일을 줄이려고 n8n과 AI 도구를 이것저것 연결해보고 있습니다.',
+    desc: '반복되는 작업을 자동화하기 위한 n8n과 AI 도구를 활용하여 작업해보고 있습니다.',
     tags: ['n8n', 'AI agents', 'Ops'],
   },
 ];
@@ -37,14 +37,14 @@ const workStack: WorkItem[] = [
     type: 'Pre-public',
     year: '2026',
     title: '회고/리뷰 노트 도구',
-    desc: '하루 기록을 나중에 다시 꺼내볼 수 있게 만드는 도구입니다. 공개할 만한 버전이 되면 여기서 바로 연결해둘 예정입니다.',
+    desc: '타인과의 관계에서 혹은 스스로의 관계에서 더 나은 성찰과 앞으로의 계획을 세울 수 있도록 회고 노트를 만들고 있습니다.',
     status: '공개 전',
   },
   {
     type: 'Pre-public',
     year: '2026',
     title: 'SOXL Analyzer',
-    desc: 'SOXL 매매를 데이터로 다시 확인하려고 만든 분석 프로그램입니다. 지금은 비공개로 검증하고 있습니다.',
+    desc: 'SOXL 매매를 데이터로 다시 확인하려고 만든 분석 프로그램입니다. 실제 계좌 테스트와 함께 개선 작업 진행 중입니다.',
     status: '공개 전',
   },
   {
@@ -157,7 +157,7 @@ const workStack: WorkItem[] = [
 const itemTarget = (item: WorkItem) => item.external || item.href?.startsWith('/homepage') || item.href?.startsWith('/study') ? '_blank' : undefined;
 const itemRel = (item: WorkItem) => itemTarget(item) ? 'noopener noreferrer' : undefined;
 const site = Astro.site ?? new URL('https://perust.github.io');
-const workDescription = '지금 만드는 프로그램, GitHub 작업물, 예전 웹 퍼블리싱 실습을 한곳에 모아둔 작업 아카이브.';
+const workDescription = '지금 제작하고 있는 작업물부터 이때까지 만들어온 작업물까지 모아두는 작업 아카이브.';
 const workLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
@@ -172,8 +172,8 @@ const workLd = {
     <section class="hero section-shell" aria-labelledby="work-hero-title">
       <div class="hero-copy">
         <p class="eyebrow">Work · Program · Archive</p>
-        <h1 id="work-hero-title">지금 만드는 것부터<br />예전 작업까지 한곳에 모아둡니다.</h1>
-        <p class="hero-description">아직 공개하지 못한 작업물이 많습니다. 공개할 수 있는 프로그램, 제작 기록, 예전 실습물부터 <strong>Archive &amp; Lab</strong>에 하나씩 올려두려고 합니다.</p>
+        <h1 id="work-hero-title">제작한 작업물들</h1>
+        <p class="hero-description">지금 제작하고 있는 작업물들부터, 이때까지 만들어온 작업물까지, <strong>Archive &amp; Lab</strong> 에 하나씩 쌓아가기로 했습니다.</p>
         <div class="hero-actions">
           <a class="button primary" href="#stack">작업물 전체 보기</a>
           <a class="button secondary" href="#projects">공개 전 작업 보기</a>
@@ -185,22 +185,22 @@ const workLd = {
         <dl class="profile-list">
           <div><dt>방향</dt><dd>아이디어를 실제로 써볼 수 있게 만들기</dd></div>
           <div><dt>현재</dt><dd>주요 작업물은 공개 준비 중</dd></div>
-          <div><dt>스택</dt><dd>React · Python · Supabase · Astro · AI-assisted build</dd></div>
+          <div><dt>스택</dt><dd>React · Python · Supabase · Astro · AI 도구</dd></div>
         </dl>
       </aside>
     </section>
 
     <section id="focus" class="section-shell split-section" aria-labelledby="focus-title">
-      <div><p class="section-kicker">Current focus</p><h2 id="focus-title">요즘 신경 쓰는 것</h2></div>
+      <div><p class="section-kicker">Current focus</p><h2 id="focus-title">지금의 관심사</h2></div>
       <div class="focus-grid">
-        <article class="focus-card"><span class="card-index">01</span><h3>소개에서 작업으로 이어지게</h3><p>홈페이지가 소개로만 끝나지 않고, 제가 실제로 만들고 있는 것들까지 이어졌으면 합니다.</p></article>
-        <article class="focus-card"><span class="card-index">02</span><h3>아직 못 보여줘도<br />자리는 남겨두기</h3><p>아직 보여주기 어려운 작업도 있지만, 나중에 올려둘 자리는 미리 만들어두려고 합니다.</p></article>
-        <article class="focus-card"><span class="card-index">03</span><h3>작업의 흐름 남겨두기</h3><p>예전 실습부터 지금 만드는 것까지 이어서 남겨두면, 시간이 지나도 전체 흐름이 보일 것 같습니다.</p></article>
+        <article class="focus-card"><span class="card-index">01</span><h3>작업물들이 사라지지 않도록 아카이빙</h3><p>홈페이지가 소개로만 끝나지 않고, 제작한 작업물들을 계속 남겨둘 수 있는 공간이 되었으면 합니다.</p></article>
+        <article class="focus-card"><span class="card-index">02</span><h3>현재 만들고 있는 것들이 무엇인지</h3><p>지금 바로 공개하기 어려운 작업물도 있지만, 어떤 작업을 하고 있는지는 남겨두려고 합니다.</p></article>
+        <article class="focus-card"><span class="card-index">03</span><h3>작업의 흐름 남겨두기</h3><p>예전 연습부터 지금 만들고 있는 것까지 남겨두어서, 시간이 지나도 예전의 발자취를 확인하고자 합니다.</p></article>
       </div>
     </section>
 
     <section id="projects" class="section-shell" aria-labelledby="projects-title">
-      <div class="section-heading"><p class="section-kicker">Pre-public programs</p><h2 id="projects-title">지금 만들고 있는 것들</h2><p>요즘 만들고 있는 것들은 아직 공개 전입니다. 공개해도 괜찮겠다 싶을 때, 여기에서 바로 볼 수 있게 연결해두려고 합니다.</p></div>
+      <div class="section-heading"><p class="section-kicker">Pre-public programs</p><h2 id="projects-title">지금 만들고 있는 것들</h2><p>지금 만들고 있는 것들은 바로 확인하기는 어렵습니다. 공개 가능한 지점까지 작업을 완료하고자 합니다.</p></div>
       <div class="project-grid">
         {activeProjects.map((project, index) => (
           <article class={`project-card ${index === 0 ? 'featured' : ''}`}>
@@ -214,7 +214,7 @@ const workLd = {
     </section>
 
     <section id="stack" class="section-shell" aria-labelledby="stack-title">
-      <div class="section-heading"><p class="section-kicker">Archive &amp; lab</p><h2 id="stack-title">작업물 전체 보기</h2><p>새로 만든 것은 위에 올리고, 예전에 만들었던 웹 퍼블리싱·자바스크립트 실습은 아래에 그대로 남겨둡니다. 공개 전 작업은 공개 전이라고 표시해두었습니다.</p></div>
+      <div class="section-heading"><p class="section-kicker">Archive &amp; Lab</p><h2 id="stack-title">작업물 전체 보기</h2><p>최근 작업부터 예전에 작업한 결과물까지 쌓아두는 공간입니다. 시간순으로 확인할 수 있습니다.</p></div>
       <div class="stack-list">
         {workStack.map((item) => {
           const card = <>
