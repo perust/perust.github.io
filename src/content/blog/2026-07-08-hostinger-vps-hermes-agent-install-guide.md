@@ -74,14 +74,17 @@ Hermes Agent는 로컬 노트북에도 설치할 수 있습니다. 하지만 자
 
 ## 준비물
 
-설치 전에는 다음을 준비합니다.
+Hostinger VPS에서 Hermes Agent가 탑재된 앱 배포로 진행한다면, 사용자가 직접 준비해야 할 것은 많지 않습니다. Ubuntu 버전 선택, SSH 접속 정보, 리버스 프록시 구성처럼 일반 VPS 수동 설치에서 필요한 항목은 대부분 Hostinger가 감싸줍니다.
 
 <div class="routine-kv">
-  <div><dt>Hostinger VPS</dt><dd>Ubuntu 22.04 또는 24.04 계열을 권장합니다.</dd></div>
-  <div><dt>SSH 접속 정보</dt><dd>서버 IP, 사용자명, 비밀번호 또는 SSH 키가 필요합니다.</dd></div>
-  <div><dt>LLM 제공자</dt><dd>Nous Portal, OpenRouter, Anthropic, OpenAI, Gemini, DeepSeek 등 하나 이상의 모델 제공자를 설정해야 합니다.</dd></div>
-  <div><dt>선택 사항</dt><dd>Slack·Discord·Telegram 봇 토큰, 도메인, Webhook/API 서버용 리버스 프록시 설정입니다.</dd></div>
+  <div><dt>필수</dt><dd>Hostinger VPS에서 Hermes Agent 앱을 선택할 수 있는 플랜과 hPanel 접근 권한입니다.</dd></div>
+  <div><dt>배포 중 입력</dt><dd>Hermes 관리자 username/password를 정합니다. 이 값은 나중에 관리 화면이나 터미널 접근에 필요할 수 있으므로 따로 보관합니다.</dd></div>
+  <div><dt>모델 사용</dt><dd>Hostinger 구매 과정에서 nexos.ai 크레딧을 함께 추가했다면 API 키가 자동 생성·입력될 수 있습니다. 크레딧을 쓰지 않는 경우에만 OpenRouter, Anthropic, OpenAI, Gemini 같은 외부 API 키를 직접 넣으면 됩니다.</dd></div>
+  <div><dt>웹 추출</dt><dd>Oxylabs 크레딧을 추가했다면 웹 검색·데이터 추출용 키도 자동으로 채워질 수 있습니다. 직접 보유한 키를 쓰는 것도 가능합니다.</dd></div>
+  <div><dt>나중에 필요한 것</dt><dd>Slack·Discord·Telegram 연동은 해당 메신저에서 봇을 만들 때 토큰이 필요합니다. 도메인과 SSH는 고급 설정이나 디버깅이 필요할 때 쓰는 선택 사항입니다.</dd></div>
 </div>
+
+정리하면 일반 독자는 “VPS 만들기 → Hermes Agent 앱 선택 → 관리자 계정과 크레딧/API 키 확인 → Deploy” 정도만 신경 쓰면 됩니다. SSH로 접속해 Ubuntu 패키지를 설치하거나 Traefik·Docker 구성을 직접 만지는 과정은 기본 사용 흐름이 아닙니다.
 
 Hostinger 공식 안내에 따르면 Hermes Agent는 Hostinger VPS의 Application Catalog를 통해 배포할 수 있습니다. 이 방식은 Docker 기반으로 Hermes Agent 컨테이너와 Traefik 같은 필요한 서비스를 자동 생성하므로, 일반적인 Linux 수동 설치보다 먼저 고려할 기본 경로입니다.
 
@@ -146,58 +149,33 @@ hermes
 
 ## 모델 제공자 설정
 
-Hermes Agent는 최소 하나의 LLM 제공자가 필요합니다. 가장 쉬운 설정 방법은 대화형 모델 선택기입니다.
+Hostinger의 Hermes Agent 앱 배포에서 nexos.ai 크레딧을 함께 추가했다면, 사용자가 OpenRouter·OpenAI·Gemini API 키를 따로 준비하지 않아도 시작할 수 있습니다. Hostinger 안내처럼 nexos.ai 키가 자동 생성·입력되는 경우에는 배포 후 바로 CLI에서 테스트하면 됩니다.
+
+다만 다음 경우에는 별도 설정이 필요합니다.
+
+<ul class="issue-list">
+  <li class="issue-card"><h3>크레딧 없이 배포한 경우</h3><p class="issue-summary">Hermes는 배포되지만 모델 호출을 위해 OpenRouter, Anthropic, OpenAI, Gemini 같은 제공자 키를 직접 넣어야 합니다.</p></li>
+  <li class="issue-card"><h3>다른 모델을 쓰고 싶은 경우</h3><p class="issue-summary">기본 연결 대신 Nous Portal, OpenRouter, Anthropic, OpenAI Codex, Gemini 등 원하는 제공자로 바꿀 수 있습니다.</p></li>
+  <li class="issue-card"><h3>비용·품질을 나눠 쓰는 경우</h3><p class="issue-summary">리서치, 코딩, 이미지 분석, 예약 작업별로 다른 모델을 쓰고 싶다면 Hermes의 모델 설정을 조정합니다.</p></li>
+</ul>
+
+추가 설정이 필요할 때는 CLI에서 모델 선택기를 엽니다.
 
 ```bash
 hermes model
 ```
 
-처음부터 전체 설정을 진행하려면 다음을 사용합니다.
+전체 설정을 다시 보고 싶다면 다음을 사용합니다.
 
 ```bash
 hermes setup
-```
-
-Nous Portal을 사용할 경우에는 다음 명령이 가장 단순합니다.
-
-```bash
-hermes setup --portal
 ```
 
 Hermes 공식 문서에 따르면 Nous Portal, OpenAI Codex, GitHub Copilot, Anthropic, OpenRouter, Gemini, DeepSeek, xAI, Hugging Face, Ollama, LM Studio, Custom Endpoint 등 여러 제공자를 사용할 수 있습니다.
 
 <https://hermes-agent.nousresearch.com/docs/integrations/providers>
 
-API 키를 직접 넣는 방식이라면 `~/.hermes/.env`에 저장합니다.
-
-```bash
-nano ~/.hermes/.env
-```
-
-예를 들어 OpenRouter는 다음처럼 설정합니다.
-
-```env
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-```
-
-OpenAI API를 직접 쓰는 경우는 다음과 같습니다.
-
-```env
-OPENAI_API_KEY=your_openai_api_key_here
-```
-
-Gemini는 다음 중 하나를 사용할 수 있습니다.
-
-```env
-GOOGLE_API_KEY=your_google_api_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-설정 후 다시 모델 선택기를 실행합니다.
-
-```bash
-hermes model
-```
+API 키를 직접 넣는 방식이라면 `.env` 파일이나 Hostinger가 제공하는 설정 화면에 저장합니다. 컨테이너 배포 방식에서는 실제 경로와 편집 방법이 Hostinger Docker Manager 구성에 따라 달라질 수 있으므로, 먼저 앱 배포 화면의 키 입력란과 터미널 환경을 확인하는 편이 좋습니다.
 
 ## 실행 테스트
 
@@ -430,15 +408,20 @@ which hermes
 
 ### 모델 호출 실패
 
-모델 제공자 설정과 API 키를 다시 확인합니다.
+먼저 Hostinger 배포 화면에서 nexos.ai 크레딧이 연결됐는지, 잔액이 남아 있는지 확인합니다. 크레딧 없이 배포했다면 Hermes CLI에서 모델 제공자를 직접 설정해야 합니다.
 
 ```bash
 hermes model
 hermes doctor
+```
+
+직접 API 키를 넣는 경우에는 Hostinger Docker Manager의 환경 변수·설정 화면을 먼저 확인합니다. 수동 설치로 운영 중이라면 `.env` 파일을 편집할 수 있습니다.
+
+```bash
 nano ~/.hermes/.env
 ```
 
-API 키를 바꾼 뒤에는 새 세션에서 다시 테스트합니다.
+API 키나 크레딧 설정을 바꾼 뒤에는 새 세션에서 다시 테스트합니다.
 
 ### Gateway가 응답하지 않음
 
