@@ -17,8 +17,6 @@ faqs:
 
 이 변화는 단순히 “도수치료가 싸졌다”로만 볼 문제가 아닙니다. 병원마다 가격이 크게 달랐던 비급여 항목이 건강보험 체계 안의 관리급여로 들어온 것이고, 동시에 치료 기록·효과 평가·횟수 확인·실손보험 적용 범위가 함께 바뀌는 문제입니다.
 
-![도수치료 관리급여 핵심 요약](/images/posts/summary/2026-07-11-manual-therapy-managed-benefit-summary.svg)
-
 ## 요약 정리
 
 <ul class="issue-list">
