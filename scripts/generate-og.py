@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""lentoludens 블로그 OG 이미지(1200x630 PNG) 생성기.
+"""lentoludens 블로그 OG 이미지(2400x1260 PNG) 생성기.
 
 Pillow(PIL)만 사용한다. dark navy 배경 + 잔잔한 wave/gradient + lentoludens 워드마크 +
 카테고리 라벨로 단순하고 차분한 카드를 만든다. 실명은 넣지 않는다.
@@ -25,7 +25,17 @@ except ImportError:
     sys.stderr.write("Pillow가 필요합니다:  pip install Pillow\n")
     raise
 
-W, H = 1200, 630
+# Slack/카카오톡/브라우저 미리보기에서 이미지를 작게 축소해 보여줄 때 한글 획이
+# 흐려 보이지 않도록 1200x630의 2배 해상도로 렌더링한다.
+# OG 비율은 1.91:1 그대로 유지한다.
+SCALE = 2
+BASE_W, BASE_H = 1200, 630
+W, H = BASE_W * SCALE, BASE_H * SCALE
+
+
+def sc(value):
+    """1200x630 기준 좌표/폰트 크기를 실제 렌더 해상도에 맞춰 스케일한다."""
+    return int(round(value * SCALE))
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(REPO_ROOT, "public", "og")
 POSTS_OUT_DIR = os.path.join(OUT_DIR, "posts")
@@ -202,38 +212,49 @@ def base_card():
     # 2) 우상단 은은한 글로우 (blue/teal)
     glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     gdraw = ImageDraw.Draw(glow)
-    gdraw.ellipse([W - 520, -260, W + 180, 360], fill=(37, 99, 235, 70))
-    gdraw.ellipse([W - 300, -160, W + 120, 200], fill=(20, 184, 166, 55))
+    gdraw.ellipse([W - sc(520), -sc(260), W + sc(180), sc(360)], fill=(37, 99, 235, 70))
+    gdraw.ellipse([W - sc(300), -sc(160), W + sc(120), sc(200)], fill=(20, 184, 166, 55))
     img.paste(Image.alpha_composite(img.convert("RGBA"), glow).convert("RGB"), (0, 0))
     draw = ImageDraw.Draw(img, "RGBA")
 
     # 3) 잔잔한 wave (lentoludens 모티프) — 하단에 낮은 투명도 사인 곡선 몇 줄
     for i, (amp, base, alpha, step) in enumerate([
-        (26, 470, 60, 6), (34, 520, 45, 6), (20, 560, 32, 6),
+        (sc(26), sc(470), 60, sc(6)), (sc(34), sc(520), 45, sc(6)), (sc(20), sc(560), 32, sc(6)),
     ]):
         pts = []
         phase = i * 1.1
         for x in range(0, W + step, step):
-            y = base + amp * math.sin(x / 150.0 + phase)
+            y = base + amp * math.sin(x / sc(150.0) + phase)
             pts.append((x, y))
-        draw.line(pts, fill=(120, 170, 255, alpha), width=3, joint="curve")
+        draw.line(pts, fill=(120, 170, 255, alpha), width=sc(3), joint="curve")
 
     return img, draw
 
 
-def draw_pill(draw, label, px=90, py=92):
+def draw_pill(draw, label, px=None, py=None):
     """카테고리 pill(좌상단)을 그린다. 라벨은 ASCII 카테고리명을 가정한다."""
-    pill_font = font(30, bold=True)
+    px = sc(90) if px is None else px
+    py = sc(92) if py is None else py
+    pill_font = font(sc(30), bold=True)
     label_up = label.upper()
-    text_w = draw.textlength(label_up, font=pill_font) + (len(label_up) - 1) * 4
-    pad_x, pad_h = 28, 56
+    text_w = draw.textlength(label_up, font=pill_font) + (len(label_up) - 1) * sc(4)
+    pad_x, pad_h = sc(28), sc(56)
     try:
-        draw.rounded_rectangle([px, py, px + text_w + pad_x * 2, py + pad_h], radius=pad_h // 2,
-                               fill=(37, 99, 235, 38), outline=(120, 170, 255, 120), width=2)
+        draw.rounded_rectangle(
+            [px, py, px + text_w + pad_x * 2, py + pad_h],
+            radius=pad_h // 2,
+            fill=(37, 99, 235, 38),
+            outline=(120, 170, 255, 120),
+            width=sc(2),
+        )
     except AttributeError:
-        draw.rectangle([px, py, px + text_w + pad_x * 2, py + pad_h],
-                       fill=(37, 99, 235, 38), outline=(120, 170, 255, 120), width=2)
-    draw_tracked_text(draw, (px + pad_x, py + 12), label_up, pill_font, (203, 220, 255, 255), tracking=4)
+        draw.rectangle(
+            [px, py, px + text_w + pad_x * 2, py + pad_h],
+            fill=(37, 99, 235, 38),
+            outline=(120, 170, 255, 120),
+            width=sc(2),
+        )
+    draw_tracked_text(draw, (px + pad_x, py + sc(12)), label_up, pill_font, (203, 220, 255, 255), tracking=sc(4))
 
 
 def build_card(label):
@@ -242,15 +263,15 @@ def build_card(label):
     draw_pill(draw, label)
 
     # lentoludens 워드마크 (중앙 좌측, 큼직하게)
-    brand_font = font(132, bold=True)
-    bx, by = 86, 250
+    brand_font = font(sc(132), bold=True)
+    bx, by = sc(86), sc(250)
     draw.text((bx, by), "lentoludens", font=brand_font, fill=(245, 248, 255, 255))
 
     # 얇은 강조선 + 도메인 (하단)
-    line_y = 432
-    draw.line([(bx + 6, line_y), (bx + 150, line_y)], fill=(37, 99, 235, 230), width=5)
-    domain_font = font(30, bold=False)
-    draw.text((bx + 4, line_y + 26), "perust.github.io", font=domain_font, fill=(148, 163, 184, 255))
+    line_y = sc(432)
+    draw.line([(bx + sc(6), line_y), (bx + sc(150), line_y)], fill=(37, 99, 235, 230), width=sc(5))
+    domain_font = font(sc(30), bold=False)
+    draw.text((bx + sc(4), line_y + sc(26)), "perust.github.io", font=domain_font, fill=(180, 191, 208, 255))
 
     return img
 
@@ -289,13 +310,13 @@ def fit_title(draw, title, max_width, max_lines=3, start_size=80, min_size=46):
     """max_lines 안에 들어오도록 폰트 크기를 줄여가며 (폰트, 줄들, 크기)를 반환한다."""
     size = start_size
     while size >= min_size:
-        fnt = cjk_font(size, bold=True)
+        fnt = cjk_font(sc(size), bold=True)
         lines = wrap_title(draw, title, fnt, max_width)
         if len(lines) <= max_lines:
             return fnt, lines, size
         size -= 4
     # 최소 크기에서도 안 맞으면 max_lines로 자르고 마지막 줄 말줄임 처리
-    fnt = cjk_font(min_size, bold=True)
+    fnt = cjk_font(sc(min_size), bold=True)
     lines = wrap_title(draw, title, fnt, max_width)
     if len(lines) > max_lines:
         lines = lines[:max_lines]
@@ -312,29 +333,29 @@ def build_post_card(title, label):
     draw_pill(draw, label)
 
     # lentoludens 워드마크 (우상단, 작게 — 브랜드 워터마크)
-    brand_font = font(46, bold=True)
+    brand_font = font(sc(46), bold=True)
     brand_w = draw.textlength("lentoludens", font=brand_font)
-    draw.text((W - 90 - brand_w, 100), "lentoludens", font=brand_font, fill=(226, 232, 240, 235))
+    draw.text((W - sc(90) - brand_w, sc(100)), "lentoludens", font=brand_font, fill=(238, 242, 248, 245))
 
     # 제목 (중앙 밴드, 흰색, 2~3줄 wrap)
-    margin = 90
+    margin = sc(90)
     max_width = W - margin * 2
     title_font, lines, size = fit_title(draw, title, max_width)
-    line_h = int(size * 1.34)
+    line_h = int(sc(size) * 1.34)
     block_h = line_h * len(lines)
-    start_y = 348 - block_h // 2
-    if start_y < 200:
-        start_y = 200
+    start_y = sc(348) - block_h // 2
+    if start_y < sc(200):
+        start_y = sc(200)
     y = start_y
     for line in lines:
         draw.text((margin, y), line, font=title_font, fill=(245, 248, 255, 255))
         y += line_h
 
     # 얇은 강조선 + 도메인 (하단)
-    line_y = 548
-    draw.line([(margin + 6, line_y), (margin + 150, line_y)], fill=(37, 99, 235, 230), width=5)
-    domain_font = font(28, bold=False)
-    draw.text((margin + 4, line_y + 20), "perust.github.io", font=domain_font, fill=(148, 163, 184, 255))
+    line_y = sc(548)
+    draw.line([(margin + sc(6), line_y), (margin + sc(150), line_y)], fill=(37, 99, 235, 230), width=sc(5))
+    domain_font = font(sc(32), bold=False)
+    draw.text((margin + sc(4), line_y + sc(18)), "perust.github.io", font=domain_font, fill=(190, 200, 216, 255))
 
     return img
 
