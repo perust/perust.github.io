@@ -33,6 +33,10 @@ jobs:
         env:
           PUBLIC_COMMENTS_API_URL: https://slowave-blog-comments.zyqn.workers.dev
         run: npm run build
+      - name: Check SEO
+        run: npm run check:seo
+      - name: Check AdSense readiness
+        run: npm run check:adsense
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

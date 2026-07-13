@@ -10,7 +10,10 @@
     "preview": "astro preview",
     "check": "astro build",
     "check:seo": "node scripts/check-seo.mjs",
-    "verify:seo": "npm run build && npm run check:seo"
+    "verify:seo": "npm run build && npm run check:seo",
+    "check:adsense": "node scripts/check-adsense.mjs",
+    "verify:adsense": "npm run build && npm run check:adsense",
+    "verify:site": "npm run build && npm run check:seo && npm run check:adsense"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
