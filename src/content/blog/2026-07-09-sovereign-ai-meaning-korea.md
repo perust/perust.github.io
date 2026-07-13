@@ -138,11 +138,29 @@ AI가 업무 시스템 안으로 깊게 들어갈수록 어떤 모델을 쓰는�
 
 소버린 AI가 중요하다고 해서 모든 관련 종목이 같은 방향으로 움직이는 것은 아닙니다. 그리고 국가가 밀어주는 산업이라고 해서 모든 기업이 이익을 가져가는 것도 아닙니다.
 
-<div class="routine-kv">
-  <div><dt>과한 해석</dt><dd>국산 AI라는 말이 붙으면 모두 수혜</dd></div>
-  <div><dt>현실적 해석</dt><dd>실제 고객, 매출, 비용 구조가 공개된 회사를 구분</dd></div>
-  <div><dt>과한 기대</dt><dd>국가대표 모델 하나가 바로 글로벌 최상위 모델을 대체</dd></div>
-  <div><dt>실제 증거</dt><dd>수주, 반복 매출, 데이터센터 가동률, 보안 인증, 전력 계약</dd></div>
+<div class="contrast-pairs">
+  <div class="contrast-row">
+    <div class="contrast-card contrast-risk">
+      <span>과한 해석</span>
+      <p>국산 AI라는 말이 붙으면 모두 수혜</p>
+    </div>
+    <div class="contrast-arrow" aria-hidden="true">→</div>
+    <div class="contrast-card contrast-real">
+      <span>현실적 해석</span>
+      <p>실제 고객, 매출, 비용 구조가 공개된 회사를 구분</p>
+    </div>
+  </div>
+  <div class="contrast-row">
+    <div class="contrast-card contrast-risk">
+      <span>과한 기대</span>
+      <p>국가대표 모델 하나가 바로 글로벌 최상위 모델을 대체</p>
+    </div>
+    <div class="contrast-arrow" aria-hidden="true">→</div>
+    <div class="contrast-card contrast-real">
+      <span>실제 증거</span>
+      <p>수주, 반복 매출, 데이터센터 가동률, 보안 인증, 전력 계약</p>
+    </div>
+  </div>
 </div>
 
 또 하나는 외산 AI를 모두 배제한다는 식의 해석입니다. 현실적으로는 글로벌 모델과 국내 모델을 함께 쓰는 혼합 구조가 더 자연스럽습니다. 중요한 업무는 국내 통제 구조 안에서 운영하고, 범용 업무는 글로벌 모델을 활용하는 식입니다.
