@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
-<title id="title">Xcode를 열지 않는 앱 배포 요약</title>
-<desc id="desc">Xcode 설치, 명령줄 도구, 릴리스 스크립트, AI 로그 해석으로 이어지는 앱 배포 흐름</desc>
+<title id="title">Xcode GUI 없는 앱 자동화 요약</title>
+<desc id="desc">Xcode 설치, 명령줄 도구, 릴리스 스크립트, AI 로그 해석으로 이어지는 앱 개발 자동화 흐름</desc>
 <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0f172a"/><stop offset=".55" stop-color="#1e1b4b"/><stop offset="1" stop-color="#111827"/></linearGradient><radialGradient id="glow" cx=".72" cy=".12" r=".75"><stop stop-color="#2563eb" stop-opacity=".45"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient></defs>
 <rect width="1200" height="630" rx="42" fill="url(#bg)"/>
 <rect width="1200" height="630" rx="42" fill="url(#glow)"/>
 <text x="72" y="86" font-family="Inter, Pretendard, system-ui, sans-serif" font-size="24" font-weight="800" fill="#93c5fd">lentoludens summary</text>
-<text x="72" y="166" font-family="Inter, Pretendard, system-ui, sans-serif" font-size="58" font-weight="900" fill="#fff">Xcode를 열지 않는 앱 배포</text>
+<text x="72" y="166" font-family="Inter, Pretendard, system-ui, sans-serif" font-size="58" font-weight="900" fill="#fff">Xcode GUI 없는 앱 자동화</text>
 <text x="72" y="224" font-family="Inter, Pretendard, system-ui, sans-serif" font-size="30" font-weight="700" fill="#cbd5e1">AI 코딩 도구가 바꾸는 곳은 코드보다 반복 절차입니다</text>
 <g font-family="Inter, Pretendard, system-ui, sans-serif"><g>
 <rect x="70" y="338" width="224" height="126" rx="24" fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.22)"/>
@@ -28,5 +28,5 @@
 <text x="920" y="386" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">4</text>
 <text x="996" y="392" text-anchor="middle" font-size="25" font-weight="850" fill="#fff">AI 로그</text><text x="996" y="422" text-anchor="middle" font-size="25" font-weight="850" fill="#fff">해석</text>
 </g></g>
-<text x="72" y="540" font-family="Inter, Pretendard, system-ui, sans-serif" font-size="26" font-weight="700" fill="#cbd5e1">HN 526점·225댓글 · Xcode GUI가 아니라 빌드/서명/배포 자동화가 이슈</text>
+<text x="72" y="540" font-family="Inter, Pretendard, system-ui, sans-serif" font-size="26" font-weight="700" fill="#cbd5e1">HN 526점·225댓글 · Xcode GUI가 아니라 빌드/서명/기기 설치 자동화가 이슈</text>
 </svg>
