@@ -29,7 +29,7 @@ tags: ["최근경제동향", "한국경제", "수출", "물가", "고용", "부�
     <span class="issue-badge">민생</span>
     <h3>물가 3.2%, 생활물가 3.4%</h3>
     <p class="issue-summary">농축수산물 상승세 확대와 고유가 여파가 이어졌습니다. 식료품·에너지 제외 근원물가는 2.5%, 농산물·석유류 제외 지수는 2.4% 상승했습니다.</p>
-    <p class="issue-meta">체감 부담은 headline 성장률보다 물가와 주거비에서 먼저 나타납니다.</p>
+    <p class="issue-meta">체감 부담은 발표 성장률보다 물가와 주거비에서 먼저 나타납니다.</p>
   </li>
 </ul>
 
@@ -121,7 +121,7 @@ tags: ["최근경제동향", "한국경제", "수출", "물가", "고용", "부�
   <li><a href="https://www.mofe.go.kr/nw/nes/detailNesDtaView.do?searchBbsId1=MOSFBBS_000000000028&searchNttId1=MOSF_000000000078588&menuNo=4010100" target="_blank" rel="noopener">재정경제부, [보도참고] 2026년 7월 최근 경제동향</a></li>
   <li>재정경제부 첨부 PDF, 「2026년 7월 최근경제동향」, 2026년 7월 15일 공개</li>
   <li><a href="/blog/2026-07-17-korea-h2-growth-strategy-2026/">lentoludens, 2026년 하반기 경제성장전략 정리</a></li>
-  <li><a href="/blog/2026-07-20-semiconductor-leverage-etf-policy-risk/">lentoludens, 삼전·하이닉스 레버리지 급락과 반도체 정책 리스크</a></li>
+  <li><a href="/blog/2026-07-20-semiconductor-leverage-etf-policy-risk/">lentoludens, 삼전·하이닉스 레버리지 ETF 급락과 반도체 정책 리스크</a></li>
 </ul>
 
 ## 마지막으로
