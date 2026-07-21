@@ -87,11 +87,12 @@ for (const file of files) {
   // 페이지 유형별로 반드시 있어야 하는 JSON-LD @type 을 검증한다.
   // - 홈(index.html): WebSite
   // - 블로그 인덱스(blog/index.html): Blog
-  // - 카테고리/태그 목록(blog/category|tag/<slug>/index.html): CollectionPage + BreadcrumbList
+  // - 카테고리/태그/주제 허브 목록(blog/category|tag|topic/<slug>/index.html): CollectionPage + BreadcrumbList
   // - 블로그 글 상세(blog/<slug>/index.html): BlogPosting + BreadcrumbList
   const isCategory = rel.startsWith('blog/category/') && rel.endsWith('index.html');
   const isTag = rel.startsWith('blog/tag/') && rel.endsWith('index.html');
-  const isPost = rel.startsWith('blog/') && rel !== 'blog/index.html' && rel.endsWith('index.html') && !isCategory && !isTag;
+  const isTopic = rel.startsWith('blog/topic/') && rel.endsWith('index.html');
+  const isPost = rel.startsWith('blog/') && rel !== 'blog/index.html' && rel.endsWith('index.html') && !isCategory && !isTag && !isTopic;
   if (rel === 'index.html' && !types.includes('WebSite')) {
     missing.push('WebSite JSON-LD');
   } else if (rel === 'about/index.html') {
@@ -103,7 +104,7 @@ for (const file of files) {
     missing.push('Privacy WebPage JSON-LD');
   } else if (rel === 'blog/index.html' && !types.includes('Blog')) {
     missing.push('Blog JSON-LD');
-  } else if (isCategory || isTag) {
+  } else if (isCategory || isTag || isTopic) {
     if (!types.includes('CollectionPage')) missing.push('CollectionPage JSON-LD');
     if (!types.includes('BreadcrumbList')) missing.push('BreadcrumbList JSON-LD');
   } else if (isPost) {

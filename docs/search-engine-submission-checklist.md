@@ -18,7 +18,7 @@ lentoludens 블로그를 검색엔진과 답변엔진이 더 빨리 발견하도
 ## 등록 전 확인
 
 ```bash
-npm run verify:seo
+npm run verify:site
 ```
 
 확인할 것:
@@ -26,8 +26,9 @@ npm run verify:seo
 - canonical, description, robots 메타가 있는가
 - `og:image`, `twitter:image`가 있는가
 - 글 상세에 `BlogPosting`과 `BreadcrumbList` JSON-LD가 있는가
-- 카테고리/태그 페이지에 `CollectionPage` JSON-LD가 있는가
+- 카테고리/태그/주제 허브 페이지에 `CollectionPage` JSON-LD가 있는가
 - RSS와 sitemap이 정상 생성되는가
+- 정식 카테고리 매핑, 레거시 카테고리 호환 페이지, 태그 색인 임계값, 주제 허브 링크가 정책대로인가(`check:taxonomy`)
 
 ## Google Search Console
 
@@ -81,6 +82,15 @@ https://perust.github.io/robots.txt
 - `robots.txt`에는 `User-agent: Yeti`와 `User-agent: *` 모두 `Allow: /`가 있어야 한다.
 - sitemap은 `https://perust.github.io/sitemap-index.xml`을 사용한다.
 - 파비콘은 루트의 `/favicon.ico`와 `<head>`의 favicon 링크로 노출된다.
+
+## 카테고리 통합 (2026-07-21) — NEXT MANUAL 등록 작업
+
+블로그 카테고리를 통합 직전 83개 글에서 확인된 기존 19개 라벨에서 `src/config/taxonomy.ts`의 정식 카테고리 6개(AI / 생활금융·경제 / 자동화·만들기 / 서평 / 회고 / 일상)로 통합했다. 현재 공개된 69개 글에는 16개 라벨만 남아 있지만, 최근 보관된 글에만 있던 `Content Strategy`, `Food`, `Maker Log`까지 과거 URL 호환 대상으로 유지한다. 이 통합으로 카테고리 아카이브 URL 슬러그가 바뀌었고(예: `/blog/category/money/` → `/blog/category/생활금융-경제/`), 예전 URL은 크롤 안전한 호환 페이지(`noindex, follow` + 정식 아카이브로 canonical)로 남는다. 태그 아카이브는 글 3개 이상이면 색인되도록 정책이 바뀌었고(이전엔 전부 noindex), 주제 허브 페이지(`/blog/topic/ai/`, `/blog/topic/생활금융-경제/`, `/blog/topic/자동화-만들기/`) 3개가 새로 생겼다. **이 문서는 아래 등록 작업이 실행됐다고 주장하지 않는다 — 계정 인증이 필요해 사용자가 직접 해야 하는 다음 단계다.**
+
+- [ ] **NEXT MANUAL — Google Search Console**: `Sitemaps`에서 `https://perust.github.io/sitemap-index.xml`을 다시 제출한다(이미 등록되어 있어도 URL 구조가 바뀌었으므로 재제출 권장). `URL 검사` 도구로 새 주제 허브 3개(`/blog/topic/ai/`, `/blog/topic/생활금융-경제/`, `/blog/topic/자동화-만들기/`)의 색인을 직접 요청한다. 기존에 색인된 구 카테고리 URL(`/blog/category/money/` 등)이 있었다면, `URL 검사`로 새 canonical(`/blog/category/생활금융-경제/` 등)을 함께 요청해 전환을 앞당긴다.
+- [ ] **NEXT MANUAL — Bing Webmaster Tools**: sitemap을 재제출한다(`https://perust.github.io/sitemap-index.xml`). 별도 URL 재검사 기능이 있다면 주제 허브 3개 URL을 제출한다.
+- [ ] **NEXT MANUAL — 네이버 서치어드바이저**: `사이트맵 제출`에서 sitemap을 다시 제출한다. `웹마스터도구 > 요청 > 웹페이지 수집`에서 주제 허브 3개 URL의 수집을 요청한다.
+- [ ] **NEXT MANUAL — 사후 확인**: 1~2주 뒤 `site:perust.github.io/blog/category/` 검색과 Search Console `페이지` 리포트에서 구 카테고리 URL이 정식 카테고리로 정리(canonical 반영)되는지 확인한다. 레거시 호환 페이지가 색인에 남아 있다면 `noindex` 처리가 정상 반영될 때까지 기다린다(강제 삭제 요청은 필요할 때만).
 
 ## Daum/Kakao
 

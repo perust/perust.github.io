@@ -39,6 +39,8 @@ jobs:
         run: npm run check:adsense
       - name: Check content quality
         run: npm run check:content-quality
+      - name: Check taxonomy and indexing policy
+        run: npm run check:taxonomy
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

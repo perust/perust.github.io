@@ -3,7 +3,7 @@ title: "깃허브 블로그 댓글 기능 만들기: Cloudflare Worker와 D1로 
 description: "GitHub Pages와 Astro 블로그에 Cloudflare Worker, D1을 붙여 익명 댓글·삭제 비밀번호·비공개 댓글 기능을 만든 과정을 정리했다."
 date: "2026-07-01"
 updated: "2026-07-02"
-category: "Build Note"
+category: "자동화·만들기"
 tags: ["Astro", "GitHub Pages", "Cloudflare", "D1", "댓글", "블로그"]
 ---
 

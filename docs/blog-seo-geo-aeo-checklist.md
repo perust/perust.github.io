@@ -12,7 +12,7 @@ title: "검색 결과에 그대로 노출돼도 자연스러운 제목"
 description: "이 글이 답하는 질문을 한 문장으로 요약. 검색 스니펫과 og/twitter, JSON-LD에 함께 쓰인다."
 date: "2026-06-28"
 updated: "2026-07-01"   # 본문을 실제로 고친 날만. 없으면 생략 (dateModified는 date로 대체)
-category: "Build Note"
+category: "자동화·만들기"
 tags: ["Astro", "GitHub Pages"]
 ---
 ```
@@ -20,8 +20,16 @@ tags: ["Astro", "GitHub Pages"]
 - `title`: 사람이 실제로 검색하는 표현을 우선한다. 110자 이내(JSON-LD `headline` 권장 한도). 브랜드명·날짜 나열로 늘리지 않는다.
 - `description`: 글의 결론을 압축한 1문장. 120~160자 권장. 본문 첫 문단과 의미가 일치해야 한다.
 - `updated`: 내용을 실제로 고쳤을 때만 추가한다. 형식적으로 날짜만 바꾸지 않는다. `updated`(없으면 `date`)는 sitemap `lastmod`에도 그대로 반영된다.
-- `tags`: 글에 실제로 다룬 주제만. 4~8개 정도. 같은 단어 변형을 반복하지 않는다(키워드 스터핑 금지).
+- `category`: **반드시 `src/config/taxonomy.ts`의 `CANONICAL_CATEGORIES`에 있는 정식 카테고리명 중 하나**를 그대로 쓴다(현재 AI / 생활금융·경제 / 자동화·만들기 / 서평 / 회고 / 일상, 8개 이하 유지). 새 주제라 기존 카테고리에 안 맞으면 새 카테고리를 만들지 말고 가장 가까운 것을 고르거나, 정말 필요하면 `taxonomy.ts`에 카테고리를 추가하고 `LEGACY_CATEGORY_MAP`에 과거 표기가 있었는지 검토한다. 과거 라벨의 일괄 매핑보다 글 내용상 다른 정식 카테고리가 명확히 가까우면 `POST_CATEGORY_OVERRIDES`에 글 슬러그와 예외를 기록한다. `npm run check:taxonomy`가 정식 카테고리가 아닌 값이나 기록된 예외와 다른 값을 쓰면 빌드 검증에서 실패시킨다.
+- `tags`: 글에 실제로 다룬 주제만. 4~8개 정도. 같은 단어 변형을 반복하지 않는다(키워드 스터핑 금지). 같은 태그가 3개 이상 쌓이면 그 태그 페이지는 자동으로 색인(`index, follow`)되고 sitemap에 포함된다(`TAG_INDEX_MIN_POSTS`, `src/config/taxonomy.ts`). 3개 미만이면 접근은 되지만 `noindex, follow`로 남는다.
 - `image`(선택): OG 이미지를 글마다 직접 지정할 때만 쓴다. 생략하면 카테고리별 기본 OG 이미지(`public/og/`), 매칭되는 카테고리가 없으면 기본 이미지로 자동 대체된다.
+
+### 카테고리·태그·주제 허브 색인 정책 (2026-07-21 카테고리 통합)
+
+- 정식 카테고리는 `src/config/taxonomy.ts`의 `CANONICAL_CATEGORIES` 하나로 정의하고(8개 이하), 카테고리 아카이브(`/blog/category/<slug>/`)는 글이 3개 이상이면 `index, follow`, 미만이면 `noindex, follow`다(`CATEGORY_INDEX_MIN_POSTS`).
+- 과거에 쓰던 카테고리 라벨(`Money`, `AI Weekly`, `금융` 등)은 `LEGACY_CATEGORY_MAP`으로 정식 카테고리에 매핑되고, 예전 URL(`/blog/category/<과거 슬러그>/`)은 자동으로 호환 페이지가 생성된다. 호환 페이지는 항상 `noindex, follow`이고 canonical이 정식 카테고리 아카이브를 가리키며 sitemap에서 제외된다 — 링크는 계속 살아있지만 색인은 정식 카테고리로만 모인다.
+- 글이 많은 카테고리 3개(AI / 생활금융·경제 / 자동화·만들기)는 `TOPIC_HUBS`로 큐레이션한 주제 허브 페이지(`/blog/topic/<slug>/`)가 따로 있다. 항상 `index, follow`이며 블로그 인덱스와 글 상세의 "주제 경로" 블록에서 링크된다.
+- `npm run check:taxonomy`가 위 세 가지(정식 카테고리 매핑, 레거시 호환 페이지, 태그/허브 색인 정렬, 글마다 주제 경로 블록 존재)를 빌드마다 검증한다.
 
 ## 2. 제목 (검색 제목)
 
@@ -71,8 +79,8 @@ tags: ["Astro", "GitHub Pages"]
 - `src/pages/rss.xml.ts`가 블로그 글(title/description/pubDate/link/categories)을 모아 `/rss.xml` 피드를 만든다. 작성자는 `lentoludens`로만 표기한다.
 - OG 이미지는 `frontmatter.image`가 있으면 그 값을 쓰고, 없으면 글별 생성 이미지(`/public/og/posts/<slug>.png`)를, 없으면 카테고리 기본 이미지(`/public/og/`)를, 매칭되는 카테고리가 없으면 `/og/default.png`를 쓴다.
 - 글별 OG 이미지는 `python3 scripts/generate-og.py`로 생성한다. 새 글을 추가했다면 배포 전 이 스크립트를 한 번 실행해 `public/og/posts/`에 PNG가 생겼는지 확인한다.
-- 카테고리·태그는 `/blog/category/<slug>/`, `/blog/tag/<slug>/` 정적 페이지로 생성되고 `CollectionPage` + `BreadcrumbList` JSON-LD가 붙는다.
-- `npm run verify:seo`가 og/twitter 이미지, RSS, BlogPosting/BreadcrumbList/CollectionPage 구조화 데이터까지 점검한다.
+- 카테고리·태그·주제 허브는 `/blog/category/<slug>/`, `/blog/tag/<slug>/`, `/blog/topic/<slug>/` 정적 페이지로 생성되고 `CollectionPage` + `BreadcrumbList` JSON-LD가 붙는다.
+- `npm run verify:seo`가 og/twitter 이미지, RSS, BlogPosting/BreadcrumbList/CollectionPage 구조화 데이터까지 점검하고, `npm run verify:site`(빌드 + 4개 체커)는 여기에 더해 `npm run check:taxonomy`로 카테고리/태그/허브 색인 정책까지 점검한다.
 
 검색엔진 등록은 계정 인증이 필요하다. Google Search Console, Bing Webmaster Tools, 네이버 서치어드바이저 등록 절차는 [`search-engine-submission-checklist.md`](search-engine-submission-checklist.md)를 따른다.
 

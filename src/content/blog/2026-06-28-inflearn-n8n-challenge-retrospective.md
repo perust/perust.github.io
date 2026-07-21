@@ -3,7 +3,7 @@ title: "인프런 n8n 챌린지 회고: 처음 시도해본 n8n 자동화"
 description: "n8n을 거의 모르는 상태에서 인프런 챌린지를 따라가며 처음 자동화 워크플로우를 만들어본 경험과 배운 점을 정리했다."
 date: "2026-06-28"
 updated: "2026-07-03"
-category: "Retrospective"
+category: "회고"
 tags: ["n8n", "Automation", "Inflearn", "AI", "n8n 사용법", "업무 자동화"]
 faqs:
   - question: "인프런 n8n 챌린지는 초보자도 따라갈 수 있나요?"

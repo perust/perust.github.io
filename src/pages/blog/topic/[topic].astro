@@ -1,0 +1,110 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getAllPosts, categoryPath, ogImageForCategory } from '../../../utils/blog';
+import { TOPIC_HUBS, canonicalCategoryFor } from '../../../config/taxonomy';
+
+// 정식 카테고리 중 비중이 큰 것을 큐레이션한 주제 허브(topic hub) 페이지.
+// 새 글을 만들지 않고, 이미 있는 글을 하위 주제별로 묶어 소개한다.
+export function getStaticPaths() {
+  const posts = getAllPosts();
+  return TOPIC_HUBS.map((hub) => {
+    const hubPosts = posts
+      .filter((post) => hub.categories.includes(canonicalCategoryFor(post.category)))
+      .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
+    const bySlug = new Map(hubPosts.map((post) => [post.slug, post]));
+    const subtopics = hub.subtopics.map((subtopic) => ({
+      ...subtopic,
+      posts: subtopic.slugs.map((slug) => bySlug.get(slug)).filter(Boolean),
+    }));
+    return {
+      params: { topic: hub.slug },
+      props: { hub, posts: hubPosts, subtopics },
+    };
+  });
+}
+
+const { hub, posts, subtopics } = Astro.props;
+const site = Astro.site ?? new URL('https://perust.github.io');
+const path = `/blog/topic/${hub.slug}/`;
+const pageUrl = new URL(path, site).toString();
+const title = `${hub.title} 주제 허브 · lentoludens 블로그`;
+const description = hub.description;
+const primaryCategory = hub.categories[0];
+
+const collectionLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${hub.title} · lentoludens 블로그`,
+  description,
+  url: pageUrl,
+  inLanguage: 'ko-KR',
+  isPartOf: { '@type': 'Blog', name: 'lentoludens 블로그', url: new URL('/blog/', site).toString() },
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post: any, index: number) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: new URL(`/blog/${post.slug}/`, site).toString(),
+      name: post.title,
+    })),
+  },
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '홈', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: '블로그', item: new URL('/blog/', site).toString() },
+    { '@type': 'ListItem', position: 3, name: hub.title, item: pageUrl },
+  ],
+};
+---
+<BaseLayout title={title} description={description} canonical={path} robots="index, follow" jsonLd={[collectionLd, breadcrumbLd]} image={ogImageForCategory(primaryCategory)}>
+  <main>
+    <section class="section-shell blog-hero blog-hero-compact">
+      <p class="section-kicker"><a href="/blog/">블로그</a> · 주제 허브</p>
+      <h1>{hub.title}</h1>
+      <p class="hero-description">{hub.description}</p>
+      <p class="hero-description"><a class="text-link" href={categoryPath(primaryCategory)}>{primaryCategory} 카테고리 전체 글 최신순으로 보기 →</a></p>
+    </section>
+
+    <section class="section-shell hub-subtopics" aria-label={`${hub.title} 하위 주제`} style="padding-top:0">
+      {subtopics.map((subtopic: any) => subtopic.posts.length > 0 && (
+        <div class="hub-subtopic">
+          <h2>{subtopic.label}</h2>
+          <p>{subtopic.description}</p>
+          <ul class="hub-subtopic-list">
+            {subtopic.posts.map((post: any) => (
+              <li><a href={`/blog/${post.slug}/`}>{post.title}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </section>
+
+    <section class="section-shell blog-main-list" aria-label={`${hub.title} 전체 글`}>
+      <div class="section-heading">
+        <p class="section-kicker">All posts</p>
+        <h2>{hub.title} 전체 글 {posts.length}편</h2>
+      </div>
+      <div class="post-list">
+        {posts.map((post: any) => (
+          <a class="post-list-item" href={`/blog/${post.slug}/`}>
+            <div class="post-list-meta">
+              <span>{post.category}</span>
+              <time datetime={new Date(post.date).toISOString()}>{new Date(post.date).toLocaleDateString('ko-KR')}</time>
+            </div>
+            <div>
+              <h2>{post.title}</h2>
+              <p>{post.description}</p>
+              <ul class="post-tags">{post.tags?.map((tag: string) => <li>{tag}</li>)}</ul>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p style="margin-top:1.5rem"><a class="text-link" href="/blog/">← 블로그 전체 글 보기</a></p>
+    </section>
+  </main>
+</BaseLayout>

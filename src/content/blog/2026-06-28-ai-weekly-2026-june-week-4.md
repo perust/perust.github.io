@@ -2,7 +2,7 @@
 title: "2026년 6월 4주차 AI 주요 이슈 정리: 에이전트, AI 코딩, 자동화, 보안"
 description: "2026년 6월 22일부터 28일까지 나온 AI 주요 이슈를 공식 발표, 제품 변경 로그, 연구기관 발표, 보안 매체 보도 기준으로 정리했다."
 date: "2026-06-28T22:00:00+09:00"
-category: "AI Weekly"
+category: "AI"
 tags: ["AI", "AI Weekly", "Automation", "AI Coding", "Security"]
 ---
 

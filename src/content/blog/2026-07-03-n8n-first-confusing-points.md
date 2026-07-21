@@ -2,7 +2,7 @@
 title: "n8n 처음 쓸 때 헷갈리는 것들: 자동화 전에 알아야 할 기본 개념"
 description: "n8n을 처음 사용할 때 헷갈리기 쉬운 워크플로우, 트리거, 노드, 데이터 흐름, 인증, 실행 모드를 초보자 관점에서 정리했다."
 date: "2026-07-03"
-category: "Automation"
+category: "자동화·만들기"
 tags: ["n8n", "n8n 사용법", "업무 자동화", "Automation", "AI", "초보자"]
 ---
 

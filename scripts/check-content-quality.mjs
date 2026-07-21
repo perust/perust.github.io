@@ -4,9 +4,9 @@
 //
 // 검사 항목:
 //  1. 보관(archive) 대상 슬러그가 src/content/blog 와 dist/blog 에 없다.
-//  2. 모든 태그 페이지는 noindex, follow 다.
+//  2. 태그 페이지는 글이 TAG_INDEX_MIN_POSTS(3)개 이상일 때만 index, 그 외에는 noindex, follow 다.
 //  3. 카테고리 페이지는 글 3개 이상일 때만 index, 그 외에는 noindex, follow 다.
-//  4. sitemap 에 태그 URL 과 noindex 카테고리 URL 이 없다.
+//  4. sitemap 에 noindex 태그/카테고리 URL 이 없다.
 //  5. 개인정보처리방침이 실제 댓글 처리(닉네임/본문/삭제 비밀번호/IP/Cloudflare/Turnstile)와
 //     Analytics/AdSense/Clarity 를 설명한다.
 //  6. 편집·운영 원칙 페이지가 존재하고 footer 에서 연결된다.
@@ -14,6 +14,7 @@
 //  8. 공개 HTML 에 보관 슬러그로 가는 내부 링크가 남아 있지 않다.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { CATEGORY_INDEX_MIN_POSTS, TAG_INDEX_MIN_POSTS, slugify } from '../src/config/taxonomy.ts';
 
 const DIST = 'dist';
 const BLOG_SRC = 'src/content/blog';
@@ -41,9 +42,6 @@ const ARCHIVED_SLUGS = [
   '2026-07-03-recording-habit-return-system',
 ];
 
-// 카테고리를 index 로 유지하기 위한 최소 공개 글 수.
-const CATEGORY_INDEX_MIN_POSTS = 3;
-
 // 개인정보처리방침에 반드시 설명되어야 하는 실제 데이터 처리 항목.
 const PRIVACY_REQUIRED_TERMS = [
   '닉네임',
@@ -63,14 +61,6 @@ const PRIVACY_REQUIRED_TERMS = [
 ];
 
 const toPosix = (p) => p.split(sep).join('/');
-
-const slugify = (value) =>
-  value
-    .normalize('NFC')
-    .trim()
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
-    .replace(/^-+|-+$/g, '');
 
 const failures = [];
 const fail = (message) => failures.push(message);
@@ -118,32 +108,48 @@ for (const slug of ARCHIVED_SLUGS) {
   );
 }
 
-// --- 카테고리별 공개 글 수 집계 (astro.config.mjs 와 같은 frontmatter 파싱) ---
+// --- 카테고리/태그별 공개 글 수 집계 (astro.config.mjs 와 같은 frontmatter 파싱) ---
 const categoryCountBySlug = new Map();
+const tagCountBySlug = new Map();
 for (const file of srcFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
   const block = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
   const category = block.match(/^category:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
-  if (!category) continue;
-  const key = slugify(category);
-  categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
+  if (category) {
+    const key = slugify(category);
+    categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
+  }
+  const tagsLine = block.match(/^tags:\s*(\[.*\])\s*$/m)?.[1];
+  if (tagsLine) {
+    try {
+      for (const tag of JSON.parse(tagsLine)) {
+        const key = slugify(tag);
+        tagCountBySlug.set(key, (tagCountBySlug.get(key) || 0) + 1);
+      }
+    } catch {
+      // 무시: 해당 글의 태그 집계를 건너뛴다.
+    }
+  }
 }
 
 // --- 2~3. 태그/카테고리 robots 규칙 ---
 const allHtml = htmlFiles(DIST).sort();
 const noindexCategorySlugs = new Set();
-let tagPagesChecked = 0;
-const badTagRobots = [];
+const noindexTagSlugs = new Set();
 for (const file of allHtml) {
   const rel = toPosix(relative(DIST, file));
 
   const tagMatch = rel.match(/^blog\/tag\/([^/]+)\/index\.html$/);
   if (tagMatch) {
+    const slug = decodeURIComponent(tagMatch[1]);
+    const count = tagCountBySlug.get(slug) || 0;
     const html = readFileSync(file, 'utf8');
-    tagPagesChecked += 1;
-    if (normalizedRobots(html) !== 'noindex, follow') {
-      badTagRobots.push(`${rel} (현재 "${robotsContent(html)}")`);
-    }
+    const expected = count >= TAG_INDEX_MIN_POSTS ? 'index, follow' : 'noindex, follow';
+    report(
+      normalizedRobots(html) === expected,
+      `태그 ${slug} (글 ${count}개) 는 robots="${expected}" 여야 함 (현재 "${robotsContent(html)}")`,
+    );
+    if (expected === 'noindex, follow') noindexTagSlugs.add(slug);
     continue;
   }
 
@@ -167,10 +173,6 @@ for (const file of allHtml) {
     }
   }
 }
-report(
-  badTagRobots.length === 0,
-  `태그 페이지 ${tagPagesChecked}개가 모두 robots="noindex, follow" 여야 함${badTagRobots.length ? ` (위반: ${badTagRobots.slice(0, 5).join(', ')})` : ''}`,
-);
 
 // --- 4. sitemap 검사 ---
 const sitemapFiles = readdirSync(DIST).filter((file) => /^sitemap-\d+\.xml$/.test(file));
@@ -179,8 +181,14 @@ if (!sitemapFiles.length) {
 } else {
   const sitemap = sitemapFiles.map((file) => readFileSync(join(DIST, file), 'utf8')).join('\n');
   const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url);
-  const tagUrls = urls.filter((url) => url.includes('/blog/tag/'));
-  report(tagUrls.length === 0, `sitemap 에 태그 URL 이 없어야 함 (발견 ${tagUrls.length}개)`);
+  const badTagUrls = urls.filter((url) => {
+    const slug = url.match(/\/blog\/tag\/([^/]+)\/?$/)?.[1];
+    return slug && noindexTagSlugs.has(decodeURIComponent(slug));
+  });
+  report(
+    badTagUrls.length === 0,
+    `sitemap 에 noindex 태그 URL 이 없어야 함 (발견: ${badTagUrls.join(', ') || '없음'})`,
+  );
   const badCategoryUrls = urls.filter((url) => {
     const slug = url.match(/\/blog\/category\/([^/]+)\/?$/)?.[1];
     return slug && noindexCategorySlugs.has(decodeURIComponent(slug));

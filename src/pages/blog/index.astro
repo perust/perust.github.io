@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { categoryPath, tagPath } from '../../utils/blog';
+import { TOPIC_HUBS } from '../../config/taxonomy';
 
 const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
 const posts = Object.entries(modules)
@@ -49,6 +50,24 @@ const blogLd = {
       <p class="section-kicker">Blog</p>
       <h1>블로그</h1>
       <p class="hero-description">프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 글로 정리합니다.</p>
+    </section>
+
+    <section class="section-shell" aria-labelledby="topic-hubs-title" style="padding-top:0">
+      <div class="section-heading">
+        <p class="section-kicker">Topic hubs</p>
+        <h2 id="topic-hubs-title">주제로 보기</h2>
+        <p>비중이 큰 주제 3개는 하위 주제와 대표 글을 큐레이션한 허브 페이지로 따로 정리했습니다.</p>
+      </div>
+      <ul class="hub-nav-grid">
+        {TOPIC_HUBS.map((hub) => (
+          <li>
+            <a class="hub-nav-card" href={`/blog/topic/${hub.slug}/`}>
+              <h3>{hub.title}</h3>
+              <p>{hub.tagline}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
 
     <section class="section-shell blog-page" aria-label="블로그 글 목록">

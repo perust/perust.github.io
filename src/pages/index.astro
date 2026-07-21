@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { categoryPath, tagPath } from '../utils/blog';
+import { tagPath } from '../utils/blog';
+import { TOPIC_HUBS, canonicalCategoryFor } from '../config/taxonomy';
 
 const modules = import.meta.glob('../content/blog/*.md', { eager: true });
 const posts = Object.entries(modules)
@@ -24,7 +25,6 @@ const curatedPosts = preferredSlugs.map((slug) => bySlug.get(slug)).filter(Boole
 const featuredPost = curatedPosts[0] ?? posts[0];
 const secondaryPosts = curatedPosts.filter((post) => post.slug !== featuredPost?.slug).slice(0, 5);
 const recentPosts = posts.filter((post) => !curatedPosts.some((curated) => curated.slug === post.slug)).slice(0, 4);
-const categories = Array.from(new Set(posts.map((post) => post.category))).sort();
 const tags = Array.from(new Set(posts.flatMap((post) => post.tags ?? []))).slice(0, 10);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
@@ -90,11 +90,11 @@ const websiteLd = {
         <p class="theme-note">전체 글을 훑기 전에 관심 있는 주제부터 볼 수 있게 묶어두었습니다.</p>
       </div>
       <div class="focus-grid">
-        {categories.slice(0, 3).map((category) => (
-          <a class="focus-card theme-card" href={categoryPath(category)}>
-            <span class="card-index">{String(posts.filter((post) => post.category === category).length).padStart(2, '0')}</span>
-            <h3>{category}</h3>
-            <p>{posts.find((post) => post.category === category)?.description}</p>
+        {TOPIC_HUBS.map((hub) => (
+          <a class="focus-card theme-card" href={`/blog/topic/${hub.slug}/`}>
+            <span class="card-index">{String(posts.filter((post) => hub.categories.includes(canonicalCategoryFor(post.category))).length).padStart(2, '0')}</span>
+            <h3>{hub.title}</h3>
+            <p>{hub.tagline}</p>
           </a>
         ))}
       </div>
