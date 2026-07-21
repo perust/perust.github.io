@@ -73,17 +73,17 @@ const srcFiles = existsSync(BLOG_SRC) ? readdirSync(BLOG_SRC).filter((f) => f.en
 // --- 1. 정식 카테고리 개수 <= 8, 모든 글이 정식 카테고리를 쓴다 ---
 report(CANONICAL_CATEGORIES.length <= 8, `정식 카테고리 수는 8개 이하여야 함 (현재 ${CANONICAL_CATEGORIES.length}개: ${CANONICAL_CATEGORIES.map((c) => c.name).join(', ')})`);
 
-// 통합 직전(83개 글, HEAD^^) Git 이력에서 실제 확인한 19개 라벨이다.
-// 현재 공개 소스에서 글이 보관되어 사라진 라벨도 과거 URL 호환을 위해 계속 매핑해야 한다.
+// 전체 Git 이력에서 실제 확인한 20개 라벨이다. AI는 정식 URL을 그대로 쓰므로,
+// 나머지 19개가 레거시 호환 페이지 대상이다.
 const historicalCategoryLabels = [
-  'AI', 'AI Weekly', 'Automation', 'Book Review', 'Build Note', 'Content Strategy',
+  'AI', 'AI Weekly', 'Automation', 'Book Review', 'Build Note', 'Content Strategy', 'Science',
   'Economy', 'Finance', 'Food', 'Life', 'Maker Log', 'Money', 'Money Weekly',
   'Product', 'Retrospective', 'Tech', 'Travel', '금융', '생활',
 ];
 const missingHistoricalLabels = historicalCategoryLabels.filter((label) => !LEGACY_CATEGORY_MAP[label]);
 report(
   missingHistoricalLabels.length === 0,
-  `통합 직전 83개 글에서 확인된 역사 카테고리 19개가 모두 매핑되어야 함 (누락: ${missingHistoricalLabels.join(', ') || '없음'})`,
+  `전체 Git 이력에서 확인된 역사 카테고리 20개(AI + 레거시 19개)가 모두 매핑되어야 함 (누락: ${missingHistoricalLabels.join(', ') || '없음'})`,
 );
 
 let categoryDrift = 0;
@@ -110,15 +110,20 @@ for (const file of srcFiles) {
   const key = slugify(category);
   categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
 
+  const hasTags = /^tags:/m.test(block);
   const tagsLine = block.match(/^tags:\s*(\[.*\])\s*$/m)?.[1];
-  if (tagsLine) {
+  if (hasTags && !tagsLine) {
+    fail(`${file}: tags 는 단일행 JSON 배열 형식이어야 함`);
+  } else if (tagsLine) {
     try {
-      for (const tag of JSON.parse(tagsLine)) {
+      const tags = JSON.parse(tagsLine);
+      if (!Array.isArray(tags) || tags.some((tag) => typeof tag !== 'string')) throw new TypeError('문자열 배열이 아님');
+      for (const tag of tags) {
         const tagKey = slugify(tag);
         tagCountBySlug.set(tagKey, (tagCountBySlug.get(tagKey) || 0) + 1);
       }
-    } catch {
-      // 무시
+    } catch (error) {
+      fail(`${file}: tags 파싱 실패 (${error.message})`);
     }
   }
 }
@@ -168,7 +173,8 @@ for (const entry of LEGACY_COMPAT_ENTRIES) {
     types.includes('CollectionPage') && types.includes('BreadcrumbList'),
     `레거시 호환 페이지 /blog/category/${entry.legacySlug}/ 에 CollectionPage+BreadcrumbList JSON-LD 가 있어야 함 (현재 [${types.join(', ')}])`,
   );
-  const inSitemap = sitemapUrls.some((url) => url.includes(`/blog/category/${entry.legacySlug}/`));
+  const expectedLegacyPath = `/blog/category/${entry.legacySlug}/`;
+  const inSitemap = sitemapUrls.some((url) => decodeURIComponent(new URL(url).pathname) === expectedLegacyPath);
   report(!inSitemap, `레거시 호환 페이지 /blog/category/${entry.legacySlug}/ 는 sitemap 에 없어야 함`);
 }
 

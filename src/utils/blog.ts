@@ -1,6 +1,9 @@
 // 블로그 글 로딩과 카테고리/태그 슬러그 처리를 한곳에 모은 헬퍼.
 // category/tag 정적 페이지, blog 인덱스, [slug] 상세가 이 모듈을 공유한다.
 
+import { slugify } from '../config/taxonomy';
+export { slugify } from '../config/taxonomy';
+
 export interface PostFrontmatter {
   title: string;
   description: string;
@@ -27,18 +30,6 @@ export function getAllPosts(): BlogPost[] {
       ...(mod.frontmatter as PostFrontmatter),
     }))
     .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
-}
-
-// 공백/특수문자는 하이픈으로, 영문은 소문자로, 한글 등 유니코드 글자는 그대로 둔 슬러그.
-// 예: "Build Note" → "build-note", "경제·재테크" → "경제-재테크".
-// 한글 슬러그는 URL에서 percent-encoding 되며, new URL()이 canonical/JSON-LD에서 자동 인코딩한다.
-export function slugify(value: string): string {
-  return value
-    .normalize('NFC')
-    .trim()
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 export function categoryPath(category: string): string {

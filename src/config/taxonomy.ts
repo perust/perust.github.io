@@ -18,9 +18,7 @@ export interface CanonicalCategory {
   description: string;
 }
 
-// blog.ts / astro.config.mjs 에도 동일한 슬러그 규칙이 있다.
-// import.meta.glob 정적 분석 제약과, astro.config.mjs가 프로젝트 초기화 이전에 로드되는
-// 특성 때문에 완전히 하나로 합치지 않고 로직만 동일하게 유지한다(세 곳을 함께 고칠 것).
+// blog.ts, astro.config.mjs, 검증 스크립트가 이 함수를 직접 import한다.
 export function slugify(value: string): string {
   return value
     .normalize('NFC')
@@ -82,6 +80,7 @@ export const CANONICAL_CATEGORY_BY_SLUG: ReadonlyMap<string, CanonicalCategory> 
 export const LEGACY_CATEGORY_MAP: Record<string, string> = {
   AI: 'AI',
   'AI Weekly': 'AI',
+  Science: 'AI',
 
   Money: '생활금융·경제',
   'Money Weekly': '생활금융·경제',

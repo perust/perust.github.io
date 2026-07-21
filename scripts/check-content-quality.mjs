@@ -119,15 +119,20 @@ for (const file of srcFiles) {
     const key = slugify(category);
     categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
   }
+  const hasTags = /^tags:/m.test(block);
   const tagsLine = block.match(/^tags:\s*(\[.*\])\s*$/m)?.[1];
-  if (tagsLine) {
+  if (hasTags && !tagsLine) {
+    fail(`${file}: tags 는 단일행 JSON 배열 형식이어야 함`);
+  } else if (tagsLine) {
     try {
-      for (const tag of JSON.parse(tagsLine)) {
+      const tags = JSON.parse(tagsLine);
+      if (!Array.isArray(tags) || tags.some((tag) => typeof tag !== 'string')) throw new TypeError('문자열 배열이 아님');
+      for (const tag of tags) {
         const key = slugify(tag);
         tagCountBySlug.set(key, (tagCountBySlug.get(key) || 0) + 1);
       }
-    } catch {
-      // 무시: 해당 글의 태그 집계를 건너뛴다.
+    } catch (error) {
+      fail(`${file}: tags 파싱 실패 (${error.message})`);
     }
   }
 }

@@ -7,7 +7,7 @@ import { CATEGORY_INDEX_MIN_POSTS, TAG_INDEX_MIN_POSTS, LEGACY_COMPAT_SLUGS, slu
 // 블로그 글의 frontmatter date/updated를 읽어 sitemap의 lastmod로 쓰고,
 // 카테고리·태그별 글 수를 계산해 색인 임계값(src/config/taxonomy.ts) 미만인 페이지는
 // sitemap에서 제외한다. 레거시 카테고리 호환 페이지는 항상 noindex 라 슬러그로 바로 제외한다.
-// 파싱이 실패해도 빌드를 막지 않도록 모든 과정을 try/catch로 감싼다.
+// frontmatter 형식이 정책과 다르면 조용히 잘못된 sitemap을 만들지 않고 빌드를 실패시킨다.
 const lastmodBySlug = new Map();
 const categoryCountBySlug = new Map();
 const tagCountBySlug = new Map();
@@ -18,14 +18,16 @@ try {
     const slug = file.replace(/\.md$/, '');
     const raw = readFileSync(`${blogDir}/${file}`, 'utf8');
     const fm = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-    if (!fm) continue;
+    if (!fm) throw new Error(`${file}: frontmatter 블록이 없음`);
     const block = fm[1];
     const pick = (key) =>
       block.match(new RegExp(`^${key}:\\s*["']?([^"'\\n]+)["']?\\s*$`, 'm'))?.[1]?.trim();
     const value = pick('updated') || pick('date');
-    if (!value) continue;
-    const parsed = new Date(value);
-    if (!Number.isNaN(parsed.valueOf())) lastmodBySlug.set(slug, parsed.toISOString());
+    if (value) {
+      const parsed = new Date(value);
+      if (Number.isNaN(parsed.valueOf())) throw new Error(`${file}: date/updated 형식이 유효하지 않음`);
+      lastmodBySlug.set(slug, parsed.toISOString());
+    }
 
     const category = pick('category');
     if (category) {
@@ -33,20 +35,22 @@ try {
       if (categorySlug) categoryCountBySlug.set(categorySlug, (categoryCountBySlug.get(categorySlug) || 0) + 1);
     }
 
+    const hasTags = /^tags:/m.test(block);
     const tagsLine = block.match(/^tags:\s*(\[.*\])\s*$/m)?.[1];
+    if (hasTags && !tagsLine) throw new Error(`${file}: tags 는 단일행 JSON 배열 형식이어야 함`);
     if (tagsLine) {
-      try {
-        for (const tag of JSON.parse(tagsLine)) {
-          const tagSlug = slugify(tag);
-          if (tagSlug) tagCountBySlug.set(tagSlug, (tagCountBySlug.get(tagSlug) || 0) + 1);
-        }
-      } catch {
-        // 무시: 해당 글의 태그 집계를 건너뛴다.
+      const tags = JSON.parse(tagsLine);
+      if (!Array.isArray(tags) || tags.some((tag) => typeof tag !== 'string')) {
+        throw new TypeError(`${file}: tags 는 문자열 배열이어야 함`);
+      }
+      for (const tag of tags) {
+        const tagSlug = slugify(tag);
+        if (tagSlug) tagCountBySlug.set(tagSlug, (tagCountBySlug.get(tagSlug) || 0) + 1);
       }
     }
   }
-} catch {
-  // 무시: lastmod/category/tag count 없이 진행한다.
+} catch (error) {
+  throw new Error(`sitemap frontmatter 집계 실패: ${error.message}`, { cause: error });
 }
 
 export default defineConfig({
