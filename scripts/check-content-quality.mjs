@@ -47,8 +47,14 @@ const CATEGORY_INDEX_MIN_POSTS = 3;
 // 개인정보처리방침에 반드시 설명되어야 하는 실제 데이터 처리 항목.
 const PRIVACY_REQUIRED_TERMS = [
   '닉네임',
+  '최대 40자',
+  '최대 800자',
   '삭제 비밀번호',
   'IP',
+  'IP 해시값',
+  '1분에 1회',
+  '원본 IP 주소 자체는 저장하지 않습니다',
+  '별도의 자동 삭제 기한은 두지 않습니다',
   'Cloudflare',
   'Turnstile',
   'Google Analytics',
@@ -85,7 +91,7 @@ function htmlFiles(dir) {
 
 const robotsContent = (html) =>
   html.match(/<meta[^>]+name=["']robots["'][^>]+content=["']([^"']*)["'][^>]*>/i)?.[1] ?? '';
-const isNoindex = (html) => /noindex/i.test(robotsContent(html));
+const normalizedRobots = (html) => robotsContent(html).toLowerCase().replace(/\s+/g, ' ').trim();
 
 if (!existsSync(DIST)) {
   console.error('[check-content-quality] dist 가 없습니다. 먼저 npm run build 를 실행하세요.');
@@ -101,6 +107,14 @@ for (const slug of ARCHIVED_SLUGS) {
   report(
     !existsSync(join(DIST, 'blog', slug, 'index.html')),
     `보관 대상 ${slug} 이(가) dist/blog 에 없어야 함`,
+  );
+  report(
+    !existsSync(join('public', 'og', 'posts', `${slug}.png`)),
+    `보관 대상 ${slug} 의 OG 이미지가 public/og/posts 에 없어야 함`,
+  );
+  report(
+    !existsSync(join(DIST, 'og', 'posts', `${slug}.png`)),
+    `보관 대상 ${slug} 의 OG 이미지가 dist/og/posts 에 없어야 함`,
   );
 }
 
@@ -118,13 +132,18 @@ for (const file of srcFiles) {
 // --- 2~3. 태그/카테고리 robots 규칙 ---
 const allHtml = htmlFiles(DIST).sort();
 const noindexCategorySlugs = new Set();
+let tagPagesChecked = 0;
+const badTagRobots = [];
 for (const file of allHtml) {
   const rel = toPosix(relative(DIST, file));
 
   const tagMatch = rel.match(/^blog\/tag\/([^/]+)\/index\.html$/);
   if (tagMatch) {
     const html = readFileSync(file, 'utf8');
-    report(isNoindex(html), `태그 페이지 ${rel} 는 noindex 여야 함 (robots="${robotsContent(html)}")`);
+    tagPagesChecked += 1;
+    if (normalizedRobots(html) !== 'noindex, follow') {
+      badTagRobots.push(`${rel} (현재 "${robotsContent(html)}")`);
+    }
     continue;
   }
 
@@ -134,17 +153,24 @@ for (const file of allHtml) {
     const count = categoryCountBySlug.get(slug) || 0;
     const html = readFileSync(file, 'utf8');
     if (count >= CATEGORY_INDEX_MIN_POSTS) {
-      report(!isNoindex(html), `카테고리 ${slug} (글 ${count}개) 는 index 여야 함`);
+      report(
+        normalizedRobots(html) === 'index, follow',
+        `카테고리 ${slug} (글 ${count}개) 는 robots="index, follow" 여야 함 (현재 "${robotsContent(html)}")`,
+      );
     } else {
-      if (isNoindex(html)) {
+      if (normalizedRobots(html) === 'noindex, follow') {
         console.log(`[ok] 카테고리 ${slug} (글 ${count}개) noindex`);
       } else {
-        report(false, `카테고리 ${slug} (글 ${count}개) 는 noindex 여야 함 (robots="${robotsContent(html)}")`);
+        report(false, `카테고리 ${slug} (글 ${count}개) 는 robots="noindex, follow" 여야 함 (현재 "${robotsContent(html)}")`);
       }
       noindexCategorySlugs.add(slug);
     }
   }
 }
+report(
+  badTagRobots.length === 0,
+  `태그 페이지 ${tagPagesChecked}개가 모두 robots="noindex, follow" 여야 함${badTagRobots.length ? ` (위반: ${badTagRobots.slice(0, 5).join(', ')})` : ''}`,
+);
 
 // --- 4. sitemap 검사 ---
 const sitemapFiles = readdirSync(DIST).filter((file) => /^sitemap-\d+\.xml$/.test(file));
@@ -205,8 +231,11 @@ for (const file of allHtml) {
   if (LEGACY_PREFIXES.some((prefix) => rel.startsWith(prefix))) continue;
 
   const html = readFileSync(file, 'utf8');
+  const hrefs = [...html.matchAll(/href=["']([^"']+)["']/gi)].map((match) => match[1]);
   for (const slug of ARCHIVED_SLUGS) {
-    if (html.includes(`href="/blog/${slug}/"`)) brokenLinks.push(`${rel} → /blog/${slug}/`);
+    if (hrefs.some((href) => href.includes(`/blog/${slug}/`))) {
+      brokenLinks.push(`${rel} → /blog/${slug}/`);
+    }
   }
 
   const isPost =

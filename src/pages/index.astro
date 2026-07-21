@@ -10,7 +10,7 @@ const posts = Object.entries(modules)
   }))
   .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
 
-// 직접 만들고 써본 경험 기반 글을 홈 첫 화면에 우선 노출한다.
+// 직접 경험을 담은 제작기와 공식 자료 기반 실용 글을 홈 첫 화면에 우선 노출한다.
 const preferredSlugs = [
   '2026-07-01-static-blog-anonymous-comments',
   '2026-06-28-inflearn-n8n-challenge-retrospective',
@@ -69,7 +69,7 @@ const websiteLd = {
       <div class="section-heading">
         <p class="section-kicker">Editor’s picks</p>
         <h2 id="curated-title">먼저 읽어볼 글</h2>
-        <p>직접 만들고 써보면서 남긴 제작기와 회고를 먼저 모았습니다.</p>
+        <p>직접 경험을 담은 제작기와 회고, 공식 자료를 바탕으로 정리한 실용 글을 먼저 모았습니다.</p>
       </div>
       <div class="blog-grid home-curation-grid">
         {secondaryPosts.map((post) => (
