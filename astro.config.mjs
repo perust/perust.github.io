@@ -12,10 +12,12 @@ const slugify = (value) =>
     .replace(/^-+|-+$/g, '');
 
 // 블로그 글의 frontmatter date/updated를 읽어 sitemap의 lastmod로 쓰고,
-// 태그별 글 수를 계산해 얇은 태그 페이지(글 1개)는 sitemap에서 제외한다.
+// 카테고리별 글 수를 계산해 글 3개 미만(noindex) 카테고리는 sitemap에서 제외한다.
+// 태그 페이지는 전부 noindex 라 sitemap에서 모두 제외한다.
 // 파싱이 실패해도 빌드를 막지 않도록 모든 과정을 try/catch로 감싼다.
+const CATEGORY_INDEX_MIN_POSTS = 3;
 const lastmodBySlug = new Map();
-const tagCountBySlug = new Map();
+const categoryCountBySlug = new Map();
 try {
   const blogDir = fileURLToPath(new URL('./src/content/blog', import.meta.url));
   for (const file of readdirSync(blogDir)) {
@@ -32,18 +34,14 @@ try {
     const parsed = new Date(value);
     if (!Number.isNaN(parsed.valueOf())) lastmodBySlug.set(slug, parsed.toISOString());
 
-    const inlineTags = block.match(/^tags:\s*\[([^\]]*)\]\s*$/m)?.[1];
-    const tags = inlineTags
-      ? inlineTags.split(',').map((tag) => tag.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)
-      : [];
-    for (const tag of tags) {
-      const tagSlug = slugify(tag);
-      if (!tagSlug) continue;
-      tagCountBySlug.set(tagSlug, (tagCountBySlug.get(tagSlug) || 0) + 1);
+    const category = pick('category');
+    if (category) {
+      const categorySlug = slugify(category);
+      if (categorySlug) categoryCountBySlug.set(categorySlug, (categoryCountBySlug.get(categorySlug) || 0) + 1);
     }
   }
 } catch {
-  // 무시: lastmod/tag count 없이 진행한다.
+  // 무시: lastmod/category count 없이 진행한다.
 }
 
 export default defineConfig({
@@ -53,8 +51,11 @@ export default defineConfig({
       filter(page) {
         const url = new URL(page);
         if (/\/(contents|homepage|study)\//.test(url.pathname)) return false;
-        const tag = url.pathname.match(/^\/blog\/tag\/([^/]+)\/$/)?.[1];
-        if (tag && (tagCountBySlug.get(decodeURIComponent(tag)) || 0) < 2) return false;
+        // 태그 페이지는 전부 noindex 이므로 sitemap 에서 제외한다.
+        if (/^\/blog\/tag\//.test(url.pathname)) return false;
+        // 글 3개 미만 카테고리는 noindex 이므로 sitemap 에서 제외한다.
+        const category = url.pathname.match(/^\/blog\/category\/([^/]+)\/$/)?.[1];
+        if (category && (categoryCountBySlug.get(decodeURIComponent(category)) || 0) < CATEGORY_INDEX_MIN_POSTS) return false;
         return true;
       },
       serialize(item) {

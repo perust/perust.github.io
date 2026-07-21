@@ -1,14 +1,15 @@
 ---
-title: "Claude Code 2.1.211 업데이트 정리: stream-json subagent 출력과 권한 미리보기 보안"
-description: "Claude Code 2.1.211 공식 변경점 기준 stream-json subagent 출력, 권한 미리보기 보안, hooks, MCP, Vertex·Bedrock 실행 안정성을 정리했습니다."
+title: "Claude Code 2.1.208–2.1.211 업데이트 총정리: 백그라운드 에이전트·worktree·stream-json·권한 보안"
+description: "7월 14~15일 연달아 나온 Claude Code 2.1.208~2.1.211 공식 변경점을 버전별로 비교 정리했습니다. 백그라운드 에이전트, worktree 격리, stream-json 출력, 권한 미리보기 보안이 핵심입니다."
 date: "2026-07-16T17:01:32+09:00"
+updated: "2026-07-21T09:00:00+09:00"
 category: "AI"
 tags: ["ClaudeCode", "Claude", "Anthropic", "AI코딩", "개발도구", "릴리스노트", "MCP"]
 ---
 
-Anthropic이 Claude Code v2.1.211을 2026년 7월 15일 공개했습니다. 이번 버전은 새 모델 발표가 아니라 Claude Code를 자동화·원격 세션·사내 실행 환경에 붙여 쓰는 사람에게 직접 영향을 주는 안정성 릴리스입니다. 핵심은 `stream-json`에서 subagent의 텍스트와 thinking을 전달하는 새 옵션, 채팅 채널로 전달되는 권한 미리보기의 문자 위장 방지, unsandboxed Bash를 다루는 `PreToolUse` hook 판단 보강입니다.
+Anthropic이 2026년 7월 14일부터 15일까지 Claude Code v2.1.208, v2.1.209, v2.1.210, v2.1.211을 연달아 공개했습니다. 네 버전 모두 새 모델 발표가 아니라 Claude Code를 자동화·원격 세션·사내 실행 환경에 붙여 쓰는 사람에게 직접 영향을 주는 안정성 릴리스입니다. 처음에는 버전별로 따로 정리했지만, 같은 주의 연속 패치라 이 글 하나로 합쳐 버전 비교 중심으로 다시 정리했습니다.
 
-전날 v2.1.210이 worktree 격리와 `claude attach` 안정성을 고쳤다면, v2.1.211은 출력 파이프라인, 권한 승인 화면, MCP 재연결, Vertex·Bedrock 모델 설정, Chrome 연동처럼 “여러 환경을 오가며 Claude Code를 계속 돌릴 때” 드러나는 문제를 더 많이 다룹니다.
+흐름은 이렇습니다. v2.1.208·v2.1.209가 백그라운드 세션의 입력 유실과 `/model` 대화창 차단, 접근성, JSON 출력 문제를 고쳤고, v2.1.210이 worktree 격리와 `claude attach`, hook timeout을 손봤으며, 마지막 v2.1.211은 `stream-json`에서 subagent의 텍스트와 thinking을 전달하는 새 옵션, 채팅 채널로 전달되는 권한 미리보기의 문자 위장 방지, unsandboxed Bash를 다루는 `PreToolUse` hook 판단 보강처럼 "여러 환경을 오가며 계속 돌릴 때" 드러나는 문제를 다룹니다.
 
 ## 핵심 요약
 
@@ -32,16 +33,34 @@ Anthropic이 Claude Code v2.1.211을 2026년 7월 15일 공개했습니다. 이�
 
 ## 공개된 버전과 날짜
 
-공식 GitHub release 기준 Claude Code v2.1.211의 공개 시각은 2026년 7월 15일 23:02 UTC입니다. 한국 시간으로는 7월 16일 오전에 해당합니다. 같은 주에 v2.1.208, v2.1.209, v2.1.210이 이어졌기 때문에 이번 업데이트는 하나의 큰 기능 발표라기보다 빠른 안정화 흐름의 다음 패치로 보는 편이 정확합니다.
+공식 GitHub release 기준 v2.1.208은 7월 14일 01:10 UTC, v2.1.209는 7월 14일 06:36 UTC에 공개됐고, v2.1.210의 changelog 날짜도 7월 14일입니다. 마지막 v2.1.211의 공개 시각은 7월 15일 23:02 UTC로, 한국 시간으로는 7월 16일 오전에 해당합니다. 하나의 큰 기능 발표라기보다 같은 주에 이어진 빠른 안정화 흐름으로 보는 편이 정확합니다.
 
 <dl class="routine-kv">
-  <div><dt>버전</dt><dd>Claude Code v2.1.211</dd></div>
-  <div><dt>공개 시각</dt><dd>2026년 7월 15일 23:02 UTC</dd></div>
-  <div><dt>주요 범위</dt><dd>stream-json, permission preview, PreToolUse hook, MCP reconnect, Vertex·Bedrock, Chrome extension</dd></div>
-  <div><dt>우선 확인 대상</dt><dd>`claude -p`, subagent 자동화, chat-channel approval, plugin MCP, Vertex·Bedrock 실행 환경을 쓰는 사용자</dd></div>
+  <div><dt>v2.1.208 중심</dt><dd>화면 읽기 모드(`--ax-screen-reader`), vim insert remap, 프로세스 래퍼, `claude -p` JSON·stream-json 출력 잘림, 200행 초과 표 렌더링, 백그라운드 세션 답장 유실·attach 실패 수정</dd></div>
+  <div><dt>v2.1.209 중심</dt><dd>`claude agents` 백그라운드 세션에서 `/model` 등 대화창이 막히던 문제 수정</dd></div>
+  <div><dt>v2.1.210 중심</dt><dd>worktree 격리, attach 전환, hook timeout, background worker, plugin MCP 재동기화, permission rule warning</dd></div>
+  <div><dt>v2.1.211 중심</dt><dd>stream-json subagent 출력, permission preview 문자 위장 방지, PreToolUse ask 보존, MCP idle reconnect, Vertex·Bedrock startup</dd></div>
 </dl>
 
-## stream-json 자동화에서 달라진 부분
+## v2.1.208·v2.1.209: 백그라운드 세션과 출력 안정화
+
+앞선 두 버전은 개발자가 매일 겪는 사용성 문제에 가깝습니다. v2.1.208은 배달 실패로 백그라운드 에이전트에 입력한 답장이 사라지던 문제, 업데이트 후 실행 바이너리가 바뀌면서 `Couldn't start the background daemon` 상태로 attach가 계속 실패하던 문제를 고쳤습니다. CLI 자동 업데이트 후 컨텍스트 창 표시가 잠깐 200k로 리셋되어 긴 컨텍스트 세션이 100% 사용처럼 보이던 문제도 함께 수정됐습니다.
+
+자동화 파이프라인 쪽에서는 `claude -p`의 큰 응답에서 stream-json/JSON 출력이 잘리거나 result message가 빠지는 문제가 고쳐졌고, 200행을 넘는 마크다운 표는 처음 200행만 보여주고 "나머지 N행" 알림을 표시하는 방식으로 바뀌었습니다.
+
+접근성과 입력 설정도 이 버전에 들어왔습니다. `claude --ax-screen-reader` 옵션, `CLAUDE_AX_SCREEN_READER=1` 환경변수, `"axScreenReader": true` 설정으로 보조기술 사용자를 위한 plain-text 렌더링을 켤 수 있고, `vimInsertModeRemaps` 설정으로 insert mode에서 `jj`를 Escape처럼 쓸 수 있습니다. 기업 환경에서는 agent view와 background service의 self-spawn이 corporate launcher를 거치게 하는 `CLAUDE_CODE_PROCESS_WRAPPER`가 추가됐습니다.
+
+v2.1.209는 변경점이 한 줄이지만 영향은 작지 않습니다. 바로 앞 버전에서 넓게 적용된 보호 로직 때문에 `claude agents`의 백그라운드 세션에서 `/model` 등 대화창이 막히던 문제를 되돌려 수정했습니다.
+
+## v2.1.210: worktree 격리와 attach·hook 안정화
+
+v2.1.210에서 가장 눈에 띄는 항목은 `isolation: 'worktree'` subagent 수정입니다. 공식 changelog에는 worktree 격리 subagent가 자기 isolated worktree가 아니라 main repo checkout에 대해 git-mutating command를 실행할 수 있던 문제가 고쳐졌다고 적혀 있습니다. 여러 에이전트가 같은 저장소를 나눠 처리하는 흐름에서는 사람이 보고 있는 브랜치나 다른 에이전트의 작업 상태가 의도치 않게 바뀔 수 있던 문제라, 단순 UI 버그가 아닙니다. killed background session이 영구적인 `git worktree lock`을 남기던 문제도 주기적 sweep으로 정리되도록 바뀌었습니다.
+
+`claude attach`는 세션 전환 중 `job not found` 또는 `agent is still starting` 오류로 실패하던 문제가 수정됐고, 이제 daemon이 안정될 때까지 기다립니다. hook 쪽에서는 hook callback timeout이 모델에게 사용자 거절처럼 잘못 전달되어 unattended session이 멈추던 문제가 고쳐졌습니다. 무인 자동화에서 timeout이 "사용자가 거절했다"로 해석되어 작업이 멈추는 것은 운영상 차이가 큰 동작입니다.
+
+이 밖에 `Write(path)`·`NotebookEdit(path)`·`Glob(path)` permission rule에 대한 startup warning, plugin MCP server 재동기화 중 teardown 문제, 긴 tool call의 elapsed-time 표시, background 이동된 command 뒤 working directory 착각 수정이 v2.1.210에 들어 있습니다.
+
+## v2.1.211: stream-json 자동화에서 달라진 부분
 
 가장 새 기능에 가까운 항목은 `--forward-subagent-text`입니다. 공식 changelog에는 이 플래그와 `CLAUDE_CODE_FORWARD_SUBAGENT_TEXT` 환경 변수를 통해 subagent text와 thinking을 `stream-json` output에 포함할 수 있다고 적혀 있습니다.
 
@@ -87,15 +106,21 @@ v2.1.211은 MCP와 subagent 주변 수정도 많습니다. plugin MCP server가 
 
 Chrome 연동도 함께 정리됐습니다. remote와 CLI session에서 Chrome으로 Claude에 파일을 업로드하는 문제가 수정됐고, Claude in Chrome extension이 켜져 있지만 Chrome이 실행 중이 아닐 때 startup hang이 생기던 문제도 고쳐졌습니다. 브라우저와 CLI를 함께 쓰는 사람에게는 작은 마찰을 줄이는 업데이트입니다.
 
-## v2.1.210과 구분해서 볼 지점
+## 버전별로 다시 확인할 사용 흐름
 
-전날 공개된 v2.1.210은 `isolation: 'worktree'` subagent, `claude attach`, hook timeout, plugin MCP 재동기화처럼 background agent 운영의 큰 예외를 손봤습니다. v2.1.211은 그 다음 단계로 볼 수 있습니다. 같은 “안정성 릴리스”지만 초점은 출력 전달, 승인 메시지 보안, idle 이후 재연결, 명시적 model 설정 유지, Chrome 확장과 파일 업로드입니다.
+네 버전을 합쳐 보면 "내가 쓰는 실행 방식이 어느 버전에서 안정화됐나"를 기준으로 확인하는 편이 좋습니다.
 
-<dl class="routine-kv">
-  <div><dt>v2.1.210 중심</dt><dd>worktree 격리, attach 전환, hook timeout, background worker, permission rule warning</dd></div>
-  <div><dt>v2.1.211 중심</dt><dd>stream-json subagent 출력, permission preview 문자 위장 방지, PreToolUse ask 보존, MCP idle reconnect, Vertex·Bedrock startup</dd></div>
-  <div><dt>겹치는 흐름</dt><dd>Claude Code를 여러 세션·subagent·hook·MCP로 장시간 돌리는 사용 패턴</dd></div>
-</dl>
+<div class="routine-template">
+  <h3>업데이트 후 바로 살펴볼 사용 흐름</h3>
+  <ul>
+    <li>`claude agents`에서 기존 백그라운드 세션 attach와 `/model` 대화창 동작 (v2.1.208–209)</li>
+    <li>`claude -p`를 파이프로 연결하는 JSON·stream-json 자동화 작업 (v2.1.208, v2.1.211)</li>
+    <li>subagent가 git 작업을 하는 병렬 worktree 워크플로의 git status (v2.1.210)</li>
+    <li>hook이 `ask`를 요구하는 지점에서 실제로 프롬프트가 뜨는지 (v2.1.210–211)</li>
+    <li>회사 래퍼·보안 실행기가 있는 환경의 background service 재시작 흐름 (v2.1.208)</li>
+    <li>채팅 채널 승인 화면과 plugin MCP idle 재연결 (v2.1.211)</li>
+  </ul>
+</div>
 
 ## 투자자로서의 관점
 
@@ -105,12 +130,15 @@ v2.1.211은 모델 성능이나 가격 발표가 아니므로 매출 효과를 �
 
 ## 마지막으로
 
-Claude Code v2.1.211은 headline용 대형 기능 발표가 아닙니다. 하지만 `claude -p` 결과를 파이프라인에 연결하거나, subagent를 여러 모델로 나눠 쓰거나, MCP와 hook을 붙여 사내 워크플로를 만드는 사람에게는 실용적인 패치입니다.
+v2.1.208부터 v2.1.211까지 이어진 이 주의 패치는 headline용 대형 기능 발표가 아니라, 실제 사용 중 걸리던 모래알을 빼는 업데이트 묶음입니다. 백그라운드 세션에서 답장이 사라지거나 모델 대화창이 막히는 문제, worktree 격리가 깨지는 문제, 대형 JSON 출력이 잘리는 문제는 모두 작게 보여도 자동화 작업에서는 시간을 많이 잡아먹습니다.
 
-이번 버전을 볼 때는 “무엇이 새로 생겼나”보다 “내 자동화에서 어느 경로가 조용히 안정화됐나”를 기준으로 보는 편이 좋습니다. 특히 `stream-json` 출력, 채팅 채널 승인, unsandboxed Bash hook, plugin MCP, Vertex·Bedrock을 쓰고 있다면 v2.1.211 changelog를 직접 읽어볼 만합니다.
+이번 버전들을 볼 때는 “무엇이 새로 생겼나”보다 “내 자동화에서 어느 경로가 조용히 안정화됐나”를 기준으로 보는 편이 좋습니다. 특히 `claude agents`, `claude -p`, worktree subagent, `stream-json` 출력, 채팅 채널 승인, unsandboxed Bash hook, plugin MCP, Vertex·Bedrock 중 하나라도 쓰고 있다면 v2.1.211 기준으로 동작을 다시 확인할 만합니다.
 
 ## 참고한 자료
 
+- [Claude Code GitHub release: v2.1.208](https://github.com/anthropics/claude-code/releases/tag/v2.1.208)
+- [Claude Code GitHub release: v2.1.209](https://github.com/anthropics/claude-code/releases/tag/v2.1.209)
+- [Claude Code 공식 changelog: 2.1.210](https://code.claude.com/docs/en/changelog#2-1-210)
 - [Claude Code GitHub release: v2.1.211](https://github.com/anthropics/claude-code/releases/tag/v2.1.211)
 - [Claude Code 공식 changelog: 2.1.211](https://code.claude.com/docs/en/changelog#2-1-211)
 - [Claude Code changelog Markdown](https://code.claude.com/docs/en/changelog.md)

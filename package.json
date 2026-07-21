@@ -13,7 +13,8 @@
     "verify:seo": "npm run build && npm run check:seo",
     "check:adsense": "node scripts/check-adsense.mjs",
     "verify:adsense": "npm run build && npm run check:adsense",
-    "verify:site": "npm run build && npm run check:seo && npm run check:adsense"
+    "check:content-quality": "node scripts/check-content-quality.mjs",
+    "verify:site": "npm run build && npm run check:seo && npm run check:adsense && npm run check:content-quality"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

@@ -2,7 +2,7 @@
 title: "Claude Code Fable 5 사용법: /model fable 설정 전 확인할 5가지"
 description: "Claude Code에서 Claude Fable 5를 /model fable로 선택하기 전 확인할 모델 ID, 버전, 비용, usage credits, 거절 응답 주의사항을 정리했다."
 date: "2026-07-02T10:11:00+09:00"
-updated: "2026-07-02T22:20:00+09:00"
+updated: "2026-07-21T09:00:00+09:00"
 category: "AI"
 tags: ["Claude Code", "Claude Fable 5", "AI Coding", "Developer Tools", "Anthropic"]
 ---
@@ -15,10 +15,6 @@ Claude Code는 저장소를 읽고, 파일을 고치고, 테스트 실행까지 
 공식 Claude Code 문서는 `fable` alias를 Claude Fable 5로 안내하고, “Fable 5는 기본 모델이 아니며 `/model fable`로 선택한다”고 설명한다.<br />
 Anthropic 모델 문서의 API 모델 ID는 `claude-fable-5`다.<br />
 다만 실제 사용 가능 여부는 Claude Code 버전, 계정 플랜, 조직 정책, zero data retention 설정, 예산 제한에 따라 달라질 수 있다.
-
-![Claude Code 모델 설정을 확인하는 코딩 작업 사진 1](/images/posts/2026-07-02-claude-code-fable-5-01.jpg)
-
-<small>생성된 참고 이미지입니다.</small>
 
 ## 핵심 요약
 
@@ -55,10 +51,6 @@ Anthropic 모델 문서의 API 모델 ID는 `claude-fable-5`다.<br />
   </li>
 </ul>
 
-![Claude Code 모델 설정을 확인하는 코딩 작업 사진 2](/images/posts/2026-07-02-claude-code-fable-5-02.jpg)
-
-<small>생성된 참고 이미지입니다.</small>
-
 ## 모델 정보
 
 Anthropic은 [Claude Fable 5와 Claude Mythos 5 소개 문서](https://docs.anthropic.com/en/docs/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5)에서 Fable 5를 “가장 까다로운 추론과 장기 에이전트 작업을 위한, 널리 배포된 가장 강력한 모델”로 설명한다. API 모델 ID는 `claude-fable-5`다.
@@ -73,10 +65,6 @@ Anthropic 문서 기준 Fable 5는 기본 1M 토큰 컨텍스트와 요청당 �
 
 다만 “강력하다”는 말만으로 바로 기본 모델을 바꿀 이유는 부족하다. 실제 개발 작업에서는 모델 성능보다 비용, 지시 준수, 파일 변경의 보수성, 테스트 실패를 해석하는 방식이 더 중요할 때가 많다.
 
-![Claude Code 모델 설정을 확인하는 코딩 작업 사진 3](/images/posts/2026-07-02-claude-code-fable-5-03.jpg)
-
-<small>생성된 참고 이미지입니다.</small>
-
 ## 복구 이력
 
 Fable 5는 2026년 6월 9일 공개됐지만, 곧바로 안정적으로 쭉 제공된 것은 아니다. Anthropic은 [Redeploying Fable 5 발표](https://www.anthropic.com/news/redeploying-fable-5)에서 6월 12일 미국 정부의 export controls 때문에 Fable 5와 Mythos 5 접근을 일시 중단했다고 설명했다.
@@ -86,10 +74,6 @@ Fable 5는 2026년 6월 9일 공개됐지만, 곧바로 안정적으로 쭉 제�
 
 다만 클라우드 프로바이더나 조직 계정에서는 재활성화 시점이 다를 수 있다.<br />
 AWS, Google Cloud, Microsoft Foundry 같은 경로로 쓰는 경우에는 해당 계정에서 실제 모델 선택 가능 여부를 따로 확인해야 한다.
-
-![Claude Code 모델 설정을 확인하는 코딩 작업 사진 4](/images/posts/2026-07-02-claude-code-fable-5-04.jpg)
-
-<small>생성된 참고 이미지입니다.</small>
 
 ## 설정 방법
 
@@ -119,10 +103,6 @@ claude update
 또 하나의 제한은 데이터 보관 설정이다.<br />
 같은 문서는 Fable 5가 zero data retention 환경에서는 사용할 수 없고, `/model` 선택기에서 빠지거나 비활성화될 수 있다고 안내한다.<br />
 회사 계정이나 조직 계정에서는 이 설정 때문에 개인 계정보다 먼저 막힐 수 있다.
-
-![Claude Code 모델 설정을 확인하는 코딩 작업 사진 5](/images/posts/2026-07-02-claude-code-fable-5-05.jpg)
-
-<small>생성된 참고 이미지입니다.</small>
 
 ## 사용 이유
 
@@ -164,6 +144,35 @@ Claude Code는 저장소 파일, 도구 결과, 테스트 로그가 함께 들�
 ```
 
 모델을 바꾸는 것보다 중요한 것은 작업을 잘게 나누는 것이다. 비싼 모델을 큰 작업에 한 번 던지는 것보다, 문제 정의와 검증 기준을 좁혀서 맡기는 쪽이 결과도 비용도 안정적이다.
+
+## 구독 한도와 usage credits 전환
+
+비용 구조에서 하나 더 봐야 할 것은 구독 플랜과의 관계다. Anthropic의 [Redeploying Fable 5 공지](https://www.anthropic.com/news/redeploying-fable-5)는 Pro, Max, Team, select Enterprise 플랜에서 Fable 5를 7월 7일까지 주간 사용량 한도의 최대 50%까지 포함해 쓸 수 있고, 그 이후에는 usage credits 기반으로 제공된다고 안내했다.
+
+> Fable 5 will be included for up to 50% of weekly usage limits through July 7, after which it will be available via usage credits.
+
+이 전환은 "API 전용 전환"이 아니다. Claude Code 안에서 Fable 5를 계속 선택할 수 있더라도, 비용이 구독 포함 한도가 아니라 credits 기반으로 잡힐 수 있다는 뜻이다. 구독료는 고정비지만 credits는 사용량 기반이라, 긴 작업을 맡기거나 큰 저장소를 읽히거나 여러 번 재시도하면 비용이 커질 수 있다.
+
+계정 경로도 함께 확인해야 한다. Anthropic Help Center는 `ANTHROPIC_API_KEY` 환경변수가 설정되어 있으면 Claude Code가 구독 포함 사용량이 아니라 API usage charges로 처리될 수 있다고 안내한다. 값을 노출하지 않고 존재 여부만 확인하려면 다음과 같이 볼 수 있다.
+
+```bash
+printenv ANTHROPIC_API_KEY >/dev/null && echo "API key is set" || echo "API key is not set"
+```
+
+정리하면 이렇게 나뉜다.
+
+```text
+Claude Code + 구독 로그인
+→ Pro/Max/Team/Enterprise의 포함 사용량 한도 소모
+
+Claude Code + ANTHROPIC_API_KEY
+→ API usage charges로 처리 가능
+
+Fable 5 (7월 7일 이후)
+→ usage credits 기반 사용
+```
+
+Fable 5가 `/model` 선택기에 보이지 않는다고 해서 무조건 버그는 아니다. credits, allowlist, zero data retention 설정 때문에 빠질 수 있다. 조직 계정이라면 admin 정책도 함께 확인해야 한다. 어려운 작업에만 Fable 5를 꺼내 쓰고, 작업이 끝나면 기본 모델로 되돌리는 습관이 비용 관리에 현실적이다.
 
 ## 거절 응답
 
@@ -237,3 +246,4 @@ Claude Code에서 Fable 5를 선택할 수 있다는 것은 바이브코더에�
 - [Introducing Claude Fable 5 and Claude Mythos 5](https://docs.anthropic.com/en/docs/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5)
 - [Anthropic Pricing](https://docs.anthropic.com/en/docs/about-claude/pricing)
 - [Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5)
+- [Anthropic Help Center: Using Claude Code with your Pro or Max plan](https://support.anthropic.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan)

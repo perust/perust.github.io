@@ -105,6 +105,7 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
         <time datetime={publishedISO}>{new Date(date).toLocaleDateString('ko-KR')}</time>
         {updated && <span> · 수정 <time datetime={modifiedISO}>{new Date(updated).toLocaleDateString('ko-KR')}</time></span>}
       </p>
+      <p class="post-meta post-byline">글쓴이 <a href="/about/">lentoludens</a> · <a href="/editorial-policy/">편집·운영 원칙</a></p>
       <Content />
 
       {relatedPosts.length > 0 && (

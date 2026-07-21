@@ -18,17 +18,30 @@ const privacyPageLd = {
   <main class="content-page">
     <p class="section-kicker">Privacy Policy</p>
     <h1>개인정보처리방침</h1>
-    <p>이 사이트는 개인 포트폴리오와 블로그 운영을 위한 정적 웹사이트입니다.</p>
-    <h2>수집하는 정보</h2>
-    <p>현재 사이트 자체에서 회원가입, 댓글, 결제 기능을 제공하지 않으며 직접적인 개인정보를 수집하지 않습니다.</p>
+    <p>이 사이트는 개인 포트폴리오와 블로그 운영을 위한 정적 웹사이트입니다. 회원가입이나 결제 기능은 없으며, 아래에 설명하는 댓글 기능과 외부 분석·광고 도구 외에는 개인정보를 수집하지 않습니다.</p>
+
+    <h2>댓글 기능에서 처리하는 정보</h2>
+    <p>블로그 글에는 익명 댓글 기능이 있습니다. 댓글은 Cloudflare Workers와 Cloudflare D1 데이터베이스에서 처리·저장되며, 다음 정보를 다룹니다.</p>
+    <ul>
+      <li><strong>닉네임(선택):</strong> 입력하지 않으면 "익명"으로 표시됩니다. 최대 40자입니다.</li>
+      <li><strong>댓글 본문:</strong> 최대 800자이며, 작성 즉시 공개됩니다. 비공개를 선택한 댓글은 공개 화면에 표시되지 않고 운영자만 확인할 수 있습니다.</li>
+      <li><strong>삭제 비밀번호:</strong> 본인이 나중에 댓글을 삭제할 때 확인용으로만 사용합니다. 원문 그대로 저장하지 않고 해시값 형태로만 저장합니다.</li>
+      <li><strong>IP 주소:</strong> 접속 IP의 일부를 가린 앞부분(IP prefix)을 댓글 옆에 표시·저장하고, 원본 IP의 해시값을 도배 방지(같은 IP는 1분에 1회 작성 제한)와 남용 대응 목적으로 저장합니다. 원본 IP 주소 자체는 저장하지 않습니다.</li>
+    </ul>
+    <p>봇에 의한 자동 등록을 막기 위해 Cloudflare Turnstile 확인을 사용할 수 있습니다. Turnstile이 켜져 있는 경우 확인 과정에서 처리되는 정보는 <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noreferrer">Cloudflare 개인정보처리방침</a>을 따릅니다.</p>
+
+    <h2>댓글 보관과 삭제</h2>
+    <p>댓글은 글과 함께 계속 게시됩니다. 작성 시 입력한 삭제 비밀번호로 본인이 직접 삭제할 수 있으며, 삭제하면 공개 화면에서 즉시 보이지 않게 됩니다. 삭제된 댓글의 기록은 스팸·남용 대응 목적으로 운영 데이터베이스에 남을 수 있고, 기록까지 완전히 지우고 싶은 경우 아래 문의 경로로 요청하면 확인 후 삭제합니다. 삭제 비밀번호를 잊은 경우에도 문의를 통해 삭제를 요청할 수 있습니다.</p>
+
     <h2>외부 서비스</h2>
     <p>이 사이트는 방문 통계 확인을 위해 Google Analytics를 사용합니다. Google Analytics는 페이지 조회, 방문 경로, 기기 정보 등 사용 통계를 처리할 수 있으며, 이 과정에서 Google의 정책에 따라 쿠키가 사용될 수 있습니다.</p>
     <p>Google의 데이터 처리 방식은 <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Google 개인정보처리방침</a>에서 확인할 수 있습니다.</p>
     <p>또한 사이트 운영 비용을 보전하기 위해 Google AdSense를 사용할 수 있습니다. Google AdSense는 광고 게재와 부정 사용 방지를 위해 쿠키, 기기 정보, 대략적인 위치, 광고 상호작용 정보를 Google의 정책에 따라 처리할 수 있습니다.</p>
     <p>또한 사이트 이용 경험을 개선하기 위해 Microsoft Clarity를 사용합니다. Microsoft Clarity는 방문자의 페이지 이용 흐름, 클릭, 스크롤, 기기·브라우저 정보 등을 분석할 수 있으며, 이 과정에서 Microsoft의 정책에 따라 쿠키나 유사 기술이 사용될 수 있습니다.</p>
     <p>Microsoft Clarity와 Microsoft의 데이터 처리 방식은 <a href="https://privacy.microsoft.com/privacystatement" target="_blank" rel="noreferrer">Microsoft 개인정보처리방침</a>에서 확인할 수 있습니다.</p>
+
     <h2>문의</h2>
-    <p>개인정보 관련 문의는 <a href="/contact/">문의 페이지</a>를 통해 연락해 주세요.</p>
-    <p>최종 업데이트: 2026. 7. 13</p>
+    <p>개인정보 관련 문의나 댓글 삭제 요청은 <a href="/contact/">문의 페이지</a>를 통해 연락해 주세요.</p>
+    <p>최종 업데이트: 2026. 7. 21</p>
   </main>
 </BaseLayout>

@@ -31,6 +31,9 @@ const site = Astro.site ?? new URL('https://perust.github.io');
 const canonicalUrl = new URL(canonical, site).toString();
 const ogImageUrl = new URL(image, site).toString();
 const siteName = 'lentoludens';
+// 검색 색인에서 제외한 태그·얇은 카테고리에는 광고 코드를 싣지 않는다.
+// 탐색용 저가치 페이지를 AdSense 게재면으로 만들지 않기 위한 안전장치다.
+const shouldLoadAdsense = !/\bnoindex\b/i.test(robots);
 // JSON-LD를 단일 객체/배열 모두 허용하고, </script> 주입을 막기 위해 < 를 이스케이프한다.
 const structuredData = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 const serializeJsonLd = (data: Record<string, unknown>) =>
@@ -48,8 +51,12 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
 <!doctype html>
 <html lang="ko">
   <head>
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1573639772192057" crossorigin="anonymous"></script>
+    {shouldLoadAdsense && (
+      <>
+        <!-- Google AdSense: indexable publisher-content pages only -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1573639772192057" crossorigin="anonymous"></script>
+      </>
+    )}
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HLB0E46BLH"></script>
     <script is:inline>
@@ -123,6 +130,8 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
       <p>© 2026 lentoludens. Built with Astro on GitHub Pages.</p>
       <div class="footer-links">
         <a href="/privacy/">개인정보처리방침</a>
+        <a href="/editorial-policy/">편집·운영 원칙</a>
+        <a href="/about/">소개</a>
         <a href="/contact/">문의</a>
         <a href="/blog/">블로그</a>
       </div>

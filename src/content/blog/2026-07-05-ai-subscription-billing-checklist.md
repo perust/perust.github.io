@@ -1,7 +1,8 @@
 ---
-title: "AI 구독 결제 전 확인할 것: Plus·Pro·크레딧·API 과금 구분"
-description: "AI 서비스를 유료로 쓰기 전 월 구독, 사용량 크레딧, API 과금, 팀 결제 경로를 나눠 확인해야 예상 밖 결제를 줄일 수 있습니다."
+title: "AI 구독·결제 안전 가이드: 과금 구조, 가짜 광고, 무단 결제 대응"
+description: "AI 서비스 결제 전 확인할 월 구독·크레딧·API 과금 구조부터, 가짜 AI 구독 광고 구별법, 무단 결제가 의심될 때의 대응 순서까지 한 글로 정리했습니다."
 date: "2026-07-05T17:20:00+09:00"
+updated: "2026-07-21T09:00:00+09:00"
 category: "AI"
 tags: ["AI구독", "ChatGPT", "Claude", "Gemini", "API", "크레딧", "생산성"]
 ---
@@ -121,7 +122,7 @@ AI 영상 생성, 고급 추론 모델, 긴 컨텍스트 작업, 실험적 기�
 
 이 부분은 최근 AI 도구를 쓰는 사람에게 점점 중요해지고 있습니다.<br />
 좋은 모델일수록 한 번의 작업 품질은 높지만, 긴 작업을 여러 번 맡기면 비용 예측이 어려워질 수 있습니다.<br />
-이전에 정리한 [Claude Fable 5 사용량 크레딧 글](/blog/2026-07-02-claude-fable-5-usage-credits/)도 같은 맥락입니다.
+이전에 정리한 [Claude Code Fable 5 사용법·비용 글](/blog/2026-07-02-claude-code-fable-5/)도 같은 맥락입니다.
 
 ## 결제 전 10분 체크리스트
 
@@ -158,10 +159,52 @@ AI 영상 생성, 고급 추론 모델, 긴 컨텍스트 작업, 실험적 기�
 AI 도구는 잘 쓰면 시간을 줄여주지만, 결제 구조를 모르고 쓰면 구독료·크레딧·API 비용이 동시에 쌓일 수 있습니다.<br />
 결제 전에는 모델 이름보다 결제 경로, 한도, 자동 실행 여부를 먼저 확인하는 것이 현실적인 절약법입니다.
 
+## 가짜 AI 구독 광고 구별하기
+
+결제 구조를 이해했다면, 결제 화면에 도달하는 경로도 점검해야 합니다. 가짜 AI 구독 페이지가 검색 광고처럼 노출되는 사례가 보도된 적이 있습니다. 사용자는 익숙한 AI 서비스 이름을 검색하고, 상단 광고를 누르고, 월 구독처럼 보이는 화면에서 결제 정보를 넣습니다. 문제는 실제 서비스 구독이 아니라 제3자 사이트 결제, 반복 과금, 계정 정보 탈취로 이어질 수 있다는 점입니다.
+
+새로 결제할 때는 검색 광고를 바로 누르기보다 북마크, 공식 앱, 공식 문서에서 결제 화면으로 이동하는 편이 낫습니다. 검색을 해야 한다면 광고 영역과 일반 검색 결과를 구분하고, 결제 전에 아래 세 가지를 확인합니다.
+
+<ul class="issue-list">
+  <li class="issue-card">
+    <span class="issue-badge">1순위</span>
+    <h3>주소창 도메인</h3>
+    <p class="issue-summary">서비스명 철자와 도메인이 맞는지 봅니다. 하이픈, 숫자, 낯선 국가 도메인, 공식 브랜드처럼 보이는 보조 단어가 섞이면 결제를 멈춥니다.</p>
+  </li>
+  <li class="issue-card">
+    <span class="issue-badge">2순위</span>
+    <h3>결제 주체</h3>
+    <p class="issue-summary">카드 결제창, 앱스토어 화면, 이메일 영수증의 판매자명을 확인합니다. 공식 서비스명과 다른 회사명이 나오면 약관과 환불 경로를 먼저 확인합니다.</p>
+  </li>
+  <li class="issue-card">
+    <span class="issue-badge">3순위</span>
+    <h3>무료 체험 조건</h3>
+    <p class="issue-summary">무료 체험이 자동 유료 전환인지, 다음 결제일이 언제인지, 취소 화면이 어디인지 확인합니다. 캘린더에 결제 전날 알림을 넣어두면 도움이 됩니다.</p>
+  </li>
+</ul>
+
+생년월일, 신분증, 카드 전체번호, 보안코드를 과도하게 요구하는 페이지는 그 자리에서 중단하는 편이 안전합니다.
+
+## 무단 결제가 의심될 때의 대응 순서
+
+이미 모르는 결제가 나갔다면 순서가 중요합니다. 의심되는 사이트에 다시 로그인해 카드 정보를 지우려 하기보다, 카드사와 공식 결제 경로를 중심으로 처리해야 합니다.
+
+<ul class="issue-list">
+  <li class="issue-card"><h3>1. 카드 승인내역 확인</h3><p class="issue-summary">카드사 앱에서 최근 승인, 해외 승인, 정기결제를 봅니다. AI, assistant, chat, pro, trial 같은 단어가 들어간 낯선 상호, 달러 결제, 같은 금액의 반복 승인이 있는지 확인합니다.</p></li>
+  <li class="issue-card"><h3>2. 결제 경로 분리</h3><p class="issue-summary">웹에서 결제한 구독은 해당 서비스 계정의 구독 관리 화면에서, Apple·Google 앱스토어 결제는 각 스토어의 구독 메뉴에서 취소·환불을 진행합니다. 구독 취소는 다음 결제를 막는 절차이고, 이미 나간 금액의 환불은 결제 경로별 정책에 따라 따로 처리됩니다.</p></li>
+  <li class="issue-card"><h3>3. 추가 결제 차단</h3><p class="issue-summary">해외 온라인 결제 차단, 카드 일시정지, 재발급, 카드사 도용 신고·분쟁 신청을 상황에 맞게 진행합니다. 승인번호, 승인시각, 금액, 가맹점명 화면을 캡처해 둡니다.</p></li>
+  <li class="issue-card"><h3>4. 계정 보안 점검</h3><p class="issue-summary">가짜 페이지에 이메일과 비밀번호를 입력했다면 결제 취소만으로 끝내면 안 됩니다. 같은 비밀번호를 쓰는 이메일·결제·AI 서비스 계정의 비밀번호를 서로 다르게 바꾸고, 2단계 인증을 켭니다. 브라우저에 저장된 카드 정보와 자동완성도 정리합니다.</p></li>
+  <li class="issue-card"><h3>5. 보안 신고</h3><p class="issue-summary">피싱·스미싱이 의심되면 KISA 보호나라 같은 공식 보안 신고·상담 채널을 이용하고, 문자·URL·캡처를 보관합니다.</p></li>
+</ul>
+
 ## 출처와 확인 기준
 
 - [Anthropic Claude pricing](https://www.anthropic.com/pricing): 개인·팀·기업 플랜과 API 가격 안내
 - [Google AI plans](https://one.google.com/about/google-ai-plans/): Google AI Pro·Ultra 등 구독형 AI 플랜 안내
 - [OpenAI API pricing](https://platform.openai.com/docs/pricing): 개발자 API 모델별 사용량 가격표
+- [Google 계정 고객센터: 해킹되거나 도용된 Google 계정 보호](https://support.google.com/accounts/answer/6294825?hl=ko)
+- [Google Play 고객센터: 정기 결제 취소, 일시중지, 변경](https://support.google.com/googleplay/answer/7018481?hl=ko)
+- [Apple 지원: Apple 구독 취소 방법](https://support.apple.com/ko-kr/118428)
+- [KISA 보호나라](https://www.boho.or.kr/)
 
 가격과 포함 기능은 자주 바뀔 수 있습니다. 이 글은 특정 플랜 가입을 권하는 글이 아니라, 결제 전 비용 경로를 나누어 확인하기 위한 체크리스트입니다.

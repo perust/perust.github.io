@@ -74,12 +74,14 @@ if (!existsSync('dist')) {
     const rel = '/' + relative('dist', path).replaceAll('\\', '/');
     const html = read(path);
     const count = html.split(adsenseUrl).length - 1;
-    if (count !== 1) badScriptPages.push(`${rel} (${count})`);
+    const isNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(html);
+    const expectedCount = isNoindex ? 0 : 1;
+    if (count !== expectedCount) badScriptPages.push(`${rel} (expected ${expectedCount}, found ${count})`);
     const isIntentionalIndexUtility = rel.startsWith('/blog/tag/') || rel.startsWith('/blog/category/');
-    if (!isIntentionalIndexUtility && /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(html)) noindexPages.push(rel);
+    if (!isIntentionalIndexUtility && isNoindex) noindexPages.push(rel);
   }
 
-  if (badScriptPages.length) fail(`Public Astro HTML pages must include AdSense script exactly once. Bad pages: ${badScriptPages.slice(0, 10).join(', ')}${badScriptPages.length > 10 ? `, ... +${badScriptPages.length - 10}` : ''}`);
+  if (badScriptPages.length) fail(`Indexable Astro pages must include AdSense exactly once and noindex pages must include none. Bad pages: ${badScriptPages.slice(0, 10).join(', ')}${badScriptPages.length > 10 ? `, ... +${badScriptPages.length - 10}` : ''}`);
   if (noindexPages.length) fail(`Core public Astro HTML pages must not be noindex. Bad pages: ${noindexPages.slice(0, 10).join(', ')}`);
   if (publicAstroPages.length < 20) fail(`Expected substantial public content; found only ${publicAstroPages.length} public Astro HTML pages.`);
 }

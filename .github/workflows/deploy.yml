@@ -37,6 +37,8 @@ jobs:
         run: npm run check:seo
       - name: Check AdSense readiness
         run: npm run check:adsense
+      - name: Check content quality
+        run: npm run check:content-quality
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

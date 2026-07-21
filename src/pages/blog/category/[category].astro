@@ -19,6 +19,8 @@ const pageUrl = new URL(path, site).toString();
 
 const title = `${category} 글 모음 · lentoludens 블로그`;
 const description = `lentoludens 블로그의 ${category} 카테고리 글 ${posts.length}편을 모았습니다. 최신 글부터 차례로 정리했습니다.`;
+// 글이 3개 이상 쌓인 카테고리만 색인을 허용한다. 얇은 카테고리는 noindex, follow.
+const robots = posts.length >= 3 ? 'index, follow' : 'noindex, follow';
 
 // CollectionPage + ItemList JSON-LD. 답변엔진이 "이 카테고리의 글 목록"을 그대로 읽을 수 있게 한다.
 const collectionLd = {
@@ -51,7 +53,7 @@ const breadcrumbLd = {
   ],
 };
 ---
-<BaseLayout title={title} description={description} canonical={path} jsonLd={[collectionLd, breadcrumbLd]} image={ogImageForCategory(category)}>
+<BaseLayout title={title} description={description} canonical={path} robots={robots} jsonLd={[collectionLd, breadcrumbLd]} image={ogImageForCategory(category)}>
   <main>
     <section class="section-shell blog-hero blog-hero-compact">
       <p class="section-kicker"><a href="/blog/">블로그</a> · 카테고리</p>

@@ -10,10 +10,19 @@ const posts = Object.entries(modules)
   }))
   .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
 
+// 첫 화면에는 최신 글 일부만 보여주고, 나머지는 카테고리 탐색으로 안내한다.
+const LIST_LIMIT = 20;
 const featuredPost = posts[0];
-const restPosts = posts.slice(1);
+const restPosts = posts.slice(1, LIST_LIMIT);
 const categories = Array.from(new Set(posts.map((post) => post.category))).sort();
-const allTags = Array.from(new Set(posts.flatMap((post) => post.tags ?? []))).sort();
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+}
+const popularTags = Array.from(tagCounts.entries())
+  .sort(([tagA, countA], [tagB, countB]) => countB - countA || tagA.localeCompare(tagB, 'ko'))
+  .slice(0, 15)
+  .map(([tag]) => tag);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
 const blogDescription = '프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 다루는 개인 블로그.';
@@ -25,7 +34,7 @@ const blogLd = {
   url: new URL('/blog/', site).toString(),
   inLanguage: 'ko-KR',
   publisher: { '@type': 'Organization', name: 'lentoludens', url: site.toString() },
-  blogPost: posts.map((post) => ({
+  blogPost: posts.slice(0, LIST_LIMIT).map((post) => ({
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
@@ -39,13 +48,13 @@ const blogLd = {
     <section class="section-shell blog-hero blog-hero-compact">
       <p class="section-kicker">Blog</p>
       <h1>블로그</h1>
-      <p class="hero-description">프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 글로 정리합니다. 네이버 블로그에 올린 책 리뷰와 공부 기록도 함께 모아둡니다.</p>
+      <p class="hero-description">프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 글로 정리합니다.</p>
     </section>
 
     <section class="section-shell blog-page" aria-label="블로그 글 목록">
       <div class="blog-main-list">
         {featuredPost && (
-          <a class="featured-post-card blog-post-entry" data-category={featuredPost.category} href={`/blog/${featuredPost.slug}/`}>
+          <a class="featured-post-card blog-post-entry" href={`/blog/${featuredPost.slug}/`}>
             <div>
               <span class="category-chip">{featuredPost.category}</span>
               <time datetime={new Date(featuredPost.date).toISOString()}>{new Date(featuredPost.date).toLocaleDateString('ko-KR')}</time>
@@ -58,7 +67,7 @@ const blogLd = {
 
         <div class="post-list">
           {restPosts.map((post) => (
-            <a class="post-list-item blog-post-entry" data-category={post.category} href={`/blog/${post.slug}/`}>
+            <a class="post-list-item blog-post-entry" href={`/blog/${post.slug}/`}>
               <div class="post-list-meta">
                 <span>{post.category}</span>
                 <time datetime={new Date(post.date).toISOString()}>{new Date(post.date).toLocaleDateString('ko-KR')}</time>
@@ -71,21 +80,20 @@ const blogLd = {
             </a>
           ))}
         </div>
-        <p class="empty-blog-message" hidden>선택한 카테고리에 글이 없습니다.</p>
+        <p style="margin-top:1.5rem">최근 글 {Math.min(LIST_LIMIT, posts.length)}개를 보여줍니다. 이전 글은 오른쪽 카테고리 목록에서 주제별로 볼 수 있습니다.</p>
       </div>
 
       <aside class="blog-sidebar" aria-label="블로그 분류">
         <div class="sidebar-card">
           <h2>카테고리</h2>
           <ul class="category-list">
-            <li><a class="category-filter is-active" href="/blog/" data-category="all"><span>전체</span><strong>{posts.length}</strong></a></li>
-            {categories.map((category) => <li><a class="category-filter" href={categoryPath(category)} data-category={category}><span>{category}</span><strong>{posts.filter((post) => post.category === category).length}</strong></a></li>)}
+            {categories.map((category) => <li><a class="category-filter" href={categoryPath(category)}><span>{category}</span><strong>{posts.filter((post) => post.category === category).length}</strong></a></li>)}
           </ul>
         </div>
         <div class="sidebar-card">
-          <h2>태그</h2>
+          <h2>자주 쓰는 태그</h2>
           <ul class="tag-cloud">
-            {allTags.map((tag) => <li><a href={tagPath(tag)}>#{tag}</a></li>)}
+            {popularTags.map((tag) => <li><a href={tagPath(tag)}>#{tag}</a></li>)}
           </ul>
         </div>
         <div class="sidebar-card">
@@ -97,41 +105,4 @@ const blogLd = {
       </aside>
     </section>
   </main>
-  <script>
-    const entries = Array.from(document.querySelectorAll('.blog-post-entry'));
-    const filters = Array.from(document.querySelectorAll('.category-filter'));
-    const emptyMessage = document.querySelector('.empty-blog-message');
-
-    function applyCategory(category, pushState = true) {
-      let visibleCount = 0;
-      entries.forEach((entry) => {
-        const shouldShow = category === 'all' || entry.dataset.category === category;
-        entry.hidden = !shouldShow;
-        if (shouldShow) visibleCount += 1;
-      });
-      filters.forEach((filter) => {
-        filter.classList.toggle('is-active', filter.dataset.category === category);
-      });
-      if (emptyMessage) emptyMessage.hidden = visibleCount !== 0;
-      if (pushState) {
-        const url = category === 'all' ? '/blog/' : `/blog/?category=${encodeURIComponent(category)}`;
-        history.pushState({ category }, '', url);
-      }
-    }
-
-    filters.forEach((filter) => {
-      filter.addEventListener('click', (event) => {
-        event.preventDefault();
-        applyCategory(filter.dataset.category || 'all');
-      });
-    });
-
-    const initialCategory = new URLSearchParams(window.location.search).get('category') || 'all';
-    applyCategory(initialCategory, false);
-
-    window.addEventListener('popstate', () => {
-      const category = new URLSearchParams(window.location.search).get('category') || 'all';
-      applyCategory(category, false);
-    });
-  </script>
 </BaseLayout>
