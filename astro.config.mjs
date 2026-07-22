@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { CATEGORY_INDEX_MIN_POSTS, TAG_INDEX_MIN_POSTS, LEGACY_COMPAT_SLUGS, slugify } from './src/config/taxonomy.ts';
+import { CATEGORY_INDEX_MIN_POSTS, LEGACY_COMPAT_SLUGS, isIndexableTag, slugify } from './src/config/taxonomy.ts';
 
 // 블로그 글의 frontmatter date/updated를 읽어 sitemap의 lastmod로 쓰고,
 // 카테고리·태그별 글 수를 계산해 색인 임계값(src/config/taxonomy.ts) 미만인 페이지는
@@ -65,9 +65,12 @@ export default defineConfig({
         if (legacyCategory && LEGACY_COMPAT_SLUGS.has(decodeURIComponent(legacyCategory))) return false;
         // 글 3개 미만 카테고리는 noindex 이므로 sitemap 에서 제외한다.
         if (legacyCategory && (categoryCountBySlug.get(decodeURIComponent(legacyCategory)) || 0) < CATEGORY_INDEX_MIN_POSTS) return false;
-        // 태그 페이지는 글 3개 이상(TAG_INDEX_MIN_POSTS) 쌓였을 때만 sitemap 에 포함한다.
+        // 태그 페이지는 색인 판정 SSOT(isIndexableTag: allowlist + 글 3개 이상)를 통과할 때만 sitemap 에 포함한다.
         const tag = url.pathname.match(/^\/blog\/tag\/([^/]+)\/$/)?.[1];
-        if (tag && (tagCountBySlug.get(decodeURIComponent(tag)) || 0) < TAG_INDEX_MIN_POSTS) return false;
+        if (tag) {
+          const tagSlug = decodeURIComponent(tag);
+          if (!isIndexableTag(tagSlug, tagCountBySlug.get(tagSlug) || 0)) return false;
+        }
         return true;
       },
       serialize(item) {

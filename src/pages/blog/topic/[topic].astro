@@ -4,26 +4,34 @@ import { getAllPosts, categoryPath, ogImageForCategory } from '../../../utils/bl
 import { TOPIC_HUBS, canonicalCategoryFor } from '../../../config/taxonomy';
 
 // 정식 카테고리 중 비중이 큰 것을 큐레이션한 주제 허브(topic hub) 페이지.
-// 새 글을 만들지 않고, 이미 있는 글을 하위 주제별로 묶어 소개한다.
+// 새 글을 만들지 않고, 에디터가 직접 고른 하위 주제별 대표 글만 보여준다.
+// 카테고리 전체 글 목록은 여기 나열하지 않고 카테고리 아카이브로 가는 CTA 링크로만 연결한다.
 export function getStaticPaths() {
   const posts = getAllPosts();
   return TOPIC_HUBS.map((hub) => {
-    const hubPosts = posts
-      .filter((post) => hub.categories.includes(canonicalCategoryFor(post.category)))
-      .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
+    const hubPosts = posts.filter((post) => hub.categories.includes(canonicalCategoryFor(post.category)));
     const bySlug = new Map(hubPosts.map((post) => [post.slug, post]));
+    // 같은 글이 여러 하위 주제에 큐레이션되어도 페이지에는 한 번만 나온다.
+    const seen = new Set();
     const subtopics = hub.subtopics.map((subtopic) => ({
       ...subtopic,
-      posts: subtopic.slugs.map((slug) => bySlug.get(slug)).filter(Boolean),
+      posts: subtopic.slugs
+        .map((slug) => bySlug.get(slug))
+        .filter((post) => {
+          if (!post || seen.has(post.slug)) return false;
+          seen.add(post.slug);
+          return true;
+        }),
     }));
+    const curatedPosts = subtopics.flatMap((subtopic) => subtopic.posts);
     return {
       params: { topic: hub.slug },
-      props: { hub, posts: hubPosts, subtopics },
+      props: { hub, curatedPosts, subtopics, totalPostCount: hubPosts.length },
     };
   });
 }
 
-const { hub, posts, subtopics } = Astro.props;
+const { hub, curatedPosts, subtopics, totalPostCount } = Astro.props;
 const site = Astro.site ?? new URL('https://perust.github.io');
 const path = `/blog/topic/${hub.slug}/`;
 const pageUrl = new URL(path, site).toString();
@@ -39,10 +47,11 @@ const collectionLd = {
   url: pageUrl,
   inLanguage: 'ko-KR',
   isPartOf: { '@type': 'Blog', name: 'lentoludens 블로그', url: new URL('/blog/', site).toString() },
+  // ItemList 는 이 페이지에 실제로 나열된 큐레이션 글만 담는다(카테고리 전체 글 아님).
   mainEntity: {
     '@type': 'ItemList',
-    numberOfItems: posts.length,
-    itemListElement: posts.map((post: any, index: number) => ({
+    numberOfItems: curatedPosts.length,
+    itemListElement: curatedPosts.map((post: any, index: number) => ({
       '@type': 'ListItem',
       position: index + 1,
       url: new URL(`/blog/${post.slug}/`, site).toString(),
@@ -84,26 +93,13 @@ const breadcrumbLd = {
       ))}
     </section>
 
-    <section class="section-shell blog-main-list" aria-label={`${hub.title} 전체 글`}>
+    <section class="section-shell" aria-label={`${hub.title} 전체 글 안내`}>
       <div class="section-heading">
         <p class="section-kicker">All posts</p>
-        <h2>{hub.title} 전체 글 {posts.length}편</h2>
+        <h2>{hub.title} 전체 글 보기</h2>
+        <p>위 목록은 하위 주제별 대표 글만 고른 것입니다. {primaryCategory} 카테고리의 전체 글 {totalPostCount}편은 아카이브에서 최신순으로 볼 수 있습니다.</p>
       </div>
-      <div class="post-list">
-        {posts.map((post: any) => (
-          <a class="post-list-item" href={`/blog/${post.slug}/`}>
-            <div class="post-list-meta">
-              <span>{post.category}</span>
-              <time datetime={new Date(post.date).toISOString()}>{new Date(post.date).toLocaleDateString('ko-KR')}</time>
-            </div>
-            <div>
-              <h2>{post.title}</h2>
-              <p>{post.description}</p>
-              <ul class="post-tags">{post.tags?.map((tag: string) => <li>{tag}</li>)}</ul>
-            </div>
-          </a>
-        ))}
-      </div>
+      <p><a class="button secondary" href={categoryPath(primaryCategory)}>{primaryCategory} 전체 글 {totalPostCount}편 보기 →</a></p>
       <p style="margin-top:1.5rem"><a class="text-link" href="/blog/">← 블로그 전체 글 보기</a></p>
     </section>
   </main>

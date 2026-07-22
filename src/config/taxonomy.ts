@@ -155,6 +155,33 @@ export const LEGACY_COMPAT_SLUGS: ReadonlySet<string> = new Set(
 export const CATEGORY_INDEX_MIN_POSTS = 3;
 export const TAG_INDEX_MIN_POSTS = 3;
 
+// 색인 허용 태그 allowlist — 태그 아카이브 중 검색 색인을 열어줄 핵심 주제만 엄선한다(약 10개).
+// 이 목록에 있어도 글 수가 TAG_INDEX_MIN_POSTS(3) 미만이면 색인하지 않는다(isIndexableTag 참고).
+// 나머지 태그 페이지는 URL·접근은 그대로 유지하되 noindex, follow 로 남는다.
+export const INDEXABLE_TAGS: string[] = [
+  'AI',
+  'AI코딩',
+  '개발도구',
+  '자동화',
+  '개인정보',
+  '반도체',
+  '부동산',
+  '투자관점',
+  '재테크',
+  '생산성',
+];
+
+export const INDEXABLE_TAG_SLUGS: ReadonlySet<string> = new Set(INDEXABLE_TAGS.map(slugify));
+
+/**
+ * 태그 페이지 색인 판정의 SSOT. 태그 표기 원문이든 URL 슬러그든 받아 슬러그로 비교한다.
+ * astro.config.mjs(sitemap 필터), blog/tag/[tag].astro(robots), 인기 태그 노출,
+ * scripts/check-content-quality.mjs·check-taxonomy.mjs 의 기대값이 전부 이 함수를 쓴다.
+ */
+export function isIndexableTag(tagOrSlug: string, count: number): boolean {
+  return count >= TAG_INDEX_MIN_POSTS && INDEXABLE_TAG_SLUGS.has(slugify(tagOrSlug));
+}
+
 // ---------------------------------------------------------------------------
 // 4) 주제 허브(topic hub) — 카테고리를 가로지르지 않고, 이번 1단계에서는
 //    비중이 큰 정식 카테고리 3개(AI / 생활금융·경제 / 자동화·만들기)를 각각 1개 허브로 큐레이션한다.
@@ -200,7 +227,7 @@ export const TOPIC_HUBS: TopicHub[] = [
       {
         label: 'AI 모델·서비스',
         description: '새로 나온 AI 모델과 서비스의 공식 발표·가격 정리.',
-        slugs: ['2026-07-14-openai-gpt-5-6-sol-terra-luna-api-pricing', '2026-07-09-gpt-5-6-release-preview-checklist'],
+        slugs: ['2026-07-14-openai-gpt-5-6-sol-terra-luna-api-pricing'],
       },
       {
         label: 'AI 에이전트·보안',
@@ -270,10 +297,121 @@ export const TOPIC_HUBS: TopicHub[] = [
       {
         label: '생산성 루틴',
         description: '무리하지 않고 유지하는 자기계발·생산성 루틴.',
-        slugs: ['2026-07-04-lock-in-challenge-routine', '2026-07-03-productivity-apps-system-first'],
+        slugs: ['2026-07-04-lock-in-challenge-routine'],
       },
     ],
   },
+];
+
+// ---------------------------------------------------------------------------
+// 5) 발행 운영 정책 — 대량 자동 발행 재발 방지 게이트의 SSOT.
+//    scripts/check-content-quality.mjs 와 scripts/check-taxonomy.mjs 가 빌드 검증에서 그대로 쓴다.
+//    값을 바꾸려면 이 파일을 고치는 커밋이 필요하므로, 상한 완화 자체가 의도된 편집 행위가 된다.
+// ---------------------------------------------------------------------------
+
+/**
+ * 신규 글 게이트 기준일. 두 겹의 게이트가 이 값을 공유한다:
+ * - 날짜 게이트(check-content-quality·check-taxonomy): 기준일 다음날(초과) date 의 글부터
+ *   커밋 여부와 무관하게 모든 글에 적용한다. 기준일(포함) 이전 date 의 기존 글은
+ *   공개 URL·태그 보존을 위해 제외한다(grandfathering).
+ * - Git 신규 파일 게이트(check-publish-policy): date 를 기준일 이전으로 적어도(backdate)
+ *   Git 기준 새로 추가된 글이면 품질 게이트(editorialReview/valueType/통제 태그/최소 분량)를
+ *   그대로 적용하고, 하루 발행 상한은 신규 파일 중 date 가 기준일 당일(포함) 이후인 글에
+ *   날짜별로 적용한다. CI는 POLICY_GIT_BASELINE을 fail-closed로 명시하고
+ *   POLICY_REQUIRE_COMMITTED_DIFF=true를 함께 사용한다. 로컬 checkout만 upstream/origin merge-base,
+ *   마지막으로 HEAD 작업 트리 모드로 해석한다.
+ */
+export const NEW_POST_POLICY_BASELINE = '2026-07-21';
+
+/**
+ * 기준일 이후 같은 날짜로 발행할 수 있는 최대 글 수. 초과는 대량 자동 발행 신호로 보고 빌드를 실패시킨다.
+ * check-publish-policy 는 Git 신규 파일 집합에 대해 기준일 당일(포함)부터 같은 상한을 적용한다.
+ */
+export const MAX_NEW_POSTS_PER_DAY = 1;
+
+/**
+ * 기준일 이후 새 글이 명시해야 하는 독자적 가치 유형(SSOT).
+ * src/content.config.ts 의 zod enum, check-content-quality, check-publish-policy 가 이 값을 공유한다.
+ * experience: 직접 경험 / original-analysis: 독자적 분석 / verified-guide: 실제 검증 / review: 서평·리뷰.
+ */
+export const VALUE_TYPES = ['experience', 'original-analysis', 'verified-guide', 'review'] as const;
+
+/** 모든 공개 글의 본문 최소 분량(공백 제외 문자 수). 얇은(thin) 글 발행을 막는다. 현재 최단 글은 약 2,800자. */
+export const MIN_POST_BODY_CHARS = 2000;
+
+/** 기준일 이후 새 글 한 편에 붙일 수 있는 최대 태그 수. */
+export const NEW_POST_MAX_TAGS = 5;
+
+/** frontmatter date 문자열("2026-07-21" 또는 ISO+09:00)에서 발행일(YYYY-MM-DD, 작성 시각대 기준)을 뽑는다. */
+export function postDayOf(rawDate: string): string {
+  const day = rawDate.trim().slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) {
+    throw new Error(`taxonomy: date "${rawDate}" 에서 발행일(YYYY-MM-DD)을 읽을 수 없습니다.`);
+  }
+  return day;
+}
+
+// 통제 태그 어휘(controlled vocabulary).
+// - 글 3개 이상 쌓여 색인 대상인 태그 전부('Automation' 은 '자동화' 의 영문 중복이라 제외)와,
+//   정식 카테고리(서평·회고·일상)를 커버하는 소수의 상시 태그로 구성한다.
+// - 기준일 이후 새 글은 이 목록의 태그만 쓸 수 있다. 새 태그가 필요하면 이 목록에 추가하는
+//   커밋이 함께 있어야 하므로, 태그 아카이브 URL 표면이 글 발행만으로 무분별하게 늘지 않는다.
+// - 기준일 이전 글과 그 태그 URL 은 그대로 보존한다(이 목록의 제약을 받지 않는다).
+export const CONTROLLED_TAGS: string[] = [
+  // 글 3개 이상(색인 대상) 태그
+  'AI',
+  'AI검색',
+  'AI도구',
+  'AI에이전트',
+  'AI코딩',
+  'ChatGPT',
+  'Claude',
+  'ClaudeCode',
+  'Gemini',
+  'MCP',
+  'SK하이닉스',
+  '가계대출',
+  '개발도구',
+  '개인정보',
+  '금리',
+  '반도체',
+  '보안',
+  '부동산',
+  '바이브코딩',
+  '생산성',
+  '생성형AI',
+  '생활비',
+  '생활체크',
+  '자동화',
+  '재테크',
+  '체크리스트',
+  '투자',
+  '투자관점',
+  '릴리스노트',
+  '환율',
+  // 반복 주제·카테고리 커버용 상시 태그
+  'n8n',
+  'OpenAI',
+  'AI모델',
+  '국민연금',
+  '세금',
+  '블로그',
+  '회고',
+  '서평',
+  '일상',
+  '여행',
+];
+
+export const CONTROLLED_TAG_SLUGS: ReadonlySet<string> = new Set(CONTROLLED_TAGS.map(slugify));
+
+// ---------------------------------------------------------------------------
+// 6) 홈·블로그 큐레이션 — 직접 만들고 자동화하며 겪은 기록을 뉴스·정책 정리 글보다 먼저 노출한다.
+//    배열 순서가 노출 순서다. 존재하지 않는 슬러그는 check-taxonomy 가 빌드에서 잡는다.
+// ---------------------------------------------------------------------------
+export const FEATURED_MAKER_SLUGS: string[] = [
+  '2026-07-01-static-blog-anonymous-comments',
+  '2026-06-28-inflearn-n8n-challenge-retrospective',
+  '2026-07-09-vibe-coding-week1-claude-code',
 ];
 
 export const CATEGORY_TO_HUB: ReadonlyMap<string, TopicHub> = new Map(

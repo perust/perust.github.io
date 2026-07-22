@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { tagPath } from '../utils/blog';
-import { TOPIC_HUBS, canonicalCategoryFor } from '../config/taxonomy';
+import { FEATURED_MAKER_SLUGS, TOPIC_HUBS, canonicalCategoryFor, isIndexableTag } from '../config/taxonomy';
 
 const modules = import.meta.glob('../content/blog/*.md', { eager: true });
 const posts = Object.entries(modules)
@@ -11,21 +11,21 @@ const posts = Object.entries(modules)
   }))
   .sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
 
-// 직접 경험을 담은 제작기와 공식 자료 기반 실용 글을 홈 첫 화면에 우선 노출한다.
-const preferredSlugs = [
-  '2026-07-01-static-blog-anonymous-comments',
-  '2026-06-28-inflearn-n8n-challenge-retrospective',
-  '2026-07-09-vibe-coding-week1-claude-code',
-  '2026-07-03-n8n-first-confusing-points',
-  '2026-07-03-personal-retrospective-system',
-  '2026-07-08-hostinger-vps-hermes-agent-install-guide',
-];
+// 직접 경험을 담은 제작기·자동화 기록(src/config/taxonomy.ts 의 큐레이션 SSOT)을 홈 첫 화면에 우선 노출한다.
 const bySlug = new Map(posts.map((post) => [post.slug, post]));
-const curatedPosts = preferredSlugs.map((slug) => bySlug.get(slug)).filter(Boolean);
+const curatedPosts = FEATURED_MAKER_SLUGS.map((slug) => bySlug.get(slug)).filter(Boolean);
 const featuredPost = curatedPosts[0] ?? posts[0];
 const secondaryPosts = curatedPosts.filter((post) => post.slug !== featuredPost?.slug).slice(0, 5);
 const recentPosts = posts.filter((post) => !curatedPosts.some((curated) => curated.slug === post.slug)).slice(0, 4);
-const tags = Array.from(new Set(posts.flatMap((post) => post.tags ?? []))).slice(0, 10);
+// "자주 쓰는 태그"는 색인 판정 SSOT(isIndexableTag)를 통과한 태그만 빈도순으로 보여준다.
+// noindex 태그 페이지로 가는 내부 링크를 만들지 않기 위한 필터다.
+const tagCounts = new Map<string, number>();
+for (const post of posts) for (const tag of post.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+const tags = Array.from(tagCounts.entries())
+  .filter(([tag, count]) => isIndexableTag(tag, count))
+  .sort(([tagA, countA], [tagB, countB]) => countB - countA || tagA.localeCompare(tagB, 'ko'))
+  .slice(0, 10)
+  .map(([tag]) => tag);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
 const homeDescription = 'IT, AI, 경제, 재테크, 자기계발처럼 관심 있는 것을 정리하고 직접 만들어보는 lentoludens 블로그.';

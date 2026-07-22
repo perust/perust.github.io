@@ -953,7 +953,7 @@ h3 {
 .post-list { display: flex; flex-direction: column; gap: .85rem; }
 .post-list-item { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 1.2rem; padding: 1.2rem; border-radius: var(--radius-md); }
 .post-list-meta { display: flex; flex-direction: column; gap: .35rem; color: var(--muted); font-size: .88rem; font-weight: 800; }
-.post-list-item h2 { margin: 0 0 .35rem; font-size: 1.35rem; line-height: 1.3; letter-spacing: -.04em; }
+.post-list-item h2, .post-list-item h3 { margin: 0 0 .35rem; font-size: 1.35rem; line-height: 1.3; letter-spacing: -.04em; }
 .post-list-item p { margin: 0 0 .8rem; color: var(--muted); }
 .post-card time, .post-meta, .category-chip, .featured-post-card time { color: var(--muted); font-size: .86rem; font-weight: 800; letter-spacing: .02em; }
 .post-card h2 { margin: 0; font-size: 1.35rem; line-height: 1.3; letter-spacing: -.04em; }
@@ -977,7 +977,8 @@ h3 {
 .recent-post-list { display: flex; flex-direction: column; gap: .65rem; }
 .recent-post-list a { color: var(--ink); font-weight: 800; }
 .tag-cloud { display: flex; flex-wrap: wrap; gap: .45rem; margin: .75rem 0 0; padding: 0; list-style: none; }
-.tag-cloud a { display: inline-flex; padding: .3rem .6rem; border-radius: 999px; color: var(--primary); font-size: .82rem; font-weight: 800; background: rgba(37, 99, 235, .09); transition: 160ms ease; }
+.tag-cloud a, .tag-cloud span { display: inline-flex; padding: .3rem .6rem; border-radius: 999px; color: var(--primary); font-size: .82rem; font-weight: 800; background: rgba(37, 99, 235, .09); }
+.tag-cloud a { transition: 160ms ease; }
 .tag-cloud a:hover, .tag-cloud a:focus-visible { color: #fff; background: var(--primary); }
 .empty-blog-message { padding: 1.2rem; border: 1px dashed var(--line); border-radius: var(--radius-md); color: var(--muted); background: var(--card); }
 .post-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 2rem; width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; padding: 4.5rem 0; align-items: start; }

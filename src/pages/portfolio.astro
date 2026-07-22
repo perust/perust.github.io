@@ -45,32 +45,32 @@ const serviceCards: Card[] = [
 
 const recoveryCases: CaseStudy[] = [
   {
-    metric: '복구율 +50%',
+    metric: '복구 범위 확대',
     title: '영상 복구 프로그램',
     problem: '카메라 제조사와 해상도별로 영상 포맷이 빠르게 분화되며 기존 복구 기술로 최신 포맷 복구가 어려워졌습니다.',
     solution: '자사 영상 데이터를 카메라 포맷별로 분류하고 영상 복구 프로세스를 다시 정리했습니다.',
-    impact: '데이터가 완전히 소멸된 경우가 아니라면 복구 가능한 수준까지 끌어올렸습니다.',
+    impact: '사내에서 테스트한 카메라 포맷 기준으로, 기존 도구가 놓치던 사례 일부를 복구 가능한 범위에 넣었습니다.',
   },
   {
-    metric: '불가 → 복구',
+    metric: '파편화 복구 사례',
     title: '음성 파일 복구 프로그램',
     problem: '기존 프로그램으로 복구되지 않는 파편화된 음성 데이터가 있었습니다.',
     solution: '흩어진 음성 데이터 조각을 재조립하는 방식으로 복구 흐름을 구현했습니다.',
-    impact: '기존에는 불가능하던 음성 파일 복구에 성공했습니다.',
+    impact: '기존 도구로 복구되지 않던 파편화 음성 파일을 실제 접수 사례 일부에서 복구했습니다.',
   },
   {
     metric: '국내 한글 특화',
     title: '한글문서 복구 프로그램',
     problem: '복구 프로그램 대부분이 해외산이라 국내 한글 파일 복구 지원이 부족했습니다.',
     solution: '한글 문서 복구 프로그램을 자체 개발했습니다.',
-    impact: '기존 도구로 전혀 나오지 않던 데이터도 복구 가능한 범위로 만들었습니다.',
+    impact: '기존 도구로 결과가 나오지 않던 한글 문서를 특정 손상 유형의 실제 사례에서 복구했습니다.',
   },
   {
-    metric: '정확도·속도 +80%',
+    metric: '오분류 감소',
     title: '손상 데이터 분류 프로그램',
     problem: '정상 데이터인데 레퍼런스가 없어 손상 데이터로 오분류되는 사례가 늘었습니다.',
     solution: '기존 데이터 기반 분류기를 만들고, 새 데이터가 들어올 때마다 분석·추가·업데이트해 레퍼런스를 축적했습니다.',
-    impact: '분류 정확도와 속도를 크게 높였습니다.',
+    impact: '레퍼런스가 쌓인 데이터 유형에 한해 오분류를 줄이고 분류 판단을 보조했습니다.',
   },
 ];
 
@@ -83,11 +83,11 @@ const automationCases: CaseStudy[] = [
     impact: '다양한 요청에도 혼동 없이 작업할 수 있도록 지원했습니다.',
   },
   {
-    metric: '업무시간 약 20% 개선',
+    metric: '반복 업무 자동화',
     title: '업무 메일 서식 생성 프로그램',
     problem: '매일 반복되는 업무 메일 작성이 시간을 잠식했고, 저연차일수록 야근으로 이어졌습니다.',
     solution: '데이터 입력, 서식 작성, 발송까지 최소 입력과 확인만으로 처리되도록 자동화했습니다.',
-    impact: '관련 업무 시간을 대폭 줄이고 서식을 통일했습니다.',
+    impact: '반복 입력 단계를 줄여 메일 작성 업무를 보조하고 서식을 통일했습니다.',
   },
 ];
 
@@ -188,7 +188,7 @@ const portfolioLd = {
       <div><p class="section-kicker">Capabilities</p><h2 id="capabilities-title">역량 · 기술 스택</h2></div>
       <div class="focus-grid">
         <article class="focus-card"><span class="card-index">01</span><h3>데이터 복구</h3><p>메인 데이터 복구 엔지니어와 지점 책임을 수행했습니다. HDD부터 서버·NAS·DB, 영상·음성·문서까지 폭넓은 매체를 다룹니다.</p></article>
-        <article class="focus-card"><span class="card-index">02</span><h3>현장 문제 해결형 개발</h3><p>기존 도구로 안 되는 문제를 직접 도구로 해결합니다. 복구율 +50%, 분류 정확도·속도 +80%, 메일 업무시간 약 20% 개선을 만들었습니다.</p></article>
+        <article class="focus-card"><span class="card-index">02</span><h3>현장 문제 해결형 개발</h3><p>기존 도구로 안 되는 문제를 직접 도구로 해결합니다. 최신 포맷 영상 복구, 파편화된 음성 복구, 손상 데이터 분류처럼 막혀 있던 작업 일부를 실제 사례에서 복구·분류 가능한 범위에 넣어 왔습니다.</p></article>
         <article class="focus-card"><span class="card-index">03</span><h3>웹 · 자동화 프로젝트</h3><p>복구 일 바깥에서도 React, Python, Supabase, Astro, n8n, AI 도구를 활용해 SOXL Analyzer와 회고/리뷰 노트 도구 같은 작업을 이어가고 있습니다.</p></article>
       </div>
     </section>

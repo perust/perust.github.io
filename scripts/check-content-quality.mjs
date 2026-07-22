@@ -4,7 +4,8 @@
 //
 // 검사 항목:
 //  1. 보관(archive) 대상 슬러그가 src/content/blog 와 dist/blog 에 없다.
-//  2. 태그 페이지는 글이 TAG_INDEX_MIN_POSTS(3)개 이상일 때만 index, 그 외에는 noindex, follow 다.
+//  2. 태그 페이지는 색인 판정 SSOT(isIndexableTag: INDEXABLE_TAGS allowlist + 글 3개 이상)를
+//     통과할 때만 index, 그 외에는 noindex, follow 다. noindex 태그로 가는 내부 링크도 0이어야 한다.
 //  3. 카테고리 페이지는 글 3개 이상일 때만 index, 그 외에는 noindex, follow 다.
 //  4. sitemap 에 noindex 태그/카테고리 URL 이 없다.
 //  5. 개인정보처리방침이 실제 댓글 처리(닉네임/본문/삭제 비밀번호/IP/Cloudflare/Turnstile)와
@@ -12,18 +13,32 @@
 //  6. 편집·운영 원칙 페이지가 존재하고 footer 에서 연결된다.
 //  7. 블로그 글 상세에 작성자 byline(post-byline)이 있다.
 //  8. 공개 HTML 에 보관 슬러그로 가는 내부 링크가 남아 있지 않다.
+//  9. 기준일(NEW_POST_POLICY_BASELINE) 이후 새 글은 frontmatter 에 사람 편집 검토 완료
+//     (editorialReview: true)와 독자적 가치 유형(valueType) 하나를 명시해야 한다.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join, relative, sep } from 'node:path';
-import { CATEGORY_INDEX_MIN_POSTS, TAG_INDEX_MIN_POSTS, slugify } from '../src/config/taxonomy.ts';
+import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  CATEGORY_INDEX_MIN_POSTS,
+  MAX_NEW_POSTS_PER_DAY,
+  MIN_POST_BODY_CHARS,
+  NEW_POST_POLICY_BASELINE,
+  VALUE_TYPES,
+  isIndexableTag,
+  postDayOf,
+  slugify,
+} from '../src/config/taxonomy.ts';
+import { loadSecondCurationManifest, manifestSlugs } from './lib/second-curation-manifest.mjs';
+import { LEGACY_PREFIXES, htmlFiles, toPosix } from './lib/site-scan.mjs';
 
+const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DIST = 'dist';
 const BLOG_SRC = 'src/content/blog';
 
-// 보존용 레거시 정적 아카이브 — 링크 검사에서 제외한다.
-const LEGACY_PREFIXES = ['contents/', 'homepage/', 'study/'];
-
 // content-archive/adsense-remediation/ 으로 이동해 공개 빌드에서 제거하는 슬러그.
-const ARCHIVED_SLUGS = [
+// 1차 보관(2026-07-21) 14편은 여기 나열하고, 2차 큐레이션 5편은
+// second-curation-manifest.json(SSOT)에서 읽는다 — 슬러그 목록을 중복 정의하지 않는다.
+const ROUND1_ARCHIVED_SLUGS = [
   // P0 저가치·비공개 전환
   '2026-06-28-content-plan',
   '2026-06-28-why-this-blog',
@@ -40,6 +55,10 @@ const ARCHIVED_SLUGS = [
   '2026-07-10-fake-ai-subscription-ad-checklist',
   '2026-07-13-chatgpt-unauthorized-payment-checklist',
   '2026-07-03-recording-habit-return-system',
+];
+const ARCHIVED_SLUGS = [
+  ...ROUND1_ARCHIVED_SLUGS,
+  ...manifestSlugs(loadSecondCurationManifest(REPO_ROOT)),
 ];
 
 // 개인정보처리방침에 반드시 설명되어야 하는 실제 데이터 처리 항목.
@@ -60,24 +79,12 @@ const PRIVACY_REQUIRED_TERMS = [
   'Microsoft Clarity',
 ];
 
-const toPosix = (p) => p.split(sep).join('/');
-
 const failures = [];
 const fail = (message) => failures.push(message);
 const report = (ok, message) => {
   console.log(`[${ok ? 'ok' : 'FAIL'}] ${message}`);
   if (!ok) fail(message);
 };
-
-function htmlFiles(dir) {
-  const out = [];
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const full = join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...htmlFiles(full));
-    else if (entry.name.endsWith('.html')) out.push(full);
-  }
-  return out;
-}
 
 const robotsContent = (html) =>
   html.match(/<meta[^>]+name=["']robots["'][^>]+content=["']([^"']*)["'][^>]*>/i)?.[1] ?? '';
@@ -111,13 +118,55 @@ for (const slug of ARCHIVED_SLUGS) {
 // --- 카테고리/태그별 공개 글 수 집계 (astro.config.mjs 와 같은 frontmatter 파싱) ---
 const categoryCountBySlug = new Map();
 const tagCountBySlug = new Map();
+const newPostCountByDay = new Map();
+let thinPosts = 0;
+// 기준일 이후 새 글의 편집 검토 게이트 — content.config.ts 의 선택 필드를 새 글에는 필수로 강제한다.
+// (VALUE_TYPES 는 src/config/taxonomy.ts 의 SSOT 를 그대로 쓴다.)
+let editorialGateFailures = 0;
 for (const file of srcFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
-  const block = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
+  const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  const block = frontmatter?.[1] ?? '';
   const category = block.match(/^category:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
   if (category) {
     const key = slugify(category);
     categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
+  }
+
+  // 발행 속도 게이트 집계: 기준일 이후 날짜의 글만 센다(기존 글은 grandfathering).
+  const date = block.match(/^date:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  if (!date) {
+    fail(`${file}: date frontmatter 가 없음`);
+  } else {
+    try {
+      const day = postDayOf(date);
+      if (day > NEW_POST_POLICY_BASELINE) {
+        newPostCountByDay.set(day, (newPostCountByDay.get(day) || 0) + 1);
+
+        // 새 글은 raw frontmatter 에 사람 편집 검토 완료와 독자적 가치 유형이 명시되어야 한다.
+        if (!/^editorialReview:\s*true\s*$/m.test(block)) {
+          editorialGateFailures += 1;
+          console.log(`[FAIL] ${file}: 기준일 이후 새 글은 frontmatter 에 editorialReview: true (사람 편집 검토 완료)를 명시해야 함`);
+        }
+        const valueType = block.match(/^valueType:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+        if (!valueType || !VALUE_TYPES.includes(valueType)) {
+          editorialGateFailures += 1;
+          console.log(
+            `[FAIL] ${file}: 기준일 이후 새 글은 valueType 이 ${VALUE_TYPES.join(' | ')} 중 하나여야 함 (현재 "${valueType ?? '없음'}")`,
+          );
+        }
+      }
+    } catch (error) {
+      fail(`${file}: ${error.message}`);
+    }
+  }
+
+  // 본문 최소 분량 게이트(공백 제외 문자 수). 얇은 글이 공개 빌드로 나가는 것을 막는다.
+  const body = frontmatter ? raw.slice(frontmatter[0].length) : raw;
+  const bodyChars = body.replace(/\s+/g, '').length;
+  if (bodyChars < MIN_POST_BODY_CHARS) {
+    thinPosts += 1;
+    console.log(`[FAIL] ${file}: 본문 ${bodyChars}자 < 최소 ${MIN_POST_BODY_CHARS}자 (공백 제외)`);
   }
   const hasTags = /^tags:/m.test(block);
   const tagsLine = block.match(/^tags:\s*(\[.*\])\s*$/m)?.[1];
@@ -137,6 +186,20 @@ for (const file of srcFiles) {
   }
 }
 
+// --- 발행 운영 게이트: 본문 분량 + 발행 속도 (대량 자동 발행 재발 방지) ---
+report(thinPosts === 0, `모든 글 본문이 최소 ${MIN_POST_BODY_CHARS}자(공백 제외) 이상이어야 함 (위반 ${thinPosts}건)`);
+const overPacedDays = [...newPostCountByDay.entries()]
+  .filter(([, count]) => count > MAX_NEW_POSTS_PER_DAY)
+  .map(([day, count]) => `${day}: ${count}편`);
+report(
+  overPacedDays.length === 0,
+  `기준일(${NEW_POST_POLICY_BASELINE}) 이후에는 하루 최대 ${MAX_NEW_POSTS_PER_DAY}편만 발행해야 함 (위반: ${overPacedDays.join(', ') || '없음'})`,
+);
+report(
+  editorialGateFailures === 0,
+  `기준일(${NEW_POST_POLICY_BASELINE}) 이후 새 글은 editorialReview: true 와 valueType(${VALUE_TYPES.join(' | ')})을 명시해야 함 (위반 ${editorialGateFailures}건)`,
+);
+
 // --- 2~3. 태그/카테고리 robots 규칙 ---
 const allHtml = htmlFiles(DIST).sort();
 const noindexCategorySlugs = new Set();
@@ -149,7 +212,7 @@ for (const file of allHtml) {
     const slug = decodeURIComponent(tagMatch[1]);
     const count = tagCountBySlug.get(slug) || 0;
     const html = readFileSync(file, 'utf8');
-    const expected = count >= TAG_INDEX_MIN_POSTS ? 'index, follow' : 'noindex, follow';
+    const expected = isIndexableTag(slug, count) ? 'index, follow' : 'noindex, follow';
     report(
       normalizedRobots(html) === expected,
       `태그 ${slug} (글 ${count}개) 는 robots="${expected}" 여야 함 (현재 "${robotsContent(html)}")`,
@@ -239,6 +302,7 @@ if (existsSync(homePath)) {
 let postPages = 0;
 let bylineMissing = 0;
 const brokenLinks = [];
+const noindexTagLinks = [];
 for (const file of allHtml) {
   const rel = toPosix(relative(DIST, file));
   if (LEGACY_PREFIXES.some((prefix) => rel.startsWith(prefix))) continue;
@@ -248,6 +312,17 @@ for (const file of allHtml) {
   for (const slug of ARCHIVED_SLUGS) {
     if (hrefs.some((href) => href.includes(`/blog/${slug}/`))) {
       brokenLinks.push(`${rel} → /blog/${slug}/`);
+    }
+  }
+
+  // noindex 태그 페이지로 크롤 예산이 새지 않도록, 내부 <a> 링크는 색인 대상 태그로만 향해야 한다.
+  // 사이트 상대 경로(/blog/tag/…)뿐 아니라 https://perust.github.io 절대 내부 링크도 잡는다.
+  // canonical 은 <link> 요소라 <a> href 만 보는 이 검사에 걸리지 않는다.
+  const anchorHrefs = [...html.matchAll(/<a\s[^>]*href=["']([^"']+)["']/gi)].map((match) => match[1]);
+  for (const href of anchorHrefs) {
+    const tagSlug = href.match(/^(?:https?:\/\/perust\.github\.io)?\/blog\/tag\/([^/?#]+)\/?$/i)?.[1];
+    if (tagSlug && noindexTagSlugs.has(decodeURIComponent(tagSlug))) {
+      noindexTagLinks.push(`${rel} → ${href}`);
     }
   }
 
@@ -269,6 +344,28 @@ report(
   brokenLinks.length === 0,
   `보관 슬러그로 가는 내부 링크가 없어야 함 (발견: ${brokenLinks.slice(0, 5).join(', ') || '없음'}${brokenLinks.length > 5 ? ` 외 ${brokenLinks.length - 5}건` : ''})`,
 );
+report(
+  noindexTagLinks.length === 0,
+  `noindex 태그 페이지로 가는 내부 링크가 없어야 함 (발견: ${noindexTagLinks.slice(0, 5).join(', ') || '없음'}${noindexTagLinks.length > 5 ? ` 외 ${noindexTagLinks.length - 5}건` : ''})`,
+);
+
+// --- 자기소개성 페이지(포트폴리오·소개·작업)의 근거 없는 정량 주장 차단 ---
+// 공개 근거(링크·데이터)를 붙일 수 없는 "+50%", "20% 개선" 류 수치 주장이 다시 들어오는 것을 막는다.
+// CSS/JS 안의 퍼센트(width:100% 등)와 헷갈리지 않도록 style/script 블록은 제거하고 본문만 본다.
+const CLAIM_PAGES = ['portfolio/index.html', 'about/index.html', 'work/index.html'];
+const UNSUPPORTED_CLAIM_RE = /[+＋]\s*\d+(?:\.\d+)?\s*%|\d+(?:\.\d+)?\s*%p?\s*(?:개선|향상|증가|감소|단축|절감)/;
+for (const page of CLAIM_PAGES) {
+  const path = join(DIST, page);
+  if (!existsSync(path)) continue;
+  const html = readFileSync(path, 'utf8')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '');
+  const match = html.match(UNSUPPORTED_CLAIM_RE);
+  report(
+    match === null,
+    `/${page.replace('/index.html', '/')} 에 근거 없는 정량 주장 패턴이 없어야 함 (발견: "${match?.[0] ?? '없음'}")`,
+  );
+}
 
 console.log(`\n[check-content-quality] 위반 ${failures.length}건`);
 process.exit(failures.length ? 1 : 0);

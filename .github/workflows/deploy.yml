@@ -20,6 +20,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # check-publish-policy 가 push 이전 커밋(POLICY_GIT_BASELINE)과 비교해
+          # 신규 글을 감지할 수 있도록 전체 이력을 받는다.
+          fetch-depth: 0
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -41,6 +45,15 @@ jobs:
         run: npm run check:content-quality
       - name: Check taxonomy and indexing policy
         run: npm run check:taxonomy
+      - name: Test publish policy validator (negative fixtures)
+        run: npm run test:publish-policy
+      - name: Check publish policy (archive integrity + new-post gates)
+        env:
+          # push는 이전 SHA와 committed diff를 반드시 비교한다. workflow_dispatch에는 before가
+          # 없으므로 의도적으로 fail-closed하며, 안전한 base를 제공하는 별도 변경 전에는 배포하지 않는다.
+          POLICY_GIT_BASELINE: ${{ github.event.before }}
+          POLICY_REQUIRE_COMMITTED_DIFF: 'true'
+        run: npm run check:publish-policy
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

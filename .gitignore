@@ -5,4 +5,34 @@ dist/
 
 # Local implementation evidence and unpublished content archives
 .hermes/
-content-archive/
+# content-archive 는 기본적으로 비공개(무시)다. 아래 예외는 2차 큐레이션(2026-07-21)으로
+# 공개에서 내린 5개 글의 보존본 21개 파일과 그 매니페스트(SSOT)만 Git 추적을 허용한다.
+# 1차 보관 14편과 round-2 후보 8편 등 다른 아카이브 파일은 계속 무시된다.
+content-archive/**
+!content-archive/adsense-remediation/
+!content-archive/adsense-remediation/2026-07-21/
+!content-archive/adsense-remediation/2026-07-21/second-curation-manifest.json
+!content-archive/adsense-remediation/2026-07-21/2026-06-28-money-weekly-2026-june-week-4.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-02-investment-data-records-not-emotion.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-03-productivity-apps-system-first.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-03-reduce-procrastination-small-tasks.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-09-gpt-5-6-release-preview-checklist.md
+!content-archive/adsense-remediation/2026-07-21/images/
+!content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-01.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-02.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-03.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-04.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-05.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-01.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-02.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-03.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-04.jpg
+!content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-05.jpg
+!content-archive/adsense-remediation/2026-07-21/images/summary/
+!content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-09-gpt-5-6-release-preview-checklist-summary.svg
+!content-archive/adsense-remediation/2026-07-21/og/
+!content-archive/adsense-remediation/2026-07-21/og/2026-06-28-money-weekly-2026-june-week-4.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-02-investment-data-records-not-emotion.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-03-productivity-apps-system-first.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-03-reduce-procrastination-small-tasks.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-09-gpt-5-6-release-preview-checklist.png

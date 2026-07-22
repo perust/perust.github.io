@@ -15,7 +15,9 @@
     "verify:adsense": "npm run build && npm run check:adsense",
     "check:content-quality": "node scripts/check-content-quality.mjs",
     "check:taxonomy": "node scripts/check-taxonomy.mjs",
-    "verify:site": "npm run build && npm run check:seo && npm run check:adsense && npm run check:content-quality && npm run check:taxonomy"
+    "check:publish-policy": "node scripts/check-publish-policy.mjs",
+    "test:publish-policy": "node --test scripts/tests/*.test.mjs",
+    "verify:site": "npm run build && npm run check:seo && npm run check:adsense && npm run check:content-quality && npm run check:taxonomy && npm run check:publish-policy"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

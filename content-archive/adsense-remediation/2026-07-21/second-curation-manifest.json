@@ -1,0 +1,168 @@
+{
+  "curation": "adsense-remediation-second-curation",
+  "curationDate": "2026-07-21",
+  "description": "2차 큐레이션으로 공개에서 내린 5개 글의 사람이 읽는 보관 선언 사본. enforcement SSOT는 scripts/lib/second-curation-policy-anchor.mjs이며 이 파일은 anchor와 정확히 일치해야 한다.",
+  "removalPolicy": {
+    "redirect": "none",
+    "expectedStatus": 404,
+    "note": "동등한 대체 URL 이 없어 억지 redirect 없이 GitHub Pages 일반 404 로 제거한다. Search Console 임시 삭제·재크롤링 후속 작업은 docs/search-engine-submission-checklist.md 참고."
+  },
+  "posts": [
+    {
+      "slug": "2026-06-28-money-weekly-2026-june-week-4",
+      "publicUrlPath": "/blog/2026-06-28-money-weekly-2026-june-week-4/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-06-28-money-weekly-2026-june-week-4.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-06-28-money-weekly-2026-june-week-4.md",
+          "sha256": "9cd9c8a6d090660829197909acc5f89e587ed489a576ece3a0e0b19f25fca5c3"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-06-28-money-weekly-2026-june-week-4-01.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-01.jpg",
+          "sha256": "6ca9c69d06bf7aece33dd1579b36990fd8fa0495d287a8ed7c6f1530ae24cb82"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-06-28-money-weekly-2026-june-week-4-02.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-02.jpg",
+          "sha256": "668ceb58e1414c8871edd96fa0960c20f582dd69b9d9aa450e56593e55cd5207"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-06-28-money-weekly-2026-june-week-4-03.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-03.jpg",
+          "sha256": "351c7cfa5a33bbc6327d94735605c46c484851fa5d8bd0242e156a3befc26c6f"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-06-28-money-weekly-2026-june-week-4-04.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-04.jpg",
+          "sha256": "382229e8adb21286c51a4b208a9737b74684bfbb83b8cc4efe15c480e4efea3a"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-06-28-money-weekly-2026-june-week-4-05.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-05.jpg",
+          "sha256": "7c24bdf3c24c2e7cd7752c95eafb4c0a9063a547b0bcda5e1b0eb5f24bb0f134"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-06-28-money-weekly-2026-june-week-4.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-06-28-money-weekly-2026-june-week-4.png",
+          "sha256": "c647215940920121005842ffc708dd173caa7322eb519c2d1f31f1ad14490b07"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-02-investment-data-records-not-emotion",
+      "publicUrlPath": "/blog/2026-07-02-investment-data-records-not-emotion/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-02-investment-data-records-not-emotion.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-02-investment-data-records-not-emotion.md",
+          "sha256": "55b6834722dc8db5846375dbada3214dd6be76481e833c7910c624f594b7da87"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-07-02-investment-data-records-not-emotion-01.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-01.jpg",
+          "sha256": "c67797adc0f1704d275d02aa17ea35f655443b445ea6329dede479e02996d14f"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-07-02-investment-data-records-not-emotion-02.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-02.jpg",
+          "sha256": "cd958dda99b8eed6e186911bc50762a88f9b82804ae44796634029b1db813184"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-07-02-investment-data-records-not-emotion-03.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-03.jpg",
+          "sha256": "5ec5b0486dd03a1942e9a216b84c4b0ca31e4957d42b70f590fc70628c21e0ae"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-07-02-investment-data-records-not-emotion-04.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-04.jpg",
+          "sha256": "f1e28ee0ff8adebdfef919d64fe94c49b106435378640ed647ebf10526ced22f"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/2026-07-02-investment-data-records-not-emotion-05.jpg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-05.jpg",
+          "sha256": "2a5092676ed9a4a494d8ce354311a284130f01a1eaa60bacf13f93854b1a3959"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-02-investment-data-records-not-emotion.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-02-investment-data-records-not-emotion.png",
+          "sha256": "e9347d6e23ca486763af5b32b1a3a1538227775e256d6834149335b0b7b90f1c"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-03-productivity-apps-system-first",
+      "publicUrlPath": "/blog/2026-07-03-productivity-apps-system-first/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-03-productivity-apps-system-first.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-03-productivity-apps-system-first.md",
+          "sha256": "ea07f86e30ff331db1d4f4b93e71240ea2651aa00b3f198a835541692709ea3d"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-03-productivity-apps-system-first.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-03-productivity-apps-system-first.png",
+          "sha256": "0593730ad0fde81f5cd8bf8e11a7811d9f6336e7526adc21eebdc45351d33d99"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-03-reduce-procrastination-small-tasks",
+      "publicUrlPath": "/blog/2026-07-03-reduce-procrastination-small-tasks/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-03-reduce-procrastination-small-tasks.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-03-reduce-procrastination-small-tasks.md",
+          "sha256": "e21e763bea1576db7237ad5ba9000c4106481ba69b2906625a1aac240525f62b"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-03-reduce-procrastination-small-tasks.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-03-reduce-procrastination-small-tasks.png",
+          "sha256": "4bdafc06dcf15a011bd6dff685dea791bb3d4012d64aaa9edcb072854f2b24ad"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-09-gpt-5-6-release-preview-checklist",
+      "publicUrlPath": "/blog/2026-07-09-gpt-5-6-release-preview-checklist/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-09-gpt-5-6-release-preview-checklist.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-09-gpt-5-6-release-preview-checklist.md",
+          "sha256": "f8b672b52d4f1460f654a5dbc4e71052db34dbda92c75637d91b84fa35d53054"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/summary/2026-07-09-gpt-5-6-release-preview-checklist-summary.svg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-09-gpt-5-6-release-preview-checklist-summary.svg",
+          "sha256": "6b84e4f3f4cffcd5958a231a9e744a9cb3e8edc22bdd27c32fd40dcd021af6ea"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-09-gpt-5-6-release-preview-checklist.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-09-gpt-5-6-release-preview-checklist.png",
+          "sha256": "afd461a9389d2ef0129925eaeb2e2fdd56f97ee53e1bc7feacf66c4897c6b9e4"
+        }
+      ]
+    }
+  ]
+}

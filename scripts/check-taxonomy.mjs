@@ -4,7 +4,8 @@
 //   1. 정식 카테고리 수 <= 8, 모든 글의 frontmatter category 가 정식 카테고리다.
 //   2. 레거시 카테고리 URL마다 크롤 안전한 호환 페이지가 있고(noindex,follow + 정식 아카이브로 canonical),
 //      sitemap 에는 없다.
-//   3. 태그 색인 임계값(TAG_INDEX_MIN_POSTS)과 sitemap 포함 여부가 정확히 일치한다(양방향 검증).
+//   3. 태그 색인 판정(isIndexableTag: INDEXABLE_TAGS allowlist + TAG_INDEX_MIN_POSTS)과
+//      robots/sitemap 포함 여부가 정확히 일치한다(양방향 검증).
 //   4. 주제 허브 페이지마다 canonical/robots/CollectionPage+BreadcrumbList JSON-LD 가 있고,
 //      sitemap 에 있으며, 블로그 인덱스에서 눈에 띄게 링크된다.
 //   5. 모든 글 상세 페이지에 주제 경로(topic-path) 블록이 있고, 카테고리(+허브) 링크를 포함한다.
@@ -15,13 +16,20 @@ import { join, relative, sep } from 'node:path';
 import {
   CANONICAL_CATEGORIES,
   CANONICAL_CATEGORY_NAMES,
+  CONTROLLED_TAGS,
+  CONTROLLED_TAG_SLUGS,
+  FEATURED_MAKER_SLUGS,
   LEGACY_CATEGORY_MAP,
   LEGACY_COMPAT_ENTRIES,
+  NEW_POST_MAX_TAGS,
+  NEW_POST_POLICY_BASELINE,
   POST_CATEGORY_OVERRIDES,
   TOPIC_HUBS,
   TAG_INDEX_MIN_POSTS,
   canonicalCategoryFor,
   hubForCategory,
+  isIndexableTag,
+  postDayOf,
   slugify,
 } from '../src/config/taxonomy.ts';
 
@@ -89,6 +97,7 @@ report(
 let categoryDrift = 0;
 const categoryCountBySlug = new Map();
 const tagCountBySlug = new Map();
+const postTagInfo = []; // { file, day, tags } — 기준일 이후 글의 통제 태그 검증에 쓴다.
 for (const file of srcFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
   const block = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
@@ -112,12 +121,14 @@ for (const file of srcFiles) {
 
   const hasTags = /^tags:/m.test(block);
   const tagsLine = block.match(/^tags:\s*(\[.*\])\s*$/m)?.[1];
+  let tags = null; // null = tags frontmatter 없음(또는 파싱 실패) — 기준일 이후 글은 아래에서 실패 처리된다.
   if (hasTags && !tagsLine) {
     fail(`${file}: tags 는 단일행 JSON 배열 형식이어야 함`);
   } else if (tagsLine) {
     try {
-      const tags = JSON.parse(tagsLine);
-      if (!Array.isArray(tags) || tags.some((tag) => typeof tag !== 'string')) throw new TypeError('문자열 배열이 아님');
+      const parsed = JSON.parse(tagsLine);
+      if (!Array.isArray(parsed) || parsed.some((tag) => typeof tag !== 'string')) throw new TypeError('문자열 배열이 아님');
+      tags = parsed;
       for (const tag of tags) {
         const tagKey = slugify(tag);
         tagCountBySlug.set(tagKey, (tagCountBySlug.get(tagKey) || 0) + 1);
@@ -126,8 +137,47 @@ for (const file of srcFiles) {
       fail(`${file}: tags 파싱 실패 (${error.message})`);
     }
   }
+  const date = block.match(/^date:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  if (date) {
+    try {
+      postTagInfo.push({ file, day: postDayOf(date), tags });
+    } catch {
+      // 잘못된 date 형식은 check-content-quality 가 별도로 실패시킨다.
+    }
+  }
 }
 report(categoryDrift === 0, `모든 글의 frontmatter category 가 정식 카테고리여야 함 (위반 ${categoryDrift}건)`);
+
+// --- 통제 태그 어휘: 기준일 이후 새 글은 CONTROLLED_TAGS 안에서만 태그를 고른다 ---
+// (기준일 이전 글과 그 태그 URL 은 grandfathering — 여기서 검사하지 않는다.)
+const controlledDuplicates = CONTROLLED_TAGS.filter(
+  (tag, index) => CONTROLLED_TAGS.findIndex((other) => slugify(other) === slugify(tag)) !== index,
+);
+report(
+  controlledDuplicates.length === 0,
+  `CONTROLLED_TAGS 에 슬러그가 중복되는 태그가 없어야 함 (중복: ${controlledDuplicates.join(', ') || '없음'})`,
+);
+let uncontrolledTagFailures = 0;
+for (const { file, day, tags } of postTagInfo) {
+  if (day <= NEW_POST_POLICY_BASELINE) continue;
+  if (tags === null || tags.length < 1 || tags.length > NEW_POST_MAX_TAGS) {
+    uncontrolledTagFailures += 1;
+    console.log(
+      `[FAIL] ${file}: 기준일 이후 새 글은 tags 를 생략하거나 비울 수 없고 통제 태그 1~${NEW_POST_MAX_TAGS}개를 명시해야 함 (현재 ${tags === null ? 'tags 없음' : `${tags.length}개`})`,
+    );
+  }
+  const outside = (tags ?? []).filter((tag) => !CONTROLLED_TAG_SLUGS.has(slugify(tag)));
+  if (outside.length) {
+    uncontrolledTagFailures += 1;
+    console.log(
+      `[FAIL] ${file}: 통제 어휘에 없는 태그 [${outside.join(', ')}] — 새 태그가 필요하면 src/config/taxonomy.ts 의 CONTROLLED_TAGS 에 먼저 추가하세요`,
+    );
+  }
+}
+report(
+  uncontrolledTagFailures === 0,
+  `기준일(${NEW_POST_POLICY_BASELINE}) 이후 새 글은 통제 태그 어휘만 사용해야 함 (위반 ${uncontrolledTagFailures}건)`,
+);
 
 // 허브에 직접 큐레이션한 대표 글은 실제 공개 소스에 존재해야 한다.
 // 페이지 구현은 없는 슬러그를 filter(Boolean)로 숨기므로, 이 독립 검사가 없으면 조용히 링크가 사라질 수 있다.
@@ -194,7 +244,7 @@ for (const [slug, count] of tagCountBySlug.entries()) {
     continue;
   }
   const html = readFileSync(file, 'utf8');
-  const shouldIndex = count >= TAG_INDEX_MIN_POSTS;
+  const shouldIndex = isIndexableTag(slug, count);
   const isIndexed = normalizedRobots(html) === 'index, follow';
   const inSitemap = sitemapUrls.some((url) => url.includes(`/blog/tag/${encodeURIComponent(slug)}/`));
   const expectedCanonical = `https://perust.github.io/blog/tag/${encodeURIComponent(slug)}/`;
@@ -206,7 +256,10 @@ for (const [slug, count] of tagCountBySlug.entries()) {
     );
   }
 }
-report(tagAlignmentFailures === 0, `태그 robots/sitemap 임계값(${TAG_INDEX_MIN_POSTS}) 정렬 위반 ${tagAlignmentFailures}건`);
+report(
+  tagAlignmentFailures === 0,
+  `태그 robots/sitemap 이 색인 판정(isIndexableTag: allowlist + 글 ${TAG_INDEX_MIN_POSTS}개 이상)과 정렬되어야 함 (위반 ${tagAlignmentFailures}건)`,
+);
 
 // --- 4. 주제 허브 메타데이터/스키마/색인/블로그 인덱스 링크 ---
 const blogIndexHtml = existsSync(join(DIST, 'blog', 'index.html')) ? readFileSync(join(DIST, 'blog', 'index.html'), 'utf8') : '';
@@ -233,6 +286,63 @@ for (const hub of TOPIC_HUBS) {
     blogIndexHtml.includes(`href="/blog/topic/${hub.slug}/"`),
     `블로그 인덱스(/blog/)에서 주제 허브 /blog/topic/${hub.slug}/ 로 가는 링크가 보여야 함`,
   );
+
+  // 허브는 수동 큐레이션 글만 중복 없이 나열해야 하고(카테고리 전체 글 목록 금지),
+  // CollectionPage 의 ItemList 도 정확히 그 큐레이션 글만 담아야 한다.
+  const expectedCuratedSlugs = [];
+  const seenCurated = new Set();
+  for (const subtopic of hub.subtopics) {
+    for (const slug of subtopic.slugs) {
+      if (sourceSlugs.has(slug) && !seenCurated.has(slug)) {
+        seenCurated.add(slug);
+        expectedCuratedSlugs.push(slug);
+      }
+    }
+  }
+  const renderedSlugs = [...html.matchAll(/<ul class="hub-subtopic-list">[\s\S]*?<\/ul>/g)]
+    .flatMap(([block]) => [...block.matchAll(/href="\/blog\/([^/"]+)\/"/g)].map((m) => m[1]));
+  const duplicatedSlugs = renderedSlugs.filter((slug, index) => renderedSlugs.indexOf(slug) !== index);
+  const renderedSet = new Set(renderedSlugs);
+  const missingRendered = expectedCuratedSlugs.filter((slug) => !renderedSet.has(slug));
+  const extraRendered = renderedSlugs.filter((slug) => !expectedCuratedSlugs.includes(slug));
+  report(
+    duplicatedSlugs.length === 0 && missingRendered.length === 0 && extraRendered.length === 0,
+    `주제 허브 /blog/topic/${hub.slug}/ 는 큐레이션 글 ${expectedCuratedSlugs.length}편만 중복 없이 나열해야 함 (중복: ${duplicatedSlugs.join(', ') || '없음'} / 누락: ${missingRendered.join(', ') || '없음'} / 초과: ${extraRendered.join(', ') || '없음'})`,
+  );
+  let itemListPaths = null;
+  for (const [, rawLd] of html.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)) {
+    try {
+      const data = JSON.parse(rawLd);
+      if (data['@type'] === 'CollectionPage' && data.mainEntity?.['@type'] === 'ItemList') {
+        itemListPaths = (data.mainEntity.itemListElement ?? []).map((item) => decodeURIComponent(new URL(item.url).pathname));
+      }
+    } catch {
+      // JSON 파싱 실패는 위 jsonLdTypes 검사가 INVALID-JSON 으로 잡는다.
+    }
+  }
+  const expectedPaths = expectedCuratedSlugs.map((slug) => `/blog/${slug}/`);
+  report(
+    itemListPaths !== null &&
+      itemListPaths.length === expectedPaths.length &&
+      expectedPaths.every((path, index) => itemListPaths[index] === path),
+    `주제 허브 /blog/topic/${hub.slug}/ 의 ItemList 는 큐레이션 글 ${expectedPaths.length}편만 담아야 함 (현재 ${itemListPaths ? `${itemListPaths.length}편` : 'ItemList 없음'})`,
+  );
+}
+
+// --- 홈·블로그 큐레이션(FEATURED_MAKER_SLUGS) ---
+// 큐레이션 슬러그가 실제 공개 글이어야 하고(페이지 구현은 없는 슬러그를 filter(Boolean)로 조용히
+// 숨기므로 독립 검사가 필요), 홈과 블로그 인덱스 양쪽에서 눈에 띄게 링크되어야 한다.
+const homeHtml = existsSync(join(DIST, 'index.html')) ? readFileSync(join(DIST, 'index.html'), 'utf8') : '';
+report(homeHtml !== '', 'dist/index.html 이 있어야 함');
+const missingFeatured = FEATURED_MAKER_SLUGS.filter((slug) => !sourceSlugs.has(slug));
+report(
+  missingFeatured.length === 0,
+  `FEATURED_MAKER_SLUGS 가 모두 공개 소스에 있어야 함 (누락: ${missingFeatured.join(', ') || '없음'})`,
+);
+for (const slug of FEATURED_MAKER_SLUGS) {
+  if (!sourceSlugs.has(slug)) continue;
+  report(homeHtml.includes(`href="/blog/${slug}/"`), `홈(/)에서 큐레이션 글 /blog/${slug}/ 링크가 보여야 함`);
+  report(blogIndexHtml.includes(`href="/blog/${slug}/"`), `블로그 인덱스(/blog/)에서 큐레이션 글 /blog/${slug}/ 링크가 보여야 함`);
 }
 
 // --- 5. 모든 글 상세에 주제 경로(topic-path) 블록과 카테고리(+허브) 링크 ---

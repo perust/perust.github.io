@@ -85,12 +85,29 @@ https://perust.github.io/robots.txt
 
 ## 카테고리 통합 (2026-07-21) — NEXT MANUAL 등록 작업
 
-블로그 전체 Git 이력에서 확인된 20개 라벨을 `src/config/taxonomy.ts`의 정식 카테고리 6개(AI / 생활금융·경제 / 자동화·만들기 / 서평 / 회고 / 일상)로 통합했다. 정식 `AI` URL은 그대로 유지되고, 나머지 19개 과거 라벨은 호환 페이지 대상이다. 현재 공개된 69개 글에는 16개 라벨만 남아 있지만, 보관된 글에만 있던 `Content Strategy`, `Food`, `Maker Log`, `Science`까지 과거 URL 호환 대상으로 유지한다. 이 통합으로 카테고리 아카이브 URL 슬러그가 바뀌었고(예: `/blog/category/money/` → `/blog/category/생활금융-경제/`), 예전 URL은 크롤 안전한 호환 페이지(`noindex, follow` + 정식 아카이브로 canonical)로 남는다. 태그 아카이브는 글 3개 이상이면 색인되도록 정책이 바뀌었고(이전엔 전부 noindex), 주제 허브 페이지(`/blog/topic/ai/`, `/blog/topic/생활금융-경제/`, `/blog/topic/자동화-만들기/`) 3개가 새로 생겼다. **이 문서는 아래 등록 작업이 실행됐다고 주장하지 않는다 — 계정 인증이 필요해 사용자가 직접 해야 하는 다음 단계다.**
+블로그 전체 Git 이력에서 확인된 20개 라벨을 `src/config/taxonomy.ts`의 정식 카테고리 6개(AI / 생활금융·경제 / 자동화·만들기 / 서평 / 회고 / 일상)로 통합했다. 정식 `AI` URL은 그대로 유지되고, 나머지 19개 과거 라벨은 호환 페이지 대상이다. 현재 공개된 64개 글에 남은 라벨 외에도, 보관된 글에만 있던 `Content Strategy`, `Food`, `Maker Log`, `Science`까지 과거 URL 호환 대상으로 유지한다. 이 통합으로 카테고리 아카이브 URL 슬러그가 바뀌었고(예: `/blog/category/money/` → `/blog/category/생활금융-경제/`), 예전 URL은 크롤 안전한 호환 페이지(`noindex, follow` + 정식 아카이브로 canonical)로 남는다. 태그 아카이브는 `INDEXABLE_TAGS` allowlist에 있고 글 3개 이상일 때만 색인되도록 정책이 바뀌었고(이전엔 전부 noindex, 판정 함수는 `isIndexableTag`), 주제 허브 페이지(`/blog/topic/ai/`, `/blog/topic/생활금융-경제/`, `/blog/topic/자동화-만들기/`) 3개가 새로 생겼다. **이 문서는 아래 등록 작업이 실행됐다고 주장하지 않는다 — 계정 인증이 필요해 사용자가 직접 해야 하는 다음 단계다.**
 
 - [ ] **NEXT MANUAL — Google Search Console**: `Sitemaps`에서 `https://perust.github.io/sitemap-index.xml`을 다시 제출한다(이미 등록되어 있어도 URL 구조가 바뀌었으므로 재제출 권장). `URL 검사` 도구로 새 주제 허브 3개(`/blog/topic/ai/`, `/blog/topic/생활금융-경제/`, `/blog/topic/자동화-만들기/`)의 색인을 직접 요청한다. 기존에 색인된 구 카테고리 URL(`/blog/category/money/` 등)이 있었다면, `URL 검사`로 새 canonical(`/blog/category/생활금융-경제/` 등)을 함께 요청해 전환을 앞당긴다.
 - [ ] **NEXT MANUAL — Bing Webmaster Tools**: sitemap을 재제출한다(`https://perust.github.io/sitemap-index.xml`). 별도 URL 재검사 기능이 있다면 주제 허브 3개 URL을 제출한다.
 - [ ] **NEXT MANUAL — 네이버 서치어드바이저**: `사이트맵 제출`에서 sitemap을 다시 제출한다. `웹마스터도구 > 요청 > 웹페이지 수집`에서 주제 허브 3개 URL의 수집을 요청한다.
 - [ ] **NEXT MANUAL — 사후 확인**: 1~2주 뒤 `site:perust.github.io/blog/category/` 검색과 Search Console `페이지` 리포트에서 구 카테고리 URL이 정식 카테고리로 정리(canonical 반영)되는지 확인한다. 레거시 호환 페이지가 색인에 남아 있다면 `noindex` 처리가 정상 반영될 때까지 기다린다(강제 삭제 요청은 필요할 때만).
+
+## 2차 큐레이션 보관 (2026-07-21) — 404 정책과 검색엔진 후속 신호
+
+2차 큐레이션으로 아래 5개 글을 공개에서 내렸다. 직접 경험 근거가 얇은 정리·주간 글이라 **동등한 대체 URL 이 없고**, 의미 없는 페이지로 억지 redirect 를 걸지 않는 것이 정책이다. 공개 source(`src/content/blog`)·dist·sitemap·내부 링크에서 완전히 제거했으므로, 배포 후 이 URL 들은 **GitHub Pages 일반 404** 를 반환한다(soft 404·가짜 canonical 없음). 원본은 `content-archive/adsense-remediation/2026-07-21/` 아래에 Git 으로 보존한다. enforcement 단일 진실 소스는 `scripts/lib/second-curation-policy-anchor.mjs`의 immutable policy anchor이며, 같은 폴더의 `second-curation-manifest.json`은 사람이 읽는 선언 사본이다(`npm run check:publish-policy`가 두 정의의 정확한 일치, 보관 무결성, 5개 슬러그의 재등장을 빌드마다 검증).
+
+- `https://perust.github.io/blog/2026-06-28-money-weekly-2026-june-week-4/`
+- `https://perust.github.io/blog/2026-07-02-investment-data-records-not-emotion/`
+- `https://perust.github.io/blog/2026-07-03-productivity-apps-system-first/`
+- `https://perust.github.io/blog/2026-07-03-reduce-procrastination-small-tasks/`
+- `https://perust.github.io/blog/2026-07-09-gpt-5-6-release-preview-checklist/`
+
+**이 문서는 아래 작업이 실행됐다고 주장하지 않는다 — 계정 인증이 필요해 사용자가 직접 해야 하는 다음 단계다.**
+
+- [ ] **NEXT MANUAL — Google Search Console**: `Sitemaps`에서 `https://perust.github.io/sitemap-index.xml`을 재제출해 제거된 URL 이 sitemap 에 없음을 재크롤링 신호로 알린다. 색인에 이미 잡혀 있던 위 5개 URL 은 `삭제(Removals) > 임시 삭제 요청`으로 임시 제거를 걸어 색인에서 빨리 내리고, 이후 크롤러가 404 를 확인하면 영구 제거된다(410이 아닌 404 라도 반복 크롤 후 제거됨). `URL 검사` 도구로 위 URL 몇 개를 조회해 "찾을 수 없음(404)" 상태가 보고되는지 확인한다.
+- [ ] **NEXT MANUAL — Bing Webmaster Tools**: sitemap 재제출. URL 제거 도구(Site Explorer/URL removal)가 있으면 위 5개 URL 을 제출한다.
+- [ ] **NEXT MANUAL — 네이버 서치어드바이저**: `사이트맵 제출` 재제출. `웹마스터도구 > 요청 > 웹페이지 검색 제외`가 제공되면 위 5개 URL 의 검색 제외를 요청한다.
+- [ ] **NEXT MANUAL — 사후 확인**: 1~2주 뒤 Search Console `페이지` 리포트에서 위 URL 들이 "찾을 수 없음(404)"으로 정리되는지 확인한다. 외부 유입이 확인되는 링크가 있으면 그때 개별적으로 대응을 재검토한다(자동 redirect 는 여전히 걸지 않는다).
 
 ## Daum/Kakao
 

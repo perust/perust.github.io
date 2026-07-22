@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
 import { categoryPath, tagPath, ogImageForPost, getAllPosts, getRelatedPosts, getPrevNext } from '../../utils/blog';
-import { canonicalCategoryFor, hubForCategory, subtopicForSlug } from '../../config/taxonomy';
+import { canonicalCategoryFor, hubForCategory, isIndexableTag, slugify, subtopicForSlug } from '../../config/taxonomy';
 
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
@@ -41,6 +41,17 @@ const currentPost = allPosts.find((post) => post.slug === slug);
 const relatedPosts = currentPost ? getRelatedPosts(currentPost, allPosts) : [];
 const { prev, next } = getPrevNext(slug, allPosts);
 const formatDate = (value: string | Date) => new Date(value).toLocaleDateString('ko-KR');
+
+// 사이드바 태그는 색인 판정 SSOT(isIndexableTag)를 통과한 태그만 링크하고,
+// 나머지는 텍스트로만 보여준다 — noindex 태그 페이지로 가는 내부 링크를 만들지 않는다.
+const tagCountBySlug = new Map<string, number>();
+for (const p of allPosts) {
+  for (const t of p.tags ?? []) {
+    const key = slugify(t);
+    tagCountBySlug.set(key, (tagCountBySlug.get(key) ?? 0) + 1);
+  }
+}
+const isLinkableTag = (tag: string) => isIndexableTag(tag, tagCountBySlug.get(slugify(tag)) ?? 0);
 
 // 이 글의 주제 경로: 카테고리(항상) → 주제 허브(있으면) → 허브 안 하위 주제(큐레이션된 글이면).
 // src/config/taxonomy.ts 의 매핑만으로 결정되는 자동 분류이며, 본문 안에 손으로 넣은 링크가 아니다.
@@ -166,7 +177,7 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     <aside class="sidebar-card" aria-label="블로그 안내">
       <h2 style="font-size:1.2rem">lentoludens Blog</h2>
       <p>아이디어를 제품으로 만들며 배운 것을 기록합니다.</p>
-      <ul class="tag-cloud">{tags.map((tag: string) => <li><a href={tagPath(tag)}>#{tag}</a></li>)}</ul>
+      <ul class="tag-cloud">{tags.map((tag: string) => <li>{isLinkableTag(tag) ? <a href={tagPath(tag)}>#{tag}</a> : <span>#{tag}</span>}</li>)}</ul>
     </aside>
   </main>
 </BaseLayout>
