@@ -8,7 +8,7 @@
 //      robots/sitemap 포함 여부가 정확히 일치한다(양방향 검증).
 //   4. 주제 허브 페이지마다 canonical/robots/CollectionPage+BreadcrumbList JSON-LD 가 있고,
 //      sitemap 에 있으며, 블로그 인덱스에서 눈에 띄게 링크된다.
-//   5. 모든 글 상세 페이지에 주제 경로(topic-path) 블록이 있고, 카테고리(+허브) 링크를 포함한다.
+//   5. 글 상세에는 내부용 주제 경로 UI를 노출하지 않되, 상단 카테고리 링크와 BreadcrumbList JSON-LD는 유지한다.
 // 사용법: npm run build 이후 `node scripts/check-taxonomy.mjs`
 // 표준 라이브러리만 사용하며, 위반이 있으면 종료 코드 1로 끝난다.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -27,7 +27,6 @@ import {
   TOPIC_HUBS,
   TAG_INDEX_MIN_POSTS,
   canonicalCategoryFor,
-  hubForCategory,
   isIndexableTag,
   postDayOf,
   slugify,
@@ -345,11 +344,11 @@ for (const slug of FEATURED_MAKER_SLUGS) {
   report(blogIndexHtml.includes(`href="/blog/${slug}/"`), `블로그 인덱스(/blog/)에서 큐레이션 글 /blog/${slug}/ 링크가 보여야 함`);
 }
 
-// --- 5. 모든 글 상세에 주제 경로(topic-path) 블록과 카테고리(+허브) 링크 ---
+// --- 5. 내부 분류 UI 비노출 + 독자용 카테고리 링크/검색엔진용 BreadcrumbList 유지 ---
 let postsChecked = 0;
-let missingTopicPath = 0;
+let visibleTopicPath = 0;
 let missingCategoryLink = 0;
-let missingHubLink = 0;
+let missingBreadcrumbLd = 0;
 for (const file of srcFiles) {
   const slug = file.replace(/\.md$/, '');
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
@@ -358,7 +357,6 @@ for (const file of srcFiles) {
   if (!rawCategory) continue;
   const category = canonicalCategoryFor(rawCategory);
   const categorySlug = slugify(category);
-  const hub = hubForCategory(category);
 
   const distPath = join(DIST, 'blog', slug, 'index.html');
   if (!existsSync(distPath)) {
@@ -367,26 +365,24 @@ for (const file of srcFiles) {
   }
   postsChecked += 1;
   const html = readFileSync(distPath, 'utf8');
-  if (!html.includes('class="topic-path"')) {
-    missingTopicPath += 1;
-    if (missingTopicPath <= 3) console.log(`[FAIL] /blog/${slug}/ 에 topic-path 블록이 없음`);
-    continue;
+  if (html.includes('class="topic-path"') || html.includes('주제 경로 · 자동 분류')) {
+    visibleTopicPath += 1;
+    if (visibleTopicPath <= 3) console.log(`[FAIL] /blog/${slug}/ 에 내부용 topic-path 블록이 노출됨`);
   }
-  const topicPathBlock = html.match(/<nav class="topic-path"[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? '';
-  // href 는 Astro가 원문 유니코드 그대로 출력한다(canonical/JSON-LD의 절대 URL과 달리 percent-encoding 안 됨).
-  if (!topicPathBlock.includes(`href="/blog/category/${categorySlug}/"`)) {
+  // 상단 카테고리 링크는 독자가 분류 글 목록으로 이동하는 최소 내비게이션으로 유지한다.
+  if (!html.includes(`<p class="section-kicker"><a href="/blog/category/${categorySlug}/">${category}</a></p>`)) {
     missingCategoryLink += 1;
-    if (missingCategoryLink <= 3) console.log(`[FAIL] /blog/${slug}/ 의 topic-path 블록에 카테고리(${category}) 링크가 없음`);
+    if (missingCategoryLink <= 3) console.log(`[FAIL] /blog/${slug}/ 상단에 카테고리(${category}) 링크가 없음`);
   }
-  if (hub && !topicPathBlock.includes(`href="/blog/topic/${hub.slug}/"`)) {
-    missingHubLink += 1;
-    if (missingHubLink <= 3) console.log(`[FAIL] /blog/${slug}/ 의 topic-path 블록에 허브(${hub.title}) 링크가 없음`);
+  if (!html.includes('"@type":"BreadcrumbList"') || !html.includes(`"position":3,"name":"${category}"`)) {
+    missingBreadcrumbLd += 1;
+    if (missingBreadcrumbLd <= 3) console.log(`[FAIL] /blog/${slug}/ 의 BreadcrumbList JSON-LD에 카테고리(${category})가 없음`);
   }
 }
 report(postsChecked > 0, `블로그 글 상세 페이지가 존재해야 함 (확인 ${postsChecked}개)`);
-if (missingTopicPath) fail(`글 ${missingTopicPath}개에 topic-path 블록이 없음`);
-if (missingCategoryLink) fail(`글 ${missingCategoryLink}개의 topic-path 블록에 카테고리 링크가 없음`);
-if (missingHubLink) fail(`글 ${missingHubLink}개의 topic-path 블록에 허브 링크가 없음`);
+if (visibleTopicPath) fail(`글 ${visibleTopicPath}개에 내부용 topic-path 블록이 노출됨`);
+if (missingCategoryLink) fail(`글 ${missingCategoryLink}개의 상단 카테고리 링크가 없음`);
+if (missingBreadcrumbLd) fail(`글 ${missingBreadcrumbLd}개의 BreadcrumbList JSON-LD에 카테고리가 없음`);
 
 console.log(`\n[check-taxonomy] 위반 ${failures.length}건`);
 process.exit(failures.length ? 1 : 0);

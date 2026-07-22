@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
 import { categoryPath, tagPath, ogImageForPost, getAllPosts, getRelatedPosts, getPrevNext } from '../../utils/blog';
-import { canonicalCategoryFor, hubForCategory, isIndexableTag, slugify, subtopicForSlug } from '../../config/taxonomy';
+import { isIndexableTag, slugify } from '../../config/taxonomy';
 
 export async function getStaticPaths() {
   const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
@@ -52,12 +52,6 @@ for (const p of allPosts) {
   }
 }
 const isLinkableTag = (tag: string) => isIndexableTag(tag, tagCountBySlug.get(slugify(tag)) ?? 0);
-
-// 이 글의 주제 경로: 카테고리(항상) → 주제 허브(있으면) → 허브 안 하위 주제(큐레이션된 글이면).
-// src/config/taxonomy.ts 의 매핑만으로 결정되는 자동 분류이며, 본문 안에 손으로 넣은 링크가 아니다.
-const canonicalCategory = canonicalCategoryFor(category);
-const hub = hubForCategory(canonicalCategory);
-const subtopic = hub ? subtopicForSlug(hub, slug) : undefined;
 
 const blogPostingLd = {
   '@context': 'https://schema.org',
@@ -125,17 +119,6 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       </p>
       <p class="post-meta post-byline">글쓴이 <a href="/about/">lentoludens</a> · <a href="/editorial-policy/">편집·운영 원칙</a></p>
       <Content />
-
-      <nav class="topic-path" aria-label="주제 경로">
-        <p class="topic-path-label">주제 경로 · 자동 분류</p>
-        <p class="topic-path-trail">
-          <a href="/blog/">블로그</a>
-          <span class="topic-path-sep">›</span>
-          <a href={categoryPath(canonicalCategory)}>{canonicalCategory}</a>
-          {hub && <><span class="topic-path-sep">›</span><a href={`/blog/topic/${hub.slug}/`}>{hub.title} 허브</a></>}
-          {subtopic && <><span class="topic-path-sep">›</span><span>{subtopic.label}</span></>}
-        </p>
-      </nav>
 
       {relatedPosts.length > 0 && (
         <section class="post-related" aria-label="관련 글">

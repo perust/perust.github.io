@@ -1112,14 +1112,6 @@ h3 {
 .hub-nav-card h3 { margin: 0; font-size: 1.05rem; letter-spacing: -.03em; color: var(--ink); }
 .hub-nav-card p { margin: 0; color: var(--muted); font-size: .85rem; }
 
-/* 글 상세의 주제 경로/클러스터 탐색 블록 — 관련 글·이전/다음 글과는 별개의, 분류 체계 기반 내비게이션 */
-.topic-path { margin-top: 2.5rem; padding: 1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--card); }
-.topic-path-label { margin: 0 0 .5rem; color: var(--muted); font-size: .74rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
-.topic-path-trail { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: 0; font-weight: 700; }
-.topic-path-trail a { color: var(--primary); text-decoration: none; }
-.topic-path-trail a:hover, .topic-path-trail a:focus-visible { text-decoration: underline; }
-.topic-path-sep { color: var(--muted); }
-
 @media (max-width: 720px) {
   .hub-subtopics { grid-template-columns: 1fr; }
   .hub-nav-grid { grid-template-columns: 1fr; }
