@@ -2,7 +2,7 @@
 title: "GitHub Copilot 7월 14일 업데이트: JetBrains BYOK와 Visual Studio 사용량 알림"
 description: "GitHub Copilot의 7월 14일 공식 업데이트 중 JetBrains BYOK custom endpoint, local sandbox, Visual Studio 사용량 알림과 MCP 신뢰 검증을 정리했습니다."
 date: "2026-07-16T06:02:09+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["GitHubCopilot", "AI코딩", "JetBrains", "VisualStudio", "BYOK", "MCP", "릴리스노트"]
 ---
 

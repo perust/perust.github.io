@@ -12,7 +12,7 @@ title: "검색 결과에 그대로 노출돼도 자연스러운 제목"
 description: "이 글이 답하는 질문을 한 문장으로 요약. 검색 스니펫과 og/twitter, JSON-LD에 함께 쓰인다."
 date: "2026-06-28"
 updated: "2026-07-01"   # 본문을 실제로 고친 날만. 없으면 생략 (dateModified는 date로 대체)
-category: "자동화·만들기"
+category: "AI/IT 정보"
 tags: ["Astro", "GitHub Pages"]
 editorialReview: true      # 2026-07-21 이후 새 글 필수 — 사람이 개별 검토를 마친 뒤에만 true
 valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | original-analysis | verified-guide | review
@@ -22,17 +22,17 @@ valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | o
 - `title`: 사람이 실제로 검색하는 표현을 우선한다. 110자 이내(JSON-LD `headline` 권장 한도). 브랜드명·날짜 나열로 늘리지 않는다.
 - `description`: 글의 결론을 압축한 1문장. 120~160자 권장. 본문 첫 문단과 의미가 일치해야 한다.
 - `updated`: 내용을 실제로 고쳤을 때만 추가한다. 형식적으로 날짜만 바꾸지 않는다. `updated`(없으면 `date`)는 sitemap `lastmod`에도 그대로 반영된다.
-- `category`: **반드시 `src/config/taxonomy.ts`의 `CANONICAL_CATEGORIES`에 있는 정식 카테고리명 중 하나**를 그대로 쓴다(현재 AI / 생활금융·경제 / 자동화·만들기 / 서평 / 회고 / 일상, 8개 이하 유지). 새 주제라 기존 카테고리에 안 맞으면 새 카테고리를 만들지 말고 가장 가까운 것을 고르거나, 정말 필요하면 `taxonomy.ts`에 카테고리를 추가하고 `LEGACY_CATEGORY_MAP`에 과거 표기가 있었는지 검토한다. 과거 라벨의 일괄 매핑보다 글 내용상 다른 정식 카테고리가 명확히 가까우면 `POST_CATEGORY_OVERRIDES`에 글 슬러그와 예외를 기록한다. `npm run check:taxonomy`가 정식 카테고리가 아닌 값이나 기록된 예외와 다른 값을 쓰면 빌드 검증에서 실패시킨다.
+- `category`: **반드시 `src/config/taxonomy.ts`의 `CANONICAL_CATEGORIES`에 있는 정식 카테고리명 중 하나**를 그대로 쓴다(책 서평 / 미리 알아보는 책 정보 / 도서 학습 챌린지 / AI/IT 정보 / 경제 정보, 정확히 5개 유지). 새 글은 이 5개 중 가장 가까운 분류를 고른다. 분류 체계를 바꾸려면 `taxonomy.ts`와 `LEGACY_CATEGORY_MAP`, 회귀 검증을 함께 수정한다. 과거 라벨의 일괄 매핑보다 글 내용상 다른 정식 카테고리가 명확히 가까우면 `POST_CATEGORY_OVERRIDES`에 글 슬러그와 예외를 기록한다. `npm run check:taxonomy`가 정식 카테고리가 아닌 값이나 기록된 예외와 다른 값을 쓰면 빌드 검증에서 실패시킨다.
 - `tags`: 글에 실제로 다룬 주제만, **1~5개**(`NEW_POST_MAX_TAGS`). 2026-07-21 이후 새 글은 tags 를 생략하거나 빈 배열로 둘 수 없다(`npm run check:taxonomy`가 실패시킨다). 또한 `src/config/taxonomy.ts`의 `CONTROLLED_TAGS`(통제 태그 어휘)에 있는 태그만 쓸 수 있다 — 새 태그가 필요하면 글 커밋에 `CONTROLLED_TAGS` 추가를 함께 넣는다(`npm run check:taxonomy`가 검증). 태그 페이지는 `INDEXABLE_TAGS` allowlist(약 10개 핵심 주제)에 있고 글이 3개 이상(`TAG_INDEX_MIN_POSTS`) 쌓였을 때만 색인(`index, follow`)되고 sitemap에 포함된다 — 판정 함수는 `isIndexableTag`(`src/config/taxonomy.ts`) 하나다. 그 외 태그 페이지는 URL 접근은 되지만 `noindex, follow`로 남고, 사이트 어디서도 내부 링크를 걸지 않는다(글 상세 사이드바에서는 텍스트로만 표시).
 - `image`(선택): OG 이미지를 글마다 직접 지정할 때만 쓴다. 생략하면 카테고리별 기본 OG 이미지(`public/og/`), 매칭되는 카테고리가 없으면 기본 이미지로 자동 대체된다.
 
-### 카테고리·태그·주제 허브 색인 정책 (2026-07-21 카테고리 통합)
+### 카테고리·태그·주제 허브 색인 정책 (2026-07-21 통합 → 2026-07-22 2차 개편)
 
-- 정식 카테고리는 `src/config/taxonomy.ts`의 `CANONICAL_CATEGORIES` 하나로 정의하고(8개 이하), 카테고리 아카이브(`/blog/category/<slug>/`)는 글이 3개 이상이면 `index, follow`, 미만이면 `noindex, follow`다(`CATEGORY_INDEX_MIN_POSTS`).
-- 과거에 쓰던 카테고리 라벨(`Money`, `AI Weekly`, `금융` 등)은 `LEGACY_CATEGORY_MAP`으로 정식 카테고리에 매핑되고, 예전 URL(`/blog/category/<과거 슬러그>/`)은 자동으로 호환 페이지가 생성된다. 호환 페이지는 항상 `noindex, follow`이고 canonical이 정식 카테고리 아카이브를 가리키며 sitemap에서 제외된다 — 링크는 계속 살아있지만 색인은 정식 카테고리로만 모인다.
-- 글이 많은 카테고리 3개(AI / 생활금융·경제 / 자동화·만들기)는 `TOPIC_HUBS`로 큐레이션한 주제 허브 페이지(`/blog/topic/<slug>/`)가 따로 있다. 항상 `index, follow`이며 블로그 인덱스와 글 상세의 "주제 경로" 블록에서 링크된다. 허브 본문과 JSON-LD ItemList에는 하위 주제별로 수동 큐레이션한 대표 글만 중복 없이 나열하고, 카테고리 전체 글은 목록 대신 카테고리 아카이브로 가는 CTA 링크로만 연결한다(카테고리 아카이브와의 중복 콘텐츠 방지).
+- 정식 카테고리는 `src/config/taxonomy.ts`의 `CANONICAL_CATEGORIES` 하나로 정확히 5개를 정의하고, 카테고리 아카이브(`/blog/category/<slug>/`)는 글이 3개 이상이면 `index, follow`, 미만이면 `noindex, follow`다(`CATEGORY_INDEX_MIN_POSTS`).
+- 과거에 쓰던 카테고리 라벨(`Money`, `AI Weekly`, `금융`뿐 아니라 1차 통합의 정식 카테고리였던 `AI`, `생활금융·경제`, `자동화·만들기`, `서평`, `회고`, `일상`까지)은 `LEGACY_CATEGORY_MAP`으로 정식 카테고리에 매핑되고, 예전 URL(`/blog/category/<과거 슬러그>/`)은 자동으로 호환 페이지가 생성된다. 호환 페이지는 항상 `noindex, follow`이고 canonical이 정식 카테고리 아카이브를 가리키며 sitemap에서 제외된다 — 링크는 계속 살아있지만 색인은 정식 카테고리로만 모인다.
+- 주제 허브 3개(AI / 생활금융·경제 / 자동화·만들기 표기 유지)는 `TOPIC_HUBS`로 큐레이션한 주제 허브 페이지(`/blog/topic/<slug>/`)가 따로 있다. 2차 개편 이후 허브의 대표 글은 카테고리와 무관하게 슬러그 기준으로 큐레이션하고, `categories`는 대표(CTA·역링크) 카테고리만 나타낸다. 항상 `index, follow`이며 블로그 인덱스에서 링크된다. 허브 본문과 JSON-LD ItemList에는 하위 주제별로 수동 큐레이션한 대표 글만 중복 없이 나열하고, 카테고리 전체 글은 목록 대신 카테고리 아카이브로 가는 CTA 링크로만 연결한다(카테고리 아카이브와의 중복 콘텐츠 방지).
 - 태그 색인은 `isIndexableTag`(= `INDEXABLE_TAGS` allowlist ∩ 글 `TAG_INDEX_MIN_POSTS`개 이상)가 단일 판정 기준이다. sitemap(astro.config.mjs), 태그 페이지 robots, 홈·블로그 인덱스의 태그 노출, 글 상세 사이드바 링크, 검증 스크립트 기대값이 전부 이 함수를 쓴다. noindex 태그 페이지로 가는 내부 링크는 0이어야 하며 `check:content-quality`가 검증한다.
-- `npm run check:taxonomy`가 위 세 가지(정식 카테고리 매핑, 레거시 호환 페이지, 태그/허브 색인 정렬, 글마다 주제 경로 블록 존재)를 빌드마다 검증한다.
+- `npm run check:taxonomy`가 정식 카테고리 매핑·아카이브 필터, 레거시 호환 페이지, 태그/허브 색인 정렬, 글 상세의 상단 카테고리 링크와 BreadcrumbList 유지, 내부용 주제 경로 UI 비노출을 빌드마다 검증한다.
 
 ### 발행 운영 정책 (2026-07-21 이후, 대량 자동 발행 재발 방지)
 

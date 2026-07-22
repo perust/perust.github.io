@@ -1,7 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { categoryPath, tagPath } from '../../utils/blog';
-import { FEATURED_MAKER_SLUGS, TOPIC_HUBS, isIndexableTag } from '../../config/taxonomy';
+import {
+  CANONICAL_CATEGORIES,
+  FEATURED_MAKER_SLUGS,
+  TOPIC_HUBS,
+  canonicalCategoryFor,
+  isIndexableTag,
+} from '../../config/taxonomy';
 
 const modules = import.meta.glob('../../content/blog/*.md', { eager: true });
 const posts = Object.entries(modules)
@@ -15,7 +21,11 @@ const posts = Object.entries(modules)
 const LIST_LIMIT = 20;
 const featuredPost = posts[0];
 const restPosts = posts.slice(1, LIST_LIMIT);
-const categories = Array.from(new Set(posts.map((post) => post.category))).sort();
+// 정식 카테고리 5개는 글이 없어도 전부 사이드바에 노출한다(taxonomy.ts 정의 순서 유지).
+const categories = CANONICAL_CATEGORIES.map((category) => ({
+  ...category,
+  count: posts.filter((post) => canonicalCategoryFor(post.category) === category.name).length,
+}));
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
   for (const tag of post.tags ?? []) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
@@ -134,7 +144,7 @@ const blogLd = {
         <div class="sidebar-card">
           <h2>카테고리</h2>
           <ul class="category-list">
-            {categories.map((category) => <li><a class="category-filter" href={categoryPath(category)}><span>{category}</span><strong>{posts.filter((post) => post.category === category).length}</strong></a></li>)}
+            {categories.map((category) => <li><a class="category-filter" href={categoryPath(category.name)}><span>{category.name}</span><strong>{category.count}</strong></a></li>)}
           </ul>
         </div>
         <div class="sidebar-card">

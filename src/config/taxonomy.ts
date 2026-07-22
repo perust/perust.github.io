@@ -29,38 +29,35 @@ export function slugify(value: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// 1) 정식(canonical) 카테고리 — 8개 이하로 유지한다.
+// 1) 정식(canonical) 카테고리 — 독자에게 약속한 아래 5개를 유지한다.
+//    글이 아직 없는 카테고리도 아카이브 URL 과 블로그 UI 노출을 유지한다
+//    (색인은 CATEGORY_INDEX_MIN_POSTS 기준을 그대로 따른다).
 // ---------------------------------------------------------------------------
 export const CANONICAL_CATEGORIES: CanonicalCategory[] = [
   {
-    name: 'AI',
-    slug: slugify('AI'),
-    description: 'AI 모델, 코딩 도구, 에이전트, 국내외 AI 정책과 이슈를 다룹니다.',
+    name: '책 서평',
+    slug: slugify('책 서평'),
+    description: '읽은 책을 정리하고 실제 업무·생활에 적용한 부분을 남기는 서평입니다.',
   },
   {
-    name: '생활금융·경제',
-    slug: slugify('생활금융·경제'),
-    description: '금리·환율 같은 거시경제 흐름과 가계대출·연금·세금 등 생활 속 금융 체크리스트를 다룹니다.',
+    name: '미리 알아보는 책 정보',
+    slug: slugify('미리 알아보는 책 정보'),
+    description: '읽기 전에 미리 살펴본 책 소개와 출간 정보를 정리합니다.',
   },
   {
-    name: '자동화·만들기',
-    slug: slugify('자동화·만들기'),
-    description: 'n8n 업무 자동화, 개인 시스템·서비스 제작기, 보안·개인정보 체크리스트를 다룹니다.',
+    name: '도서 학습 챌린지',
+    slug: slugify('도서 학습 챌린지'),
+    description: '책·강의 완독 챌린지를 따라가며 남기는 주차별 학습 기록과 회고입니다.',
   },
   {
-    name: '서평',
-    slug: slugify('서평'),
-    description: '읽은 책을 정리하고 실제 업무·생활에 적용한 부분을 남깁니다.',
+    name: 'AI/IT 정보',
+    slug: slugify('AI/IT 정보'),
+    description: 'AI 모델·코딩 도구, 소프트웨어, 자동화, 보안 등 IT 전반의 소식과 사용 기록을 다룹니다.',
   },
   {
-    name: '회고',
-    slug: slugify('회고'),
-    description: '챌린지, 강의, 프로젝트를 끝낸 뒤 남기는 회고입니다.',
-  },
-  {
-    name: '일상',
-    slug: slugify('일상'),
-    description: '여행, 생활 체크리스트처럼 특정 주제에 묶이지 않는 일상 기록입니다.',
+    name: '경제 정보',
+    slug: slugify('경제 정보'),
+    description: '금리·환율 같은 경제 흐름과 세금·연금·결제·생활비 등 생활 금융 정보를 다룹니다.',
   },
 ];
 
@@ -78,37 +75,55 @@ export const CANONICAL_CATEGORY_BY_SLUG: ReadonlyMap<string, CanonicalCategory> 
 //    모든 과거 라벨은 정확히 하나의 정식 카테고리로만 귀속된다(다대일).
 // ---------------------------------------------------------------------------
 export const LEGACY_CATEGORY_MAP: Record<string, string> = {
-  AI: 'AI',
-  'AI Weekly': 'AI',
-  Science: 'AI',
+  // 1차 통합(2026-07) 이전의 원래 라벨들.
+  AI: 'AI/IT 정보',
+  'AI Weekly': 'AI/IT 정보',
+  Science: 'AI/IT 정보',
 
-  Money: '생활금융·경제',
-  'Money Weekly': '생활금융·경제',
-  Economy: '생활금융·경제',
-  Finance: '생활금융·경제',
-  금융: '생활금융·경제',
+  Money: '경제 정보',
+  'Money Weekly': '경제 정보',
+  Economy: '경제 정보',
+  Finance: '경제 정보',
+  금융: '경제 정보',
 
-  Product: '자동화·만들기',
-  Tech: '자동화·만들기',
-  Automation: '자동화·만들기',
-  'Build Note': '자동화·만들기',
-  'Content Strategy': '자동화·만들기',
-  'Maker Log': '자동화·만들기',
+  Product: 'AI/IT 정보',
+  Tech: 'AI/IT 정보',
+  Automation: 'AI/IT 정보',
+  'Build Note': 'AI/IT 정보',
+  'Content Strategy': 'AI/IT 정보',
+  'Maker Log': 'AI/IT 정보',
 
-  'Book Review': '서평',
+  'Book Review': '책 서평',
 
-  Retrospective: '회고',
+  Retrospective: '도서 학습 챌린지',
 
-  Life: '일상',
-  생활: '일상',
-  Travel: '일상',
-  Food: '일상',
+  Life: '경제 정보',
+  생활: '경제 정보',
+  Travel: '경제 정보',
+  Food: '경제 정보',
+
+  // 1차 통합에서 정식이었다가 2차 개편(2026-07-22)으로 레거시가 된 라벨들.
+  // 제작·자동화 글은 AI/IT 정보로, 일상 글 다수는 생활비·결제 성격이라 경제 정보로 귀속한다.
+  '생활금융·경제': '경제 정보',
+  '자동화·만들기': 'AI/IT 정보',
+  서평: '책 서평',
+  회고: '도서 학습 챌린지',
+  일상: '경제 정보',
 };
 
-// 과거 라벨만으로는 글의 실제 주제를 정확히 표현하지 못하는 소수의 결정론적 예외.
-// `Tech`는 원칙적으로 자동화·만들기로 통합하지만, 소비자 게임 플랫폼 정책 글은 일상이 더 가깝다.
+// 과거 라벨의 일괄 매핑만으로는 글의 실제 주제를 표현하지 못하는 결정론적 개별 분류.
+// 소비자 IT·게임 플랫폼 글은 AI/IT 정보로, 결제·금융 서비스 점검 글은 경제 정보로,
+// 책·강의 완독 챌린지 기록은 도서 학습 챌린지로 귀속한다.
+// 앞의 두 서평·챌린지 글은 개편의 기준 분류라 예외가 아니어도 명시적으로 고정한다.
 export const POST_CATEGORY_OVERRIDES: Record<string, string> = {
-  '2026-07-03-playstation-disc-digital-only-2028': '일상',
+  '2026-06-28-this-is-multi-agent-review': '책 서평',
+  '2026-07-22-vibe-engineering-week1-review': '도서 학습 챌린지',
+  '2026-07-09-vibe-coding-week1-claude-code': '도서 학습 챌린지',
+  '2026-07-04-lock-in-challenge-routine': '도서 학습 챌린지',
+  '2026-07-11-financial-ai-security-network-separation': '경제 정보',
+  '2026-07-11-kakaopay-privacy-payment-checklist': '경제 정보',
+  '2026-07-03-playstation-disc-digital-only-2028': 'AI/IT 정보',
+  '2026-07-08-phone-opening-identity-check': 'AI/IT 정보',
 };
 
 /** 과거 라벨이든 이미 정식 이름이든, 정식 카테고리명으로 변환한다. 매핑에 없으면 에러로 막는다. */
@@ -183,9 +198,10 @@ export function isIndexableTag(tagOrSlug: string, count: number): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// 4) 주제 허브(topic hub) — 카테고리를 가로지르지 않고, 이번 1단계에서는
-//    비중이 큰 정식 카테고리 3개(AI / 생활금융·경제 / 자동화·만들기)를 각각 1개 허브로 큐레이션한다.
-//    서평·회고·일상처럼 글이 적은 카테고리는 허브 없이 카테고리 아카이브만 유지한다.
+// 4) 주제 허브(topic hub) — 에디터가 하위 주제별 대표 글을 직접 큐레이션한 페이지.
+//    2차 카테고리 개편 이후 허브는 카테고리와 독립적으로 슬러그 기준으로 큐레이션하고,
+//    categories 는 허브의 대표(CTA·전체 글 수·카테고리 아카이브 역링크) 카테고리만 나타낸다.
+//    책 서평·미리 알아보는 책 정보·도서 학습 챌린지는 허브 없이 카테고리 아카이브만 유지한다.
 // ---------------------------------------------------------------------------
 export interface TopicSubtopic {
   label: string;
@@ -213,7 +229,7 @@ export const TOPIC_HUBS: TopicHub[] = [
     tagline: 'AI 모델, 코딩 도구, 에이전트, 국내외 정책 이슈',
     description:
       'AI 모델·코딩 도구의 업데이트, 에이전트·MCP 같은 실무 이슈, 소버린 AI·모두의 AI 같은 국내 정책까지 확인한 사실 기준으로 정리합니다.',
-    categories: ['AI'],
+    categories: ['AI/IT 정보'],
     subtopics: [
       {
         label: 'AI 코딩 도구',
@@ -247,7 +263,7 @@ export const TOPIC_HUBS: TopicHub[] = [
     tagline: '금리·환율 같은 거시경제와 가계대출·연금·세금 체크리스트',
     description:
       '금리·환율·수출 같은 거시경제 지표와, 가계대출·연금·세금처럼 생활에 바로 영향을 주는 금융 체크리스트를 함께 정리합니다.',
-    categories: ['생활금융·경제'],
+    categories: ['경제 정보'],
     subtopics: [
       {
         label: '금리·환율·거시경제',
@@ -277,7 +293,7 @@ export const TOPIC_HUBS: TopicHub[] = [
     tagline: '업무 자동화, 개인 시스템 제작기, 보안·개인정보 체크리스트',
     description:
       'n8n으로 업무를 자동화한 과정, 개인 서비스를 직접 만든 제작기, 그리고 카카오페이·인스타그램 같은 서비스의 보안·개인정보 설정 체크리스트를 모읍니다.',
-    categories: ['자동화·만들기'],
+    categories: ['AI/IT 정보'],
     subtopics: [
       {
         label: '직접 만들기',
@@ -353,7 +369,7 @@ export function postDayOf(rawDate: string): string {
 
 // 통제 태그 어휘(controlled vocabulary).
 // - 글 3개 이상 쌓여 색인 대상인 태그 전부('Automation' 은 '자동화' 의 영문 중복이라 제외)와,
-//   정식 카테고리(서평·회고·일상)를 커버하는 소수의 상시 태그로 구성한다.
+//    책·학습·일상 성격의 글을 커버하는 소수의 상시 태그로 구성한다.
 // - 기준일 이후 새 글은 이 목록의 태그만 쓸 수 있다. 새 태그가 필요하면 이 목록에 추가하는
 //   커밋이 함께 있어야 하므로, 태그 아카이브 URL 표면이 글 발행만으로 무분별하게 늘지 않는다.
 // - 기준일 이전 글과 그 태그 URL 은 그대로 보존한다(이 목록의 제약을 받지 않는다).
@@ -414,9 +430,17 @@ export const FEATURED_MAKER_SLUGS: string[] = [
   '2026-07-09-vibe-coding-week1-claude-code',
 ];
 
-export const CATEGORY_TO_HUB: ReadonlyMap<string, TopicHub> = new Map(
-  TOPIC_HUBS.flatMap((hub) => hub.categories.map((categoryName) => [categoryName, hub] as const)),
-);
+// 한 카테고리를 여러 허브가 대표할 수 있으므로(예: AI/IT 정보 ← AI 허브·자동화·만들기 허브),
+// TOPIC_HUBS 배열에서 먼저 나오는 허브를 그 카테고리의 대표 허브로 쓴다(first-wins).
+export const CATEGORY_TO_HUB: ReadonlyMap<string, TopicHub> = (() => {
+  const byCategory = new Map<string, TopicHub>();
+  for (const hub of TOPIC_HUBS) {
+    for (const categoryName of hub.categories) {
+      if (!byCategory.has(categoryName)) byCategory.set(categoryName, hub);
+    }
+  }
+  return byCategory;
+})();
 
 export function hubForCategory(categoryName: string): TopicHub | undefined {
   return CATEGORY_TO_HUB.get(categoryName);

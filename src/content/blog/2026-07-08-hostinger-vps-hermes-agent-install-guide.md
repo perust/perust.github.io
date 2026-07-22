@@ -2,7 +2,7 @@
 title: "Hostinger VPS에서 Hermes Agent 원클릭 설치하기"
 description: "Hostinger VPS의 Application Catalog로 Hermes Agent를 배포하고, 모델·CLI·도구·게이트웨이·예약 작업까지 설정하는 방법을 정리했습니다."
 date: "2026-07-08"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["HermesAgent", "Hostinger", "VPS", "AI에이전트", "자동화", "서버운영", "Slack"]
 ---
 

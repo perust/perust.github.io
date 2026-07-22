@@ -2,7 +2,7 @@
 title: "바이브코딩 뜻: AI로 앱을 만든다는 말은 어디까지 맞을까"
 description: "바이브코딩은 AI와 대화하며 앱·자동화 도구를 만드는 방식입니다. 뜻, 가능한 일, 한계, 투자자가 볼 플랫폼 변화를 쉽게 정리했습니다."
 date: "2026-07-07"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["AI", "바이브코딩", "AI코딩", "ClaudeCode", "Cursor", "앱개발", "자동화"]
 ---
 

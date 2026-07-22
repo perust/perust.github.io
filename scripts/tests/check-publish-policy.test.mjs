@@ -62,7 +62,7 @@ function postSource({
   valueType = 'experience',
   bodyChars = MIN_POST_BODY_CHARS + 200,
 } = {}) {
-  const lines = ['---', 'title: "fixture"', 'description: "fixture"', `date: "${date}"`, 'category: "AI"'];
+  const lines = ['---', 'title: "fixture"', 'description: "fixture"', `date: "${date}"`, 'category: "AI/IT 정보"'];
   if (tags !== null) lines.push(`tags: ${JSON.stringify(tags)}`);
   if (editorialReview !== null) lines.push(`editorialReview: ${editorialReview}`);
   if (valueType !== null) lines.push(`valueType: "${valueType}"`);

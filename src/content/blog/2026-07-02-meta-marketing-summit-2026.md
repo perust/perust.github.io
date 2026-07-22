@@ -2,7 +2,7 @@
 title: "Meta Marketing Summit 2026에서 읽은 AI 마케팅의 변화"
 description: "메타 마케팅 서밋 2026의 주요 발표를 정리하고, AI 비서·관심사 타겟팅·카탈로그·크리에이터 전략이 브랜드에 주는 의미를 살폈다."
 date: "2026-07-02T14:47:52+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["Meta", "AI마케팅", "디지털마케팅", "퍼포먼스마케팅", "크리에이터", "이커머스"]
 ---
 

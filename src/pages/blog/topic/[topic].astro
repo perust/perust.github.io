@@ -3,14 +3,15 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getAllPosts, categoryPath, ogImageForCategory } from '../../../utils/blog';
 import { TOPIC_HUBS, canonicalCategoryFor } from '../../../config/taxonomy';
 
-// 정식 카테고리 중 비중이 큰 것을 큐레이션한 주제 허브(topic hub) 페이지.
-// 새 글을 만들지 않고, 에디터가 직접 고른 하위 주제별 대표 글만 보여준다.
+// 에디터가 하위 주제별 대표 글을 직접 고른 주제 허브(topic hub) 페이지.
+// 새 글을 만들지 않고, 큐레이션된 슬러그 기준으로만 보여준다(글의 카테고리와 무관).
+// hub.categories 는 대표 카테고리로, 전체 글 수 안내와 카테고리 아카이브 CTA 에만 쓴다.
 // 카테고리 전체 글 목록은 여기 나열하지 않고 카테고리 아카이브로 가는 CTA 링크로만 연결한다.
 export function getStaticPaths() {
   const posts = getAllPosts();
   return TOPIC_HUBS.map((hub) => {
     const hubPosts = posts.filter((post) => hub.categories.includes(canonicalCategoryFor(post.category)));
-    const bySlug = new Map(hubPosts.map((post) => [post.slug, post]));
+    const bySlug = new Map(posts.map((post) => [post.slug, post]));
     // 같은 글이 여러 하위 주제에 큐레이션되어도 페이지에는 한 번만 나온다.
     const seen = new Set();
     const subtopics = hub.subtopics.map((subtopic) => ({

@@ -2,7 +2,7 @@
 title: "Seedance로 AI 영상 만드는 방법과 요금 정리"
 description: "BytePlus Seedance 2.0 기준으로 영상 생성 방법, API 사용 흐름, 모델 선택, 프롬프트 요령, 토큰·리소스팩 요금 구조를 정리했다."
 date: "2026-07-03T17:18:57+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["Seedance", "AI Video", "BytePlus", "ModelArk", "Video Generation"]
 ---
 

@@ -2,7 +2,7 @@
 title: "Higgsfield AI란? 영상·이미지 생성 크리에이티브 스튜디오 정리"
 description: "Higgsfield AI의 영상·이미지 생성, Supercomputer, MCP, 가격 구조, 활용법과 주의할 점을 공식 페이지와 보도 자료를 바탕으로 정리했습니다."
 date: "2026-07-08"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["HiggsfieldAI", "AI영상", "이미지생성", "AI도구", "크리에이터", "MCP", "마케팅"]
 ---
 

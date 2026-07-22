@@ -2,7 +2,7 @@
 title: "GEO와 AEO 뜻: AI 검색 시대에 블로그 글은 어떻게 바뀔까"
 description: "AI 검색과 AI 브리핑이 늘면서 자주 보이는 GEO와 AEO의 뜻, SEO와의 차이, 블로그 글에 바로 적용할 작성 기준을 담았습니다."
 date: "2026-07-05"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["GEO", "AEO", "AI검색", "SEO", "블로그", "콘텐츠전략", "마케팅"]
 ---
 

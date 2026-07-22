@@ -3,7 +3,7 @@ title: "Xcode 창 없이 앱을 빌드·배포한다는 글, 어디까지 사실
 description: "Hacker News에서 화제가 된 Xcode GUI 없는 Mac·iOS 개발 자동화 글을 바탕으로, 가능한 것과 아닌 것을 나눠 정리했습니다."
 date: "2026-07-14"
 updated: "2026-07-14"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["AI코딩", "Xcode", "ClaudeCode", "바이브코딩", "iOS개발", "개발자도구"]
 ---
 

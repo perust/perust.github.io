@@ -2,7 +2,7 @@
 title: "GitHub Copilot 보안 리뷰 업데이트: /security-review와 agentic autofix"
 description: "GitHub Copilot 앱의 /security-review 공개 프리뷰와 code scanning agentic autofix를 공식 변경 로그 기준으로 정리했습니다."
 date: "2026-07-15T06:00:59+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["GitHubCopilot", "AI코딩", "보안리뷰", "개발도구", "코드스캔", "릴리스노트", "투자관점"]
 ---
 

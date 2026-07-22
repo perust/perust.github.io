@@ -43,10 +43,11 @@ export function tagPath(tag: string): string {
 // 카테고리별 전용 OG 이미지. 매칭되는 것이 없으면 default 를 쓴다.
 // 키는 src/config/taxonomy.ts 의 정식(canonical) 카테고리명과 일치해야 한다.
 const CATEGORY_OG: Record<string, string> = {
-  AI: '/og/ai-weekly.png',
-  '생활금융·경제': '/og/money-weekly.png',
-  '자동화·만들기': '/og/build-note.png',
-  서평: '/og/book-review.png',
+  'AI/IT 정보': '/og/ai-weekly.png',
+  '경제 정보': '/og/money-weekly.png',
+  '책 서평': '/og/book-review.png',
+  '미리 알아보는 책 정보': '/og/book-review.png',
+  '도서 학습 챌린지': '/og/book-review.png',
 };
 
 export const DEFAULT_OG = '/og/default.png';

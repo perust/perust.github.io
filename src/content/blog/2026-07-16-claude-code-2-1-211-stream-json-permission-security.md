@@ -3,7 +3,7 @@ title: "Claude Code 2.1.208–2.1.211 업데이트 총정리: 백그라운드 �
 description: "7월 14~15일 연달아 나온 Claude Code 2.1.208~2.1.211 공식 변경점을 버전별로 비교 정리했습니다. 백그라운드 에이전트, worktree 격리, stream-json 출력, 권한 미리보기 보안이 핵심입니다."
 date: "2026-07-16T17:01:32+09:00"
 updated: "2026-07-21T09:00:00+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["ClaudeCode", "Claude", "Anthropic", "AI코딩", "개발도구", "릴리스노트", "MCP"]
 ---
 

@@ -1,7 +1,7 @@
 // 카테고리 통합 / 태그 색인 기준 / 주제 허브(topic hub) 전용 검증 스크립트.
 // check-content-quality.mjs 가 이미 다루는 "태그·카테고리 robots + sitemap 정렬"과는 별개로,
 // 이 스크립트는 src/config/taxonomy.ts 를 SSOT로 삼아 아래를 검증한다:
-//   1. 정식 카테고리 수 <= 8, 모든 글의 frontmatter category 가 정식 카테고리다.
+//   1. 정식 카테고리 이름·순서가 약속한 5개와 일치하고, 모든 글의 frontmatter category 가 정식 카테고리다.
 //   2. 레거시 카테고리 URL마다 크롤 안전한 호환 페이지가 있고(noindex,follow + 정식 아카이브로 canonical),
 //      sitemap 에는 없다.
 //   3. 태그 색인 판정(isIndexableTag: INDEXABLE_TAGS allowlist + TAG_INDEX_MIN_POSTS)과
@@ -77,24 +77,51 @@ const jsonLdTypes = (html) => {
 const allHtml = htmlFiles(DIST).sort();
 const srcFiles = existsSync(BLOG_SRC) ? readdirSync(BLOG_SRC).filter((f) => f.endsWith('.md')) : [];
 
-// --- 1. 정식 카테고리 개수 <= 8, 모든 글이 정식 카테고리를 쓴다 ---
-report(CANONICAL_CATEGORIES.length <= 8, `정식 카테고리 수는 8개 이하여야 함 (현재 ${CANONICAL_CATEGORIES.length}개: ${CANONICAL_CATEGORIES.map((c) => c.name).join(', ')})`);
+// --- 1. 정식 카테고리는 독자에게 약속한 5개와 정확히 일치하고, 모든 글이 그중 하나를 쓴다 ---
+const expectedCanonicalCategoryNames = [
+  '책 서평',
+  '미리 알아보는 책 정보',
+  '도서 학습 챌린지',
+  'AI/IT 정보',
+  '경제 정보',
+];
+const actualCanonicalCategoryNames = CANONICAL_CATEGORIES.map((category) => category.name);
+report(
+  JSON.stringify(actualCanonicalCategoryNames) === JSON.stringify(expectedCanonicalCategoryNames),
+  `정식 카테고리 이름·순서는 약속한 5개와 정확히 일치해야 함 (현재 ${actualCanonicalCategoryNames.length}개: ${actualCanonicalCategoryNames.join(', ')})`,
+);
 
-// 전체 Git 이력에서 실제 확인한 20개 라벨이다. AI는 정식 URL을 그대로 쓰므로,
-// 나머지 19개가 레거시 호환 페이지 대상이다.
+// 전체 Git 이력에서 실제 확인한 역사 라벨 25개 — 최초 라벨 20개와,
+// 1차 통합(2026-07)의 정식 카테고리였다가 2차 개편(2026-07-22)으로 레거시가 된 6개 중
+// 슬러그가 겹치지 않는 5개('AI' 는 최초 라벨과 동일 표기)를 합친 것이다.
+// 새 정식 카테고리 5개와 슬러그가 전부 다르므로 25개 모두 레거시 호환 페이지 대상이다.
 const historicalCategoryLabels = [
   'AI', 'AI Weekly', 'Automation', 'Book Review', 'Build Note', 'Content Strategy', 'Science',
   'Economy', 'Finance', 'Food', 'Life', 'Maker Log', 'Money', 'Money Weekly',
   'Product', 'Retrospective', 'Tech', 'Travel', '금융', '생활',
+  '생활금융·경제', '자동화·만들기', '서평', '회고', '일상',
 ];
 const missingHistoricalLabels = historicalCategoryLabels.filter((label) => !LEGACY_CATEGORY_MAP[label]);
 report(
   missingHistoricalLabels.length === 0,
-  `전체 Git 이력에서 확인된 역사 카테고리 20개(AI + 레거시 19개)가 모두 매핑되어야 함 (누락: ${missingHistoricalLabels.join(', ') || '없음'})`,
+  `전체 Git 이력에서 확인된 역사 카테고리 ${historicalCategoryLabels.length}개가 모두 매핑되어야 함 (누락: ${missingHistoricalLabels.join(', ') || '없음'})`,
+);
+// 역사 라벨은 하나도 새 정식 슬러그와 겹치지 않아야 호환 페이지가 전부 생성된다(양방향 고정).
+const overlappingHistoricalLabels = historicalCategoryLabels.filter((label) =>
+  CANONICAL_CATEGORIES.some((category) => category.slug === slugify(label)),
+);
+report(
+  overlappingHistoricalLabels.length === 0,
+  `역사 카테고리 라벨의 슬러그가 새 정식 카테고리 슬러그와 겹치지 않아야 함 (겹침: ${overlappingHistoricalLabels.join(', ') || '없음'})`,
+);
+report(
+  LEGACY_COMPAT_ENTRIES.length === historicalCategoryLabels.length,
+  `레거시 호환 페이지 대상은 역사 라벨 ${historicalCategoryLabels.length}개 전부여야 함 (현재 ${LEGACY_COMPAT_ENTRIES.length}개)`,
 );
 
 let categoryDrift = 0;
 const categoryCountBySlug = new Map();
+const postSlugsByCategory = new Map(CANONICAL_CATEGORIES.map((category) => [category.name, []]));
 const tagCountBySlug = new Map();
 const postTagInfo = []; // { file, day, tags } — 기준일 이후 글의 통제 태그 검증에 쓴다.
 for (const file of srcFiles) {
@@ -117,6 +144,7 @@ for (const file of srcFiles) {
   }
   const key = slugify(category);
   categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
+  if (CANONICAL_CATEGORY_NAMES.has(category)) postSlugsByCategory.get(category).push(postSlug);
 
   const hasTags = /^tags:/m.test(block);
   const tagsLine = block.match(/^tags:\s*(\[.*\])\s*$/m)?.[1];
@@ -263,6 +291,31 @@ report(
 // --- 4. 주제 허브 메타데이터/스키마/색인/블로그 인덱스 링크 ---
 const blogIndexHtml = existsSync(join(DIST, 'blog', 'index.html')) ? readFileSync(join(DIST, 'blog', 'index.html'), 'utf8') : '';
 report(blogIndexHtml !== '', 'dist/blog/index.html 이 있어야 함');
+
+// 독자가 블로그 UI에서 5개 분류를 모두 선택할 수 있어야 하고, 각 아카이브는 그 분류의 글만 보여야 한다.
+for (const category of CANONICAL_CATEGORIES) {
+  const archivePath = `/blog/category/${category.slug}/`;
+  report(
+    blogIndexHtml.includes(`href="${archivePath}"`) && blogIndexHtml.includes(`<span>${category.name}</span>`),
+    `블로그 인덱스에 정식 카테고리 "${category.name}" 링크(${archivePath})가 보여야 함`,
+  );
+
+  const distPath = join(DIST, 'blog', 'category', category.slug, 'index.html');
+  if (!existsSync(distPath)) {
+    report(false, `정식 카테고리 아카이브 누락: ${archivePath}`);
+    continue;
+  }
+  const html = readFileSync(distPath, 'utf8');
+  const renderedSlugs = [...html.matchAll(/<a class="post-list-item" href="\/blog\/([^/"]+)\/">/g)].map((match) => match[1]);
+  const expectedSlugs = postSlugsByCategory.get(category.name) ?? [];
+  const renderedSet = new Set(renderedSlugs);
+  const missing = expectedSlugs.filter((slug) => !renderedSet.has(slug));
+  const extra = renderedSlugs.filter((slug) => !expectedSlugs.includes(slug));
+  report(
+    renderedSlugs.length === expectedSlugs.length && missing.length === 0 && extra.length === 0,
+    `정식 카테고리 "${category.name}" 아카이브는 해당 글 ${expectedSlugs.length}편만 보여야 함 (현재 ${renderedSlugs.length}편 / 누락: ${missing.join(', ') || '없음'} / 초과: ${extra.join(', ') || '없음'})`,
+  );
+}
 
 for (const hub of TOPIC_HUBS) {
   const distPath = join(DIST, 'blog', 'topic', hub.slug, 'index.html');

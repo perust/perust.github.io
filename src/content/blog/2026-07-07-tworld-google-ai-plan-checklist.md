@@ -2,7 +2,7 @@
 title: "T 우주 구글 AI 플랜 출시: Gemini 구독 전 확인할 것"
 description: "SKT T 우주에 구글 AI 플랜 3종이 추가됐습니다. Gemini 유료 구독 전 가격, 저장공간, 기존 Google One 결제 중복을 확인할 차례입니다."
 date: "2026-07-07"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["Gemini", "구글AI", "T우주", "AI구독", "생산성", "구독관리"]
 ---
 

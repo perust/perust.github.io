@@ -3,7 +3,7 @@ title: "Claude Code Fable 5 사용법: /model fable 설정 전 확인할 5가지
 description: "Claude Code에서 Claude Fable 5를 /model fable로 선택하기 전 확인할 모델 ID, 버전, 비용, usage credits, 거절 응답 주의사항을 정리했다."
 date: "2026-07-02T10:11:00+09:00"
 updated: "2026-07-21T09:00:00+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["Claude Code", "Claude Fable 5", "AI Coding", "Developer Tools", "Anthropic"]
 ---
 

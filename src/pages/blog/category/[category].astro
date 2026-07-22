@@ -113,6 +113,9 @@ const breadcrumbLd = {
     </section>
 
     <section class="section-shell blog-main-list" aria-label={`${category} 글 목록`} style="padding-top:0">
+      {posts.length === 0 && (
+        <p>아직 이 카테고리에 발행된 글이 없습니다. 곧 글이 올라올 예정입니다.</p>
+      )}
       <div class="post-list">
         {posts.map((post) => (
           <a class="post-list-item" href={`/blog/${post.slug}/`}>

@@ -2,7 +2,7 @@
 title: "OpenAI GPT-5.6 API 정리: Sol·Terra·Luna 모델 ID와 가격"
 description: "OpenAI 개발자 문서 기준 GPT-5.6 Sol·Terra·Luna의 모델 ID, 컨텍스트, 출력 한도, 토큰 가격, 실제 선택 기준을 정리했습니다."
 date: "2026-07-14T06:01:36+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["OpenAI", "GPT-5.6", "API", "AI모델", "개발도구", "AI비용", "투자관점"]
 ---
 

@@ -2,7 +2,7 @@
 title: "AI 챗봇 답변을 그대로 믿으면 생기는 문제"
 description: "AI 챗봇 답변은 빠르지만 틀린 출처, 오래된 정보, 과한 확신이 섞일 수 있습니다. 검색·업무·투자 전에 확인할 기준을 정리했습니다."
 date: "2026-07-07"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["AI", "챗봇", "ChatGPT", "Gemini", "AI검색", "환각", "검증"]
 ---
 

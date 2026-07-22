@@ -3,7 +3,7 @@ title: "AI 구독·결제 안전 가이드: 과금 구조, 가짜 광고, 무단
 description: "AI 서비스 결제 전 확인할 월 구독·크레딧·API 과금 구조부터, 가짜 AI 구독 광고 구별법, 무단 결제가 의심될 때의 대응 순서까지 한 글로 정리했습니다."
 date: "2026-07-05T17:20:00+09:00"
 updated: "2026-07-21T09:00:00+09:00"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["AI구독", "ChatGPT", "Claude", "Gemini", "API", "크레딧", "생산성"]
 ---
 

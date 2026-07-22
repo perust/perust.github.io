@@ -2,7 +2,7 @@
 title: "Claude Code 논란으로 보는 AI 코딩 도구 신뢰 문제"
 description: "Claude Code 관련 성능·보안·비용 논란을 계기로 AI 코딩 도구를 어떻게 써야 하는지, 신뢰 기준과 확인 체크리스트를 정리했습니다."
 date: "2026-07-07"
-category: "AI"
+category: "AI/IT 정보"
 tags: ["AI", "ClaudeCode", "AI코딩", "바이브코딩", "보안", "개발도구", "자동화"]
 ---
 
