@@ -158,8 +158,13 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       {commentsEnabled && <Comments slug={slug} />}
     </article>
     <aside class="sidebar-card" aria-label="블로그 안내">
-      <h2 style="font-size:1.2rem">lentoludens Blog</h2>
-      <p>아이디어를 제품으로 만들며 배운 것을 기록합니다.</p>
+      <div class="sidebar-intro">
+        <h2>lentoludens</h2>
+        <p class="sidebar-intro-title">렌토루덴스 블로그</p>
+        <p>직접 공부하거나 찾아본 정보, 책, 다녀온 장소 등에 대한 글을 적습니다.</p>
+        <p>따로 문의주실 분은 메일로 부탁드립니다.</p>
+        <a class="sidebar-email" href="mailto:zyqn@naver.com">email: zyqn@naver.com</a>
+      </div>
       <ul class="tag-cloud">{tags.map((tag: string) => <li>{isLinkableTag(tag) ? <a href={tagPath(tag)}>#{tag}</a> : <span>#{tag}</span>}</li>)}</ul>
     </aside>
   </main>
