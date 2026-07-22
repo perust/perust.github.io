@@ -15,7 +15,7 @@
 //  8. 공개 HTML 에 보관 슬러그로 가는 내부 링크가 남아 있지 않다.
 //  9. 기준일(NEW_POST_POLICY_BASELINE) 이후 새 글은 frontmatter 에 사람 편집 검토 완료
 //     (editorialReview: true)와 독자적 가치 유형(valueType) 하나를 명시해야 한다.
-// 10. 독자에게 보이는 글에는 AI 문서처럼 보일 수 있는 스마트 따옴표(“”, ‘’)가 없어야 한다.
+// 10. Markdown 원본과 빌드된 글 HTML 모두 AI 문서처럼 보일 수 있는 스마트 따옴표(“”, ‘’)가 없어야 한다.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -213,6 +213,15 @@ report(
 
 // --- 2~3. 태그/카테고리 robots 규칙 ---
 const allHtml = htmlFiles(DIST).sort();
+const builtPostHtml = allHtml.filter((file) => /^blog\/[^/]+\/index\.html$/.test(toPosix(relative(DIST, file))));
+let builtSmartQuoteFailures = 0;
+for (const file of builtPostHtml) {
+  builtSmartQuoteFailures += (readFileSync(file, 'utf8').match(/[“”‘’]/g) ?? []).length;
+}
+report(
+  builtSmartQuoteFailures === 0,
+  `빌드된 모든 글 HTML은 직선 따옴표만 사용해야 함 (스마트 따옴표 위반 ${builtSmartQuoteFailures}개)`,
+);
 const noindexCategorySlugs = new Set();
 const noindexTagSlugs = new Set();
 for (const file of allHtml) {

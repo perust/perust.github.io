@@ -55,6 +55,11 @@ try {
 
 export default defineConfig({
   site: 'https://perust.github.io',
+  // 독자 글을 키보드로 작성한 문장처럼 유지한다. Astro 기본 smartypants는
+  // 직선 따옴표를 “스마트 따옴표”로 다시 바꾸므로 명시적으로 끈다.
+  markdown: {
+    smartypants: false,
+  },
   integrations: [
     sitemap({
       filter(page) {
