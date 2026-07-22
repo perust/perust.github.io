@@ -232,10 +232,10 @@ def base_card():
 
 
 def draw_pill(draw, label, px=None, py=None):
-    """카테고리 pill(좌상단)을 그린다. 라벨은 ASCII 카테고리명을 가정한다."""
+    """카테고리 pill(좌상단)을 그린다. 한글 라벨은 CJK 폰트로 렌더링한다."""
     px = sc(90) if px is None else px
     py = sc(92) if py is None else py
-    pill_font = font(sc(30), bold=True)
+    pill_font = cjk_font(sc(30), bold=True) if any(ord(ch) > 127 for ch in label) else font(sc(30), bold=True)
     label_up = label.upper()
     text_w = draw.textlength(label_up, font=pill_font) + (len(label_up) - 1) * sc(4)
     pad_x, pad_h = sc(28), sc(56)
