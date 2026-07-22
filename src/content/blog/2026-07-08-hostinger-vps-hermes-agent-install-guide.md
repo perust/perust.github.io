@@ -7,7 +7,7 @@ tags: ["HermesAgent", "Hostinger", "VPS", "AI에이전트", "자동화", "서버
 ---
 
 Hostinger VPS에서는 Hermes Agent를 처음부터 수동 설치할 필요가 없습니다. Hostinger가 Application Catalog에서 Hermes Agent 배포 옵션을 제공하기 때문에, VPS 대시보드에서 앱을 선택하면 Docker 컨테이너와 필요한 서비스가 기본으로 만들어지는 흐름입니다.<br />
-따라서 이 글의 핵심은 “Ubuntu 서버에 처음부터 직접 설치”가 아니라, Hostinger의 Hermes Agent 원클릭 배포를 먼저 쓰고 이후 CLI·모델 제공자·도구·Gateway·Cron을 어떻게 설정해 개인 AI 작업 서버로 운영할지입니다.
+따라서 이 글의 핵심은 "Ubuntu 서버에 처음부터 직접 설치"가 아니라, Hostinger의 Hermes Agent 원클릭 배포를 먼저 쓰고 이후 CLI·모델 제공자·도구·Gateway·Cron을 어떻게 설정해 개인 AI 작업 서버로 운영할지입니다.
 
 ![Hostinger VPS에서 Hermes Agent를 운영하는 구조](/images/posts/summary/2026-07-08-hostinger-vps-hermes-agent-install-guide-summary.svg)
 
@@ -84,7 +84,7 @@ Hostinger VPS에서 Hermes Agent가 탑재된 앱 배포로 진행한다면, 사
   <div><dt>나중에 필요한 것</dt><dd>Slack·Discord·Telegram 연동은 해당 메신저에서 봇을 만들 때 토큰이 필요합니다. 도메인과 SSH는 고급 설정이나 디버깅이 필요할 때 쓰는 선택 사항입니다.</dd></div>
 </div>
 
-정리하면 일반 독자는 “VPS 만들기 → Hermes Agent 앱 선택 → 관리자 계정과 크레딧/API 키 확인 → Deploy” 정도만 신경 쓰면 됩니다. SSH로 접속해 Ubuntu 패키지를 설치하거나 Traefik·Docker 구성을 직접 만지는 과정은 기본 사용 흐름이 아닙니다.
+정리하면 일반 독자는 "VPS 만들기 → Hermes Agent 앱 선택 → 관리자 계정과 크레딧/API 키 확인 → Deploy" 정도만 신경 쓰면 됩니다. SSH로 접속해 Ubuntu 패키지를 설치하거나 Traefik·Docker 구성을 직접 만지는 과정은 기본 사용 흐름이 아닙니다.
 
 Hostinger 공식 안내에 따르면 Hermes Agent는 Hostinger VPS의 Application Catalog를 통해 배포할 수 있습니다. 이 방식은 Docker 기반으로 Hermes Agent 컨테이너와 Traefik 같은 필요한 서비스를 자동 생성하므로, 일반적인 Linux 수동 설치보다 먼저 고려할 기본 경로입니다.
 
@@ -473,7 +473,7 @@ Hermes Agent는 강력한 도구입니다. 그래서 서버 운영에서는 편�
 
 ## 투자자로서의 관점
 
-Hermes Agent를 Hostinger VPS에 올려 쓰는 방식은 단순한 설치 팁을 넘어 AI 에이전트 시장의 방향을 보여줍니다. 모델 자체보다 “모델이 계속 일할 수 있는 실행 환경”이 중요해지고 있기 때문입니다.
+Hermes Agent를 Hostinger VPS에 올려 쓰는 방식은 단순한 설치 팁을 넘어 AI 에이전트 시장의 방향을 보여줍니다. 모델 자체보다 "모델이 계속 일할 수 있는 실행 환경"이 중요해지고 있기 때문입니다.
 
 <div class="routine-grid">
   <section class="routine-card">
@@ -484,7 +484,7 @@ Hermes Agent를 Hostinger VPS에 올려 쓰는 방식은 단순한 설치 팁을
   <section class="routine-card">
     <span class="issue-badge">2순위</span>
     <h3>메신저 기반 운영 도구</h3>
-    <p>앞으로는 관리자 페이지보다 Slack·Discord에서 “서버 점검해줘”, “배포 로그 봐줘”라고 말하는 방식이 더 자연스러워질 수 있습니다. 업무용 메신저와 에이전트 게이트웨이의 결합을 볼 필요가 있습니다.</p>
+    <p>앞으로는 관리자 페이지보다 Slack·Discord에서 "서버 점검해줘", "배포 로그 봐줘"라고 말하는 방식이 더 자연스러워질 수 있습니다. 업무용 메신저와 에이전트 게이트웨이의 결합을 볼 필요가 있습니다.</p>
   </section>
   <section class="routine-card">
     <span class="issue-badge">3순위</span>
@@ -498,7 +498,7 @@ Hermes Agent를 Hostinger VPS에 올려 쓰는 방식은 단순한 설치 팁을
   </section>
 </div>
 
-투자 판단에서는 “어떤 모델이 가장 똑똑한가”만 볼 것이 아니라, 에이전트가 실제 업무 환경에 얼마나 깊게 연결되는지 봐야 합니다. 서버, 메신저, 인증, 비용 관리, 보안이 함께 움직이는 시장입니다.
+투자 판단에서는 "어떤 모델이 가장 똑똑한가"만 볼 것이 아니라, 에이전트가 실제 업무 환경에 얼마나 깊게 연결되는지 봐야 합니다. 서버, 메신저, 인증, 비용 관리, 보안이 함께 움직이는 시장입니다.
 
 ## 마지막으로
 

@@ -15,6 +15,7 @@
 //  8. 공개 HTML 에 보관 슬러그로 가는 내부 링크가 남아 있지 않다.
 //  9. 기준일(NEW_POST_POLICY_BASELINE) 이후 새 글은 frontmatter 에 사람 편집 검토 완료
 //     (editorialReview: true)와 독자적 가치 유형(valueType) 하나를 명시해야 한다.
+// 10. 독자에게 보이는 글에는 AI 문서처럼 보일 수 있는 스마트 따옴표(“”, ‘’)가 없어야 한다.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -120,11 +121,17 @@ const categoryCountBySlug = new Map();
 const tagCountBySlug = new Map();
 const newPostCountByDay = new Map();
 let thinPosts = 0;
+let smartQuoteFailures = 0;
 // 기준일 이후 새 글의 편집 검토 게이트 — content.config.ts 의 선택 필드를 새 글에는 필수로 강제한다.
 // (VALUE_TYPES 는 src/config/taxonomy.ts 의 SSOT 를 그대로 쓴다.)
 let editorialGateFailures = 0;
 for (const file of srcFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
+  const smartQuotes = raw.match(/[“”‘’]/g) ?? [];
+  if (smartQuotes.length > 0) {
+    smartQuoteFailures += smartQuotes.length;
+    console.log(`[FAIL] ${file}: 스마트 따옴표 ${smartQuotes.length}개 발견 (키보드 직선 따옴표만 사용)`);
+  }
   const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const block = frontmatter?.[1] ?? '';
   const category = block.match(/^category:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
@@ -188,6 +195,10 @@ for (const file of srcFiles) {
 
 // --- 발행 운영 게이트: 본문 분량 + 발행 속도 (대량 자동 발행 재발 방지) ---
 report(thinPosts === 0, `모든 글 본문이 최소 ${MIN_POST_BODY_CHARS}자(공백 제외) 이상이어야 함 (위반 ${thinPosts}건)`);
+report(
+  smartQuoteFailures === 0,
+  `모든 글은 키보드 직선 따옴표만 사용해야 함 (스마트 따옴표 위반 ${smartQuoteFailures}개)`,
+);
 const overPacedDays = [...newPostCountByDay.entries()]
   .filter(([, count]) => count > MAX_NEW_POSTS_PER_DAY)
   .map(([day, count]) => `${day}: ${count}편`);

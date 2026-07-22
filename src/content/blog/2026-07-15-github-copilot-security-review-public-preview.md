@@ -8,7 +8,7 @@ tags: ["GitHubCopilot", "AI코딩", "보안리뷰", "개발도구", "코드스�
 
 GitHub가 7월 14일 Copilot 앱에 `/security-review` 명령을 공개 프리뷰로 추가했습니다. 작업 중인 코드 변경분을 Copilot 앱 안에서 바로 보안 리뷰할 수 있고, 7월 10일에는 code scanning alert를 Copilot에게 맡겨 수정 PR까지 만들게 하는 agentic autofix도 공개 프리뷰로 열렸습니다.
 
-이번 변화는 “AI가 코드를 잘 짜는가”보다 조금 더 실무적인 업데이트입니다. 개발자가 PR을 올린 뒤 보안 도구가 잡아주는 구조에서, 작업 도중 Copilot 앱·CLI·code scanning alert 흐름 안으로 보안 점검이 앞당겨지고 있습니다.
+이번 변화는 "AI가 코드를 잘 짜는가"보다 조금 더 실무적인 업데이트입니다. 개발자가 PR을 올린 뒤 보안 도구가 잡아주는 구조에서, 작업 도중 Copilot 앱·CLI·code scanning alert 흐름 안으로 보안 점검이 앞당겨지고 있습니다.
 
 ## 핵심 요약
 
@@ -49,7 +49,7 @@ GitHub 공식 변경 로그에 따르면 `/security-review`는 Copilot 앱에서
 
 7월 10일 공개된 agentic autofix는 훨씬 조직용 기능에 가깝습니다. code scanning alert를 Copilot에게 배정하면 Copilot이 코드베이스의 관련 파일을 살펴보고, 수정안을 만들고, CodeQL을 다시 실행해 alert가 닫히는지 확인한 뒤 초안 PR을 엽니다. GitHub는 보통 수정 생성에 2분에서 4분 정도 걸린다고 설명했습니다.
 
-이 기능은 무료 “Generate Fix” 버튼을 대체하는 흐름으로 안내됐습니다. alert 목록에서 하나 이상을 골라 Copilot에게 맡기거나, security campaign 안에서 여러 alert를 한 PR로 고치게 할 수 있습니다. REST API로는 code scanning alert의 assignees를 `copilot-swe-agent[bot]`으로 설정하는 방식도 언급됐습니다.
+이 기능은 무료 "Generate Fix" 버튼을 대체하는 흐름으로 안내됐습니다. alert 목록에서 하나 이상을 골라 Copilot에게 맡기거나, security campaign 안에서 여러 alert를 한 PR로 고치게 할 수 있습니다. REST API로는 code scanning alert의 assignees를 `copilot-swe-agent[bot]`으로 설정하는 방식도 언급됐습니다.
 
 <ul class="issue-list">
   <li class="issue-card"><h3><code>/security-review</code></h3><p class="issue-summary">작업 중인 변경분을 Copilot 앱에서 바로 훑어보는 공개 프리뷰입니다. 빠른 사전 점검에 가깝고, Copilot Free 사용자도 프리뷰 기간에는 접근 대상으로 안내됐습니다.</p></li>
@@ -59,7 +59,7 @@ GitHub 공식 변경 로그에 따르면 `/security-review`는 Copilot 앱에서
 
 ## 실제 개발 흐름의 변화
 
-작은 프로젝트에서는 `/security-review`가 커밋 전 습관이 될 수 있습니다. 로그인 처리, 결제 콜백, 파일 업로드, 관리자 페이지, 외부 API 토큰을 다루는 변경분에서 Copilot에게 한 번 더 보게 하는 방식입니다. 사람이 이미 알고 있는 “보안 조심”이 아니라, 현재 diff를 대상으로 취약점 유형과 수정 제안을 받는 점이 다릅니다.
+작은 프로젝트에서는 `/security-review`가 커밋 전 습관이 될 수 있습니다. 로그인 처리, 결제 콜백, 파일 업로드, 관리자 페이지, 외부 API 토큰을 다루는 변경분에서 Copilot에게 한 번 더 보게 하는 방식입니다. 사람이 이미 알고 있는 "보안 조심"이 아니라, 현재 diff를 대상으로 취약점 유형과 수정 제안을 받는 점이 다릅니다.
 
 회사 환경에서는 agentic autofix 쪽이 더 큰 변화입니다. 기존에는 code scanning alert가 쌓이고, 담당자가 맥락을 다시 읽고, 수정 PR을 직접 만들어야 했습니다. 이제 일부 alert는 Copilot에게 배정해 초안 PR과 검증 기록을 먼저 받아볼 수 있습니다. 다만 Copilot이 만든 PR은 그대로 병합할 대상이 아니라 리뷰할 초안입니다. 보안 수정은 동작 변경과 권한 범위 변경을 같이 만들 수 있기 때문입니다.
 
@@ -71,7 +71,7 @@ GitHub 공식 변경 로그에 따르면 `/security-review`는 Copilot 앱에서
 
 ## 투자자로서의 관점
 
-GitHub Copilot의 이번 업데이트는 AI 코딩 도구가 “코드 생성”에서 “개발 프로세스 안의 보안·운영 자동화”로 이동하는 신호입니다. 단순 채팅 기능보다 기업이 비용을 지불하기 쉬운 영역은 보안 alert 처리, 정책 준수, PR 품질 관리, 감사 가능한 자동화입니다.
+GitHub Copilot의 이번 업데이트는 AI 코딩 도구가 "코드 생성"에서 "개발 프로세스 안의 보안·운영 자동화"로 이동하는 신호입니다. 단순 채팅 기능보다 기업이 비용을 지불하기 쉬운 영역은 보안 alert 처리, 정책 준수, PR 품질 관리, 감사 가능한 자동화입니다.
 
 볼 지점은 세 가지입니다. 첫째, Copilot Business·Enterprise에서 cloud agent와 보안 기능이 실제 사용량을 만들 수 있는지입니다. 둘째, GitHub Advanced Security 또는 GitHub Code Security와 Copilot이 묶여 판매될 때 보안 제품 매출에 어떤 영향을 주는지입니다. 셋째, AI Credits 기반 기능이 조직 예산 안에서 반복 사용될 만큼 신뢰를 얻는지입니다. 아직은 공개 프리뷰 단계이므로 매출 효과를 단정하기보다 사용량과 정식 출시 범위를 보는 것이 맞습니다.
 
@@ -79,7 +79,7 @@ GitHub Copilot의 이번 업데이트는 AI 코딩 도구가 “코드 생성”
 
 개인 개발자라면 보안상 민감한 변경분에서 `/security-review`를 먼저 써보면 됩니다. 특히 사용자 입력을 SQL·명령어·파일 경로에 연결하는 코드, 인증 쿠키와 세션 처리, 업로드 파일 검증, 암호화·해시·토큰 저장 로직은 리뷰 대상으로 적합합니다.
 
-팀에서는 자동수정 결과를 바로 믿기보다 PR 템플릿과 리뷰 규칙을 함께 정하는 편이 좋습니다. Copilot이 만든 설명, CodeQL 재실행 결과, 테스트 변경, 권한 변경 여부를 사람이 확인해야 합니다. 이 기능의 가치는 “보안 리뷰를 생략”하는 것이 아니라 “반복 alert의 첫 수정안을 빠르게 받는 것”에 있습니다.
+팀에서는 자동수정 결과를 바로 믿기보다 PR 템플릿과 리뷰 규칙을 함께 정하는 편이 좋습니다. Copilot이 만든 설명, CodeQL 재실행 결과, 테스트 변경, 권한 변경 여부를 사람이 확인해야 합니다. 이 기능의 가치는 "보안 리뷰를 생략"하는 것이 아니라 "반복 alert의 첫 수정안을 빠르게 받는 것"에 있습니다.
 
 ## 출처
 

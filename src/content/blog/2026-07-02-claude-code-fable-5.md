@@ -12,7 +12,7 @@ Claude Code는 저장소를 읽고, 파일을 고치고, 테스트 실행까지 
 어떤 모델을 붙일 수 있는지는 속도, 비용, 안정성, 거절 응답 처리 방식까지 함께 바꾼다.
 
 확인한 범위에서 핵심은 이렇다.<br />
-공식 Claude Code 문서는 `fable` alias를 Claude Fable 5로 안내하고, “Fable 5는 기본 모델이 아니며 `/model fable`로 선택한다”고 설명한다.<br />
+공식 Claude Code 문서는 `fable` alias를 Claude Fable 5로 안내하고, "Fable 5는 기본 모델이 아니며 `/model fable`로 선택한다"고 설명한다.<br />
 Anthropic 모델 문서의 API 모델 ID는 `claude-fable-5`다.<br />
 다만 실제 사용 가능 여부는 Claude Code 버전, 계정 플랜, 조직 정책, zero data retention 설정, 예산 제한에 따라 달라질 수 있다.
 
@@ -53,7 +53,7 @@ Anthropic 모델 문서의 API 모델 ID는 `claude-fable-5`다.<br />
 
 ## 모델 정보
 
-Anthropic은 [Claude Fable 5와 Claude Mythos 5 소개 문서](https://docs.anthropic.com/en/docs/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5)에서 Fable 5를 “가장 까다로운 추론과 장기 에이전트 작업을 위한, 널리 배포된 가장 강력한 모델”로 설명한다. API 모델 ID는 `claude-fable-5`다.
+Anthropic은 [Claude Fable 5와 Claude Mythos 5 소개 문서](https://docs.anthropic.com/en/docs/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5)에서 Fable 5를 "가장 까다로운 추론과 장기 에이전트 작업을 위한, 널리 배포된 가장 강력한 모델"로 설명한다. API 모델 ID는 `claude-fable-5`다.
 
 같은 문서에서 Mythos 5도 함께 언급되지만 둘은 접근성이 다르다.<br />
 Fable 5는 일반 제공 모델로 안내되고, Mythos 5는 Project Glasswing을 통한 제한 제공 모델로 설명된다.<br />
@@ -63,14 +63,14 @@ Claude Code를 일상적으로 쓰는 바이브코더가 먼저 신경 써야 �
 Anthropic 문서 기준 Fable 5는 기본 1M 토큰 컨텍스트와 요청당 최대 128k 출력 토큰을 제공한다.<br />
 저장소 전체 맥락, 긴 로그, 여러 문서, 큰 리팩터링 계획을 함께 다루는 코딩 에이전트 작업에 유리할 수 있는 구조다.
 
-다만 “강력하다”는 말만으로 바로 기본 모델을 바꿀 이유는 부족하다. 실제 개발 작업에서는 모델 성능보다 비용, 지시 준수, 파일 변경의 보수성, 테스트 실패를 해석하는 방식이 더 중요할 때가 많다.
+다만 "강력하다"는 말만으로 바로 기본 모델을 바꿀 이유는 부족하다. 실제 개발 작업에서는 모델 성능보다 비용, 지시 준수, 파일 변경의 보수성, 테스트 실패를 해석하는 방식이 더 중요할 때가 많다.
 
 ## 복구 이력
 
 Fable 5는 2026년 6월 9일 공개됐지만, 곧바로 안정적으로 쭉 제공된 것은 아니다. Anthropic은 [Redeploying Fable 5 발표](https://www.anthropic.com/news/redeploying-fable-5)에서 6월 12일 미국 정부의 export controls 때문에 Fable 5와 Mythos 5 접근을 일시 중단했다고 설명했다.
 
-이후 7월 1일 업데이트에서 “Access to Claude Fable 5 and Mythos 5 is now restored”라고 밝혔고, Fable 5가 Claude Platform, Claude.ai, Claude Code, Claude Cowork에서 글로벌 사용자에게 제공된다고 안내했다.<br />
-그래서 지금 글을 쓸 때는 “출시됐다”보다 “일시 중단 후 복구됐다”는 맥락까지 같이 보는 편이 정확하다.
+이후 7월 1일 업데이트에서 "Access to Claude Fable 5 and Mythos 5 is now restored"라고 밝혔고, Fable 5가 Claude Platform, Claude.ai, Claude Code, Claude Cowork에서 글로벌 사용자에게 제공된다고 안내했다.<br />
+그래서 지금 글을 쓸 때는 "출시됐다"보다 "일시 중단 후 복구됐다"는 맥락까지 같이 보는 편이 정확하다.
 
 다만 클라우드 프로바이더나 조직 계정에서는 재활성화 시점이 다를 수 있다.<br />
 AWS, Google Cloud, Microsoft Foundry 같은 경로로 쓰는 경우에는 해당 계정에서 실제 모델 선택 가능 여부를 따로 확인해야 한다.
@@ -114,13 +114,13 @@ Fable 5가 의미 있을 수 있는 작업은 이런 쪽이다.
 - 오래된 코드베이스의 구조 파악하기
 - 긴 로그와 테스트 실패를 함께 읽고 원인 좁히기
 - 문서, 이슈, 코드 변경을 한 번에 연결하기
-- 단순 생성보다 “어디까지 바꿔야 하는지” 판단이 중요한 작업
+- 단순 생성보다 "어디까지 바꿔야 하는지" 판단이 중요한 작업
 
 특히 1M 토큰 컨텍스트는 큰 장점이 될 수 있다. 기존에는 필요한 파일을 잘라서 넣거나, 여러 번 나눠 설명해야 했던 작업에서 더 많은 배경을 한 번에 줄 수 있기 때문이다.
 
 하지만 모든 코딩 작업에 Fable 5가 필요한 것은 아니다.<br />
 작은 수정, 단순 테스트 보정, 문서 수정에는 Sonnet 계열이나 더 저렴한 모델이 충분할 수 있다.<br />
-상위 모델은 “항상 켜두는 기본값”보다 “어려운 판단이 필요할 때 쓰는 카드”에 가깝게 보는 편이 안전하다.
+상위 모델은 "항상 켜두는 기본값"보다 "어려운 판단이 필요할 때 쓰는 카드"에 가깝게 보는 편이 안전하다.
 
 ## 비용 구조
 
@@ -180,7 +180,7 @@ Fable 5에서 새로 봐야 할 지점은 거절 응답이다.<br />
 Anthropic 문서는 Fable 5가 안전 분류기에 의해 특정 요청을 거절할 수 있고, 이때 Messages API는 HTTP 오류가 아니라 `stop_reason: "refusal"`이 포함된 정상 응답을 반환할 수 있다고 설명한다.
 
 일반 블로그 독자에게는 작은 차이처럼 보일 수 있지만, 개발 도구 통합에서는 중요하다.<br />
-자동화 파이프라인이 “응답이 왔으니 성공”이라고만 판단하면, 실제로는 작업이 수행되지 않았는데 다음 단계로 넘어갈 수 있기 때문이다.
+자동화 파이프라인이 "응답이 왔으니 성공"이라고만 판단하면, 실제로는 작업이 수행되지 않았는데 다음 단계로 넘어갈 수 있기 때문이다.
 
 Claude Code를 사람이 직접 쓰는 경우라면 화면에서 거절 여부를 확인할 수 있다. 하지만 API나 자동화 스크립트에 Fable 5를 붙인다면 다음을 처리해야 한다.
 

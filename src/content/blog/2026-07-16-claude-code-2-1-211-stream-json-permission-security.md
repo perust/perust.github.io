@@ -64,7 +64,7 @@ v2.1.210에서 가장 눈에 띄는 항목은 `isolation: 'worktree'` subagent �
 
 가장 새 기능에 가까운 항목은 `--forward-subagent-text`입니다. 공식 changelog에는 이 플래그와 `CLAUDE_CODE_FORWARD_SUBAGENT_TEXT` 환경 변수를 통해 subagent text와 thinking을 `stream-json` output에 포함할 수 있다고 적혀 있습니다.
 
-이 변화는 Claude Code를 터미널에서 대화형으로만 쓰는 사람보다 자동화하는 사람에게 더 중요합니다. 예를 들어 `claude -p` 결과를 CI 로그, 사내 대시보드, 별도 에이전트 오케스트레이터, 리뷰 봇으로 넘기는 구조에서는 “최종 응답”만으로 충분하지 않을 때가 있습니다. subagent가 중간에 어떤 텍스트를 만들었는지까지 받아야 후속 파서나 알림 시스템이 제대로 동작합니다.
+이 변화는 Claude Code를 터미널에서 대화형으로만 쓰는 사람보다 자동화하는 사람에게 더 중요합니다. 예를 들어 `claude -p` 결과를 CI 로그, 사내 대시보드, 별도 에이전트 오케스트레이터, 리뷰 봇으로 넘기는 구조에서는 "최종 응답"만으로 충분하지 않을 때가 있습니다. subagent가 중간에 어떤 텍스트를 만들었는지까지 받아야 후속 파서나 알림 시스템이 제대로 동작합니다.
 
 다만 이 옵션은 모든 사용자에게 무조건 켜야 하는 설정은 아닙니다. thinking과 subagent text를 더 넓게 전달하면 로그에 남는 정보량도 늘어납니다. 사내 저장소, 고객 데이터, 보안 검토 내용을 다루는 팀은 출력 보관 위치와 접근 권한을 같이 정해야 합니다.
 
@@ -72,7 +72,7 @@ v2.1.210에서 가장 눈에 띄는 항목은 `isolation: 'worktree'` subagent �
 
 v2.1.211에는 permission preview 보안 수정이 포함됐습니다. 공식 설명은 채팅 채널로 전달되는 권한 미리보기가 bidirectional-override, zero-width, look-alike quote 문자를 중화하지 못해 tool input이 approval message를 시각적으로 바꿔 보이게 만들 수 있던 문제를 고쳤다는 내용입니다.
 
-이 항목은 개발자에게 낯선 UI 버그처럼 보일 수 있지만, 실제로는 승인 기반 자동화의 핵심입니다. Claude Code가 외부 채팅, 원격 제어, 에이전트 뷰 같은 경로로 “이 도구를 실행해도 되는가”를 보여줄 때 사용자는 표시된 문자열을 보고 판단합니다. 보이지 않는 문자나 방향 제어 문자가 섞이면 같은 텍스트라도 화면에서는 다른 의미처럼 보일 수 있습니다.
+이 항목은 개발자에게 낯선 UI 버그처럼 보일 수 있지만, 실제로는 승인 기반 자동화의 핵심입니다. Claude Code가 외부 채팅, 원격 제어, 에이전트 뷰 같은 경로로 "이 도구를 실행해도 되는가"를 보여줄 때 사용자는 표시된 문자열을 보고 판단합니다. 보이지 않는 문자나 방향 제어 문자가 섞이면 같은 텍스트라도 화면에서는 다른 의미처럼 보일 수 있습니다.
 
 특히 다음 환경에서는 v2.1.211 업데이트 의미가 큽니다.
 
@@ -88,13 +88,13 @@ v2.1.211에는 permission preview 보안 수정이 포함됐습니다. 공식 �
 
 Claude Code의 hook은 단순 편의 기능이 아닙니다. 팀에 따라서는 특정 명령 실행 전 승인, 파일 경로 제한, 배포 명령 차단, 로그 기록, 민감 정보 검사에 hook을 씁니다. 특히 sandbox가 없는 Bash 실행은 파일 변경, 네트워크 호출, 배포 스크립트 실행으로 이어질 수 있으므로 `ask` 판단이 auto mode에 눌리는 것은 운영상 위험한 동작입니다.
 
-이 수정은 “자동화 속도”보다 “사람이 물어보라고 정한 지점은 물어본다”는 쪽에 가깝습니다. Claude Code를 unattended workflow에 넣는 팀이라면 v2.1.211 이후에도 hook이 기대한 지점에서 실제로 prompt를 만드는지 작은 재현 작업으로 확인하는 편이 좋습니다.
+이 수정은 "자동화 속도"보다 "사람이 물어보라고 정한 지점은 물어본다"는 쪽에 가깝습니다. Claude Code를 unattended workflow에 넣는 팀이라면 v2.1.211 이후에도 hook이 기대한 지점에서 실제로 prompt를 만드는지 작은 재현 작업으로 확인하는 편이 좋습니다.
 
 ## MCP·subagent·원격 세션 안정성
 
 v2.1.211은 MCP와 subagent 주변 수정도 많습니다. plugin MCP server가 idle web session에서 깨어난 뒤 재연결되지 않아 다음 메시지 전까지 MCP call이 실패하던 문제가 수정됐습니다. 명시적으로 model override를 준 subagent가 resume이나 follow-up message 뒤 parent model로 되돌아가던 문제도 고쳐졌습니다.
 
-이 두 항목은 겉으로는 다른 문제지만 공통점이 있습니다. Claude Code를 한 번 실행하고 바로 끝내는 대신, web session, background agent, plugin MCP, model override를 이어서 쓰는 장시간 사용 패턴에서 발생합니다. 에이전트가 쉬었다가 다시 깨어나는 순간, “연결돼 있어야 할 MCP”와 “유지돼야 할 model 설정”이 유지되는지가 중요합니다.
+이 두 항목은 겉으로는 다른 문제지만 공통점이 있습니다. Claude Code를 한 번 실행하고 바로 끝내는 대신, web session, background agent, plugin MCP, model override를 이어서 쓰는 장시간 사용 패턴에서 발생합니다. 에이전트가 쉬었다가 다시 깨어나는 순간, "연결돼 있어야 할 MCP"와 "유지돼야 할 model 설정"이 유지되는지가 중요합니다.
 
 또한 여러 Claude Code 세션이 하나의 credential store를 공유할 때 wake-from-sleep 이후 병렬 세션이 동시에 로그아웃되던 문제도 수정됐습니다. 노트북을 닫았다 열거나, 원격 개발 환경을 절전 상태에서 복구하는 사용자는 이 항목을 체감할 수 있습니다.
 
@@ -126,13 +126,13 @@ Chrome 연동도 함께 정리됐습니다. remote와 CLI session에서 Chrome�
 
 v2.1.211은 모델 성능이나 가격 발표가 아니므로 매출 효과를 직접 단정할 수는 없습니다. 다만 Claude Code가 개인용 코드 보조 도구에서 팀 단위 자동화 도구로 이동할 때 필요한 영역을 보여줍니다. `stream-json`, chat-channel approval, hooks, MCP, Vertex·Bedrock, Chrome extension은 모두 단순 채팅보다 깊은 사용을 전제로 합니다.
 
-투자 관점에서 볼 지점은 “새 모델이 더 똑똑한가”보다 “개발 워크플로에 오래 붙어 있을 만큼 안정적인가”입니다. 권한 승인 화면의 보안, model override 유지, idle session 재연결, 로그아웃 안정성은 화려하지 않지만 기업 도입에서 반복 사용과 지원 비용을 좌우합니다. 반대로 이런 수정이 계속 나온다는 것은 실제 사용 패턴이 복잡해지는 만큼 운영 리스크도 같이 늘어난다는 뜻입니다.
+투자 관점에서 볼 지점은 "새 모델이 더 똑똑한가"보다 "개발 워크플로에 오래 붙어 있을 만큼 안정적인가"입니다. 권한 승인 화면의 보안, model override 유지, idle session 재연결, 로그아웃 안정성은 화려하지 않지만 기업 도입에서 반복 사용과 지원 비용을 좌우합니다. 반대로 이런 수정이 계속 나온다는 것은 실제 사용 패턴이 복잡해지는 만큼 운영 리스크도 같이 늘어난다는 뜻입니다.
 
 ## 마지막으로
 
 v2.1.208부터 v2.1.211까지 이어진 이 주의 패치는 headline용 대형 기능 발표가 아니라, 실제 사용 중 걸리던 모래알을 빼는 업데이트 묶음입니다. 백그라운드 세션에서 답장이 사라지거나 모델 대화창이 막히는 문제, worktree 격리가 깨지는 문제, 대형 JSON 출력이 잘리는 문제는 모두 작게 보여도 자동화 작업에서는 시간을 많이 잡아먹습니다.
 
-이번 버전들을 볼 때는 “무엇이 새로 생겼나”보다 “내 자동화에서 어느 경로가 조용히 안정화됐나”를 기준으로 보는 편이 좋습니다. 특히 `claude agents`, `claude -p`, worktree subagent, `stream-json` 출력, 채팅 채널 승인, unsandboxed Bash hook, plugin MCP, Vertex·Bedrock 중 하나라도 쓰고 있다면 v2.1.211 기준으로 동작을 다시 확인할 만합니다.
+이번 버전들을 볼 때는 "무엇이 새로 생겼나"보다 "내 자동화에서 어느 경로가 조용히 안정화됐나"를 기준으로 보는 편이 좋습니다. 특히 `claude agents`, `claude -p`, worktree subagent, `stream-json` 출력, 채팅 채널 승인, unsandboxed Bash hook, plugin MCP, Vertex·Bedrock 중 하나라도 쓰고 있다면 v2.1.211 기준으로 동작을 다시 확인할 만합니다.
 
 ## 참고한 자료
 

@@ -79,11 +79,11 @@ GPT-5.6 Sol은 코딩, 과학, 사이버보안 역량을 강조한 모델로 소
 
 Daybreak와 Patch the Planet은 AI를 보안 방어와 오픈소스 취약점 패치에 활용하려는 흐름을 보여준다. IBM도 같은 주 OpenAI Daybreak Cyber Partner Program 참여를 발표했다.
 
-### 2. AI 코딩 도구는 “코드 생성”보다 “개발 흐름 통합”으로 이동 중이다
+### 2. AI 코딩 도구는 "코드 생성"보다 "개발 흐름 통합"으로 이동 중이다
 
 GitHub는 이번 주 Copilot 관련 변경을 다수 공개했다. JetBrains IDE의 Claude agent provider preview, Copilot CLI 새 터미널 UI GA, BYOK 지원, Free/Student 플랜의 모델 선택 변경, Copilot for Jira GA, code review 분석 업데이트, GitHub Desktop 3.6의 worktree·Copilot 통합이 포함됐다.
 
-또 GitHub는 Microsoft AI의 코딩 모델 MAI-Code-1-Flash를 Copilot Business와 Copilot Enterprise에서 일반 제공한다고 발표했다. 국내에서는 AI타임스가 이 이슈를 “하이쿠보다 빠르고 저렴”이라는 제목으로 보도했지만, 이 표현은 보도 제목 기준이며 이 글에서 독립적으로 검증한 내용은 아니다.
+또 GitHub는 Microsoft AI의 코딩 모델 MAI-Code-1-Flash를 Copilot Business와 Copilot Enterprise에서 일반 제공한다고 발표했다. 국내에서는 AI타임스가 이 이슈를 "하이쿠보다 빠르고 저렴"이라는 제목으로 보도했지만, 이 표현은 보도 제목 기준이며 이 글에서 독립적으로 검증한 내용은 아니다.
 
 Cursor도 공식 changelog에서 `Customize Cursor` 업데이트를 통해 플러그인, skills, MCP, subagents, rules, commands, hooks를 user, team, workspace 단위로 관리할 수 있다고 설명했다. AI 코딩 도구가 단일 모델 호출을 넘어 팀 단위 규칙과 도구 연결까지 포함하는 방향으로 확장되는 흐름이다.
 
@@ -125,7 +125,7 @@ GitHub는 캘리포니아 AI 투명성법과 관련해 오픈소스를 보호하
 
 ## 이번 주 정리
 
-이번 주 AI 이슈의 중심은 “모델 발표” 하나로만 설명하기 어렵다. 모델, 코딩 도구, 협업 에이전트, 업무 자동화, 인프라, 보안이 동시에 움직였다.
+이번 주 AI 이슈의 중심은 "모델 발표" 하나로만 설명하기 어렵다. 모델, 코딩 도구, 협업 에이전트, 업무 자동화, 인프라, 보안이 동시에 움직였다.
 
 특히 AI 코딩과 업무 자동화는 점점 제품 안쪽으로 들어가고 있다. Copilot은 IDE와 CLI, Jira, Desktop, 코드 리뷰로 확장되고 있고, Claude Tag는 Slack 안에서 업무 위임을 시도한다. n8n과 AWS, MIT, NVIDIA의 글들은 에이전트를 실제로 운영하려면 workflow, 데이터 구조, 비용, 에너지, 거버넌스까지 함께 봐야 한다는 점을 보여준다.
 

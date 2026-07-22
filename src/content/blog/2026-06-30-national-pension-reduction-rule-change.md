@@ -169,7 +169,7 @@ tags: ["국민연금", "노령연금", "연금", "노후준비", "재테크", "�
 
 ## 참고한 공식 자료
 
-- [보건복지부 보도자료: “연금 줄어들 걱정 없이 인생 이모작” 개선된 노령연금 감액제도 본격 시행](https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490872)
+- [보건복지부 보도자료: "연금 줄어들 걱정 없이 인생 이모작" 개선된 노령연금 감액제도 본격 시행](https://www.mohw.go.kr/board.es?mid=a10503010100&bid=0027&act=view&list_no=1490872)
 - [국민연금공단: 국민연금법 일부개정법률 공포 및 시행 안내(2025. 12. 16.)](https://www.nps.or.kr/pnsinfo/databbs/getOHAF0275M1Detail.do?menuId=MN24000997&pstId=ZZ202500000000001564)
 - [국가법령정보센터: 국민연금법 제63조의2 소득활동에 따른 노령연금액](https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1032082483)
 - [국민연금 온에어: 국민연금 노령연금 감액제도를 개선합니다](https://www.npsonair.kr/advantages/detail.html?strIdx=3744)
