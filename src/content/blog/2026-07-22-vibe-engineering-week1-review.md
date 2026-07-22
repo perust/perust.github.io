@@ -6,12 +6,31 @@ category: "서평"
 tags: ["바이브엔지니어링", "바이브코딩", "AI코딩", "길벗챌린지", "개발자", "소프트웨어테스트"]
 ---
 
-『바이브 엔지니어링』은 바이브 코딩을 더 빠르게 하는 요령보다, AI가 만든 결과물을 실제 서비스에 쓸 수 있는 수준으로 끌어올리는 개발자의 역할을 다루는 책입니다. 길벗 도서 챌린지 1주차에는 1장부터 4장 초반까지 읽었습니다. 생성형 AI가 기본 도구가 된 환경에서 무엇을 요구하고, 어떤 기준으로 검증하며, 문제가 생겼을 때 어디서부터 이해해야 하는지를 생각해보는 시간이었습니다.
+## 책 소개
+
+<a href="https://www.gilbut.co.kr/book/view?bookcode=BN004853&amp;keyword=%EB%B0%94%EC%9D%B4%EB%B8%8C%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81&amp;collection=GB_BOOK" target="_blank" rel="noopener noreferrer" aria-label="길벗 바이브 엔지니어링 공식 도서 페이지로 이동">
+  <img src="/images/posts/vibe-engineering-week1/book-cover.jpg" alt="제이킴의 바이브 엔지니어링 책 표지" width="300" height="385" style="max-width: 300px; margin: 0 auto;" />
+</a>
+
+<small style="text-align: center;">표지 이미지: 길벗 공식 도서 페이지</small>
+
+『바이브 엔지니어링』은 AI에게 코드를 생성해 달라고 요청하는 데서 멈추지 않고, 요구사항 정의부터 설계·검증·테스트·도메인 판단까지 전체 개발 과정을 AI와 함께 이끄는 방법을 다루는 책입니다. AI가 코드를 만들더라도 무엇을 만들지 정의하고 결과가 올바른지 판단하는 책임은 개발자에게 있다는 관점에서 출발합니다.
 
 <div class="routine-kv">
   <div><dt>도서</dt><dd>바이브 엔지니어링</dd></div>
   <div><dt>저자·출판사</dt><dd>제이킴 · 길벗</dd></div>
-  <div><dt>1주차 범위</dt><dd>1장 바이브 엔지니어링의 시대부터 4장 디버깅 초반까지</dd></div>
+  <div><dt>출간·분량</dt><dd>2026년 6월 30일 · 312쪽</dd></div>
+  <div><dt>ISBN</dt><dd>9791140719273</dd></div>
+</div>
+
+<p class="source-link"><a href="https://www.gilbut.co.kr/book/view?bookcode=BN004853&amp;keyword=%EB%B0%94%EC%9D%B4%EB%B8%8C%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81&amp;collection=GB_BOOK" target="_blank" rel="noopener noreferrer">길벗 공식 도서 페이지에서 구매 정보 보기 →</a></p>
+
+## 1주차에 읽은 내용
+
+길벗 도서 챌린지 1주차에는 1장부터 4장 초반까지 읽었습니다. 생성형 AI가 기본 도구가 된 환경에서 무엇을 요구하고, 어떤 기준으로 검증하며, 문제가 생겼을 때 어디서부터 이해해야 하는지를 생각해보는 시간이었습니다.
+
+<div class="routine-kv">
+  <div><dt>읽은 범위</dt><dd>1장 바이브 엔지니어링의 시대부터 4장 디버깅 초반까지</dd></div>
   <div><dt>가장 크게 남은 질문</dt><dd>AI에게 맡긴 코드를 나는 어디까지 이해하고 책임질 수 있는가?</dd></div>
 </div>
 
