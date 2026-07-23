@@ -981,18 +981,31 @@ h3 {
 .tag-cloud a { transition: 160ms ease; }
 .tag-cloud a:hover, .tag-cloud a:focus-visible { color: #fff; background: var(--primary); }
 .empty-blog-message { padding: 1.2rem; border: 1px dashed var(--line); border-radius: var(--radius-md); color: var(--muted); background: var(--card); }
-.post-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 2rem; width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; padding: 4.5rem 0; align-items: start; }
-.post-article { min-width: 0; padding: 2rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: rgba(255,255,255,.78); box-shadow: var(--shadow); }
-.post-article h1 {
+.post-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 2rem; width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; padding: 2.75rem 0 4.5rem; align-items: start; }
+.post-article { min-width: 0; }
+
+/* 글 상세 전용 헤더 — 본문+사이드바 그리드 위를 가로지르는 전체 폭 영역 */
+.post-header { grid-column: 1 / -1; min-width: 0; padding-bottom: 1.9rem; border-bottom: 1px solid var(--line); }
+.post-header-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 2.4rem; color: var(--muted); font-size: .85rem; font-weight: 700; }
+.post-header-nav a { display: inline-flex; align-items: center; min-height: 2.75rem; margin-block: -.65rem; transition: color 160ms ease; }
+.post-header-nav a:hover, .post-header-nav a:focus-visible { color: var(--primary); }
+.post-kicker .section-kicker { margin: 0 0 .8rem; color: var(--primary); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-align: center; text-transform: uppercase; }
+.post-kicker .section-kicker::before { display: none; }
+.post-kicker .section-kicker a { display: inline-flex; align-items: center; min-height: 2.75rem; margin-block: -.65rem; }
+.post-header h1 {
   max-width: 760px;
-  margin-bottom: 0.95rem;
+  margin: 0 auto 1rem;
   font-size: clamp(2rem, 4.2vw, 3.35rem);
-  line-height: 1.14;
+  line-height: 1.18;
   letter-spacing: -0.052em;
+  text-align: center;
   text-wrap: balance;
   word-break: keep-all;
   overflow-wrap: break-word;
 }
+.post-header-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: .35rem .45rem; margin: 0; color: var(--muted); font-size: .88rem; font-weight: 600; letter-spacing: .01em; }
+.post-header-meta a { color: inherit; font-weight: 700; text-decoration: underline; text-decoration-color: rgba(100, 116, 139, .4); text-underline-offset: .2em; transition: color 160ms ease; }
+.post-header-meta a:hover, .post-header-meta a:focus-visible { color: var(--primary); }
 .post-article h2 { margin-top: 2.4rem; font-size: 1.8rem; }
 .post-article h3 { margin-top: 1.8rem; }
 .post-article p, .post-article li { color: #334155; font-size: 1.06rem; line-height: 1.5; }
@@ -1071,8 +1084,8 @@ h3 {
 .comment-form button:disabled { opacity: .55; cursor: wait; }
 .footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: .4rem; }
 .footer-links a { color: var(--muted); font-weight: 700; }
-@media (max-width: 900px) { .blog-grid, .blog-page, .post-layout, .post-list-item, .post-article .investor-grid { grid-template-columns: 1fr; } .home-curation-grid .post-card:first-child { grid-column: auto; } .sidebar-card { position: static; } }
-@media (max-width: 480px) { .post-layout { width: min(calc(100% - 1rem), var(--max-width)); padding: 3rem 0; } .post-article { padding: 1rem; border-radius: var(--radius-md); } .post-article .issue-card { padding: .9rem 1rem; } .post-article .contrast-row { grid-template-columns: 1fr; } .post-article .contrast-arrow { min-width: 0; transform: rotate(90deg); } }
+@media (max-width: 900px) { .blog-grid, .blog-page, .post-layout, .post-list-item, .post-article .investor-grid { grid-template-columns: 1fr; } .home-curation-grid .post-card:first-child { grid-column: auto; } .sidebar-card { position: static; } .post-layout { padding-top: 2rem; } .post-header { padding-bottom: 1.5rem; } .post-header-nav { margin-bottom: 1.8rem; } }
+@media (max-width: 480px) { .post-layout { width: min(calc(100% - 1.25rem), var(--max-width)); padding: 1.4rem 0 3rem; gap: 1.6rem; } .post-header-nav { margin-bottom: 1.4rem; } .post-article .issue-card { padding: .9rem 1rem; } .post-article .contrast-row { grid-template-columns: 1fr; } .post-article .contrast-arrow { min-width: 0; transform: rotate(90deg); } }
 
 /* Related posts + prev/next pager (post detail) */
 .post-related { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); }

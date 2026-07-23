@@ -110,14 +110,23 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
 ---
 <BaseLayout title={`${title} · lentoludens 블로그`} description={description} canonical={Astro.url.pathname} ogType="article" jsonLd={jsonLd} publishedTime={publishedISO} modifiedTime={modifiedISO} tags={tags} image={ogImage}>
   <main class="post-layout">
-    <article class="post-article">
-      <p class="section-kicker"><a href={categoryPath(category)}>{category}</a></p>
-      <h1>{title}</h1>
-      <p class="post-meta">
-        <time datetime={publishedISO}>{new Date(date).toLocaleDateString('ko-KR')}</time>
-        {updated && <span> · 수정 <time datetime={modifiedISO}>{new Date(updated).toLocaleDateString('ko-KR')}</time></span>}
+    <header class="post-header">
+      <nav class="post-header-nav" aria-label="글 탐색">
+        <a href={categoryPath(category)}>{category}</a>
+        <a href="/blog/">전체 글</a>
+      </nav>
+      <div class="post-kicker">
+        <p class="section-kicker"><a href={categoryPath(category)}>{category}</a></p>
+      </div>
+      <h1 id="post-title">{title}</h1>
+      <p class="post-header-meta post-byline">
+        <time datetime={publishedISO}>{formatDate(date)}</time>
+        {updated && <span>· 수정 <time datetime={modifiedISO}>{formatDate(updated)}</time></span>}
+        <span>· 글쓴이 <a href="/about/">lentoludens</a></span>
+        <span>· <a href="/editorial-policy/">편집·운영 원칙</a></span>
       </p>
-      <p class="post-meta post-byline">글쓴이 <a href="/about/">lentoludens</a> · <a href="/editorial-policy/">편집·운영 원칙</a></p>
+    </header>
+    <article class="post-article" aria-labelledby="post-title">
       <Content />
 
       {relatedPosts.length > 0 && (
