@@ -16,6 +16,8 @@
 //  9. 기준일(NEW_POST_POLICY_BASELINE) 이후 새 글은 frontmatter 에 사람 편집 검토 완료
 //     (editorialReview: true)와 독자적 가치 유형(valueType) 하나를 명시해야 한다.
 // 10. Markdown 원본과 빌드된 글 HTML 모두 AI 문서처럼 보일 수 있는 스마트 따옴표(“”, ‘’)가 없어야 한다.
+// 11. Markdown 본문 prose 에 고신뢰 AI 답변 잔재가 없어야 한다.
+//     문맥 의존 패턴은 check-publish-policy에서 Git 신규 글에만 warning을 낸다.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -31,6 +33,7 @@ import {
 } from '../src/config/taxonomy.ts';
 import { loadSecondCurationManifest, manifestSlugs } from './lib/second-curation-manifest.mjs';
 import { LEGACY_PREFIXES, htmlFiles, toPosix } from './lib/site-scan.mjs';
+import { lintMarkdownAiStyle } from './lib/ai-style-lint.mjs';
 
 const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DIST = 'dist';
@@ -122,11 +125,18 @@ const tagCountBySlug = new Map();
 const newPostCountByDay = new Map();
 let thinPosts = 0;
 let smartQuoteFailures = 0;
+let aiStyleFailures = 0;
 // 기준일 이후 새 글의 편집 검토 게이트 — content.config.ts 의 선택 필드를 새 글에는 필수로 강제한다.
 // (VALUE_TYPES 는 src/config/taxonomy.ts 의 SSOT 를 그대로 쓴다.)
 let editorialGateFailures = 0;
 for (const file of srcFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
+  const aiStyle = lintMarkdownAiStyle(raw);
+  for (const finding of aiStyle.failures) {
+    aiStyleFailures += 1;
+    console.log(`[FAIL] ${file}:${finding.line} [${finding.ruleId}] ${finding.message} — ${finding.excerpt}`);
+  }
+
   const smartQuotes = raw.match(/[“”‘’]/g) ?? [];
   if (smartQuotes.length > 0) {
     smartQuoteFailures += smartQuotes.length;
@@ -198,6 +208,10 @@ report(thinPosts === 0, `모든 글 본문이 최소 ${MIN_POST_BODY_CHARS}자(�
 report(
   smartQuoteFailures === 0,
   `모든 글은 키보드 직선 따옴표만 사용해야 함 (스마트 따옴표 위반 ${smartQuoteFailures}개)`,
+);
+report(
+  aiStyleFailures === 0,
+  `본문 prose 에 고신뢰 AI 문체 흔적이 없어야 함 (차단 ${aiStyleFailures}건)`,
 );
 const overPacedDays = [...newPostCountByDay.entries()]
   .filter(([, count]) => count > MAX_NEW_POSTS_PER_DAY)

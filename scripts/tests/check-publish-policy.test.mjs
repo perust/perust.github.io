@@ -61,12 +61,13 @@ function postSource({
   editorialReview = true,
   valueType = 'experience',
   bodyChars = MIN_POST_BODY_CHARS + 200,
+  body = null,
 } = {}) {
   const lines = ['---', 'title: "fixture"', 'description: "fixture"', `date: "${date}"`, 'category: "AI/IT 정보"'];
   if (tags !== null) lines.push(`tags: ${JSON.stringify(tags)}`);
   if (editorialReview !== null) lines.push(`editorialReview: ${editorialReview}`);
   if (valueType !== null) lines.push(`valueType: "${valueType}"`);
-  lines.push('---', '', '가'.repeat(bodyChars), '');
+  lines.push('---', '', body ?? '가'.repeat(bodyChars), '');
   return lines.join('\n');
 }
 
@@ -132,6 +133,23 @@ test('게이트를 모두 만족하는 신규 글 1편은 통과한다', (t) => 
   const root = makeFixture(t);
   writeFileSync(newPostPath(root, '2026-07-22-valid-new-post.md'), postSource());
   assertPass(runValidator(root));
+});
+
+test('신규 글의 고신뢰 챗봇 잔재는 발행을 차단한다', (t) => {
+  const root = makeFixture(t);
+  const body = `물론입니다! 요청하신 글입니다.\n\n${'가'.repeat(MIN_POST_BODY_CHARS + 200)}`;
+  writeFileSync(newPostPath(root, '2026-07-22-chatbot-residue.md'), postSource({ body }));
+  assertFailWith(runValidator(root), 'chatbot-preface');
+});
+
+test('신규 글의 문맥 의존 AI 문체 신호는 warning만 내고 통과한다', (t) => {
+  const root = makeFixture(t);
+  const body = `## 초보 추천도\n\n${'가'.repeat(MIN_POST_BODY_CHARS + 200)}`;
+  writeFileSync(newPostPath(root, '2026-07-22-style-warning.md'), postSource({ body }));
+  const result = runValidator(root);
+  assertPass(result);
+  assert.ok(result.stdout.includes('[warn] 신규 글'));
+  assert.ok(result.stdout.includes('generic-outline'));
 });
 
 test('게이트를 만족하는 staged 신규 글도 baseline 트리와 비교해 통과한다', (t) => {

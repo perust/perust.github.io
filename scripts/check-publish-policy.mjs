@@ -32,6 +32,7 @@ import {
   slugify,
 } from '../src/config/taxonomy.ts';
 import { detectNewPostFiles, gitTrackableState } from './lib/git-policy.mjs';
+import { lintMarkdownAiStyle } from './lib/ai-style-lint.mjs';
 import {
   SECOND_CURATION_MANIFEST_RELPATH,
   loadSecondCurationManifest,
@@ -151,6 +152,13 @@ report(
 const newPostsByDay = new Map();
 for (const file of newFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
+  const aiStyle = lintMarkdownAiStyle(raw);
+  for (const finding of aiStyle.failures) {
+    report(false, `신규 글 ${file}:${finding.line} [${finding.ruleId}] ${finding.message}`);
+  }
+  for (const finding of aiStyle.warnings) {
+    console.log(`[warn] 신규 글 ${file}:${finding.line} [${finding.ruleId}] ${finding.message}`);
+  }
   const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const block = frontmatter?.[1] ?? '';
 

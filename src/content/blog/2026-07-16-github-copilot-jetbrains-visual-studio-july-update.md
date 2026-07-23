@@ -101,6 +101,6 @@ C++ 쪽에서는 GitHub Copilot modernization agent의 MSVC upgrade scenarios가
 
 <ul class="issue-list">
   <li class="issue-card"><h3>GitHub Copilot for JetBrains expands BYOK capabilities</h3><p class="issue-summary"><a href="https://github.blog/changelog/2026-07-14-github-copilot-for-jetbrains-expands-byok-capabilities">GitHub Changelog</a>에서 BYOK custom endpoint, Claude agent provider, local sandbox, Copilot CLI debugger skill, 플러그인 관리 개선을 확인했습니다.</p></li>
-  <li class="issue-card"><h3>GitHub Copilot in Visual Studio — June update</h3><p class="issue-summary"><a href="https://github.blog/changelog/2026-07-14-github-copilot-in-visual-studio-june-update">GitHub Changelog</a>에서 Copilot Usage, MCP server trust validation, C++ modernization agent GA, PR context 기능을 확인했습니다.</p></li>
+  <li class="issue-card"><h3><a href="https://github.blog/changelog/2026-07-14-github-copilot-in-visual-studio-june-update">GitHub Copilot in Visual Studio — June update</a></h3><p class="issue-summary"><a href="https://github.blog/changelog/2026-07-14-github-copilot-in-visual-studio-june-update">GitHub Changelog</a>에서 Copilot Usage, MCP server trust validation, C++ modernization agent GA, PR context 기능을 확인했습니다.</p></li>
   <li class="issue-card"><h3>Cloud and local sandboxes for GitHub Copilot</h3><p class="issue-summary"><a href="https://docs.github.com/copilot/concepts/about-cloud-and-local-sandboxes">GitHub Docs</a>에서 Copilot cloud/local sandbox 개념과 관련 문서 위치를 확인했습니다.</p></li>
 </ul>
