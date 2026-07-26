@@ -55,9 +55,14 @@ Claude Code는 프로그램의 화면만 만든 것이 아니라 손글씨를 �
 
 ## 이전 버전에서 만들었던 결과
 
-아래 사진은 이번에 새로 만든 프로그램이 아니라 이전 AI 버전으로 같은 미션을 진행했을 때의 결과입니다. 이번 글에서는 변화 비교를 위한 자료로만 작게 묶었습니다.
+아래 사진들은 이번에 새로 만든 프로그램이 아니라 이전 AI 버전으로 같은 미션을 진행했을 때의 결과입니다. 사진 자체는 합치거나 편집하지 않고, 이전 버전 비교 자료로만 크기를 줄여 배치했습니다.
 
-![이전 AI 버전으로 만들었던 데스크톱과 웹 손글씨 인식 결과 비교](/images/posts/2026-07-26-vibe-coding-week3/previous-version-results.webp)
+<div role="region" aria-label="이전 AI 버전 손글씨 인식 결과" tabindex="0" style="display: flex; align-items: flex-start; gap: 0.8rem; overflow-x: auto; padding: 0.4rem 0 0.8rem; scroll-snap-type: x mandatory;">
+  <img src="/images/posts/2026-07-26-vibe-coding-week3/01-prompt.webp" alt="이전 AI 버전에 손글씨 인식 프로그램 제작을 요청한 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-07-26-vibe-coding-week3/02-desktop-initial.webp" alt="이전 AI 버전으로 만든 데스크톱 프로그램 초기 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-07-26-vibe-coding-week3/03-desktop-six.webp" alt="이전 데스크톱 프로그램이 숫자 6을 인식한 결과" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-07-26-vibe-coding-week3/04-web-five.webp" alt="이전 웹 프로그램이 숫자 5를 인식한 결과" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+</div>
 
 이전 버전에서는 손글씨 프로그램을 만들어 달라고 하면 MNIST 학습 없이 화면과 기능부터 만들어주는 경우가 있었습니다. 겉으로는 프로그램이 실행됐지만 손글씨를 이상하게 인식했습니다. 다시 프롬프트를 보내고, 학습 과정을 추가하고, 여러 번 수정한 끝에야 제대로 인식했습니다. 작업 시간도 지금보다 오래 걸렸던 것 같습니다.
 
