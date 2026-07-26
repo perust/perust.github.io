@@ -27,6 +27,10 @@ valueType: "review"
   <div><dt>난이도</dt><dd>초급</dd></div>
 </div>
 
+<a href="https://www.hanbit.co.kr/books/%ED%81%B4%EB%A1%9C%EB%93%9C-%EC%98%AC%EC%9D%B8%EC%9B%90-with-%EC%BD%94%EC%9B%8C%ED%81%AC-%EC%BD%94%EB%93%9C-%EB%94%94%EC%9E%90%EC%9D%B8?code=B3472808035" target="_blank" rel="noopener noreferrer" aria-label="한빛미디어 클로드 올인원 with 코워크, 코드, 디자인 공식 도서 페이지로 이동">
+  <img src="/images/posts/2026-07-27-claude-all-in-one-review/official-book-page.webp" alt="한빛미디어 공식 페이지에 표시된 클로드 올인원 with 코워크, 코드, 디자인 도서 정보와 표지" width="1600" height="450" loading="lazy" />
+</a>
+
 <p class="source-link"><a href="https://www.hanbit.co.kr/books/%ED%81%B4%EB%A1%9C%EB%93%9C-%EC%98%AC%EC%9D%B8%EC%9B%90-with-%EC%BD%94%EC%9B%8C%ED%81%AC-%EC%BD%94%EB%93%9C-%EB%94%94%EC%9E%90%EC%9D%B8?code=B3472808035" target="_blank" rel="noopener noreferrer">[ 한빛미디어 공식 도서 페이지에서 책 정보와 목차 보기 ]</a></p>
 
 <img src="/images/posts/2026-07-27-claude-all-in-one-review/reading-cover.webp" alt="태블릿 화면에 띄운 클로드 올인원 with 코워크, 코드, 디자인 전자책 표지" width="1000" height="1333" loading="lazy" style="max-width: 680px; margin: 0 auto;" />
