@@ -11,7 +11,7 @@
 //  1. 보관 매니페스트(second-curation-manifest.json, SSOT)가 존재하고 구조가 유효하다.
 //  2. 매니페스트의 모든 보관 파일이 존재하고 Git 추적 가능(tracked 또는 untracked-비무시)하며
 //     sha256 이 매니페스트와 일치한다(변조 감지). 원본 공개 경로는 삭제되어 있다.
-//  3. 매니페스트 슬러그가 소스(src/content/blog)·dist·sitemap·내부 링크 어디에도 재등장하지 않는다.
+//  3. 매니페스트 슬러그가 소스(src/content/blog)·dist·sitemap·RSS·내부 링크 어디에도 재등장하지 않는다.
 //     보관 자산의 공개 URL 경로도 dist HTML 에서 참조되지 않는다. (동등 대체 URL 이 없는 글이므로
 //     redirect 없이 GitHub Pages 일반 404 로 남기는 것이 정책이다.)
 //  4. Git 기준 새로 추가된 글은 date 가 기준일(2026-07-21) 이전이어도(backdate)
@@ -110,6 +110,16 @@ if (manifest) {
     const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url);
     const reappeared = urls.filter((url) => slugs.some((slug) => url.includes(`/blog/${slug}/`)));
     report(reappeared.length === 0, `sitemap 에 보관 슬러그 URL 이 없어야 함 (발견: ${reappeared.join(', ') || '없음'})`);
+  }
+
+  // RSS 는 sitemap 과 별개 배포 표면이라 따로 본다 — 피드는 src/content/blog 글롭에서 생성되므로
+  // 보관 슬러그가 남아 있으면 구독자에게 그대로 다시 나간다.
+  const rssPath = join(DIST, 'rss.xml');
+  report(existsSync(rssPath), 'dist/rss.xml 이 있어야 함');
+  if (existsSync(rssPath)) {
+    const rss = readFileSync(rssPath, 'utf8');
+    const rssHits = slugs.filter((slug) => rss.includes(`/blog/${slug}`));
+    report(rssHits.length === 0, `RSS 피드에 보관 슬러그가 없어야 함 (발견: ${rssHits.join(', ') || '없음'})`);
   }
 
   const linkHits = [];

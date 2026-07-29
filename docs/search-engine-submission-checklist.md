@@ -94,19 +94,27 @@ https://perust.github.io/robots.txt
 
 ## 2차 큐레이션 보관 (2026-07-21) — 404 정책과 검색엔진 후속 신호
 
-2차 큐레이션으로 아래 5개 글을 공개에서 내렸다. 직접 경험 근거가 얇은 정리·주간 글이라 **동등한 대체 URL 이 없고**, 의미 없는 페이지로 억지 redirect 를 걸지 않는 것이 정책이다. 공개 source(`src/content/blog`)·dist·sitemap·내부 링크에서 완전히 제거했으므로, 배포 후 이 URL 들은 **GitHub Pages 일반 404** 를 반환한다(soft 404·가짜 canonical 없음). 원본은 `content-archive/adsense-remediation/2026-07-21/` 아래에 Git 으로 보존한다. enforcement 단일 진실 소스는 `scripts/lib/second-curation-policy-anchor.mjs`의 immutable policy anchor이며, 같은 폴더의 `second-curation-manifest.json`은 사람이 읽는 선언 사본이다(`npm run check:publish-policy`가 두 정의의 정확한 일치, 보관 무결성, 5개 슬러그의 재등장을 빌드마다 검증).
+2차 큐레이션으로 아래 13개 글을 공개에서 내렸다(1차 확정 5편 + 저가치 콘텐츠 집중 감사에서 확정된 8편). 직접 경험 근거가 얇은 정리·요약·체크리스트 글이라 **동등한 대체 URL 이 없고**, 의미 없는 페이지로 억지 redirect 를 걸지 않는 것이 정책이다. 공개 source(`src/content/blog`)·dist·sitemap·RSS·내부 링크·public 자산에서 완전히 제거했으므로, 배포 후 이 URL 들은 **GitHub Pages 일반 404** 를 반환한다(soft 404·가짜 canonical 없음). 원본은 `content-archive/adsense-remediation/2026-07-21/` 아래에 Git 으로 보존한다. enforcement 단일 진실 소스는 `scripts/lib/second-curation-policy-anchor.mjs`의 immutable policy anchor이며, 같은 폴더의 `second-curation-manifest.json`은 사람이 읽는 선언 사본이다(`npm run check:publish-policy`가 두 정의의 정확한 일치, 보관 무결성, 13개 슬러그의 재등장을 빌드마다 검증).
 
 - `https://perust.github.io/blog/2026-06-28-money-weekly-2026-june-week-4/`
 - `https://perust.github.io/blog/2026-07-02-investment-data-records-not-emotion/`
 - `https://perust.github.io/blog/2026-07-03-productivity-apps-system-first/`
 - `https://perust.github.io/blog/2026-07-03-reduce-procrastination-small-tasks/`
+- `https://perust.github.io/blog/2026-07-07-ai-agent-cost-power/`
+- `https://perust.github.io/blog/2026-07-07-ai-chatbot-answer-verification/`
+- `https://perust.github.io/blog/2026-07-07-ai-coding-tool-trust-claude-code/`
+- `https://perust.github.io/blog/2026-07-07-gemini-image-generation-free/`
+- `https://perust.github.io/blog/2026-07-07-kpass-card-update-checklist/`
+- `https://perust.github.io/blog/2026-07-07-second-half-policy-changes-checklist/`
+- `https://perust.github.io/blog/2026-07-08-kakao-card-receipt-shopping-points/`
+- `https://perust.github.io/blog/2026-07-08-phone-opening-identity-check/`
 - `https://perust.github.io/blog/2026-07-09-gpt-5-6-release-preview-checklist/`
 
 **이 문서는 아래 작업이 실행됐다고 주장하지 않는다 — 계정 인증이 필요해 사용자가 직접 해야 하는 다음 단계다.**
 
-- [ ] **NEXT MANUAL — Google Search Console**: `Sitemaps`에서 `https://perust.github.io/sitemap-index.xml`을 재제출해 제거된 URL 이 sitemap 에 없음을 재크롤링 신호로 알린다. 색인에 이미 잡혀 있던 위 5개 URL 은 `삭제(Removals) > 임시 삭제 요청`으로 임시 제거를 걸어 색인에서 빨리 내리고, 이후 크롤러가 404 를 확인하면 영구 제거된다(410이 아닌 404 라도 반복 크롤 후 제거됨). `URL 검사` 도구로 위 URL 몇 개를 조회해 "찾을 수 없음(404)" 상태가 보고되는지 확인한다.
-- [ ] **NEXT MANUAL — Bing Webmaster Tools**: sitemap 재제출. URL 제거 도구(Site Explorer/URL removal)가 있으면 위 5개 URL 을 제출한다.
-- [ ] **NEXT MANUAL — 네이버 서치어드바이저**: `사이트맵 제출` 재제출. `웹마스터도구 > 요청 > 웹페이지 검색 제외`가 제공되면 위 5개 URL 의 검색 제외를 요청한다.
+- [ ] **NEXT MANUAL — Google Search Console**: `Sitemaps`에서 `https://perust.github.io/sitemap-index.xml`을 재제출해 제거된 URL 이 sitemap 에 없음을 재크롤링 신호로 알린다. 색인에 이미 잡혀 있던 위 13개 URL 은 `삭제(Removals) > 임시 삭제 요청`으로 임시 제거를 걸어 색인에서 빨리 내리고, 이후 크롤러가 404 를 확인하면 영구 제거된다(410이 아닌 404 라도 반복 크롤 후 제거됨). `URL 검사` 도구로 위 URL 몇 개를 조회해 "찾을 수 없음(404)" 상태가 보고되는지 확인한다.
+- [ ] **NEXT MANUAL — Bing Webmaster Tools**: sitemap 재제출. URL 제거 도구(Site Explorer/URL removal)가 있으면 위 13개 URL 을 제출한다.
+- [ ] **NEXT MANUAL — 네이버 서치어드바이저**: `사이트맵 제출` 재제출. `웹마스터도구 > 요청 > 웹페이지 검색 제외`가 제공되면 위 13개 URL 의 검색 제외를 요청한다.
 - [ ] **NEXT MANUAL — 사후 확인**: 1~2주 뒤 Search Console `페이지` 리포트에서 위 URL 들이 "찾을 수 없음(404)"으로 정리되는지 확인한다. 외부 유입이 확인되는 링크가 있으면 그때 개별적으로 대응을 재검토한다(자동 redirect 는 여전히 걸지 않는다).
 
 ## Daum/Kakao

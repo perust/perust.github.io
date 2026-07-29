@@ -7,13 +7,25 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { appendFileSync, chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  appendFileSync,
+  chmodSync,
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { devNull, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { MIN_POST_BODY_CHARS } from '../../src/config/taxonomy.ts';
 import { SECOND_CURATION_MANIFEST_RELPATH } from '../lib/second-curation-manifest.mjs';
+import { SECOND_CURATION_POLICY_ANCHOR } from '../lib/second-curation-policy-anchor.mjs';
 
 const SCRIPT = fileURLToPath(new URL('../check-publish-policy.mjs', import.meta.url));
 const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url));
@@ -78,9 +90,13 @@ function writeDist(root) {
     join(root, 'dist', 'sitemap-0.xml'),
     '<?xml version="1.0" encoding="UTF-8"?><urlset><url><loc>https://example.com/blog/kept-post/</loc></url></urlset>\n',
   );
+  writeFileSync(
+    join(root, 'dist', 'rss.xml'),
+    '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><item><link>https://example.com/blog/kept-post/</link></item></channel></rss>\n',
+  );
 }
 
-// 프로덕션 immutable anchor와 같은 실제 5편/21 payload 보관 세트를 fixture로 복사한다.
+// 프로덕션 immutable anchor와 같은 실제 13편/42 payload 보관 세트를 fixture로 복사한다.
 function writeArchiveSet(root) {
   cpSync(join(REPO_ROOT, ARCH_DIR), join(root, ARCH_DIR), { recursive: true });
 }
@@ -118,6 +134,86 @@ function makeFixture(t, { archiveUntracked = false } = {}) {
 }
 
 const newPostPath = (root, name) => join(root, 'src', 'content', 'blog', name);
+
+// --- 실제 저장소 대상: 2차 큐레이션 확정 13편 ---
+
+// AdSense 저가치 콘텐츠 감사에서 공개 중단이 확정된 슬러그 전체.
+// policy anchor 와 독립적으로 여기에 적어 둔다 — anchor 를 줄여서 검사를 빠져나가는 회귀를 잡기 위함이다.
+const SECOND_CURATION_SLUGS = [
+  // 1차 확정(5편)
+  '2026-06-28-money-weekly-2026-june-week-4',
+  '2026-07-02-investment-data-records-not-emotion',
+  '2026-07-03-productivity-apps-system-first',
+  '2026-07-03-reduce-procrastination-small-tasks',
+  '2026-07-09-gpt-5-6-release-preview-checklist',
+  // 2차 확정(8편)
+  '2026-07-07-ai-agent-cost-power',
+  '2026-07-07-ai-chatbot-answer-verification',
+  '2026-07-07-ai-coding-tool-trust-claude-code',
+  '2026-07-07-gemini-image-generation-free',
+  '2026-07-07-kpass-card-update-checklist',
+  '2026-07-07-second-half-policy-changes-checklist',
+  '2026-07-08-kakao-card-receipt-shopping-points',
+  '2026-07-08-phone-opening-identity-check',
+];
+
+/** dir 아래 모든 파일의 저장소 상대 경로(posix). */
+function filesUnder(root, dir) {
+  const abs = join(root, dir);
+  if (!existsSync(abs)) return [];
+  const out = [];
+  for (const entry of readdirSync(abs, { withFileTypes: true })) {
+    const rel = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) out.push(...filesUnder(root, rel));
+    else out.push(rel);
+  }
+  return out;
+}
+
+test('실제 저장소: 확정 13편이 policy anchor 에 모두 있고 보관본 해시가 일치한다', () => {
+  const anchored = SECOND_CURATION_POLICY_ANCHOR.posts.map((post) => post.slug).sort();
+  assert.deepEqual(
+    anchored,
+    [...SECOND_CURATION_SLUGS].sort(),
+    'immutable policy anchor 는 확정 13편을 정확히 담아야 함(축소·누락 금지)',
+  );
+  for (const post of SECOND_CURATION_POLICY_ANCHOR.posts) {
+    for (const file of post.files) {
+      const archive = join(REPO_ROOT, file.archivePath);
+      assert.ok(existsSync(archive), `보관본이 있어야 함: ${file.archivePath}`);
+      assert.equal(
+        sha256(readFileSync(archive)),
+        file.sha256,
+        `보관본이 anchor 해시와 byte-identical 해야 함: ${file.archivePath}`,
+      );
+    }
+  }
+});
+
+test('실제 저장소: 확정 13편의 소스와 slug-addressable public 자산이 공개 트리에 없다', () => {
+  const publicFiles = [...filesUnder(REPO_ROOT, 'public/images/posts'), ...filesUnder(REPO_ROOT, 'public/og/posts')];
+  for (const slug of SECOND_CURATION_SLUGS) {
+    assert.ok(
+      !existsSync(join(REPO_ROOT, 'src', 'content', 'blog', `${slug}.md`)),
+      `보관 슬러그 ${slug} 이(가) src/content/blog 에 남아 있으면 안 됨`,
+    );
+    const leftovers = publicFiles.filter((rel) => rel.split('/').pop().startsWith(slug));
+    assert.deepEqual(leftovers, [], `보관 슬러그 ${slug} 의 public 자산이 남아 있으면 안 됨`);
+  }
+});
+
+// src/ 에는 글 본문·내부 링크·홈 큐레이션·주제 허브·카테고리 설정이 모두 들어 있다.
+// (보관 슬러그를 정당하게 담는 곳은 enforcement anchor·매니페스트뿐이라 scripts/ 는 대상이 아니다.)
+test('실제 저장소: 확정 13편의 슬러그를 참조하는 소스·설정이 없다', () => {
+  const hits = [];
+  for (const rel of filesUnder(REPO_ROOT, 'src')) {
+    const text = readFileSync(join(REPO_ROOT, rel), 'utf8');
+    for (const slug of SECOND_CURATION_SLUGS) {
+      if (text.includes(slug)) hits.push(`${rel} → ${slug}`);
+    }
+  }
+  assert.deepEqual(hits, [], '내부 링크·홈 큐레이션·주제 허브·설정에 보관 슬러그 참조가 없어야 함');
+});
 
 // --- 양성 대조군 ---
 
@@ -345,10 +441,18 @@ test('manifest 항목 삭제 후 빠진 글 source를 복원해도 immutable anc
   assertFailWith(runValidator(root), 'immutable policy anchor');
 });
 
-test('manifest만 4편으로 축소하면 실패한다', (t) => {
+test('manifest만 12편으로 축소하면 실패한다', (t) => {
   const root = makeFixture(t);
   mutateManifest(root, (manifest) => { manifest.posts.pop(); });
-  assertFailWith(runValidator(root), '정확히 5');
+  assertFailWith(runValidator(root), '정확히 13');
+});
+
+test('manifest에서 2차 확정 8편 중 1편을 빼고 그 원문을 되살려도 immutable anchor가 실패시킨다', (t) => {
+  const root = makeFixture(t);
+  const slug = '2026-07-08-phone-opening-identity-check';
+  mutateManifest(root, (manifest) => { manifest.posts = manifest.posts.filter((post) => post.slug !== slug); });
+  cpSync(join(root, ARCH_DIR, `${slug}.md`), newPostPath(root, `${slug}.md`));
+  assertFailWith(runValidator(root), 'immutable policy anchor');
 });
 
 test('존재하는 파일로 빠져나가는 archivePath traversal도 실패한다', (t) => {
@@ -437,6 +541,45 @@ test('slash 없는 absolute 보관 링크도 dist HTML 에 재등장하면 실�
     '<a href="https://perust.github.io/blog/2026-07-03-reduce-procrastination-small-tasks">old</a>\n',
   );
   assertFailWith(runValidator(root), '내부 링크');
+});
+
+test('보관 슬러그가 RSS 피드에 재등장하면 실패한다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    join(root, 'dist', 'rss.xml'),
+    '<?xml version="1.0"?><rss><channel><item><link>https://example.com/blog/2026-07-07-ai-agent-cost-power/</link></item></channel></rss>\n',
+  );
+  assertFailWith(runValidator(root), 'RSS 피드');
+});
+
+test('dist/rss.xml 이 없으면 실패한다 (피드 검사를 조용히 건너뛰지 않는다)', (t) => {
+  const root = makeFixture(t);
+  rmSync(join(root, 'dist', 'rss.xml'));
+  assertFailWith(runValidator(root), 'dist/rss.xml');
+});
+
+test('보관 글의 OG 이미지가 public/og/posts 에 복원되면 실패한다', (t) => {
+  const root = makeFixture(t);
+  const slug = '2026-07-08-phone-opening-identity-check';
+  mkdirSync(join(root, 'public', 'og', 'posts'), { recursive: true });
+  cpSync(join(root, ARCH_DIR, 'og', `${slug}.png`), join(root, 'public', 'og', 'posts', `${slug}.png`));
+  assertFailWith(runValidator(root), `public/og/posts/${slug}.png 이(가) 삭제되어야 함`);
+});
+
+test('보관 글의 summary 이미지가 public/images/posts/summary 에 복원되면 실패한다', (t) => {
+  const root = makeFixture(t);
+  const name = '2026-07-07-ai-coding-tool-trust-claude-code-summary.svg';
+  mkdirSync(join(root, 'public', 'images', 'posts', 'summary'), { recursive: true });
+  cpSync(join(root, ARCH_DIR, 'images', 'summary', name), join(root, 'public', 'images', 'posts', 'summary', name));
+  assertFailWith(runValidator(root), `public/images/posts/summary/${name} 이(가) 삭제되어야 함`);
+});
+
+test('보관 자산이 dist 에 그대로 복사되어 재등장하면 실패한다', (t) => {
+  const root = makeFixture(t);
+  const slug = '2026-07-07-gemini-image-generation-free';
+  mkdirSync(join(root, 'dist', 'og', 'posts'), { recursive: true });
+  cpSync(join(root, ARCH_DIR, 'og', `${slug}.png`), join(root, 'dist', 'og', 'posts', `${slug}.png`));
+  assertFailWith(runValidator(root), `보관 자산 /og/posts/${slug}.png 이(가) dist 에 재등장하면 안 됨`);
 });
 
 test('보관 자산 경로를 참조하는 dist HTML 이 있으면 실패한다', (t) => {

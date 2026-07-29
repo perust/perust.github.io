@@ -1,7 +1,7 @@
 {
   "curation": "adsense-remediation-second-curation",
   "curationDate": "2026-07-21",
-  "description": "2차 큐레이션으로 공개에서 내린 5개 글의 사람이 읽는 보관 선언 사본. enforcement SSOT는 scripts/lib/second-curation-policy-anchor.mjs이며 이 파일은 anchor와 정확히 일치해야 한다.",
+  "description": "2차 큐레이션으로 공개에서 내린 13개 글의 사람이 읽는 보관 선언 사본. enforcement SSOT는 scripts/lib/second-curation-policy-anchor.mjs이며 이 파일은 anchor와 정확히 일치해야 한다.",
   "removalPolicy": {
     "redirect": "none",
     "expectedStatus": 404,
@@ -137,6 +137,180 @@
           "publicPath": "public/og/posts/2026-07-03-reduce-procrastination-small-tasks.png",
           "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-03-reduce-procrastination-small-tasks.png",
           "sha256": "4bdafc06dcf15a011bd6dff685dea791bb3d4012d64aaa9edcb072854f2b24ad"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-07-ai-agent-cost-power",
+      "publicUrlPath": "/blog/2026-07-07-ai-agent-cost-power/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-07-ai-agent-cost-power.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-07-ai-agent-cost-power.md",
+          "sha256": "38f7ecc2bef850b089847186475cdca3e1711bdc158e868f7361d8ee6a0e7eb0"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/summary/2026-07-07-ai-agent-cost-power-summary.svg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-ai-agent-cost-power-summary.svg",
+          "sha256": "dcc6ebdb8cb2984e745112963513a85820b020a09f046ee1a8a8f24bf5a961f4"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-07-ai-agent-cost-power.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-07-ai-agent-cost-power.png",
+          "sha256": "9372e35d483b55444f7bffaf0c149096dfc96f707f353d53d73eb4e0241c43bd"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-07-ai-chatbot-answer-verification",
+      "publicUrlPath": "/blog/2026-07-07-ai-chatbot-answer-verification/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-07-ai-chatbot-answer-verification.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-07-ai-chatbot-answer-verification.md",
+          "sha256": "d079b217e23a4062479b45e25f8d0eb3bccc1133a540c252d145285bf7473f50"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/summary/2026-07-07-ai-chatbot-answer-verification-summary.svg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-ai-chatbot-answer-verification-summary.svg",
+          "sha256": "4aa25cb7effdc6875d581128053941b107cbec680605ea4562a4db2397bac66e"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-07-ai-chatbot-answer-verification.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-07-ai-chatbot-answer-verification.png",
+          "sha256": "aacce97314bc8f40da1693f6c89014dd1069afaab59818d6f4d177f6e47a4888"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-07-ai-coding-tool-trust-claude-code",
+      "publicUrlPath": "/blog/2026-07-07-ai-coding-tool-trust-claude-code/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-07-ai-coding-tool-trust-claude-code.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-07-ai-coding-tool-trust-claude-code.md",
+          "sha256": "81ecfa9935e780036d4dd2676cca64b6f0afabed476bb6f9e76cd5b29429b70b"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/summary/2026-07-07-ai-coding-tool-trust-claude-code-summary.svg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-ai-coding-tool-trust-claude-code-summary.svg",
+          "sha256": "87dd0f28cd27a4ef958c77cbaa70691f618a4b7276738b1c155ddb24be70ad98"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-07-ai-coding-tool-trust-claude-code.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-07-ai-coding-tool-trust-claude-code.png",
+          "sha256": "36e8846120f8acba667395ac5c7ef308b6a2b31d7cad778fce6ffab129617e73"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-07-gemini-image-generation-free",
+      "publicUrlPath": "/blog/2026-07-07-gemini-image-generation-free/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-07-gemini-image-generation-free.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-07-gemini-image-generation-free.md",
+          "sha256": "c62de6218c7e874bfdad0a195b1a157e6a3a450b792d1e18a6624dc15d8ff081"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/summary/2026-07-07-gemini-image-generation-free-summary.svg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-gemini-image-generation-free-summary.svg",
+          "sha256": "020d4ec0a1234e92e80720c9ad7b60298f8a4e8d874fcad00e0d7a854d3a522f"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-07-gemini-image-generation-free.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-07-gemini-image-generation-free.png",
+          "sha256": "865456b55a136b0797d0991490dadcce66b7771b089ec80fb42c596c8969c874"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-07-kpass-card-update-checklist",
+      "publicUrlPath": "/blog/2026-07-07-kpass-card-update-checklist/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-07-kpass-card-update-checklist.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-07-kpass-card-update-checklist.md",
+          "sha256": "cbfc55617e57c57afaaee9db621f9316e269f8780196bb8991edb896e23193d5"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-07-kpass-card-update-checklist.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-07-kpass-card-update-checklist.png",
+          "sha256": "a9ada881faf7debaa3bbdb2ce4593b9937fa20699ff2f6fc8d9d8a98cdefaec9"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-07-second-half-policy-changes-checklist",
+      "publicUrlPath": "/blog/2026-07-07-second-half-policy-changes-checklist/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-07-second-half-policy-changes-checklist.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-07-second-half-policy-changes-checklist.md",
+          "sha256": "534cc0192797c3a9649a744e9d45836f1a2cca1f3a19a376a64af920d02fb9fd"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-07-second-half-policy-changes-checklist.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-07-second-half-policy-changes-checklist.png",
+          "sha256": "ca64f65da2d96ec626646687723cadde6eee4250a0fdea0e0ae77f084892e2b0"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-08-kakao-card-receipt-shopping-points",
+      "publicUrlPath": "/blog/2026-07-08-kakao-card-receipt-shopping-points/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-08-kakao-card-receipt-shopping-points.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-08-kakao-card-receipt-shopping-points.md",
+          "sha256": "2f06ee7ada32af0f48583461d84e9f8a89cc7ab29874881180d1ec6a6485c2d6"
+        },
+        {
+          "kind": "image",
+          "publicPath": "public/images/posts/summary/2026-07-08-kakao-card-receipt-shopping-points-summary.svg",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-08-kakao-card-receipt-shopping-points-summary.svg",
+          "sha256": "66b9fd4c5ad393a1cb4b9d27df537b07d1483fcf00acef1af163343934db6683"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-08-kakao-card-receipt-shopping-points.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-08-kakao-card-receipt-shopping-points.png",
+          "sha256": "d3872224adb00f44b02dd6589b6b2cc1f13d39dfa1fda04b1a990f7917ca9701"
+        }
+      ]
+    },
+    {
+      "slug": "2026-07-08-phone-opening-identity-check",
+      "publicUrlPath": "/blog/2026-07-08-phone-opening-identity-check/",
+      "files": [
+        {
+          "kind": "post",
+          "publicPath": "src/content/blog/2026-07-08-phone-opening-identity-check.md",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/2026-07-08-phone-opening-identity-check.md",
+          "sha256": "e586f01d51f5dc115f270cea234de4a13f43953fcea35f213f8fcd0b6df79287"
+        },
+        {
+          "kind": "og",
+          "publicPath": "public/og/posts/2026-07-08-phone-opening-identity-check.png",
+          "archivePath": "content-archive/adsense-remediation/2026-07-21/og/2026-07-08-phone-opening-identity-check.png",
+          "sha256": "76d9ffdb529fe4edb559a64377c6732c42f30c69df397e218e40249389d129be"
         }
       ]
     },

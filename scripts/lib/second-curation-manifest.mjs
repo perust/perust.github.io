@@ -11,7 +11,9 @@ const ARCHIVE_ROOT = 'content-archive/adsense-remediation/2026-07-21';
 const PUBLIC_ROOTS = ['src/content/blog', 'public/images/posts', 'public/og/posts'];
 const SHA256_RE = /^[0-9a-f]{64}$/;
 const FILE_KINDS = new Set(['post', 'image', 'og']);
-const EXPECTED_COUNTS = { post: 5, image: 11, og: 5 };
+const EXPECTED_POSTS = 13;
+const EXPECTED_PAYLOADS = 42;
+const EXPECTED_COUNTS = { post: 13, image: 16, og: 13 };
 
 function isInside(root, candidate) {
   const rel = relative(root, candidate);
@@ -59,7 +61,9 @@ export function validateSecondCurationManifest(manifest, rootDir = process.cwd()
     problems.push('posts 배열이 없음');
     return problems;
   }
-  if (manifest.posts.length !== 5) problems.push(`posts 는 정확히 5편이어야 함 (현재 ${manifest.posts.length})`);
+  if (manifest.posts.length !== EXPECTED_POSTS) {
+    problems.push(`posts 는 정확히 ${EXPECTED_POSTS}편이어야 함 (현재 ${manifest.posts.length})`);
+  }
 
   const slugs = new Set();
   const publicPaths = new Set();
@@ -94,7 +98,9 @@ export function validateSecondCurationManifest(manifest, rootDir = process.cwd()
     }
   }
 
-  if (actualPayloads.length !== 21) problems.push(`payload 는 정확히 21개여야 함 (현재 ${actualPayloads.length})`);
+  if (actualPayloads.length !== EXPECTED_PAYLOADS) {
+    problems.push(`payload 는 정확히 ${EXPECTED_PAYLOADS}개여야 함 (현재 ${actualPayloads.length})`);
+  }
   for (const [kind, expected] of Object.entries(EXPECTED_COUNTS)) {
     if (kinds[kind] !== expected) problems.push(`kind=${kind} 는 정확히 ${expected}개여야 함 (현재 ${kinds[kind]})`);
   }

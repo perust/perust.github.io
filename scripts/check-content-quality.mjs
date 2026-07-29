@@ -40,7 +40,7 @@ const DIST = 'dist';
 const BLOG_SRC = 'src/content/blog';
 
 // content-archive/adsense-remediation/ 으로 이동해 공개 빌드에서 제거하는 슬러그.
-// 1차 보관(2026-07-21) 14편은 여기 나열하고, 2차 큐레이션 5편은
+// 1차 보관(2026-07-21) 14편은 여기 나열하고, 2차 큐레이션 13편은
 // second-curation-manifest.json(SSOT)에서 읽는다 — 슬러그 목록을 중복 정의하지 않는다.
 const ROUND1_ARCHIVED_SLUGS = [
   // P0 저가치·비공개 전환

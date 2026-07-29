@@ -6,8 +6,8 @@ dist/
 # Local implementation evidence and unpublished content archives
 .hermes/
 # content-archive 는 기본적으로 비공개(무시)다. 아래 예외는 2차 큐레이션(2026-07-21)으로
-# 공개에서 내린 5개 글의 보존본 21개 파일과 그 매니페스트(SSOT)만 Git 추적을 허용한다.
-# 1차 보관 14편과 round-2 후보 8편 등 다른 아카이브 파일은 계속 무시된다.
+# 공개에서 내린 13개 글의 보존본 42개 파일과 그 매니페스트(SSOT)만 Git 추적을 허용한다.
+# 1차 보관 14편 등 다른 아카이브 파일은 계속 무시된다.
 content-archive/**
 !content-archive/adsense-remediation/
 !content-archive/adsense-remediation/2026-07-21/
@@ -16,6 +16,14 @@ content-archive/**
 !content-archive/adsense-remediation/2026-07-21/2026-07-02-investment-data-records-not-emotion.md
 !content-archive/adsense-remediation/2026-07-21/2026-07-03-productivity-apps-system-first.md
 !content-archive/adsense-remediation/2026-07-21/2026-07-03-reduce-procrastination-small-tasks.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-07-ai-agent-cost-power.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-07-ai-chatbot-answer-verification.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-07-ai-coding-tool-trust-claude-code.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-07-gemini-image-generation-free.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-07-kpass-card-update-checklist.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-07-second-half-policy-changes-checklist.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-08-kakao-card-receipt-shopping-points.md
+!content-archive/adsense-remediation/2026-07-21/2026-07-08-phone-opening-identity-check.md
 !content-archive/adsense-remediation/2026-07-21/2026-07-09-gpt-5-6-release-preview-checklist.md
 !content-archive/adsense-remediation/2026-07-21/images/
 !content-archive/adsense-remediation/2026-07-21/images/2026-06-28-money-weekly-2026-june-week-4-01.jpg
@@ -29,10 +37,23 @@ content-archive/**
 !content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-04.jpg
 !content-archive/adsense-remediation/2026-07-21/images/2026-07-02-investment-data-records-not-emotion-05.jpg
 !content-archive/adsense-remediation/2026-07-21/images/summary/
+!content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-ai-agent-cost-power-summary.svg
+!content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-ai-chatbot-answer-verification-summary.svg
+!content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-ai-coding-tool-trust-claude-code-summary.svg
+!content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-07-gemini-image-generation-free-summary.svg
+!content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-08-kakao-card-receipt-shopping-points-summary.svg
 !content-archive/adsense-remediation/2026-07-21/images/summary/2026-07-09-gpt-5-6-release-preview-checklist-summary.svg
 !content-archive/adsense-remediation/2026-07-21/og/
 !content-archive/adsense-remediation/2026-07-21/og/2026-06-28-money-weekly-2026-june-week-4.png
 !content-archive/adsense-remediation/2026-07-21/og/2026-07-02-investment-data-records-not-emotion.png
 !content-archive/adsense-remediation/2026-07-21/og/2026-07-03-productivity-apps-system-first.png
 !content-archive/adsense-remediation/2026-07-21/og/2026-07-03-reduce-procrastination-small-tasks.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-07-ai-agent-cost-power.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-07-ai-chatbot-answer-verification.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-07-ai-coding-tool-trust-claude-code.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-07-gemini-image-generation-free.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-07-kpass-card-update-checklist.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-07-second-half-policy-changes-checklist.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-08-kakao-card-receipt-shopping-points.png
+!content-archive/adsense-remediation/2026-07-21/og/2026-07-08-phone-opening-identity-check.png
 !content-archive/adsense-remediation/2026-07-21/og/2026-07-09-gpt-5-6-release-preview-checklist.png

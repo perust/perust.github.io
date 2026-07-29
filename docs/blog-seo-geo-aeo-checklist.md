@@ -63,7 +63,7 @@ valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | o
 
 ### 2차 큐레이션 immutable policy anchor와 보관 선언
 
-2차 큐레이션(2026-07-21)으로 공개에서 내린 5개 글의 enforcement 단일 진실 소스는 `scripts/lib/second-curation-policy-anchor.mjs`의 immutable policy anchor다. `content-archive/adsense-remediation/2026-07-21/second-curation-manifest.json`은 사람이 읽는 보관 선언 사본이며, 고정 5개 slug와 21개 payload의 경로·kind·sha256 및 404 정책을 anchor와 정확히 일치시켜야 한다. `check:publish-policy`가 이 일치 여부와 보관 파일 존재·Git 추적 가능 상태·체크섬·원본 공개 경로 삭제·소스/dist/sitemap/내부 링크 재등장을 검증한다. 제거된 URL의 404 정책과 Search Console 후속 작업은 [`search-engine-submission-checklist.md`](search-engine-submission-checklist.md)를 따른다.
+2차 큐레이션(2026-07-21)으로 공개에서 내린 13개 글의 enforcement 단일 진실 소스는 `scripts/lib/second-curation-policy-anchor.mjs`의 immutable policy anchor다. `content-archive/adsense-remediation/2026-07-21/second-curation-manifest.json`은 사람이 읽는 보관 선언 사본이며, 고정 13개 slug와 42개 payload의 경로·kind·sha256 및 404 정책을 anchor와 정확히 일치시켜야 한다. `check:publish-policy`가 이 일치 여부와 보관 파일 존재·Git 추적 가능 상태·체크섬·원본 공개 경로 삭제·소스/dist/sitemap/RSS/내부 링크/public 자산 재등장을 검증한다. 제거된 URL의 404 정책과 Search Console 후속 작업은 [`search-engine-submission-checklist.md`](search-engine-submission-checklist.md)를 따른다.
 
 ## 2. 제목 (검색 제목)
 

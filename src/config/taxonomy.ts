@@ -123,7 +123,6 @@ export const POST_CATEGORY_OVERRIDES: Record<string, string> = {
   '2026-07-11-financial-ai-security-network-separation': '경제 정보',
   '2026-07-11-kakaopay-privacy-payment-checklist': '경제 정보',
   '2026-07-03-playstation-disc-digital-only-2028': 'AI/IT 정보',
-  '2026-07-08-phone-opening-identity-check': 'AI/IT 정보',
 };
 
 /** 과거 라벨이든 이미 정식 이름이든, 정식 카테고리명으로 변환한다. 매핑에 없으면 에러로 막는다. */
@@ -247,8 +246,8 @@ export const TOPIC_HUBS: TopicHub[] = [
       },
       {
         label: 'AI 에이전트·보안',
-        description: 'MCP 연결, 에이전트 비용 구조 등 AI 도구를 실무에 붙일 때 확인할 것.',
-        slugs: ['2026-07-07-mcp-security-ai-tools', '2026-07-07-ai-agent-cost-power'],
+        description: 'MCP 연결, 에이전트 서버 설치 등 AI 도구를 실무에 붙일 때 확인할 것.',
+        slugs: ['2026-07-07-mcp-security-ai-tools', '2026-07-08-hostinger-vps-hermes-agent-install-guide'],
       },
       {
         label: '국내 AI 정책',
