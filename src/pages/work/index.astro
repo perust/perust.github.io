@@ -52,6 +52,14 @@ const categoryCounts = Object.fromEntries(
   Object.keys(categoryLabels).map((category) => [category, workStack.filter((item) => item.category === category).length]),
 ) as Record<WorkCategory, number>;
 
+const latestUpdated = workStack.reduce((latest, item) => item.updated > latest ? item.updated : latest, '');
+const categoryLatestUpdated = Object.fromEntries(
+  Object.keys(categoryLabels).map((category) => [
+    category,
+    workStack.filter((item) => item.category === category).reduce((latest, item) => item.updated > latest ? item.updated : latest, ''),
+  ]),
+) as Record<WorkCategory, string>;
+
 const itemTarget = (item: WorkItem) => item.external || item.href?.startsWith('/homepage') || item.href?.startsWith('/study') ? '_blank' : undefined;
 const itemRel = (item: WorkItem) => itemTarget(item) ? 'noopener noreferrer' : undefined;
 const site = Astro.site ?? new URL('https://perust.github.io');
@@ -79,11 +87,11 @@ const workLd = {
       <div class="section-heading"><p class="section-kicker">Archive &amp; Lab</p><h2 id="stack-title">작업물 전체 보기</h2><p>종류를 골라 빠르게 찾거나, 전체 목록을 최근 작업순으로 볼 수 있습니다.</p></div>
       <nav class="work-categories" aria-label="작업물 종류 필터">
         <button class="work-category is-active" type="button" data-work-filter="all" aria-pressed="true">
-          <span>전체</span><strong>{workStack.length}</strong><small>모든 작업물</small>
+          <span>전체</span><strong>{workStack.length}</strong><small>모든 작업물</small><time datetime={latestUpdated.replaceAll('.', '-')}>최근 업데이트 {latestUpdated}</time>
         </button>
         {(Object.entries(categoryLabels) as [WorkCategory, { label: string; desc: string }][]).map(([category, info]) => (
           <button class="work-category" type="button" data-work-filter={category} aria-pressed="false">
-            <span>{info.label}</span><strong>{categoryCounts[category]}</strong><small>{info.desc}</small>
+            <span>{info.label}</span><strong>{categoryCounts[category]}</strong><small>{info.desc}</small><time datetime={categoryLatestUpdated[category].replaceAll('.', '-')}>최근 업데이트 {categoryLatestUpdated[category]}</time>
           </button>
         ))}
       </nav>
@@ -198,7 +206,7 @@ const workLd = {
   }
 
   .work-category strong {
-    grid-row: 1 / 3;
+    grid-row: 1 / 4;
     grid-column: 2;
     align-self: center;
     color: var(--primary);
@@ -211,6 +219,12 @@ const workLd = {
     font-size: 0.72rem;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .work-category time {
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
   }
 
   .filter-result {
