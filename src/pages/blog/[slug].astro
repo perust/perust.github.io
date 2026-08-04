@@ -177,3 +177,157 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     </aside>
   </main>
 </BaseLayout>
+
+<script is:inline>
+  const initializeImageCarousels = () => {
+    document.querySelectorAll('[data-image-carousel]').forEach((carousel) => {
+      if (carousel.dataset.carouselReady === 'true') return;
+
+      const track = carousel.querySelector('.image-carousel-track');
+      const items = Array.from(track?.querySelectorAll('img') ?? []);
+      const previous = carousel.querySelector('[data-carousel-prev]');
+      const next = carousel.querySelector('[data-carousel-next]');
+      const status = carousel.querySelector('[data-carousel-status]');
+      if (!track || !previous || !next || !status || items.length === 0) return;
+
+      carousel.dataset.carouselReady = 'true';
+
+      const currentIndex = () => {
+        const scrollLeft = track.scrollLeft;
+        return items.reduce((closest, item, index) => {
+          const currentDistance = Math.abs(items[closest].offsetLeft - scrollLeft);
+          const itemDistance = Math.abs(item.offsetLeft - scrollLeft);
+          return itemDistance < currentDistance ? index : closest;
+        }, 0);
+      };
+
+      const update = () => {
+        const index = currentIndex();
+        const maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+        previous.disabled = track.scrollLeft <= 4;
+        next.disabled = track.scrollLeft >= maxScroll - 4;
+        status.textContent = `사진 ${index + 1} / ${items.length}`;
+      };
+
+      const move = (delta) => {
+        const targetIndex = Math.max(0, Math.min(items.length - 1, currentIndex() + delta));
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        track.scrollTo({ left: items[targetIndex].offsetLeft, behavior });
+      };
+
+      previous.addEventListener('click', () => move(-1));
+      next.addEventListener('click', () => move(1));
+      track.addEventListener('scroll', update, { passive: true });
+      track.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        move(event.key === 'ArrowLeft' ? -1 : 1);
+      });
+      window.addEventListener('resize', update, { passive: true });
+      items.forEach((item) => item.addEventListener('load', update, { once: true }));
+      update();
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeImageCarousels, { once: true });
+  } else {
+    initializeImageCarousels();
+  }
+</script>
+
+<style is:global>
+  .post-article .image-carousel {
+    margin: 1.1rem 0 1.6rem;
+  }
+
+  .post-article .image-carousel-track {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    overflow-x: auto;
+    padding: 0.4rem 0 0.8rem;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    overscroll-behavior-inline: contain;
+  }
+
+  .post-article .image-carousel-track img {
+    display: block;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: min(82vw, 620px);
+    height: auto;
+    max-height: 390px;
+    object-fit: contain;
+    scroll-snap-align: start;
+    margin: 0;
+  }
+
+  .post-article .image-carousel-controls {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.2rem;
+  }
+
+  .post-article .image-carousel-controls button {
+    min-height: 2.6rem;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid rgba(37, 99, 235, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #1d4ed8;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease, opacity 160ms ease;
+  }
+
+  .post-article .image-carousel-controls button:first-child {
+    justify-self: start;
+  }
+
+  .post-article .image-carousel-controls button:last-child {
+    justify-self: end;
+  }
+
+  .post-article .image-carousel-controls button:hover:not(:disabled),
+  .post-article .image-carousel-controls button:focus-visible {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+
+  .post-article .image-carousel-controls button:disabled {
+    opacity: 0.38;
+    cursor: default;
+  }
+
+  .post-article .image-carousel-status {
+    min-width: 5.8rem;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .post-article .image-carousel-track img {
+      max-width: 82vw;
+      max-height: 320px;
+    }
+
+    .post-article .image-carousel-controls {
+      gap: 0.45rem;
+    }
+
+    .post-article .image-carousel-controls button {
+      min-height: 2.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+    }
+  }
+</style>

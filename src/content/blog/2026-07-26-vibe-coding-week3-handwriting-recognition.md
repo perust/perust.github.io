@@ -105,11 +105,18 @@ Claude Code는 화면 구성에 그치지 않고 실제 인식에 필요한 MNIS
 
 아래 사진들은 이번에 새로 만든 프로그램이 아니라 이전 AI 버전으로 같은 미션을 진행했을 때 당시의 실습 이미지입니다.
 
-<div role="region" aria-label="이전 AI 버전 손글씨 인식 결과" tabindex="0" style="display: flex; align-items: flex-start; gap: 0.8rem; overflow-x: auto; padding: 0.4rem 0 0.8rem; scroll-snap-type: x mandatory;">
-  <img src="/images/posts/2026-07-26-vibe-coding-week3/01-prompt.webp" alt="이전 AI 버전에 손글씨 인식 프로그램 제작을 요청한 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-07-26-vibe-coding-week3/02-desktop-initial.webp" alt="이전 AI 버전으로 만든 데스크톱 프로그램 초기 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-07-26-vibe-coding-week3/03-desktop-six.webp" alt="이전 데스크톱 프로그램이 숫자 6을 인식한 결과" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-07-26-vibe-coding-week3/04-web-five.webp" alt="이전 웹 프로그램이 숫자 5를 인식한 결과" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(78vw, 440px); height: auto; max-height: 320px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+<div class="image-carousel" data-image-carousel>
+  <div class="image-carousel-track" role="region" aria-label="이전 AI 버전 손글씨 인식 결과" tabindex="0">
+    <img src="/images/posts/2026-07-26-vibe-coding-week3/01-prompt.webp" alt="이전 AI 버전에 손글씨 인식 프로그램 제작을 요청한 화면" loading="lazy" />
+    <img src="/images/posts/2026-07-26-vibe-coding-week3/02-desktop-initial.webp" alt="이전 AI 버전으로 만든 데스크톱 프로그램 초기 화면" loading="lazy" />
+    <img src="/images/posts/2026-07-26-vibe-coding-week3/03-desktop-six.webp" alt="이전 데스크톱 프로그램이 숫자 6을 인식한 결과" loading="lazy" />
+    <img src="/images/posts/2026-07-26-vibe-coding-week3/04-web-five.webp" alt="이전 웹 프로그램이 숫자 5를 인식한 결과" loading="lazy" />
+  </div>
+  <div class="image-carousel-controls">
+    <button type="button" data-carousel-prev aria-label="이전 사진">← 이전</button>
+    <span class="image-carousel-status" data-carousel-status role="status" aria-live="polite">사진 1 / 4</span>
+    <button type="button" data-carousel-next aria-label="다음 사진">다음 →</button>
+  </div>
 </div>
 
 이전에는 손글씨 프로그램을 만들어 달라고 처음 요청했을때 MNIST 학습 없이 화면과 기능부터 만들어줬었습니다.

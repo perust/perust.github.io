@@ -62,11 +62,18 @@ valueType: "experience"
 
 뽀모도로 타이머는 숫자만 표시하는 형태와 시간이 줄어드는 모습을 볼 수 있는 원형 타이머를 만들었습니다. 기본 집중 시간과 휴식 시간, 반복 횟수도 바꿀 수 있습니다.
 
-<div role="region" aria-label="My What Todo 기능 화면" tabindex="0" style="display: flex; align-items: flex-start; gap: 0.8rem; overflow-x: auto; padding: 0.4rem 0 0.8rem; scroll-snap-type: x mandatory;">
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/09.webp" alt="원형으로 시각화한 뽀모도로 타이머" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/10.webp" alt="집중 시간과 휴식 시간을 바꾸는 뽀모도로 사이클 설정" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/11.webp" alt="하위 할 일과 태그, 우선순위를 설정한 할 일 목록" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/12.webp" alt="우선순위와 생성일 등으로 할 일을 정렬하는 메뉴" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+<div class="image-carousel" data-image-carousel>
+  <div class="image-carousel-track" role="region" aria-label="My What Todo 기능 화면" tabindex="0">
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/09.webp" alt="원형으로 시각화한 뽀모도로 타이머" loading="lazy" />
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/10.webp" alt="집중 시간과 휴식 시간을 바꾸는 뽀모도로 사이클 설정" loading="lazy" />
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/11.webp" alt="하위 할 일과 태그, 우선순위를 설정한 할 일 목록" loading="lazy" />
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/12.webp" alt="우선순위와 생성일 등으로 할 일을 정렬하는 메뉴" loading="lazy" />
+  </div>
+  <div class="image-carousel-controls">
+    <button type="button" data-carousel-prev aria-label="이전 사진">← 이전</button>
+    <span class="image-carousel-status" data-carousel-status role="status" aria-live="polite">사진 1 / 4</span>
+    <button type="button" data-carousel-next aria-label="다음 사진">다음 →</button>
+  </div>
 </div>
 
 ## 로컬 저장과 로그인 사이의 고민
@@ -112,11 +119,18 @@ valueType: "experience"
 
 ![quiz by quiz의 카테고리 선택 메인 화면](/images/posts/2026-08-04-vibe-coding-week4/16.webp)
 
-<div role="region" aria-label="quiz by quiz 실행 결과" tabindex="0" style="display: flex; align-items: flex-start; gap: 0.8rem; overflow-x: auto; padding: 0.4rem 0 0.8rem; scroll-snap-type: x mandatory;">
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/17.webp" alt="quiz by quiz에서 객관식 문제를 푸는 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/18.webp" alt="정답을 선택한 뒤 해설을 확인하는 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/19.webp" alt="점수와 분야별 결과가 표시된 퀴즈 결과 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
-  <img src="/images/posts/2026-08-04-vibe-coding-week4/21.webp" alt="점수와 플레이 기록이 표시된 랭킹 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+<div class="image-carousel" data-image-carousel>
+  <div class="image-carousel-track" role="region" aria-label="quiz by quiz 실행 결과" tabindex="0">
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/17.webp" alt="quiz by quiz에서 객관식 문제를 푸는 화면" loading="lazy" />
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/18.webp" alt="정답을 선택한 뒤 해설을 확인하는 화면" loading="lazy" />
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/19.webp" alt="점수와 분야별 결과가 표시된 퀴즈 결과 화면" loading="lazy" />
+    <img src="/images/posts/2026-08-04-vibe-coding-week4/21.webp" alt="점수와 플레이 기록이 표시된 랭킹 화면" loading="lazy" />
+  </div>
+  <div class="image-carousel-controls">
+    <button type="button" data-carousel-prev aria-label="이전 사진">← 이전</button>
+    <span class="image-carousel-status" data-carousel-status role="status" aria-live="polite">사진 1 / 4</span>
+    <button type="button" data-carousel-next aria-label="다음 사진">다음 →</button>
+  </div>
 </div>
 
 ## 평범한 퀴즈 앱에서 더 해보고 싶었던 것
