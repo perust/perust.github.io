@@ -9,10 +9,12 @@ const blogPagePath = new URL('src/pages/blog/[slug].astro', root);
 test('4주차 실행 링크는 화살표가 있는 버튼형 카드로 표시된다', async () => {
   const post = await readFile(postPath, 'utf8');
 
-  assert.equal((post.match(/class="app-launch-button"/g) ?? []).length, 2);
+  assert.equal((post.match(/class="app-launch-button"/g) ?? []).length, 4);
+  assert.equal((post.match(/href="\/my-what-todo\/"/g) ?? []).length, 2);
+  assert.equal((post.match(/href="https:\/\/perust\.github\.io\/quiz-by-quiz\/"/g) ?? []).length, 2);
   assert.match(post, /href="\/my-what-todo\/"[^>]*class="app-launch-button"/);
   assert.match(post, /href="https:\/\/perust\.github\.io\/quiz-by-quiz\/"[^>]*class="app-launch-button"/);
-  assert.equal((post.match(/바로가기 <span aria-hidden="true">→<\/span>/g) ?? []).length, 2);
+  assert.equal((post.match(/바로가기 <span aria-hidden="true">→<\/span>/g) ?? []).length, 4);
 
   const todoButton = post.indexOf('href="/my-what-todo/"');
   const todoExplanationEnd = post.indexOf('/15.webp');
@@ -21,6 +23,15 @@ test('4주차 실행 링크는 화살표가 있는 버튼형 카드로 표시된
 
   assert.ok(todoButton > todoExplanationEnd, '할 일 앱 버튼은 기능과 저장 방식 설명이 끝난 뒤에 있어야 한다');
   assert.ok(quizButton > quizExplanationEnd, '퀴즈 앱 버튼은 확장 아이디어 설명이 끝난 뒤에 있어야 한다');
+
+  const finalSection = post.indexOf('## 앱 직접 실행하기');
+  const finalTodoButton = post.lastIndexOf('href="/my-what-todo/"');
+  const finalQuizButton = post.lastIndexOf('href="https://perust.github.io/quiz-by-quiz/"');
+  const closingParagraph = post.indexOf('판단하는 일은 사람의 몫인 것 같습니다.');
+
+  assert.ok(finalSection > closingParagraph, '마지막 실행 구간은 회고 본문이 끝난 뒤에 있어야 한다');
+  assert.ok(finalTodoButton > finalSection && finalQuizButton > finalSection, '두 앱 실행 버튼은 마지막 실행 구간에 함께 있어야 한다');
+  assert.match(post.trim(), /quiz by quiz 실행하기[\s\S]*<\/a>$/);
 });
 
 test('퀴즈 게임 모드 설명과 실제 화면이 실행 버튼보다 먼저 표시된다', async () => {

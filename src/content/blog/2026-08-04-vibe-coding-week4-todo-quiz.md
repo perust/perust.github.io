@@ -190,3 +190,9 @@ PRD를 만들어 진행하니 요구사항을 더 명확히 정의할 수 있었
 AI의 개발 과정을 내 의도대로 만들어내기 위해 코드를 이해하고 지금 AI의 의도를 파악하면서 일방적인 명령이 아닌 의사소통을 하는 것 같다고 생각이 들었던 것 같기도 하구요.
 
 모델이 좋아질수록 사용자의 많은 개입 없이도 잘 만들어주는 것 같지만, 실제로는 무엇을 만들고 어디까지 만들지 판단하는 일은 사람의 몫인 것 같습니다.
+
+## 앱 직접 실행하기
+
+<a href="/my-what-todo/" class="app-launch-button" aria-label="My What Todo 실행 페이지로 이동"><span class="app-launch-button__label">My What Todo 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+
+<a href="https://perust.github.io/quiz-by-quiz/" class="app-launch-button" aria-label="quiz by quiz 실행 페이지로 이동"><span class="app-launch-button__label">quiz by quiz 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
