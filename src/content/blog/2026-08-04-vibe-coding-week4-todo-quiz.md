@@ -1,0 +1,155 @@
+---
+title: "[혼자 공부하는 바이브 코딩 with 클로드 코드] 4주차 후기: 할 일 관리 앱과 퀴즈 게임"
+description: "혼자 공부하는 바이브 코딩 with 클로드 코드 4주차 기록입니다. PRD로 다시 만든 할 일 관리 앱, 퀴즈 게임과 자동화 실습에서 느낀 점을 정리했습니다."
+date: "2026-08-04"
+category: "도서 학습 챌린지"
+tags: ["바이브코딩", "ClaudeCode", "AI코딩", "개발도구", "회고"]
+editorialReview: true
+valueType: "experience"
+---
+
+이번 주에는 [혼자 공부하는 바이브 코딩 with 클로드 코드] Ch 04와 Ch 05를 공부했습니다. 기본 미션은 할 일 관리 앱 만들기, 추가 미션은 상식 퀴즈 게임 만들기와 AI 개발 시 주의할 점 정리였습니다.
+
+두 앱 모두 올해 초에 한 번 만들어본 적이 있습니다. 기존 앱을 고도화할지, 최근 모델로 처음부터 다시 만들지 고민했는데 이번에는 새로 만들기로 했습니다. 같은 미션이어도 프롬프트를 더 세세하게 작성하고 제가 원하는 기능을 처음부터 넣으면 결과가 얼마나 달라지는지 궁금했습니다.
+
+<ul class="issue-list">
+  <li class="issue-card"><span class="issue-badge">기본 미션</span><h3>PROJECT 5. 할 일 관리 앱</h3><p class="issue-summary">PRD를 단계별 프롬프트로 바꾼 뒤, 하위 할 일과 태그, 우선순위, 뽀모도로 타이머, 데이터 내보내기 기능을 넣었습니다.</p></li>
+  <li class="issue-card"><span class="issue-badge">추가 미션</span><h3>PROJECT 7. 상식 퀴즈 게임</h3><p class="issue-summary">4개 분야의 객관식 퀴즈와 즉시 해설, 결과, 랭킹 화면을 만들고 할루시네이션 방지 규칙을 살펴봤습니다.</p></li>
+</ul>
+
+## Ch 04. PRD를 나눠서 구현하는 흐름
+
+4장에서는 클로드 웹에서 PRD를 만들고, 이를 클로드 코드에서 사용할 단계별 프롬프트로 바꾼 뒤 순서대로 실행했습니다. 한 번에 완성품을 요구하는 대신 기본 구조, 핵심 기능, UI, 부가 기능, 최종 점검처럼 작업을 나누는 방식입니다.
+
+이전 세션을 다시 불러오는 `--resume`, 최근 대화를 잇는 `--continue`, 컨텍스트를 확인하고 정리하는 명령어도 배웠습니다. `@`로 파일이나 폴더를 직접 불러와 분석하게 하는 방법도 다뤘습니다. 프로젝트가 커질수록 대화에서 파일 내용을 다시 설명하는 것보다, AI가 실제 파일을 읽도록 하는 편이 빠르고 정확해 보였습니다.
+
+## 같은 미션을 다시 만든 이유
+
+저번 기수에서는 과제를 후다닥 끝내느라 책의 예제와 프롬프트를 그대로 따라간 부분이 많았습니다. 이번에는 할 일 관리 앱을 실제로 쓴다면 무엇이 필요할지 먼저 생각했습니다. 평소 투두리스트를 활발하게 쓰는 편은 아니지만, 작업을 시작할 때 할 일과 집중 시간을 함께 관리할 수 있으면 좋겠다고 생각했습니다.
+
+클로드 웹에서 만든 PRD와 단계별 프롬프트는 대화창에 전부 복사하지 않고 문서로 내려받아 프로젝트에 넣었습니다. 긴 프롬프트를 대화에 붙여 넣으면 작업이 이어지는 동안 처음 내용이 희석될 수 있습니다. 파일로 남겨두면 AI가 필요할 때 다시 읽기 쉽고, 저도 최초 요구사항과 현재 결과를 비교하기 편했습니다.
+
+![클로드 웹에서 만든 PRD와 단계별 프롬프트 문서](/images/posts/2026-08-04-vibe-coding-week4/01.webp)
+
+제가 진행한 순서는 단순했습니다.
+
+<ol class="check-list">
+  <li>클로드 웹에서 PRD 작성</li>
+  <li>PRD를 5단계 프롬프트로 변환</li>
+  <li>문서를 프로젝트에 넣고 클로드 코드로 작업</li>
+  <li>결과를 직접 실행하고 필요한 기능을 추가</li>
+</ol>
+
+처음 만들어진 결과는 디자인보다 기능에 집중한 모습이었습니다. 이전에 자주 만들었던 깔끔한 카드형 레이아웃은 이번 프롬프트에서 일부러 빼봤습니다.
+
+![기능을 중심으로 처음 만들어진 할 일 관리 앱](/images/posts/2026-08-04-vibe-coding-week4/02.webp)
+
+브라우저에서 데스크톱 화면과 모바일 크기를 함께 확인할 수 있었습니다. 예전에 비슷한 앱을 만들었을 때는 맥북에서 한글 마지막 글자가 반복되어 할 일이 하나 더 생기거나 자음과 모음이 중복되는 오류가 있었습니다. 당시에는 문제를 따로 설명하고 수정했지만, 이번에는 별도로 언급하지 않아도 같은 오류가 나타나지 않았습니다.
+
+![데스크톱과 모바일 화면을 함께 확인한 모습](/images/posts/2026-08-04-vibe-coding-week4/03.webp)
+
+## 직접 써보고 싶었던 My What Todo
+
+이번에 만든 앱 이름은 `My What Todo`입니다. 할 일을 적는 데서 끝나지 않고, 큰 작업을 하위 할 일로 나누고 집중 시간까지 이어서 관리하도록 만들었습니다.
+
+- [My What Todo 실행하기](/my-what-todo/)
+
+![My What Todo의 라이트 모드 전체 화면](/images/posts/2026-08-04-vibe-coding-week4/04.webp)
+
+라이트 모드와 다크 모드를 모두 넣었습니다. 할 일에는 하위 작업, 태그, 우선순위를 붙일 수 있고, 정렬 방식도 바꿀 수 있습니다.
+
+![My What Todo의 다크 모드 화면](/images/posts/2026-08-04-vibe-coding-week4/07.webp)
+
+뽀모도로 타이머는 숫자만 표시하는 형태와 시간이 줄어드는 모습을 볼 수 있는 원형 타이머를 만들었습니다. 기본 집중 시간과 휴식 시간, 반복 횟수도 바꿀 수 있습니다.
+
+<div role="region" aria-label="My What Todo 기능 화면" tabindex="0" style="display: flex; align-items: flex-start; gap: 0.8rem; overflow-x: auto; padding: 0.4rem 0 0.8rem; scroll-snap-type: x mandatory;">
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/09.webp" alt="원형으로 시각화한 뽀모도로 타이머" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/10.webp" alt="집중 시간과 휴식 시간을 바꾸는 뽀모도로 사이클 설정" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/11.webp" alt="하위 할 일과 태그, 우선순위를 설정한 할 일 목록" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/12.webp" alt="우선순위와 생성일 등으로 할 일을 정렬하는 메뉴" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+</div>
+
+## 로컬 저장과 로그인 사이의 고민
+
+가장 고민한 부분은 데이터 저장 방식이었습니다. 현재 앱은 브라우저에 데이터를 저장합니다. 회원가입 없이 바로 쓸 수 있다는 장점은 있지만, 모바일에서 적은 할 일을 PC에서 바로 이어볼 수는 없습니다.
+
+일단 데이터 내보내기와 가져오기 기능을 넣었습니다. 기기를 바꿀 때 파일로 옮길 수는 있지만 매번 하기에는 번거롭습니다. 결국 실제로 오래 쓰려면 데이터베이스와 로그인이 필요할 것 같다는 생각도 들었습니다.
+
+![할 일 데이터를 옮기기 위한 내보내기와 가져오기 기능](/images/posts/2026-08-04-vibe-coding-week4/13.webp)
+
+다만 모든 사용자가 서버에 데이터를 저장하고 싶어 하는 것은 아닐 수 있습니다. 비로그인 상태에서는 지금처럼 브라우저에만 저장하고, 로그인한 사람만 여러 기기에서 동기화하는 방식도 생각해봤습니다. 이번 과제에서는 한 자리에 앉아 작업을 시작할 때 쓰는 앱으로 범위를 잡고 로그인과 데이터베이스는 넣지 않았습니다.
+
+도움말에는 할 일 관리와 뽀모도로 사용법을 한 화면에 정리했습니다.
+
+![My What Todo의 기능을 설명하는 도움말 화면](/images/posts/2026-08-04-vibe-coding-week4/15.webp)
+
+## Ch 05. 퀴즈 게임과 할루시네이션
+
+5장에서는 상식 퀴즈 게임을 만들며 할루시네이션을 줄이는 방법과 반복 작업 자동화를 배웠습니다. 퀴즈의 "가장 크다", "최초다", "가장 길다" 같은 표현은 기준과 시점에 따라 답이 달라질 수 있습니다.
+
+책에서는 다음 규칙을 `CLAUDE.md`에 기록해 프로젝트 전체에서 계속 참고하도록 했습니다.
+
+- 정답이 하나로 명확한지 확인
+- 최상급 표현에 측정 기준 명시
+- 바뀔 수 있는 정보에 시점과 범위 명시
+- 의심스러운 정보는 2개 이상의 출처로 교차 검증
+
+교차 검증 규칙을 추가하고 확인해보니, AI가 먼저 작성한 `CLAUDE.md`에도 비슷한 내용이 일부 있었습니다. 모델이 달라지면서 기본적으로 챙기는 항목이 늘어난 것 같았고, 새 규칙을 그대로 덧붙이기보다 기존 내용과 합치는 과정이 필요했습니다. 그래도 AI가 퀴즈를 만들었다는 이유만으로 정답까지 맞다고 생각할 수는 없습니다. 모델이 좋아져도 최종 확인은 필요했습니다.
+
+## 반복 작업을 커스텀 명령어로 만들기
+
+문제 추가, 형식 확인, 난이도 조정, 중복 검사, 정답 검증을 매번 긴 프롬프트로 입력하면 내용이 조금씩 달라질 수 있습니다. 5장에서는 이를 마크다운 파일로 정의해 커스텀 명령어로 만들었습니다.
+
+카테고리나 난이도, 문제 번호 범위를 인수로 전달하고 여러 명령어를 연결하면 문제 생성부터 검증과 통계 확인까지 순서대로 진행할 수 있습니다. 앞 명령이 실패하면 뒤 작업을 중단하도록 구성할 수도 있습니다.
+
+자동화한다고 검증이 사라지는 것은 아니었습니다. 작은 명령어를 각각 테스트한 뒤 연결해야 어느 단계에서 잘못됐는지 찾을 수 있습니다. 결국 반복 검증을 빼는 기능이 아니라, 같은 검증 절차를 빠뜨리지 않고 다시 실행하기 위한 기능에 가까웠습니다.
+
+## quiz by quiz 결과
+
+완성한 퀴즈 앱은 한국사, 과학, 지리, 일반상식 네 분야에서 문제를 풀 수 있습니다. 문제를 고르면 정답과 해설이 바로 나오고, 마지막에는 결과와 랭킹을 확인할 수 있습니다.
+
+- [quiz by quiz 실행하기](https://perust.github.io/quiz-by-quiz/)
+
+![quiz by quiz의 카테고리 선택 메인 화면](/images/posts/2026-08-04-vibe-coding-week4/16.webp)
+
+<div role="region" aria-label="quiz by quiz 실행 결과" tabindex="0" style="display: flex; align-items: flex-start; gap: 0.8rem; overflow-x: auto; padding: 0.4rem 0 0.8rem; scroll-snap-type: x mandatory;">
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/17.webp" alt="quiz by quiz에서 객관식 문제를 푸는 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/18.webp" alt="정답을 선택한 뒤 해설을 확인하는 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/19.webp" alt="점수와 분야별 결과가 표시된 퀴즈 결과 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+  <img src="/images/posts/2026-08-04-vibe-coding-week4/21.webp" alt="점수와 플레이 기록이 표시된 랭킹 화면" loading="lazy" style="display: block; flex: 0 0 auto; width: auto; max-width: min(82vw, 620px); height: auto; max-height: 390px; object-fit: contain; scroll-snap-align: start; margin: 0;" />
+</div>
+
+## 평범한 퀴즈 앱에서 더 해보고 싶었던 것
+
+만들고 나니 이미 비슷한 퀴즈 서비스가 많아서 차별점이 부족하다고 느꼈습니다. 먼저 떠오른 것은 운전면허나 정보처리기사처럼 분야를 좁힌 자격증 문제은행이었습니다.
+
+조금 더 재미있는 방향으로는 예전에 했던 퀴즈퀴즈 게임이 생각났습니다. 버튼으로 답을 고르는 대신 캐릭터를 1번부터 4번 발판으로 움직여 정답을 선택하는 방식입니다. 다른 사람의 최근 플레이를 고스트처럼 보여주면 같은 시간에 접속한 사람이 없어도 함께 문제를 푸는 느낌을 줄 수 있을 것 같았습니다. 화면 속 캐릭터가 봇처럼 보이지만 실제로는 먼저 플레이한 사람의 움직임인 셈입니다.
+
+친구를 초대하는 방, 공개와 비공개, 실시간과 비동기 플레이까지 생각하니 금방 프로젝트 크기가 커졌습니다. 원하는 방향까지 모두 고치고 올리려면 이번 주차를 넘길 것 같아 기본 형태에서 먼저 마무리했습니다. 아이디어가 생겼다고 전부 넣기보다 이번에 끝낼 범위를 정하는 것도 필요했습니다.
+
+## 책의 예제와 다른 결과를 다루는 일
+
+올해 초에는 책이나 강의의 명령어를 그대로 가져와 사용했습니다. 이번에는 기본 PRD 작성 방식만 따라가고, 현재 모델이 만든 단계별 프롬프트로 진행했습니다. 그 결과 책의 예제와 제 작업물이 많이 달라졌습니다.
+
+자유롭게 만들 수 있다는 점은 좋았지만, 책에서 설명하는 기능을 제 프로젝트에 적용하려면 예제와 현재 구조를 모두 이해해야 했습니다. 예제 프롬프트를 그대로 복사하면 파일이나 기능 이름이 맞지 않을 수 있어서, 제가 이해한 내용을 바탕으로 추가 프롬프트를 작성하고 조금씩 맞춰야 했습니다.
+
+같은 과제를 두 번째로 하니 이 차이가 더 잘 보였습니다. 예전에는 예제와 비슷한 화면을 완성하는 데 집중했다면, 이번에는 제가 쓰려면 무엇이 필요한지, 어디까지 만들고 멈출지를 더 오래 생각했습니다.
+
+## AI를 활용해 개발할 때 주의할 점
+
+이번 추가 미션에서 정리한 내용은 네 가지입니다.
+
+<ul class="issue-list">
+  <li class="issue-card"><h3>보안과 개인정보</h3><p class="issue-summary">API 키, 비밀번호, 개인정보를 프롬프트나 코드에 그대로 넣지 않고 생성된 코드의 저장 방식도 확인해야 합니다.</p></li>
+  <li class="issue-card"><h3>코드 품질과 신뢰성</h3><p class="issue-summary">코드가 실행된다는 것과 목적에 맞게 동작한다는 것은 다릅니다. 기능 테스트와 예외 상황 확인이 필요합니다.</p></li>
+  <li class="issue-card"><h3>할루시네이션</h3><p class="issue-summary">사실을 다루는 콘텐츠는 정답의 기준과 시점을 적고, 논란이 있는 정보는 여러 출처로 검증해야 합니다.</p></li>
+  <li class="issue-card"><h3>AI 의존과 검증 생략</h3><p class="issue-summary">결과를 이해하지 않고 반영하면 문제가 생겼을 때 고치기 어렵습니다. 자동화한 작업도 중간 결과를 확인해야 합니다.</p></li>
+</ul>
+
+## 4주차를 마치며
+
+이번 주에는 기능을 많이 만드는 것보다 무엇을 문서로 남기고, 어디까지 자동화하며, 어느 지점에서 직접 확인할지를 더 많이 생각했습니다.
+
+PRD를 파일로 남기니 처음 요구사항을 다시 읽기 쉬웠고, 커스텀 명령어를 만들면서 자동화와 검증이 반대말이 아니라는 점도 알게 됐습니다. 할 일 관리 앱에서는 로컬 저장과 로그인 사이에서 고민했고, 퀴즈 게임에서는 만들고 싶은 아이디어와 이번 주에 끝낼 범위를 나눠야 했습니다.
+
+모델이 좋아질수록 사용자가 할 일이 없어지는 것 같지만, 실제로는 무엇을 만들고 어디서 멈출지 판단하는 일이 더 중요해지는 것 같습니다. 결과물이 책과 다르게 나왔을 때 그대로 받아들이기보다, 왜 달라졌는지 이해하고 원하는 방향으로 다시 조정해야 했습니다.
