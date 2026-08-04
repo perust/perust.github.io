@@ -1,9 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
+type WorkCategory = 'productivity' | 'data-ai' | 'game' | 'web-design' | 'learning';
+
 type WorkItem = {
   type: string;
-  year: string;
+  category: WorkCategory;
+  created: string;
+  updated: string;
   title: string;
   desc: string;
   href?: string;
@@ -13,178 +17,58 @@ type WorkItem = {
 
 const activeProjects = [
   {
-    meta: ['Product', 'Pre-public'],
+    meta: 'Product · Pre-public',
     title: '회고/리뷰 노트 도구',
-    desc: '타인과의 관계에서 혹은 스스로의 관계에서 더 나은 성찰과 앞으로의 계획을 세울 수 있도록 회고 노트를 만들고 있습니다.',
-    tags: ['React', 'Supabase', 'UX Writing'],
+    desc: '관계와 생각을 정리하고 다음 계획으로 이어가는 회고 도구',
   },
   {
-    meta: ['Data', 'Pre-public'],
+    meta: 'Data · Pre-public',
     title: 'SOXL Analyzer',
-    desc: 'SOXL 매매를 감으로만 보지 않으려고 만든 분석 도구입니다. 실제 계좌 테스트와 함께 개선 작업 진행 중입니다.',
-    tags: ['Python', 'Streamlit', 'Decision support'],
+    desc: '실제 계좌 테스트와 함께 개선 중인 투자 분석 도구',
   },
   {
-    meta: ['Automation', 'Lab'],
+    meta: 'Automation · Lab',
     title: 'AI 업무 자동화 실험',
-    desc: '반복되는 작업을 자동화하기 위한 n8n과 AI 도구를 활용하여 작업해보고 있습니다.',
-    tags: ['n8n', 'AI agents', 'Ops'],
+    desc: 'n8n과 AI 도구로 반복 작업을 줄이는 자동화 실험',
   },
 ];
 
+const categoryLabels: Record<WorkCategory, { label: string; desc: string }> = {
+  productivity: { label: '생산성 도구', desc: '할 일, 회고, 개인 대시보드' },
+  'data-ai': { label: '데이터 · AI', desc: '분석, 인식, 자동화 도구' },
+  game: { label: '게임', desc: '규칙과 상호작용을 만든 웹 게임' },
+  'web-design': { label: '웹 디자인', desc: '브랜드 페이지와 반응형 UI' },
+  learning: { label: '학습 · 기록', desc: '연습 결과와 제작 기록' },
+};
+
 const workStack: WorkItem[] = [
-  {
-    type: 'Portfolio',
-    year: '2026',
-    title: '데이터 복구 포트폴리오',
-    desc: '데이터 복구 엔지니어로 일해온 3년의 기록 · HDD·서버·NAS·영상·DB 복구 · 자체 개발 도구 6종',
-    href: '/portfolio/',
-    status: '보기',
-  },
-  {
-    type: 'Contents',
-    year: '2026',
-    title: '할 일 관리 My Task',
-    desc: '큰 일을 하위 할 일로 쪼개서 관리 · 우선순위 0~3, 태그, 검색, 정렬 · 브라우저에만 저장하고 JSON으로 내보내기',
-    href: '/contents/my-task/',
-    status: '바로 사용',
-  },
-  {
-    type: 'Contents',
-    year: '2026',
-    title: '손글씨 숫자 인식기',
-    desc: 'MNIST로 학습한 CNN · 마우스나 손가락으로 그리면 브라우저 안에서 바로 인식 · 데스크톱 앱과 같은 전처리',
-    href: '/contents/digit-recognizer/',
-    status: '바로 사용',
-  },
-  {
-    type: 'Pre-public',
-    year: '2026',
-    title: '회고/리뷰 노트 도구',
-    desc: '타인과의 관계에서 혹은 스스로의 관계에서 더 나은 성찰과 앞으로의 계획을 세울 수 있도록 회고 노트를 만들고 있습니다.',
-    status: '공개 전',
-  },
-  {
-    type: 'Pre-public',
-    year: '2026',
-    title: 'SOXL Analyzer',
-    desc: 'SOXL 매매를 데이터로 다시 확인하려고 만든 분석 프로그램입니다. 실제 계좌 테스트와 함께 개선 작업 진행 중입니다.',
-    status: '공개 전',
-  },
-  {
-    type: 'Contents',
-    year: '2026',
-    title: '나의 시작 페이지',
-    desc: '개인 대시보드 · 시계·검색·날씨·뉴스·할 일 위젯',
-    href: '/contents/start-page.html',
-    status: '바로 사용',
-  },
-  {
-    type: 'Lab',
-    year: '2026',
-    title: '제작 기록 블로그',
-    desc: '만들어본 것, 막힌 것, 다시 써먹을 만한 내용을 블로그에 남기고 있습니다.',
-    href: '/blog/',
-    status: '연결됨',
-  },
-  {
-    type: 'Profile',
-    year: '2026',
-    title: 'GitHub 작업 허브',
-    desc: '공개 저장소와 앞으로 열어둘 작업물을 이어서 볼 수 있는 GitHub 프로필입니다.',
-    href: 'https://github.com/perust',
-    external: true,
-    status: 'GitHub',
-  },
-  {
-    type: 'Contents',
-    year: '2022',
-    title: '끝말잇기 게임',
-    desc: 'JavaScript 게임 로직 · 순수 JS 구현',
-    href: '/contents/word-relay.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Contents',
-    year: '2022',
-    title: '계산기',
-    desc: 'JavaScript 연습 · 사칙연산 구현',
-    href: '/contents/calculator.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Contents',
-    year: '2022',
-    title: '숫자야구 게임',
-    desc: 'JavaScript 연습 · 게임 로직 구현',
-    href: '/contents/number-baseball.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Homepage',
-    year: '2022',
-    title: '플라워가든 페이지',
-    desc: 'HTML/CSS · 이미지 중심 레이아웃',
-    href: '/homepage/flower/index.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Homepage',
-    year: '2022',
-    title: '교보문고 모바일 리디자인',
-    desc: '모바일 UI 실습 · 반응형 리디자인',
-    href: '/homepage/gyobo/index.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Homepage',
-    year: '2022',
-    title: '더페이스샵 모바일 리디자인',
-    desc: '모바일 UI 실습 · 뷰티 브랜드 리디자인',
-    href: '/homepage/thefaceshop/index.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Homepage',
-    year: '2022',
-    title: '뚜레쥬르 PC 리디자인',
-    desc: 'PC UI 실습 · 브랜드 사이트 리디자인',
-    href: '/homepage/tous/index.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Homepage',
-    year: '2022',
-    title: '삼진어묵 메인',
-    desc: '웹 퍼블리싱 · 메인 페이지',
-    href: '/homepage/3z/index.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Homepage',
-    year: '2022',
-    title: '삼진어묵 서브',
-    desc: '웹 퍼블리싱 · 서브 페이지',
-    href: '/homepage/3z/sub.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Study',
-    year: '2022',
-    title: '렛츠기릿 자바스크립트',
-    desc: '자바스크립트 입문 · 강의 실습 모음',
-    href: '/study/ZeroCho-JavaScript-Beginner/index.html',
-    status: 'Archive',
-  },
-  {
-    type: 'Study',
-    year: '2022',
-    title: '반응형 웹 만들기',
-    desc: 'HTML/CSS 스터디 · 반응형 레이아웃',
-    href: '/study/responsive-web-design2017/index.html',
-    status: 'Archive',
-  },
+  { type: 'Contents', category: 'productivity', created: '2026.08.03', updated: '2026.08.04', title: '할 일 관리 My Task', desc: '하위 할 일 · 우선순위 · 태그 · 검색 · 정렬 · JSON 내보내기', href: '/contents/my-task/', status: '바로 사용' },
+  { type: 'Contents', category: 'data-ai', created: '2026.07.27', updated: '2026.07.27', title: '손글씨 숫자 인식기', desc: '그린 숫자를 브라우저에서 바로 인식하는 MNIST 기반 도구', href: '/contents/digit-recognizer/', status: '바로 사용' },
+  { type: 'Portfolio', category: 'data-ai', created: '2026.07.09', updated: '2026.07.22', title: '데이터 복구 포트폴리오', desc: 'HDD · 서버 · NAS · 영상 · DB 복구와 자체 개발 도구 기록', href: '/portfolio/', status: '보기' },
+  { type: 'Pre-public', category: 'productivity', created: '2026.06.28', updated: '2026.07.22', title: '회고/리뷰 노트 도구', desc: '관계와 생각을 정리하고 다음 계획으로 이어가는 회고 도구', status: '공개 전' },
+  { type: 'Pre-public', category: 'data-ai', created: '2026.06.28', updated: '2026.07.22', title: 'SOXL Analyzer', desc: 'SOXL 매매를 데이터로 다시 확인하는 분석 프로그램', status: '공개 전' },
+  { type: 'Lab', category: 'data-ai', created: '2026.06.28', updated: '2026.07.22', title: 'AI 업무 자동화 실험', desc: 'n8n과 AI 도구로 반복 작업을 줄이는 자동화 실험', status: '실험 중' },
+  { type: 'Contents', category: 'productivity', created: '2026.07.09', updated: '2026.07.09', title: '나의 시작 페이지', desc: '시계 · 검색 · 날씨 · 뉴스 · 할 일 위젯을 모은 개인 대시보드', href: '/contents/start-page.html', status: '바로 사용' },
+  { type: 'Lab', category: 'learning', created: '2026.06.28', updated: '2026.07.22', title: '제작 기록 블로그', desc: '만들어본 것과 막힌 것, 다시 쓸 내용을 남기는 제작 기록', href: '/blog/', status: '연결됨' },
+  { type: 'Profile', category: 'learning', created: '2026.06.28', updated: '2026.08.04', title: 'GitHub 작업 허브', desc: '공개 저장소와 앞으로 공개할 작업물을 잇는 GitHub 프로필', href: 'https://github.com/perust', external: true, status: 'GitHub' },
+  { type: 'Contents', category: 'game', created: '2022.11.06', updated: '2026.07.03', title: '끝말잇기 게임', desc: '순수 JavaScript로 만든 끝말잇기 게임 로직', href: '/contents/word-relay.html', status: 'Archive' },
+  { type: 'Contents', category: 'learning', created: '2022.11.06', updated: '2026.07.03', title: '계산기', desc: '사칙연산 흐름을 구현한 JavaScript 연습', href: '/contents/calculator.html', status: 'Archive' },
+  { type: 'Contents', category: 'game', created: '2022.11.07', updated: '2026.07.03', title: '숫자야구 게임', desc: '숫자 추리 규칙을 구현한 JavaScript 게임', href: '/contents/number-baseball.html', status: 'Archive' },
+  { type: 'Homepage', category: 'web-design', created: '2022.08.28', updated: '2026.07.03', title: '플라워가든 페이지', desc: '이미지 중심으로 구성한 HTML/CSS 페이지', href: '/homepage/flower/index.html', status: 'Archive' },
+  { type: 'Homepage', category: 'web-design', created: '2022.08.28', updated: '2026.07.03', title: '교보문고 모바일 리디자인', desc: '모바일 화면에 맞춘 서점 UI 리디자인', href: '/homepage/gyobo/index.html', status: 'Archive' },
+  { type: 'Homepage', category: 'web-design', created: '2022.08.28', updated: '2026.07.03', title: '더페이스샵 모바일 리디자인', desc: '뷰티 브랜드의 모바일 UI 리디자인', href: '/homepage/thefaceshop/index.html', status: 'Archive' },
+  { type: 'Homepage', category: 'web-design', created: '2022.08.28', updated: '2026.07.03', title: '뚜레쥬르 PC 리디자인', desc: '베이커리 브랜드의 PC 화면 리디자인', href: '/homepage/tous/index.html', status: 'Archive' },
+  { type: 'Homepage', category: 'web-design', created: '2022.08.28', updated: '2026.07.03', title: '삼진어묵 메인', desc: '브랜드 사이트 메인 페이지 웹 퍼블리싱', href: '/homepage/3z/index.html', status: 'Archive' },
+  { type: 'Homepage', category: 'web-design', created: '2022.08.28', updated: '2026.07.03', title: '삼진어묵 서브', desc: '브랜드 사이트 서브 페이지 웹 퍼블리싱', href: '/homepage/3z/sub.html', status: 'Archive' },
+  { type: 'Study', category: 'learning', created: '2022.10.31', updated: '2026.06.28', title: '렛츠기릿 자바스크립트', desc: '자바스크립트 입문 강의 실습 모음', href: '/study/ZeroCho-JavaScript-Beginner/index.html', status: 'Archive' },
+  { type: 'Study', category: 'web-design', created: '2022.09.11', updated: '2026.07.03', title: '반응형 웹 만들기', desc: '화면 크기에 맞춰 바뀌는 HTML/CSS 레이아웃 연습', href: '/study/responsive-web-design2017/index.html', status: 'Archive' },
 ];
+
+workStack.sort((a, b) => b.created.localeCompare(a.created));
+
+const categoryCounts = Object.fromEntries(
+  Object.keys(categoryLabels).map((category) => [category, workStack.filter((item) => item.category === category).length]),
+) as Record<WorkCategory, number>;
 
 const itemTarget = (item: WorkItem) => item.external || item.href?.startsWith('/homepage') || item.href?.startsWith('/study') ? '_blank' : undefined;
 const itemRel = (item: WorkItem) => itemTarget(item) ? 'noopener noreferrer' : undefined;
@@ -200,70 +84,62 @@ const workLd = {
 };
 ---
 <BaseLayout title="lentoludens 작업 · 프로그램과 아카이브" description={workDescription} canonical="/work/" jsonLd={workLd}>
-  <main id="top">
-    <section class="hero section-shell" aria-labelledby="work-hero-title">
+  <main id="top" class="work-page">
+    <section class="hero section-shell work-hero" aria-labelledby="work-hero-title">
       <div class="hero-copy">
         <p class="eyebrow">Work · Program · Archive</p>
         <h1 id="work-hero-title">제작한 작업물들</h1>
-        <p class="hero-description">지금 제작하고 있는 작업물들부터, 이때까지 만들어온 작업물까지, <strong>Archive &amp; Lab</strong> 에 하나씩 쌓아가기로 했습니다.</p>
+        <p class="hero-description">지금 쓰고 있는 도구부터 예전에 만든 게임과 웹 페이지까지, 실제 작업물을 중심으로 모았습니다.</p>
         <div class="hero-actions">
           <a class="button primary" href="#stack">작업물 전체 보기</a>
-          <a class="button secondary" href="/portfolio/">데이터 복구 포트폴리오</a>
           <a class="button secondary" href="#projects">공개 전 작업 보기</a>
           <a class="button secondary" href="https://github.com/perust" target="_blank" rel="noopener noreferrer">GitHub 열기</a>
         </div>
       </div>
-      <aside class="hero-card" aria-label="작업 허브 요약">
-        <div class="status-pill"><span></span> 공개 전 작업 정리 중</div>
-        <dl class="profile-list">
-          <div><dt>방향</dt><dd>아이디어를 실제로 써볼 수 있게 만들기</dd></div>
-          <div><dt>현재</dt><dd>주요 작업물은 공개 준비 중</dd></div>
-          <div><dt>스택</dt><dd>React · Python · Supabase · Astro · AI 도구</dd></div>
-        </dl>
-      </aside>
     </section>
 
-    <section id="focus" class="section-shell split-section" aria-labelledby="focus-title">
-      <div><p class="section-kicker">Current focus</p><h2 id="focus-title">지금의 관심사</h2></div>
-      <div class="focus-grid">
-        <article class="focus-card"><span class="card-index">01</span><h3>작업물들이 사라지지 않도록 아카이빙</h3><p>홈페이지가 소개로만 끝나지 않고, 제작한 작업물들을 계속 남겨둘 수 있는 공간이 되었으면 합니다.</p></article>
-        <article class="focus-card"><span class="card-index">02</span><h3>현재 만들고 있는 것들이 무엇인지</h3><p>지금 바로 공개하기 어려운 작업물도 있지만, 어떤 작업을 하고 있는지는 남겨두려고 합니다.</p></article>
-        <article class="focus-card"><span class="card-index">03</span><h3>작업의 흐름 남겨두기</h3><p>예전 연습부터 지금 만들고 있는 것까지 남겨두어서, 시간이 지나도 예전의 발자취를 확인하고자 합니다.</p></article>
-      </div>
-    </section>
-
-    <section id="projects" class="section-shell" aria-labelledby="projects-title">
-      <div class="section-heading"><p class="section-kicker">Pre-public programs</p><h2 id="projects-title">지금 만들고 있는 것들</h2><p>지금 만들고 있는 것들은 바로 확인하기는 어렵습니다. 공개 가능한 지점까지 작업을 완료하고자 합니다.</p></div>
-      <div class="project-grid">
-        {activeProjects.map((project, index) => (
-          <article class={`project-card ${index === 0 ? 'featured' : ''}`}>
-            <div class="project-meta">{project.meta.map((meta) => <span>{meta}</span>)}</div>
+    <section id="projects" class="section-shell compact-projects" aria-labelledby="projects-title">
+      <div class="section-heading compact"><p class="section-kicker">In progress</p><h2 id="projects-title">지금 만들고 있는 것들</h2></div>
+      <div class="project-strip">
+        {activeProjects.map((project) => (
+          <article class="project-mini-card">
+            <p class="project-mini-meta">{project.meta}</p>
             <h3>{project.title}</h3>
             <p>{project.desc}</p>
-            <ul class="tag-list" aria-label="사용 기술 및 키워드">{project.tags.map((tag) => <li>{tag}</li>)}</ul>
           </article>
         ))}
       </div>
     </section>
 
     <section id="stack" class="section-shell" aria-labelledby="stack-title">
-      <div class="section-heading"><p class="section-kicker">Archive &amp; Lab</p><h2 id="stack-title">작업물 전체 보기</h2><p>최근 작업부터 예전에 작업한 결과물까지 쌓아두는 공간입니다. 시간순으로 확인할 수 있습니다.</p></div>
+      <div class="section-heading"><p class="section-kicker">Archive &amp; Lab</p><h2 id="stack-title">작업물 전체 보기</h2><p>종류를 골라 빠르게 찾거나, 전체 목록을 최근 작업순으로 볼 수 있습니다.</p></div>
+      <nav class="work-categories" aria-label="작업물 종류 필터">
+        <button class="work-category is-active" type="button" data-work-filter="all" aria-pressed="true">
+          <span>전체</span><strong>{workStack.length}</strong><small>모든 작업물</small>
+        </button>
+        {(Object.entries(categoryLabels) as [WorkCategory, { label: string; desc: string }][]).map(([category, info]) => (
+          <button class="work-category" type="button" data-work-filter={category} aria-pressed="false">
+            <span>{info.label}</span><strong>{categoryCounts[category]}</strong><small>{info.desc}</small>
+          </button>
+        ))}
+      </nav>
+      <p class="filter-result" aria-live="polite"><strong>{workStack.length}</strong>개의 작업물을 표시하고 있습니다.</p>
       <div class="stack-list">
         {workStack.map((item) => {
           const card = <>
             <div class="stack-marker" aria-hidden="true"></div>
             <div class="stack-card-header">
-              <span class={`archive-tag ${item.type.toLowerCase().replace('pre-public', 'prepublic')}`}>{item.type}</span>
-              <span class="archive-date">{item.year}</span>
+              <span class={`archive-tag ${item.type.toLowerCase().replace('pre-public', 'prepublic')}`}>{categoryLabels[item.category].label}</span>
+              <span class="archive-date"><span>작업 {item.created}</span><span>업데이트 {item.updated}</span></span>
             </div>
             <h3 class="archive-title">{item.title}</h3>
             <p class="archive-desc">{item.desc}</p>
             <span class={`stack-status ${item.href ? 'is-linked' : 'is-muted'}`}>{item.href ? item.status ?? '보기' : item.status ?? '공개 전'}</span>
           </>;
           return item.href ? (
-            <a class="stack-card" href={item.href} target={itemTarget(item)} rel={itemRel(item)}>{card}</a>
+            <a class="stack-card" data-work-item data-category={item.category} href={item.href} target={itemTarget(item)} rel={itemRel(item)}>{card}</a>
           ) : (
-            <article class="stack-card is-disabled">{card}</article>
+            <article class="stack-card is-disabled" data-work-item data-category={item.category}>{card}</article>
           );
         })}
       </div>
@@ -280,3 +156,187 @@ const workLd = {
     </section>
   </main>
 </BaseLayout>
+
+<script>
+  const filterButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-work-filter]'));
+  const workItems = Array.from(document.querySelectorAll<HTMLElement>('[data-work-item]'));
+  const result = document.querySelector<HTMLElement>('.filter-result');
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const selected = button.dataset.workFilter ?? 'all';
+      let visibleCount = 0;
+
+      filterButtons.forEach((candidate) => {
+        const active = candidate === button;
+        candidate.classList.toggle('is-active', active);
+        candidate.setAttribute('aria-pressed', String(active));
+      });
+
+      workItems.forEach((item) => {
+        const visible = selected === 'all' || item.dataset.category === selected;
+        item.hidden = !visible;
+        if (visible) visibleCount += 1;
+      });
+
+      if (result) result.innerHTML = `<strong>${visibleCount}</strong>개의 작업물을 표시하고 있습니다.`;
+    });
+  });
+</script>
+
+<style>
+  .work-hero {
+    grid-template-columns: minmax(0, 760px);
+    min-height: 0;
+    padding-top: 5rem;
+    padding-bottom: 4.25rem;
+  }
+
+  .work-hero .hero-description {
+    max-width: 680px;
+  }
+
+  .compact-projects {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .project-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .project-mini-card {
+    padding: 1rem 1.05rem;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.58);
+  }
+
+  .project-mini-card h3 {
+    margin: 0.3rem 0 0.35rem;
+    font-size: 1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .project-mini-card > p:last-child {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+
+  .project-mini-meta {
+    margin: 0;
+    color: var(--primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .work-categories {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+  }
+
+  .work-category {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.18rem 0.75rem;
+    min-width: 0;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    color: var(--ink);
+    text-align: left;
+    background: rgba(255, 255, 255, 0.58);
+    cursor: pointer;
+    transition: 160ms ease;
+  }
+
+  .work-category:hover,
+  .work-category:focus-visible,
+  .work-category.is-active {
+    border-color: rgba(37, 99, 235, 0.35);
+    background: rgba(37, 99, 235, 0.08);
+  }
+
+  .work-category:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .work-category span {
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  .work-category strong {
+    grid-row: 1 / 3;
+    grid-column: 2;
+    align-self: center;
+    color: var(--primary);
+    font-size: 1.25rem;
+  }
+
+  .work-category small {
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 0.72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .filter-result {
+    margin: 0 0 1rem 2.5rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .filter-result strong {
+    color: var(--ink);
+  }
+
+  .stack-card[hidden] {
+    display: none;
+  }
+
+  .archive-date {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem 0.75rem;
+    text-align: right;
+  }
+
+  @media (max-width: 760px) {
+    .work-hero {
+      padding-top: 3rem;
+      padding-bottom: 2.75rem;
+    }
+
+    .project-strip,
+    .work-categories {
+      grid-template-columns: 1fr;
+    }
+
+    .compact-projects {
+      padding-top: 2.5rem;
+      padding-bottom: 2.5rem;
+    }
+
+    .stack-card-header {
+      align-items: flex-start;
+    }
+
+    .archive-date {
+      display: grid;
+      gap: 0.1rem;
+      font-size: 0.7rem;
+    }
+  }
+</style>
