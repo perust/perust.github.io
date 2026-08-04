@@ -45,8 +45,6 @@ valueType: "experience"
 
 To do list 프로그램을 만들면서 내가 쓰면서 필요할 기능을 만들어보자에 집중했습니다. 할 일을 적는 데서 끝나지 않고, 큰 작업을 하위 할 일로 추가할 수 있도록 하고, 집중 시간을 관리할 수 있도록 뽀모도로 타이머 기능을 추가하였습니다.
 
-- [My What Todo 실행하기](/my-what-todo/)
-
 ![My What Todo의 라이트 모드 전체 화면](/images/posts/2026-08-04-vibe-coding-week4/04.webp)
 
 라이트 모드와 다크 모드를 추가했고, 할 일에는 하위 작업과 태그를 추가할 수 있으며 우선순위와 정렬 방식을 바꿀 수 있습니다.
@@ -93,6 +91,8 @@ To do list 프로그램을 만들면서 내가 쓰면서 필요할 기능을 만
 
 ![My What Todo의 기능을 설명하는 도움말 화면](/images/posts/2026-08-04-vibe-coding-week4/15.webp)
 
+<a href="/my-what-todo/" class="app-launch-button" aria-label="My What Todo 실행 페이지로 이동"><span class="app-launch-button__label">My What Todo 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+
 ## Ch 05. 퀴즈 게임과 할루시네이션
 
 5장에서는 상식 퀴즈 게임을 만들며 할루시네이션을 줄이는 방법과 반복 작업 자동화를 배우는 챕터입니다. 퀴즈의 "가장 크다", "최초다", "가장 길다" 같은 표현은 기준과 시점에 따라 답이 달라질 수 있습니다.
@@ -122,8 +122,6 @@ To do list 프로그램을 만들면서 내가 쓰면서 필요할 기능을 만
 
 할 일 관리 프로그램에서 좀 오래 붙잡아서 그런지, 여기서는 기본 형태에서 이번 주차 마무리를 하기로 했습니다.
 
-- [quiz by quiz 실행하기](https://perust.github.io/quiz-by-quiz/)
-
 ![quiz by quiz의 카테고리 선택 메인 화면](/images/posts/2026-08-04-vibe-coding-week4/16.webp)
 
 <div class="image-carousel" data-image-carousel>
@@ -149,6 +147,8 @@ To do list 프로그램을 만들면서 내가 쓰면서 필요할 기능을 만
 게임 형태를 띠더라도 결국 같이 게임하는 사람이 있어야 더 재미있기 때문에 네트워크 기능이 필요했고, 실시간이 안 되더라도 다른 사람의 최근 플레이를 고스트처럼 보여주면 같은 시간에 접속한 사람이 없어도 함께 문제를 푸는 느낌을 줄 수 있을 것 같았습니다. 화면 속 다른 사람의 캐릭터가 먼저 플레이했던 사람의 움직임인 셈입니다.
 
 친구를 초대하는 방, 공개와 비공개, 실시간과 비동기 플레이까지 생각하니 프로젝트 사이즈가 너무 커질 것 같아서 이번 주차에는 안 될 것 같아 기본 형태에서 먼저 마무리했습니다. 한 번 실제로 만들어볼까 생각도 듭니다.
+
+<a href="https://perust.github.io/quiz-by-quiz/" class="app-launch-button" aria-label="quiz by quiz 실행 페이지로 이동"><span class="app-launch-button__label">quiz by quiz 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
 
 ## 책의 예제와는 다른 결과물
 
