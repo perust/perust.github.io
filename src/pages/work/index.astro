@@ -15,24 +15,6 @@ type WorkItem = {
   external?: boolean;
 };
 
-const activeProjects = [
-  {
-    meta: 'Product · Pre-public',
-    title: '회고/리뷰 노트 도구',
-    desc: '관계와 생각을 정리하고 다음 계획으로 이어가는 회고 도구',
-  },
-  {
-    meta: 'Data · Pre-public',
-    title: 'SOXL Analyzer',
-    desc: '실제 계좌 테스트와 함께 개선 중인 투자 분석 도구',
-  },
-  {
-    meta: 'Automation · Lab',
-    title: 'AI 업무 자동화 실험',
-    desc: 'n8n과 AI 도구로 반복 작업을 줄이는 자동화 실험',
-  },
-];
-
 const categoryLabels: Record<WorkCategory, { label: string; desc: string }> = {
   productivity: { label: '생산성 도구', desc: '할 일, 회고, 개인 대시보드' },
   'data-ai': { label: '데이터 · AI', desc: '분석, 인식, 자동화 도구' },
@@ -92,22 +74,8 @@ const workLd = {
         <p class="hero-description">지금 쓰고 있는 도구부터 예전에 만든 게임과 웹 페이지까지, 실제 작업물을 중심으로 모았습니다.</p>
         <div class="hero-actions">
           <a class="button primary" href="#stack">작업물 전체 보기</a>
-          <a class="button secondary" href="#projects">공개 전 작업 보기</a>
           <a class="button secondary" href="https://github.com/perust" target="_blank" rel="noopener noreferrer">GitHub 열기</a>
         </div>
-      </div>
-    </section>
-
-    <section id="projects" class="section-shell compact-projects" aria-labelledby="projects-title">
-      <div class="section-heading compact"><p class="section-kicker">In progress</p><h2 id="projects-title">지금 만들고 있는 것들</h2></div>
-      <div class="project-strip">
-        {activeProjects.map((project) => (
-          <article class="project-mini-card">
-            <p class="project-mini-meta">{project.meta}</p>
-            <h3>{project.title}</h3>
-            <p>{project.desc}</p>
-          </article>
-        ))}
       </div>
     </section>
 
@@ -196,46 +164,6 @@ const workLd = {
     max-width: 680px;
   }
 
-  .compact-projects {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-  }
-
-  .project-strip {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-  }
-
-  .project-mini-card {
-    padding: 1rem 1.05rem;
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.58);
-  }
-
-  .project-mini-card h3 {
-    margin: 0.3rem 0 0.35rem;
-    font-size: 1rem;
-    letter-spacing: -0.03em;
-  }
-
-  .project-mini-card > p:last-child {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.84rem;
-    line-height: 1.5;
-  }
-
-  .project-mini-meta {
-    margin: 0;
-    color: var(--primary);
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
   .work-categories {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -319,14 +247,8 @@ const workLd = {
       padding-bottom: 2.75rem;
     }
 
-    .project-strip,
     .work-categories {
       grid-template-columns: 1fr;
-    }
-
-    .compact-projects {
-      padding-top: 2.5rem;
-      padding-bottom: 2.5rem;
     }
 
     .stack-card-header {
