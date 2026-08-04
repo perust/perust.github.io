@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 const root = new URL('../../', import.meta.url);
@@ -21,6 +21,25 @@ test('4주차 실행 링크는 화살표가 있는 버튼형 카드로 표시된
 
   assert.ok(todoButton > todoExplanationEnd, '할 일 앱 버튼은 기능과 저장 방식 설명이 끝난 뒤에 있어야 한다');
   assert.ok(quizButton > quizExplanationEnd, '퀴즈 앱 버튼은 확장 아이디어 설명이 끝난 뒤에 있어야 한다');
+});
+
+test('퀴즈 게임 모드 설명과 실제 화면이 실행 버튼보다 먼저 표시된다', async () => {
+  const post = await readFile(postPath, 'utf8');
+  const section = post.indexOf('## 게임 모드로 정답 고르기');
+  const expansion = post.indexOf('## 퀴즈 게임에서 더 해보고 싶었던 것');
+  const quizButton = post.indexOf('href="https://perust.github.io/quiz-by-quiz/"');
+
+  assert.ok(section > expansion && section < quizButton, '게임 모드 설명은 확장 아이디어 뒤, 실행 버튼 앞에 있어야 한다');
+  assert.match(post, /게임 모드가 켜져 있으면/);
+  assert.match(post, /엔터나 스페이스 키로 정답을 확정/);
+  assert.match(post, /\/22\.webp/);
+  assert.match(post, /\/23\.webp/);
+  assert.ok(quizButton > section, '실행 버튼은 게임 모드 설명 뒤에 있어야 한다');
+
+  await Promise.all([
+    access(new URL('public/images/posts/2026-08-04-vibe-coding-week4/22.webp', root)),
+    access(new URL('public/images/posts/2026-08-04-vibe-coding-week4/23.webp', root)),
+  ]);
 });
 
 test('버튼형 실행 링크에는 hover와 키보드 focus 스타일이 있다', async () => {
