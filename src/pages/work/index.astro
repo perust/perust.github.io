@@ -72,10 +72,6 @@ const workLd = {
         <p class="eyebrow">Work · Program · Archive</p>
         <h1 id="work-hero-title">제작한 작업물들</h1>
         <p class="hero-description">지금 쓰고 있는 도구부터 예전에 만든 게임과 웹 페이지까지, 실제 작업물을 중심으로 모았습니다.</p>
-        <div class="hero-actions">
-          <a class="button primary" href="#stack">작업물 전체 보기</a>
-          <a class="button secondary" href="https://github.com/perust" target="_blank" rel="noopener noreferrer">GitHub 열기</a>
-        </div>
       </div>
     </section>
 
@@ -113,14 +109,12 @@ const workLd = {
       </div>
     </section>
 
-    <section id="principles" class="section-shell principles" aria-labelledby="principles-title">
-      <div class="section-heading compact"><p class="section-kicker">Notes</p><h2 id="principles-title">작업할 때 자주 생각하는 것</h2></div>
-      <ol class="principle-list"><li><strong>일단 작게 만들기</strong><span>머릿속에만 두면 계속 흐려져서, 작은 화면이라도 먼저 만들어보려고 합니다.</span></li><li><strong>직접 써보면서 고치기</strong><span>처음부터 완벽하게 잡기보다 실제로 써보면서 부족한 부분을 찾는 편입니다.</span></li><li><strong>반복되는 일은 줄이기</strong><span>계속 반복하는 일은 자동화하거나 도구로 빼두려고 합니다.</span></li><li><strong>기록 남겨두기</strong><span>나중에 다시 봤을 때 왜 그렇게 만들었는지 알 수 있게 남겨두는 편이 좋습니다.</span></li></ol>
-    </section>
-
     <section id="contact" class="section-shell contact" aria-labelledby="contact-title">
       <div><p class="section-kicker">Contact</p><h2 id="contact-title">계속 만들고 있습니다.</h2><p>공개할 수 있는 코드는 GitHub에 올리고, 만들면서 배운 것은 블로그에 남기고 있습니다. 피드백이나 문의는 <a href="mailto:zyqn@naver.com">zyqn@naver.com</a>으로 보내주세요.</p></div>
-      <a class="button primary" href="mailto:zyqn@naver.com">이메일 보내기</a>
+      <div class="contact-actions">
+        <a class="button secondary" href="https://github.com/perust" target="_blank" rel="noopener noreferrer">GitHub 열기</a>
+        <a class="button primary" href="mailto:zyqn@naver.com">이메일 보내기</a>
+      </div>
     </section>
   </main>
 </BaseLayout>
@@ -241,6 +235,13 @@ const workLd = {
     text-align: right;
   }
 
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    justify-content: flex-end;
+  }
+
   @media (max-width: 760px) {
     .work-hero {
       padding-top: 3rem;
@@ -259,6 +260,11 @@ const workLd = {
       display: grid;
       gap: 0.1rem;
       font-size: 0.7rem;
+    }
+
+    .contact-actions {
+      display: grid;
+      width: 100%;
     }
   }
 </style>
