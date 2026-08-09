@@ -11,6 +11,10 @@ valueType: "experience"
 길벗 도서 챌린지 『바이브 엔지니어링』 3주차에는 7장 컨텍스트 전달의 기술부터 9장 컴퓨터 공학 기초가 필요한 순간까지 읽었습니다.<br />
 이번 범위는 AI에게 어떻게 지시할 것인가에서 시작해, 결국 내가 무엇을 알고 판단해야 하는가로 이어졌습니다.
 
+<img src="/images/posts/vibe-engineering-week3/book-cover-reading.webp" alt="태블릿 화면에 표시된 바이브 엔지니어링 표지" width="1350" height="1800" loading="lazy" decoding="async" style="width: min(100%, 560px); height: auto; margin: 0 auto; object-fit: contain;" />
+
+<small style="text-align: center;">태블릿으로 읽은 『바이브 엔지니어링』</small>
+
 <div class="routine-kv">
   <div><dt>읽은 범위</dt><dd>7장 컨텍스트 전달의 기술부터 9장 컴퓨터 공학 기초까지</dd></div>
   <div><dt>계속 든 질문</dt><dd>AI가 만든 결과에 나는 어디까지 "왜?"라고 답할 수 있을까?</dd></div>
@@ -26,6 +30,10 @@ AI에게 지시할 때는 정성을 들일수록 결과가 잘 나오는 것 같
 
 페르소나도 "너는 무슨 전문가야"라고 이름만 붙이는 것과는 달랐습니다. 지금 어떤 시선으로 판단할지 지정하는 도구이며, 구현·검증·운영 중 어떤 관점에서 무엇을 볼지 더 구체적으로 주는 것이 검증의 틀이 됩니다.
 
+<img src="/images/posts/vibe-engineering-week3/chapter-7-context.webp" alt="컨텍스트 전달과 페르소나 지정을 다루는 바이브 엔지니어링 7장 목차" width="1350" height="1800" loading="lazy" decoding="async" style="width: min(100%, 560px); height: auto; margin: 0 auto; object-fit: contain;" />
+
+<small style="text-align: center;">컨텍스트 전달의 기술을 다루는 7장</small>
+
 ## 구현하는 사람과 의심하는 사람을 따로 두기
 
 서로 다른 페르소나를 사용하면 혼자서도 페어 프로그래밍 효과를 얻을 수 있습니다. 먼저 구현 관점에서 만들고, 검증 관점에서 문제를 찾은 뒤, 발견한 내용을 선별해 다시 수정합니다. 필요하다면 검증과 수정을 반복합니다. 한 번에 구현과 의심을 모두 깊게 하려고 하기보다 관점을 나눠 맡기는 방식입니다.
@@ -38,11 +46,23 @@ AI에게 지시할 때는 정성을 들일수록 결과가 잘 나오는 것 같
 
 방법은 컨텍스트를 단계적으로 전달하고, 요청을 작업 단위로 나누는 것입니다. 요구사항을 공유한 뒤 AI가 이해한 내용을 확인하고, HLD로 전체 구조와 범위를 맞춥니다. 그다음 LLD와 작업 분해를 거쳐 모듈별로 구현하고 검증·수정합니다. 어떻게 나눠야 할지 모르겠다면 분해하는 일부터 AI에게 물어볼 수도 있습니다.
 
+<img src="/images/posts/vibe-engineering-week3/chapter-8-modularization.webp" alt="모듈화와 단계적 지시를 다루는 바이브 엔지니어링 8장 목차" width="1350" height="1800" loading="lazy" decoding="async" style="width: min(100%, 560px); height: auto; margin: 0 auto; object-fit: contain;" />
+
+<small style="text-align: center;">모듈화와 단계적 지시를 다루는 8장</small>
+
 하지만 실제로는 "처음부터 끝까지 너가 알아서 다 해줘!"라고 말하고 싶은 유혹이 큽니다. 그렇게 시켜도 완벽할 리 없고, 그 과정에서 토큰은 계속 쓰이는데 결과물을 확인하기는 더 어려워집니다. 책에서 작업을 쪼개는 5분과 한 번에 시킨 뒤 디버깅에 걸릴 수 있는 5시간을 대비한 대목을 보며 전에 작업했던 과정들이 떠올랐습니다. 한 번에 시킨 작업은 점점 크기만 커지고, 문제가 생기면 어디서부터 바로잡아야 할지 막막했습니다. 이것이 초보 바이브코더가 처음 만나는 큰 장벽 중 하나가 아닐까 싶습니다.
+
+<img src="/images/posts/vibe-engineering-week3/part-3-survival.webp" alt="생존의 조건 인간만이 할 수 있는 일이라고 적힌 바이브 엔지니어링 3부 표지" width="1350" height="1800" loading="lazy" decoding="async" style="width: min(100%, 560px); height: auto; margin: 0 auto; object-fit: contain;" />
+
+<small style="text-align: center;">인간의 판단을 묻는 3부 「생존의 조건」</small>
 
 ## 돌아가는 코드와 "왜"를 설명하는 코드
 
 9장은 프롬프트를 잘 쓰는 방법에서 컴퓨터 공학 기초로 방향을 돌립니다. 문서가 많아졌을 때 검색이 왜 느려지는지, 대화가 길어질수록 응답이 왜 늦어지는지, 여러 사람이 동시에 사용하면 왜 타임아웃이 생기는지 알려면 문제를 분류할 기준이 필요합니다. AI가 코드를 만들어주더라도 그 코드가 왜 느린지 판단할 기준까지 대신 생기지는 않습니다.
+
+<img src="/images/posts/vibe-engineering-week3/chapter-9-cs-basics.webp" alt="컴퓨터 공학 기초가 필요한 순간을 다루는 바이브 엔지니어링 9장 목차" width="1350" height="1800" loading="lazy" decoding="async" style="width: min(100%, 560px); height: auto; margin: 0 auto; object-fit: contain;" />
+
+<small style="text-align: center;">컴퓨터 공학 기초가 필요한 순간을 다루는 9장</small>
 
 AI가 만든 코드를 검증하고 제안을 이해하려면 시간·공간 복잡도, 메모리, 동시성, 네트워크, 데이터베이스 같은 기초가 필요합니다. 시스템 수준에서 생기는 문제를 발견하고 "왜 이렇게 만들었는가?"라는 질문에 답하기 위해서입니다. 다행히 지금은 모르는 내용을 바로 묻고 예시와 함께 배울 수 있는 AI라는 튜터도 있습니다. 컴퓨터 공학 기초를 더 효과적으로 공부할 수 있는 환경인 것은 맞는 것 같습니다.
 
