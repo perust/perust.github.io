@@ -1,6 +1,6 @@
 ---
-title: "[바이브 엔지니어링] 길벗 챌린지 3주차 후기: AI가 빨라질수록 더 천천히 확인해야 할까"
-description: "제이킴의 바이브 엔지니어링 4–6장을 읽으며 코드 인스펙션, 요구사항 정의, HLD와 LLD를 내 AI 개발 방식에 어떻게 적용할지 생각한 길벗 챌린지 3주차 후기."
+title: "[바이브 엔지니어링] 길벗 챌린지 2주차 후기: AI가 빨라질수록 더 천천히 확인해야 할까"
+description: "제이킴의 바이브 엔지니어링 4–6장을 읽으며 코드 인스펙션, 요구사항 정의, HLD와 LLD를 내 AI 개발 방식에 어떻게 적용할지 생각한 길벗 챌린지 2주차 후기."
 date: "2026-08-09"
 category: "도서 학습 챌린지"
 tags: ["AI코딩", "바이브코딩", "개발도구", "생산성", "회고"]
@@ -8,10 +8,10 @@ editorialReview: true
 valueType: "experience"
 ---
 
-길벗 도서 챌린지 『바이브 엔지니어링』 3주차에는 4장 코드 인스펙션부터 6장 시스템 아키텍처 설계까지 읽었습니다.<br />
+길벗 도서 챌린지 『바이브 엔지니어링』 2주차에는 4장 코드 인스펙션부터 6장 시스템 아키텍처 설계까지 읽었습니다.<br />
 이번 범위는 AI가 빠르게 만든 결과 앞에서 내가 어떤 역할을 해야 하는지를 계속 묻게 했습니다.
 
-<img src="/images/posts/vibe-engineering-week3/book-cover-reading.webp" alt="태블릿 화면에 표시된 바이브 엔지니어링 표지" width="1200" height="1600" loading="lazy" style="max-width: 540px; margin: 0 auto;" />
+<img src="/images/posts/vibe-engineering-week2/book-cover-reading.webp" alt="태블릿 화면에 표시된 바이브 엔지니어링 표지" width="1200" height="1600" loading="lazy" style="max-width: 540px; margin: 0 auto;" />
 
 <small style="text-align: center;">태블릿으로 읽은 『바이브 엔지니어링』</small>
 
@@ -26,8 +26,8 @@ valueType: "experience"
 
 <div class="image-carousel" data-image-carousel>
   <div class="image-carousel-track" role="region" aria-label="바이브 엔지니어링 4장과 코드 인스펙션 독서 화면" tabindex="0">
-    <img src="/images/posts/vibe-engineering-week3/chapter4-overview.webp" alt="디버깅과 코드 인스펙션을 다루는 바이브 엔지니어링 4장 목차" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
-    <img src="/images/posts/vibe-engineering-week3/code-inspection-page.webp" alt="코드 인스펙션의 의미를 설명하는 바이브 엔지니어링 본문" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
+    <img src="/images/posts/vibe-engineering-week2/chapter4-overview.webp" alt="디버깅과 코드 인스펙션을 다루는 바이브 엔지니어링 4장 목차" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
+    <img src="/images/posts/vibe-engineering-week2/code-inspection-page.webp" alt="코드 인스펙션의 의미를 설명하는 바이브 엔지니어링 본문" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
   </div>
   <div class="image-carousel-controls">
     <button type="button" data-carousel-prev aria-label="이전 사진">← 이전</button>
@@ -50,8 +50,8 @@ valueType: "experience"
 
 <div class="image-carousel" data-image-carousel>
   <div class="image-carousel-track" role="region" aria-label="바이브 엔지니어링 2부와 5장 독서 화면" tabindex="0">
-    <img src="/images/posts/vibe-engineering-week3/part2-intro.webp" alt="지휘의 기술 AI와 함께 만드는 법이라는 바이브 엔지니어링 2부 표지" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
-    <img src="/images/posts/vibe-engineering-week3/chapter5-overview.webp" alt="프롬프트와 요구사항 정의를 다루는 바이브 엔지니어링 5장 목차" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
+    <img src="/images/posts/vibe-engineering-week2/part2-intro.webp" alt="지휘의 기술 AI와 함께 만드는 법이라는 바이브 엔지니어링 2부 표지" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
+    <img src="/images/posts/vibe-engineering-week2/chapter5-overview.webp" alt="프롬프트와 요구사항 정의를 다루는 바이브 엔지니어링 5장 목차" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
   </div>
   <div class="image-carousel-controls">
     <button type="button" data-carousel-prev aria-label="이전 사진">← 이전</button>
@@ -72,8 +72,8 @@ valueType: "experience"
 
 <div class="image-carousel" data-image-carousel>
   <div class="image-carousel-track" role="region" aria-label="바이브 엔지니어링 6장과 시스템 아키텍처 설계 독서 화면" tabindex="0">
-    <img src="/images/posts/vibe-engineering-week3/chapter6-overview.webp" alt="시스템 아키텍처 설계를 다루는 바이브 엔지니어링 6장 목차" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
-    <img src="/images/posts/vibe-engineering-week3/architecture-page.webp" alt="시스템 아키텍처 설계의 필요성을 설명하는 바이브 엔지니어링 본문" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
+    <img src="/images/posts/vibe-engineering-week2/chapter6-overview.webp" alt="시스템 아키텍처 설계를 다루는 바이브 엔지니어링 6장 목차" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
+    <img src="/images/posts/vibe-engineering-week2/architecture-page.webp" alt="시스템 아키텍처 설계의 필요성을 설명하는 바이브 엔지니어링 본문" width="1200" height="1600" loading="lazy" style="width: min(82vw, 620px); height: min(120vw, 520px); max-height: 520px; object-fit: contain;" />
   </div>
   <div class="image-carousel-controls">
     <button type="button" data-carousel-prev aria-label="이전 사진">← 이전</button>
@@ -86,9 +86,9 @@ valueType: "experience"
 
 하지만 비전공자로서 HLD와 LLD를 꼼꼼하게 작성해 요청하는 일은 여전히 어렵게 느껴졌습니다.
 
-## 3주차를 마치며
+## 2주차를 마치며
 
-이번 3주차를 읽고 나니 AI가 빠르게 만들어주는 코드 앞에서 나는 어떤 역할을 해야 하는지 계속 생각하게 됩니다. AI가 결과를 빠르게 내는 만큼 나도 빨리 승인하고 방향만 제시하는 것이 아니라, 오히려 더 천천히 꼼꼼하게 확인해야 하는 것은 아닐까 싶습니다.
+이번 2주차를 읽고 나니 AI가 빠르게 만들어주는 코드 앞에서 나는 어떤 역할을 해야 하는지 계속 생각하게 됩니다. AI가 결과를 빠르게 내는 만큼 나도 빨리 승인하고 방향만 제시하는 것이 아니라, 오히려 더 천천히 꼼꼼하게 확인해야 하는 것은 아닐까 싶습니다.
 
 책의 체크리스트와 프롬프트를 그대로 복사해 사용하는 데서 멈추기보다, 각각 어떤 맥락을 확인하기 위한 질문인지 이해하고 싶습니다. 문제가 생겼을 때 AI에게 답만 받기보다 코드와 환경, 로직, 전제조건과 한계를 함께 확인하면서 문제를 토론하듯 나아가는 방향으로 바꿔가고 싶습니다.
 
