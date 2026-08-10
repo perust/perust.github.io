@@ -1,5 +1,5 @@
 import { defineCollection, z } from 'astro:content';
-import { VALUE_TYPES } from './config/taxonomy.ts';
+import { PUBLISH_PACING_EXCEPTIONS, VALUE_TYPES } from './config/taxonomy.ts';
 
 const blog = defineCollection({
   schema: z.object({
@@ -16,6 +16,8 @@ const blog = defineCollection({
     // 이 글이 제공하는 독자적 가치 유형(VALUE_TYPES SSOT). 기준일 이후 새 글은 반드시 하나를 명시해야 한다.
     // experience: 직접 경험 / original-analysis: 독자적 분석 / verified-guide: 실제 검증한 가이드 / review: 서평·리뷰.
     valueType: z.enum(VALUE_TYPES).optional(),
+    // 기한이 지난 도서 학습 챌린지를 같은 날 추가 발행해야 할 때만 사용하는 좁은 예외.
+    publishPacingException: z.enum(PUBLISH_PACING_EXCEPTIONS).optional(),
     // 실제 본문에 FAQ 섹션이 있는 글에만 사용한다. 있으면 FAQPage JSON-LD를 함께 출력한다.
     faqs: z.array(z.object({ question: z.string(), answer: z.string() })).optional(),
     // OG 이미지를 글마다 직접 지정할 때만 사용. 없으면 카테고리 기본 이미지로 대체된다.

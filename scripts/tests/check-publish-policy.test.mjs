@@ -69,16 +69,19 @@ const FIXTURE_GITIGNORE = `dist/\n`;
 
 function postSource({
   date = '2026-07-22',
+  category = 'AI/IT 정보',
   tags = ['AI'],
   editorialReview = true,
   valueType = 'experience',
+  publishPacingException = null,
   bodyChars = MIN_POST_BODY_CHARS + 200,
   body = null,
 } = {}) {
-  const lines = ['---', 'title: "fixture"', 'description: "fixture"', `date: "${date}"`, 'category: "AI/IT 정보"'];
+  const lines = ['---', 'title: "fixture"', 'description: "fixture"', `date: "${date}"`, `category: "${category}"`];
   if (tags !== null) lines.push(`tags: ${JSON.stringify(tags)}`);
   if (editorialReview !== null) lines.push(`editorialReview: ${editorialReview}`);
   if (valueType !== null) lines.push(`valueType: "${valueType}"`);
+  if (publishPacingException !== null) lines.push(`publishPacingException: "${publishPacingException}"`);
   lines.push('---', '', body ?? '가'.repeat(bodyChars), '');
   return lines.join('\n');
 }
@@ -324,6 +327,53 @@ test('같은 date 의 신규 글 2편은 하루 상한을 넘어 실패한다', 
   writeFileSync(newPostPath(root, '2026-07-22-first.md'), postSource());
   writeFileSync(newPostPath(root, '2026-07-22-second.md'), postSource());
   assertFailWith(runValidator(root), '하루 최대');
+});
+
+test('기한형 도서 챌린지는 명시적 사유로 같은 날 발행할 수 있다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(newPostPath(root, '2026-07-22-first.md'), postSource());
+  writeFileSync(
+    newPostPath(root, '2026-07-22-deadline-challenge.md'),
+    postSource({
+      category: '도서 학습 챌린지',
+      publishPacingException: 'deadline-bound-challenge',
+    }),
+  );
+  assertPass(runValidator(root));
+});
+
+test('기한형 챌린지 발행 예외는 다른 카테고리에서 사용할 수 없다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-22-invalid-exception.md'),
+    postSource({ publishPacingException: 'deadline-bound-challenge' }),
+  );
+  assertFailWith(runValidator(root), '도서 학습 챌린지');
+});
+
+test('알 수 없는 기한형 챌린지 예외값은 fail-closed로 거부한다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-22-unknown-exception.md'),
+    postSource({
+      category: '도서 학습 챌린지',
+      publishPacingException: 'challenge-catch-up',
+    }),
+  );
+  assertFailWith(runValidator(root), '도서 학습 챌린지');
+});
+
+test('기한형 챌린지 예외 글도 사람 편집 검토를 생략할 수 없다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-22-unreviewed-exception.md'),
+    postSource({
+      category: '도서 학습 챌린지',
+      editorialReview: null,
+      publishPacingException: 'deadline-bound-challenge',
+    }),
+  );
+  assertFailWith(runValidator(root), 'editorialReview: true');
 });
 
 test('기준일 당일(포함) date 의 신규 글 2편도 하루 상한을 넘어 실패한다', (t) => {

@@ -26,7 +26,9 @@ import {
   MAX_NEW_POSTS_PER_DAY,
   MIN_POST_BODY_CHARS,
   NEW_POST_POLICY_BASELINE,
+  PUBLISH_PACING_EXCEPTION_CATEGORY,
   VALUE_TYPES,
+  isPublishPacingExceptionAllowed,
   isIndexableTag,
   postDayOf,
   slugify,
@@ -126,6 +128,7 @@ const newPostCountByDay = new Map();
 let thinPosts = 0;
 let smartQuoteFailures = 0;
 let aiStyleFailures = 0;
+let pacingExceptionFailures = 0;
 // 기준일 이후 새 글의 편집 검토 게이트 — content.config.ts 의 선택 필드를 새 글에는 필수로 강제한다.
 // (VALUE_TYPES 는 src/config/taxonomy.ts 의 SSOT 를 그대로 쓴다.)
 let editorialGateFailures = 0;
@@ -150,6 +153,15 @@ for (const file of srcFiles) {
     categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
   }
 
+  const publishPacingException = block.match(/^publishPacingException:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  const pacingExempt = isPublishPacingExceptionAllowed(category, publishPacingException);
+  if (publishPacingException !== undefined && !pacingExempt) {
+    pacingExceptionFailures += 1;
+    console.log(
+      `[FAIL] ${file}: publishPacingException 은 ${PUBLISH_PACING_EXCEPTION_CATEGORY}의 기한형 챌린지에만 사용할 수 있음`,
+    );
+  }
+
   // 발행 속도 게이트 집계: 기준일 이후 날짜의 글만 센다(기존 글은 grandfathering).
   const date = block.match(/^date:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
   if (!date) {
@@ -158,9 +170,11 @@ for (const file of srcFiles) {
     try {
       const day = postDayOf(date);
       if (day > NEW_POST_POLICY_BASELINE) {
-        newPostCountByDay.set(day, (newPostCountByDay.get(day) || 0) + 1);
+        if (!pacingExempt) {
+          newPostCountByDay.set(day, (newPostCountByDay.get(day) || 0) + 1);
+        }
 
-        // 새 글은 raw frontmatter 에 사람 편집 검토 완료와 독자적 가치 유형이 명시되어야 한다.
+        // 발행 속도 예외와 무관하게 사람 편집 검토와 독자적 가치 유형은 그대로 강제한다.
         if (!/^editorialReview:\s*true\s*$/m.test(block)) {
           editorialGateFailures += 1;
           console.log(`[FAIL] ${file}: 기준일 이후 새 글은 frontmatter 에 editorialReview: true (사람 편집 검토 완료)를 명시해야 함`);
@@ -219,6 +233,10 @@ const overPacedDays = [...newPostCountByDay.entries()]
 report(
   overPacedDays.length === 0,
   `기준일(${NEW_POST_POLICY_BASELINE}) 이후에는 하루 최대 ${MAX_NEW_POSTS_PER_DAY}편만 발행해야 함 (위반: ${overPacedDays.join(', ') || '없음'})`,
+);
+report(
+  pacingExceptionFailures === 0,
+  `발행 속도 예외는 ${PUBLISH_PACING_EXCEPTION_CATEGORY}의 기한형 챌린지에서만 사용해야 함 (위반 ${pacingExceptionFailures}건)`,
 );
 report(
   editorialGateFailures === 0,

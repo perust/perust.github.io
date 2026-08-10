@@ -345,6 +345,17 @@ export const NEW_POST_POLICY_BASELINE = '2026-07-21';
 export const MAX_NEW_POSTS_PER_DAY = 1;
 
 /**
+ * 하루 발행 상한의 명시적 예외. 기한이 지난 챌린지 후기를 더 늦추지 않기 위한 값이며,
+ * 도서 학습 챌린지 카테고리에서만 허용한다. 일반 글의 대량 발행 우회에는 사용할 수 없다.
+ */
+export const PUBLISH_PACING_EXCEPTIONS = ['deadline-bound-challenge'] as const;
+export const PUBLISH_PACING_EXCEPTION_CATEGORY = '도서 학습 챌린지';
+
+export function isPublishPacingExceptionAllowed(category: string | undefined, exception: string | undefined): boolean {
+  return exception === PUBLISH_PACING_EXCEPTIONS[0] && category === PUBLISH_PACING_EXCEPTION_CATEGORY;
+}
+
+/**
  * 기준일 이후 새 글이 명시해야 하는 독자적 가치 유형(SSOT).
  * src/content.config.ts 의 zod enum, check-content-quality, check-publish-policy 가 이 값을 공유한다.
  * experience: 직접 경험 / original-analysis: 독자적 분석 / verified-guide: 실제 검증 / review: 서평·리뷰.

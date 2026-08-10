@@ -27,7 +27,9 @@ import {
   MIN_POST_BODY_CHARS,
   NEW_POST_MAX_TAGS,
   NEW_POST_POLICY_BASELINE,
+  PUBLISH_PACING_EXCEPTION_CATEGORY,
   VALUE_TYPES,
+  isPublishPacingExceptionAllowed,
   postDayOf,
   slugify,
 } from '../src/config/taxonomy.ts';
@@ -172,6 +174,14 @@ for (const file of newFiles) {
   const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const block = frontmatter?.[1] ?? '';
 
+  const category = block.match(/^category:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  const publishPacingException = block.match(/^publishPacingException:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  const pacingExempt = isPublishPacingExceptionAllowed(category, publishPacingException);
+  report(
+    publishPacingException === undefined || pacingExempt,
+    `신규 글 ${file}: publishPacingException 은 ${PUBLISH_PACING_EXCEPTION_CATEGORY}의 기한형 챌린지에만 사용할 수 있어야 함`,
+  );
+
   const date = block.match(/^date:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
   let day = null;
   if (!date) {
@@ -183,7 +193,7 @@ for (const file of newFiles) {
       report(false, `신규 글 ${file}: ${error.message}`);
     }
   }
-  if (day !== null && day >= NEW_POST_POLICY_BASELINE) {
+  if (day !== null && day >= NEW_POST_POLICY_BASELINE && !pacingExempt) {
     newPostsByDay.set(day, (newPostsByDay.get(day) || 0) + 1);
   }
 
