@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="72" viewBox="0 0 260 72" role="img" aria-labelledby="title desc">
+  <title id="title">YES24에서 보기</title>
+  <desc id="desc">바이브 엔지니어링 YES24 상품 페이지 링크 이미지</desc>
+  <rect x="1" y="1" width="258" height="70" rx="12" fill="#ffffff" stroke="#d7dce3" stroke-width="2"/>
+  <rect x="1" y="1" width="7" height="70" rx="4" fill="#e96b1f"/>
+  <circle cx="31" cy="36" r="11" fill="#fff1e8"/>
+  <circle cx="31" cy="36" r="4" fill="#e96b1f"/>
+  <text x="53" y="43" fill="#25282d" font-family="Arial, 'Noto Sans KR', sans-serif" font-size="18" font-weight="700">YES24에서 보기</text>
+  <path d="M228 29l7 7-7 7M235 36h-14" fill="none" stroke="#6d727a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
