@@ -25,6 +25,7 @@ const categoryLabels: Record<WorkCategory, { label: string; desc: string }> = {
 
 const workStack: WorkItem[] = [
   // created/updated는 작업물 자체의 개발 이력입니다. 블로그 등록·이전·브랜드/SEO 수정일은 포함하지 않습니다.
+  { type: 'Lab', category: 'data-ai', created: '2026.08.11', updated: '2026.08.11', title: '냉장고 재료 인식 레시피 추천', desc: '냉장고 사진에서 재료 인식 · 보유 재료로 조리법 추천 · 알레르기 제외 · 저장과 메모', href: 'https://github.com/perust/fridge-recipe-nim', external: true, status: 'GitHub' },
   { type: 'Contents', category: 'game', created: '2026.08.04', updated: '2026.08.04', title: 'quiz by quiz', desc: '한국사 · 과학 · 지리 · 일반상식 · 예술과문화 4지선다 · 문항당 20초 · 즉시 해설', href: 'https://perust.github.io/quiz-by-quiz/', external: true, status: '바로 사용' },
   { type: 'Contents', category: 'productivity', created: '2026.08.04', updated: '2026.08.04', title: '할 일 관리 My What Todo', desc: '하위 할 일 · 우선순위 · 태그 · 검색 · 정렬 · JSON 내보내기', href: '/my-what-todo/', status: '바로 사용' },
   { type: 'Contents', category: 'data-ai', created: '2026.01.25', updated: '2026.07.27', title: '손글씨 숫자 인식기', desc: '그린 숫자를 브라우저에서 바로 인식하는 MNIST 기반 도구', href: '/contents/digit-recognizer/', status: '바로 사용' },
