@@ -176,6 +176,27 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       <ul class="tag-cloud">{tags.map((tag: string) => <li>{isLinkableTag(tag) ? <a href={tagPath(tag)}>#{tag}</a> : <span>#{tag}</span>}</li>)}</ul>
     </aside>
   </main>
+
+  <dialog id="image-lightbox" class="image-lightbox" data-image-lightbox data-lightbox-fit="false" aria-labelledby="image-lightbox-caption">
+    <div class="image-lightbox__toolbar">
+      <p id="image-lightbox-caption" class="image-lightbox__caption" data-lightbox-caption>이미지 원본 보기</p>
+      <div class="image-lightbox__actions">
+        <div class="image-lightbox__zoom" role="group" aria-label="이미지 확대와 축소">
+          <button type="button" data-lightbox-zoom-out aria-label="이미지 축소">−</button>
+          <span class="image-lightbox__zoom-status" data-lightbox-zoom-status role="status" aria-live="polite">125%</span>
+          <button type="button" data-lightbox-zoom-in aria-label="이미지 확대">+</button>
+        </div>
+        <button type="button" data-lightbox-fit aria-pressed="false">화면에 맞추기</button>
+        <a href="/" data-lightbox-original target="_blank" rel="noopener">원본 파일 열기 <span aria-hidden="true">↗</span></a>
+        <button type="button" data-lightbox-close aria-label="확대 이미지 닫기">닫기</button>
+      </div>
+    </div>
+    <div class="image-lightbox__viewport" data-lightbox-viewport>
+      <div class="image-lightbox__canvas">
+        <img class="image-lightbox__image" data-lightbox-image alt="" />
+      </div>
+    </div>
+  </dialog>
 </BaseLayout>
 
 <script is:inline>
@@ -229,10 +250,148 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     });
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeImageCarousels, { once: true });
-  } else {
+  const initializeImageLightbox = () => {
+    const lightbox = document.querySelector('[data-image-lightbox]');
+    const expandedImage = lightbox?.querySelector('[data-lightbox-image]');
+    const caption = lightbox?.querySelector('[data-lightbox-caption]');
+    const viewport = lightbox?.querySelector('[data-lightbox-viewport]');
+    const canvas = lightbox?.querySelector('.image-lightbox__canvas');
+    const zoomOutButton = lightbox?.querySelector('[data-lightbox-zoom-out]');
+    const zoomStatus = lightbox?.querySelector('[data-lightbox-zoom-status]');
+    const zoomInButton = lightbox?.querySelector('[data-lightbox-zoom-in]');
+    const fitButton = lightbox?.querySelector('[data-lightbox-fit]');
+    const originalLink = lightbox?.querySelector('[data-lightbox-original]');
+    const closeButton = lightbox?.querySelector('[data-lightbox-close]');
+    if (!lightbox || !expandedImage || !caption || !viewport || !canvas || !zoomOutButton || !zoomStatus || !zoomInButton || !fitButton || !originalLink || !closeButton) return;
+
+    const DEFAULT_ZOOM = 1.25;
+    const MIN_ZOOM = 1;
+    const MAX_ZOOM = 3;
+    const ZOOM_STEP = 0.25;
+    let triggerImage = null;
+    let baseWidth = 0;
+    let baseHeight = 0;
+    let zoom = DEFAULT_ZOOM;
+
+    const fitImageToViewport = () => {
+      if (baseWidth <= 0 || baseHeight <= 0) {
+        expandedImage.style.removeProperty('width');
+        return;
+      }
+
+      const canvasStyle = window.getComputedStyle(canvas);
+      const horizontalPadding = (Number.parseFloat(canvasStyle.paddingLeft) || 0) + (Number.parseFloat(canvasStyle.paddingRight) || 0);
+      const verticalPadding = (Number.parseFloat(canvasStyle.paddingTop) || 0) + (Number.parseFloat(canvasStyle.paddingBottom) || 0);
+      const availableWidth = Math.max(1, viewport.clientWidth - horizontalPadding);
+      const availableHeight = Math.max(1, viewport.clientHeight - verticalPadding);
+      const fitScale = Math.min(availableWidth / baseWidth, availableHeight / baseHeight, 1);
+      expandedImage.style.width = `${Math.max(1, Math.floor(baseWidth * fitScale))}px`;
+    };
+
+    const updateZoom = () => {
+      const isFit = lightbox.dataset.lightboxFit === 'true';
+      if (isFit) {
+        fitImageToViewport();
+      } else if (baseWidth > 0) {
+        expandedImage.style.width = `${Math.round(baseWidth * zoom)}px`;
+      }
+      zoomStatus.textContent = isFit ? '맞춤' : `${Math.round(zoom * 100)}%`;
+      zoomOutButton.disabled = zoom <= MIN_ZOOM;
+      zoomInButton.disabled = zoom >= MAX_ZOOM;
+    };
+
+    const openImage = (image) => {
+      const source = image.currentSrc || image.src;
+      if (!source) return;
+
+      triggerImage = image;
+      baseWidth = image.naturalWidth || image.width;
+      baseHeight = image.naturalHeight || image.height;
+      zoom = DEFAULT_ZOOM;
+      expandedImage.src = source;
+      expandedImage.alt = image.alt || '확대 이미지';
+      caption.textContent = image.alt || '이미지 원본 보기';
+      originalLink.href = source;
+      lightbox.dataset.lightboxFit = 'false';
+      fitButton.textContent = '화면에 맞추기';
+      fitButton.setAttribute('aria-pressed', 'false');
+      updateZoom();
+      viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.classList.add('image-lightbox-open');
+      lightbox.showModal();
+      closeButton.focus();
+    };
+
+    document.querySelectorAll('.post-article img').forEach((image) => {
+      if (image.dataset.lightboxReady === 'true' || image.closest('a') || image.hasAttribute('data-no-lightbox')) return;
+
+      image.dataset.lightboxReady = 'true';
+      image.tabIndex = 0;
+      image.setAttribute('role', 'button');
+      image.setAttribute('aria-haspopup', 'dialog');
+      image.setAttribute('aria-controls', 'image-lightbox');
+      image.setAttribute('aria-label', `${image.alt || '본문 이미지'} 이미지 크게 보기`);
+      image.addEventListener('click', () => openImage(image));
+      image.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        openImage(image);
+      });
+    });
+
+    expandedImage.addEventListener('load', () => {
+      baseWidth = expandedImage.naturalWidth || baseWidth;
+      baseHeight = expandedImage.naturalHeight || baseHeight;
+      updateZoom();
+    });
+
+    const changeZoom = (delta) => {
+      zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom + delta));
+      lightbox.dataset.lightboxFit = 'false';
+      fitButton.textContent = '화면에 맞추기';
+      fitButton.setAttribute('aria-pressed', 'false');
+      updateZoom();
+      viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    };
+
+    zoomOutButton.addEventListener('click', () => changeZoom(-ZOOM_STEP));
+    zoomInButton.addEventListener('click', () => changeZoom(ZOOM_STEP));
+    window.addEventListener('resize', () => {
+      if (lightbox.open && lightbox.dataset.lightboxFit === 'true') updateZoom();
+    }, { passive: true });
+
+    fitButton.addEventListener('click', () => {
+      const isFit = lightbox.dataset.lightboxFit !== 'true';
+      lightbox.dataset.lightboxFit = String(isFit);
+      fitButton.textContent = isFit ? '확대 보기' : '화면에 맞추기';
+      fitButton.setAttribute('aria-pressed', String(isFit));
+      updateZoom();
+      viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    });
+
+    closeButton.addEventListener('click', () => lightbox.close());
+    lightbox.addEventListener('click', (event) => {
+      if (event.target === lightbox) lightbox.close();
+    });
+    lightbox.addEventListener('close', () => {
+      document.documentElement.classList.remove('image-lightbox-open');
+      expandedImage.removeAttribute('src');
+      expandedImage.style.removeProperty('width');
+      originalLink.removeAttribute('href');
+      triggerImage?.focus();
+      triggerImage = null;
+    });
+  };
+
+  const initializePostImages = () => {
     initializeImageCarousels();
+    initializeImageLightbox();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePostImages, { once: true });
+  } else {
+    initializePostImages();
   }
 </script>
 
@@ -361,6 +520,161 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     text-align: center;
   }
 
+  html.image-lightbox-open {
+    overflow: hidden;
+  }
+
+  .post-article img[data-lightbox-ready="true"] {
+    cursor: zoom-in;
+  }
+
+  .post-article img[data-lightbox-ready="true"]:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.55);
+    outline-offset: 4px;
+  }
+
+  .image-lightbox {
+    width: min(96vw, 110rem);
+    height: 94dvh;
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1rem;
+    overflow: hidden;
+    background: #0b1120;
+    box-shadow: 0 1.5rem 4rem rgba(2, 6, 23, 0.55);
+    color: #f8fafc;
+  }
+
+  .image-lightbox[open] {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .image-lightbox::backdrop {
+    background: rgba(2, 6, 23, 0.84);
+    backdrop-filter: blur(4px);
+  }
+
+  .image-lightbox__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0.9rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(15, 23, 42, 0.98);
+  }
+
+  .image-lightbox__caption {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .image-lightbox__actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .image-lightbox__zoom {
+    display: grid;
+    grid-template-columns: auto minmax(3.2rem, auto) auto;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .image-lightbox__zoom-status {
+    color: #e2e8f0;
+    font-size: 0.84rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .image-lightbox__actions button,
+  .image-lightbox__actions a {
+    min-height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    border-radius: 999px;
+    background: #1e293b;
+    color: #f8fafc;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .image-lightbox__actions button:hover,
+  .image-lightbox__actions a:hover,
+  .image-lightbox__actions button:focus-visible,
+  .image-lightbox__actions a:focus-visible {
+    border-color: #93c5fd;
+    background: #334155;
+    outline: none;
+  }
+
+  .image-lightbox__actions button:disabled {
+    opacity: 0.42;
+    cursor: default;
+  }
+
+  .image-lightbox__viewport {
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: #020617;
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+
+  .image-lightbox__canvas {
+    display: grid;
+    width: max-content;
+    height: max-content;
+    min-width: 100%;
+    min-height: 100%;
+    place-items: center;
+    box-sizing: border-box;
+    padding: 1rem;
+  }
+
+  .image-lightbox__image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    background: #ffffff;
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.38);
+  }
+
+  .image-lightbox[data-lightbox-fit="true"] .image-lightbox__canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .image-lightbox[data-lightbox-fit="true"] .image-lightbox__image {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
   @media (max-width: 640px) {
     .post-article .app-launch-button {
       width: 100%;
@@ -381,5 +695,42 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       padding: 0.5rem 0.75rem;
       font-size: 0.9rem;
     }
+
+    .image-lightbox {
+      width: 100vw;
+      height: 100dvh;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .image-lightbox__toolbar {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0.6rem;
+      padding: 0.65rem;
+    }
+
+    .image-lightbox__caption {
+      white-space: normal;
+    }
+
+    .image-lightbox__actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      width: 100%;
+    }
+
+    .image-lightbox__zoom {
+      grid-column: 1 / -1;
+      grid-template-columns: auto 1fr auto;
+      width: 100%;
+    }
+
+    .image-lightbox__actions button,
+    .image-lightbox__actions a {
+      padding-inline: 0.65rem;
+      font-size: 0.82rem;
+    }
+
   }
 </style>
