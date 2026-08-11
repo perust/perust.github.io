@@ -124,7 +124,6 @@ export const initializeImageLightbox = () => {
     caption.textContent = image.alt || '이미지 원본 보기';
     originalLink.href = source;
     lightbox.dataset.lightboxFit = 'false';
-    fitButton.textContent = '화면에 맞추기';
     fitButton.setAttribute('aria-pressed', 'false');
     updateZoom();
     viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -156,7 +155,7 @@ export const initializeImageLightbox = () => {
     updateZoom();
   });
 
-  const changeZoom = (delta) => {
+  const changeZoom = (delta, sourceButton) => {
     const isFit = lightbox.dataset.lightboxFit === 'true';
     const next = nextImageZoom({ zoom, delta, isFit });
     if (!next.exitFit) return;
@@ -164,13 +163,13 @@ export const initializeImageLightbox = () => {
     const previousViewport = viewportSnapshot();
     zoom = next.zoom;
     lightbox.dataset.lightboxFit = 'false';
-    fitButton.textContent = '화면에 맞추기';
     fitButton.setAttribute('aria-pressed', 'false');
     updateZoomPreservingFocus(previousViewport);
+    if (sourceButton.disabled) (delta < 0 ? zoomInButton : zoomOutButton).focus();
   };
 
-  zoomOutButton.addEventListener('click', () => changeZoom(-IMAGE_ZOOM_STEP));
-  zoomInButton.addEventListener('click', () => changeZoom(IMAGE_ZOOM_STEP));
+  zoomOutButton.addEventListener('click', () => changeZoom(-IMAGE_ZOOM_STEP, zoomOutButton));
+  zoomInButton.addEventListener('click', () => changeZoom(IMAGE_ZOOM_STEP, zoomInButton));
   window.addEventListener('resize', () => {
     if (lightbox.open && lightbox.dataset.lightboxFit === 'true') updateZoom();
   }, { passive: true });
@@ -179,7 +178,6 @@ export const initializeImageLightbox = () => {
     const previousViewport = viewportSnapshot();
     const isFit = lightbox.dataset.lightboxFit !== 'true';
     lightbox.dataset.lightboxFit = String(isFit);
-    fitButton.textContent = isFit ? '확대 보기' : '화면에 맞추기';
     fitButton.setAttribute('aria-pressed', String(isFit));
     updateZoomPreservingFocus(previousViewport);
   });

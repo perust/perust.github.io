@@ -108,3 +108,13 @@ test('대화상자는 실제 크기·화면 맞춤·안정된 스크롤바 레�
   assert.match(script, /window\.addEventListener\('resize',[\s\S]*?updateZoom\(\)/);
   assert.match(script, /calculatePreservedScroll/);
 });
+
+test('화면 맞춤 토글과 줌 경계는 보조기술·키보드 포커스 상태를 일관되게 유지한다', async () => {
+  const { page, script } = await readImplementation();
+  const originalLinkTag = page.match(/<a[^>]*data-lightbox-original[^>]*>/)?.[0] ?? '';
+
+  assert.match(page, /<button[^>]*data-lightbox-fit[^>]*aria-pressed="false">화면에 맞추기<\/button>/);
+  assert.doesNotMatch(script, /fitButton\.textContent\s*=/);
+  assert.match(script, /if \(sourceButton\.disabled\) \(delta < 0 \? zoomInButton : zoomOutButton\)\.focus\(\)/);
+  assert.doesNotMatch(originalLinkTag, /href=/);
+});
