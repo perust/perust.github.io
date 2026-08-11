@@ -199,7 +199,9 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
   </dialog>
 </BaseLayout>
 
-<script is:inline>
+<script>
+  import { initializeImageLightbox } from '../../utils/image-lightbox.mjs';
+
   const initializeImageCarousels = () => {
     document.querySelectorAll('[data-image-carousel]').forEach((carousel) => {
       if (carousel.dataset.carouselReady === 'true') return;
@@ -247,139 +249,6 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       window.addEventListener('resize', update, { passive: true });
       items.forEach((item) => item.addEventListener('load', update, { once: true }));
       update();
-    });
-  };
-
-  const initializeImageLightbox = () => {
-    const lightbox = document.querySelector('[data-image-lightbox]');
-    const expandedImage = lightbox?.querySelector('[data-lightbox-image]');
-    const caption = lightbox?.querySelector('[data-lightbox-caption]');
-    const viewport = lightbox?.querySelector('[data-lightbox-viewport]');
-    const canvas = lightbox?.querySelector('.image-lightbox__canvas');
-    const zoomOutButton = lightbox?.querySelector('[data-lightbox-zoom-out]');
-    const zoomStatus = lightbox?.querySelector('[data-lightbox-zoom-status]');
-    const zoomInButton = lightbox?.querySelector('[data-lightbox-zoom-in]');
-    const fitButton = lightbox?.querySelector('[data-lightbox-fit]');
-    const originalLink = lightbox?.querySelector('[data-lightbox-original]');
-    const closeButton = lightbox?.querySelector('[data-lightbox-close]');
-    if (!lightbox || !expandedImage || !caption || !viewport || !canvas || !zoomOutButton || !zoomStatus || !zoomInButton || !fitButton || !originalLink || !closeButton) return;
-
-    const DEFAULT_ZOOM = 1.25;
-    const MIN_ZOOM = 1;
-    const MAX_ZOOM = 3;
-    const ZOOM_STEP = 0.25;
-    let triggerImage = null;
-    let baseWidth = 0;
-    let baseHeight = 0;
-    let zoom = DEFAULT_ZOOM;
-
-    const fitImageToViewport = () => {
-      if (baseWidth <= 0 || baseHeight <= 0) {
-        expandedImage.style.removeProperty('width');
-        return;
-      }
-
-      const canvasStyle = window.getComputedStyle(canvas);
-      const horizontalPadding = (Number.parseFloat(canvasStyle.paddingLeft) || 0) + (Number.parseFloat(canvasStyle.paddingRight) || 0);
-      const verticalPadding = (Number.parseFloat(canvasStyle.paddingTop) || 0) + (Number.parseFloat(canvasStyle.paddingBottom) || 0);
-      const availableWidth = Math.max(1, viewport.clientWidth - horizontalPadding);
-      const availableHeight = Math.max(1, viewport.clientHeight - verticalPadding);
-      const fitScale = Math.min(availableWidth / baseWidth, availableHeight / baseHeight, 1);
-      expandedImage.style.width = `${Math.max(1, Math.floor(baseWidth * fitScale))}px`;
-    };
-
-    const updateZoom = () => {
-      const isFit = lightbox.dataset.lightboxFit === 'true';
-      if (isFit) {
-        fitImageToViewport();
-      } else if (baseWidth > 0) {
-        expandedImage.style.width = `${Math.round(baseWidth * zoom)}px`;
-      }
-      zoomStatus.textContent = isFit ? '맞춤' : `${Math.round(zoom * 100)}%`;
-      zoomOutButton.disabled = zoom <= MIN_ZOOM;
-      zoomInButton.disabled = zoom >= MAX_ZOOM;
-    };
-
-    const openImage = (image) => {
-      const source = image.currentSrc || image.src;
-      if (!source) return;
-
-      triggerImage = image;
-      baseWidth = image.naturalWidth || image.width;
-      baseHeight = image.naturalHeight || image.height;
-      zoom = DEFAULT_ZOOM;
-      expandedImage.src = source;
-      expandedImage.alt = image.alt || '확대 이미지';
-      caption.textContent = image.alt || '이미지 원본 보기';
-      originalLink.href = source;
-      lightbox.dataset.lightboxFit = 'false';
-      fitButton.textContent = '화면에 맞추기';
-      fitButton.setAttribute('aria-pressed', 'false');
-      updateZoom();
-      viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      document.documentElement.classList.add('image-lightbox-open');
-      lightbox.showModal();
-      closeButton.focus();
-    };
-
-    document.querySelectorAll('.post-article img').forEach((image) => {
-      if (image.dataset.lightboxReady === 'true' || image.closest('a') || image.hasAttribute('data-no-lightbox')) return;
-
-      image.dataset.lightboxReady = 'true';
-      image.tabIndex = 0;
-      image.setAttribute('role', 'button');
-      image.setAttribute('aria-haspopup', 'dialog');
-      image.setAttribute('aria-controls', 'image-lightbox');
-      image.setAttribute('aria-label', `${image.alt || '본문 이미지'} 이미지 크게 보기`);
-      image.addEventListener('click', () => openImage(image));
-      image.addEventListener('keydown', (event) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
-        event.preventDefault();
-        openImage(image);
-      });
-    });
-
-    expandedImage.addEventListener('load', () => {
-      baseWidth = expandedImage.naturalWidth || baseWidth;
-      baseHeight = expandedImage.naturalHeight || baseHeight;
-      updateZoom();
-    });
-
-    const changeZoom = (delta) => {
-      zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom + delta));
-      lightbox.dataset.lightboxFit = 'false';
-      fitButton.textContent = '화면에 맞추기';
-      fitButton.setAttribute('aria-pressed', 'false');
-      updateZoom();
-      viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    };
-
-    zoomOutButton.addEventListener('click', () => changeZoom(-ZOOM_STEP));
-    zoomInButton.addEventListener('click', () => changeZoom(ZOOM_STEP));
-    window.addEventListener('resize', () => {
-      if (lightbox.open && lightbox.dataset.lightboxFit === 'true') updateZoom();
-    }, { passive: true });
-
-    fitButton.addEventListener('click', () => {
-      const isFit = lightbox.dataset.lightboxFit !== 'true';
-      lightbox.dataset.lightboxFit = String(isFit);
-      fitButton.textContent = isFit ? '확대 보기' : '화면에 맞추기';
-      fitButton.setAttribute('aria-pressed', String(isFit));
-      updateZoom();
-      viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    });
-
-    closeButton.addEventListener('click', () => lightbox.close());
-    lightbox.addEventListener('click', (event) => {
-      if (event.target === lightbox) lightbox.close();
-    });
-    lightbox.addEventListener('close', () => {
-      document.documentElement.classList.remove('image-lightbox-open');
-      expandedImage.removeAttribute('src');
-      expandedImage.style.removeProperty('width');
-      originalLink.removeAttribute('href');
-      triggerImage?.focus();
-      triggerImage = null;
     });
   };
 
@@ -518,6 +387,10 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     font-size: 0.9rem;
     font-weight: 700;
     text-align: center;
+  }
+
+  html {
+    scrollbar-gutter: stable;
   }
 
   html.image-lightbox-open {
