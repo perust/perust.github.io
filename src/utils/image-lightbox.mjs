@@ -78,7 +78,6 @@ export const initializeImageLightbox = () => {
     } else if (baseWidth > 0) {
       expandedImage.style.width = `${baseWidth}px`;
     }
-    sizeToggle.setAttribute('aria-pressed', String(!isFit));
     sizeToggle.setAttribute('aria-label', isFit ? '원본 크기로 보기' : '화면에 맞추기');
     sizeIcon.textContent = isFit ? '+' : '−';
   };

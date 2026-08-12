@@ -47,6 +47,10 @@ jobs:
         run: npm run check:taxonomy
       - name: Test publish policy validator (negative fixtures)
         run: npm run test:publish-policy
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Test browser interactions
+        run: npm run test:browser
       - name: Check publish policy (archive integrity + new-post gates)
         env:
           # push는 이전 SHA와 committed diff를 반드시 비교한다. workflow_dispatch에는 before가

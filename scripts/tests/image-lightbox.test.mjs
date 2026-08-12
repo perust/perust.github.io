@@ -9,6 +9,10 @@ import {
 const root = new URL('../../', import.meta.url);
 const blogPagePath = new URL('src/pages/blog/[slug].astro', root);
 const lightboxScriptPath = new URL('src/utils/image-lightbox.mjs', root);
+const packagePath = new URL('package.json', root);
+const deployWorkflowPath = new URL('.github/workflows/deploy.yml', root);
+const playwrightConfigPath = new URL('playwright.config.mjs', root);
+const browserSpecPath = new URL('scripts/browser-tests/image-lightbox.spec.mjs', root);
 
 const readImplementation = async () => {
   const [page, script] = await Promise.all([
@@ -24,7 +28,9 @@ test('블로그 본문 이미지는 키보드로도 확대 대화상자를 열 �
   assert.match(page, /<dialog[^>]*data-image-lightbox[^>]*data-lightbox-fit="true"[^>]*aria-labelledby="image-lightbox-caption"/);
   assert.match(page, /data-lightbox-image/);
   assert.match(page, /data-lightbox-close/);
-  assert.match(page, /<button[^>]*class="image-lightbox__size-toggle"[^>]*data-lightbox-size-toggle[^>]*aria-pressed="false"[^>]*aria-label="원본 크기로 보기"/);
+  const sizeToggleTag = page.match(/<button[^>]*class="image-lightbox__size-toggle"[^>]*data-lightbox-size-toggle[^>]*>/)?.[0] ?? '';
+  assert.match(sizeToggleTag, /aria-label="원본 크기로 보기"/);
+  assert.doesNotMatch(sizeToggleTag, /aria-pressed=/);
   assert.match(page, /<span[^>]*data-lightbox-size-icon[^>]*aria-hidden="true"[^>]*>\+<\/span>/);
   assert.doesNotMatch(page, /image-lightbox__toolbar/);
   assert.doesNotMatch(page, /data-lightbox-zoom-(?:in|out|status)/);
@@ -53,7 +59,7 @@ test('확대 대화상자는 화면 맞춤으로 열리고 반투명 플러스 �
   assert.match(script, /lightbox\.dataset\.lightboxFit = 'true'/);
   assert.match(script, /expandedImage\.style\.width = `\$\{baseWidth\}px`/);
   assert.match(script, /sizeToggle\.addEventListener\('click'/);
-  assert.match(script, /sizeToggle\.setAttribute\('aria-pressed', String\(!isFit\)\)/);
+  assert.doesNotMatch(script, /aria-pressed/);
   assert.match(script, /sizeToggle\.setAttribute\('aria-label', isFit \? '원본 크기로 보기' : '화면에 맞추기'\)/);
   assert.match(script, /sizeIcon\.textContent = isFit \? '\+' : '−'/);
   assert.match(page, /<div class="image-lightbox__frame">[\s\S]*?<img[^>]*data-lightbox-image[^>]*>[\s\S]*?<button[^>]*data-lightbox-size-toggle/);
@@ -116,4 +122,28 @@ test('원본 크기 토글과 닫기 버튼은 상단 메뉴 없이 보조기술
   assert.match(page, /\.image-lightbox__close\s*\{[\s\S]*?position: absolute;/);
   assert.doesNotMatch(page, /원본 파일 열기/);
   assert.doesNotMatch(script, /DEFAULT_IMAGE_ZOOM|MIN_IMAGE_ZOOM|MAX_IMAGE_ZOOM|IMAGE_ZOOM_STEP|nextImageZoom/);
+});
+
+test('배포 브라우저 검사는 환경변수가 적용된 기존 빌드 산출물을 덮어쓰지 않는다', async () => {
+  const [packageSource, workflow, playwrightConfig] = await Promise.all([
+    readFile(packagePath, 'utf8'),
+    readFile(deployWorkflowPath, 'utf8'),
+    readFile(playwrightConfigPath, 'utf8'),
+  ]);
+  const manifest = JSON.parse(packageSource);
+
+  assert.equal(manifest.scripts['test:browser'], 'playwright test');
+  assert.equal(manifest.scripts['verify:browser'], 'npm run build && npm run test:browser');
+  assert.match(workflow, /- name: Build[\s\S]*?- name: Test browser interactions\n\s+run: npm run test:browser/);
+  assert.match(playwrightConfig, /reuseExistingServer:\s*false/);
+  assert.doesNotMatch(playwrightConfig, /reuseExistingServer:\s*!process\.env\.CI/);
+});
+
+test('수동 Playwright 컨텍스트는 설정의 baseURL을 명시적으로 전달한다', async () => {
+  const browserSpec = await readFile(browserSpecPath, 'utf8');
+
+  assert.equal(
+    browserSpec.match(/browser\.newContext\(\{\s*baseURL,\s*viewport:/g)?.length ?? 0,
+    2,
+  );
 });
