@@ -1,6 +1,7 @@
 ---
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import 'photoswipe/style.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Comments from '../../components/Comments.astro';
 import { categoryPath, tagPath, ogImageForPost, getAllPosts, getRelatedPosts, getPrevNext } from '../../utils/blog';
@@ -177,29 +178,6 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     </aside>
   </main>
 
-  <dialog id="image-lightbox" class="image-lightbox" data-image-lightbox data-lightbox-fit="true" aria-labelledby="image-lightbox-caption">
-    <p id="image-lightbox-caption" class="image-lightbox__caption" data-lightbox-caption>이미지 확대 보기</p>
-    <div class="image-lightbox__viewport" data-lightbox-viewport>
-      <div class="image-lightbox__canvas">
-        <div class="image-lightbox__frame">
-          <img class="image-lightbox__image" data-lightbox-image alt="" />
-        </div>
-      </div>
-    </div>
-    <button class="image-lightbox__size-toggle" type="button" data-lightbox-size-toggle aria-label="원본 크기로 보기">
-      <svg class="image-lightbox__control-icon" data-lightbox-size-icon="original" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-        <path d="M12 5v14M5 12h14" />
-      </svg>
-      <svg class="image-lightbox__control-icon" data-lightbox-size-icon="fit" aria-hidden="true" viewBox="0 0 24 24" hidden focusable="false">
-        <path d="M5 12h14" />
-      </svg>
-    </button>
-    <button class="image-lightbox__close" type="button" data-lightbox-close aria-label="확대 이미지 닫기">
-      <svg class="image-lightbox__control-icon" data-lightbox-close-icon aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-        <path d="m6 6 12 12M18 6 6 18" />
-      </svg>
-    </button>
-  </dialog>
 </BaseLayout>
 
 <script>
@@ -396,9 +374,8 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     scrollbar-gutter: stable;
   }
 
-  html.image-lightbox-open {
+  html.pswp-lightbox-open {
     overflow: hidden;
-    background: #020617;
   }
 
   .post-article img[data-lightbox-ready="true"] {
@@ -410,98 +387,47 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     outline-offset: 4px;
   }
 
-  .image-lightbox {
-    position: fixed;
-    inset: 0;
-    width: min(96vw, 110rem);
-    height: 94dvh;
-    max-width: none;
-    max-height: none;
-    margin: auto;
-    padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 1rem;
-    overflow: hidden;
-    background: #0b1120;
-    box-shadow: 0 1.5rem 4rem rgba(2, 6, 23, 0.55);
-    color: #f8fafc;
+  .pswp {
+    width: 100vw;
+    --pswp-bg: #020617;
+    --pswp-placeholder-bg: #0f172a;
+    --pswp-icon-color: #ffffff;
+    --pswp-icon-color-secondary: #0f172a;
   }
 
-  .image-lightbox[open] {
-    display: block;
-  }
-
-  .image-lightbox::backdrop {
-    background: rgba(2, 6, 23, 0.84);
-    backdrop-filter: blur(4px);
-  }
-
-  .image-lightbox__caption {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  .image-lightbox__viewport {
-    width: 100%;
-    height: 100%;
-    min-width: 0;
-    min-height: 0;
-    overflow: auto;
-    overscroll-behavior: contain;
-    background: #020617;
-    touch-action: pan-x pan-y pinch-zoom;
-  }
-
-  .image-lightbox__canvas {
-    display: grid;
-    width: max-content;
-    height: max-content;
-    min-width: 100%;
-    min-height: 100%;
-    place-items: center;
-    box-sizing: border-box;
-    padding: 1rem;
-  }
-
-  .image-lightbox__frame {
-    position: relative;
-    display: grid;
-    width: max-content;
-    height: max-content;
-  }
-
-  .image-lightbox__image {
-    grid-area: 1 / 1;
-    display: block;
-    width: auto;
-    height: auto;
-    max-width: none;
-    max-height: none;
-    margin: 0;
+  .pswp__img {
     background: #ffffff;
     box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.38);
   }
 
-  .image-lightbox[data-lightbox-fit="true"] .image-lightbox__canvas {
-    width: 100%;
-    height: 100%;
+  .pswp__counter {
+    position: absolute;
+    top: 1.375rem;
+    left: 50%;
+    z-index: 20;
+    display: grid;
+    min-width: 3.5rem;
+    height: 2rem;
+    place-items: center;
+    margin: 0;
+    padding: 0 0.75rem;
+    transform: translateX(-50%);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 999px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: none;
+    opacity: 1;
+    white-space: nowrap;
+    pointer-events: none;
   }
 
-  .image-lightbox[data-lightbox-fit="true"] .image-lightbox__image {
-    max-width: 100%;
-    max-height: 100%;
-  }
-
-  .image-lightbox__size-toggle,
-  .image-lightbox__close {
-    z-index: 3;
+  .pswp__button--fit-original,
+  .pswp__button--close {
+    z-index: 20;
     display: grid;
     width: 2.75rem;
     height: 2.75rem;
@@ -509,32 +435,34 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     padding: 0;
     border: 1px solid rgba(255, 255, 255, 0.42);
     border-radius: 999px;
+    background: #0f172a;
     box-shadow: 0 0.35rem 1rem rgba(2, 6, 23, 0.34);
     color: #ffffff;
-    font: inherit;
+    opacity: 1;
     line-height: 1;
     cursor: pointer;
     backdrop-filter: blur(8px);
     transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
   }
 
-  .image-lightbox__size-toggle {
+  .pswp__button--fit-original {
     position: absolute;
     top: 1rem;
     left: 1rem;
-    background: rgba(15, 23, 42, 0.58);
   }
 
-  .image-lightbox__close {
+  .pswp__button--close {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: rgba(15, 23, 42, 0.58);
+    margin-right: 0;
   }
 
-  .image-lightbox__control-icon {
+  .pswp-lightbox__control-icon {
+    position: static;
     width: 1.5rem;
     height: 1.5rem;
+    color: #ffffff;
     fill: none;
     stroke: currentColor;
     stroke-width: 2;
@@ -543,18 +471,24 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     pointer-events: none;
   }
 
-  .image-lightbox__control-icon[hidden] {
+  .pswp-lightbox__control-icon[hidden] {
     display: none;
   }
 
-  .image-lightbox__size-toggle:hover,
-  .image-lightbox__close:hover,
-  .image-lightbox__size-toggle:focus-visible,
-  .image-lightbox__close:focus-visible {
+  .pswp__button--fit-original:hover,
+  .pswp__button--close:hover {
     border-color: rgba(255, 255, 255, 0.82);
-    background: rgba(15, 23, 42, 0.82);
-    outline: 3px solid rgba(147, 197, 253, 0.72);
-    outline-offset: 2px;
+    background: #1e293b;
+    transform: scale(1.04);
+  }
+
+  .pswp__button--fit-original:focus-visible,
+  .pswp__button--close:focus-visible {
+    border-color: #ffffff;
+    background: #0f172a;
+    box-shadow: 0 0 0 7px #0f172a, 0 0.35rem 1rem rgba(2, 6, 23, 0.34);
+    outline: 3px solid #ffffff;
+    outline-offset: 3px;
     transform: scale(1.04);
   }
 
@@ -577,13 +511,6 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       min-height: 2.5rem;
       padding: 0.5rem 0.75rem;
       font-size: 0.9rem;
-    }
-
-    .image-lightbox {
-      width: 100vw;
-      height: 100dvh;
-      border: 0;
-      border-radius: 0;
     }
 
   }
