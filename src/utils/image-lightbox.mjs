@@ -1,18 +1,4 @@
-export const DEFAULT_IMAGE_ZOOM = 1.25;
-export const MIN_IMAGE_ZOOM = 1;
-export const MAX_IMAGE_ZOOM = 3;
-export const IMAGE_ZOOM_STEP = 0.25;
-
 const clamp = (value, minimum, maximum) => Math.max(minimum, Math.min(maximum, value));
-
-export const nextImageZoom = ({ zoom, delta, isFit }) => {
-  if (isFit && delta < 0) return { zoom, exitFit: false };
-  if (isFit) return { zoom: MIN_IMAGE_ZOOM, exitFit: true };
-  return {
-    zoom: clamp(zoom + delta, MIN_IMAGE_ZOOM, MAX_IMAGE_ZOOM),
-    exitFit: true,
-  };
-};
 
 export const calculateImageFitWidth = ({ baseWidth, baseHeight, availableWidth, availableHeight }) => {
   if (baseWidth <= 0 || baseHeight <= 0 || availableWidth <= 0 || availableHeight <= 0) return null;
@@ -47,20 +33,16 @@ export const initializeImageLightbox = () => {
   const caption = lightbox?.querySelector('[data-lightbox-caption]');
   const viewport = lightbox?.querySelector('[data-lightbox-viewport]');
   const canvas = lightbox?.querySelector('.image-lightbox__canvas');
-  const zoomOutButton = lightbox?.querySelector('[data-lightbox-zoom-out]');
-  const zoomStatus = lightbox?.querySelector('[data-lightbox-zoom-status]');
-  const zoomInButton = lightbox?.querySelector('[data-lightbox-zoom-in]');
-  const fitButton = lightbox?.querySelector('[data-lightbox-fit]');
-  const originalLink = lightbox?.querySelector('[data-lightbox-original]');
+  const sizeToggle = lightbox?.querySelector('[data-lightbox-size-toggle]');
+  const sizeIcon = lightbox?.querySelector('[data-lightbox-size-icon]');
   const closeButton = lightbox?.querySelector('[data-lightbox-close]');
-  if (!lightbox || !expandedImage || !caption || !viewport || !canvas || !zoomOutButton || !zoomStatus || !zoomInButton || !fitButton || !originalLink || !closeButton) return;
+  if (!lightbox || !expandedImage || !caption || !viewport || !canvas || !sizeToggle || !sizeIcon || !closeButton) return;
   if (lightbox.dataset.lightboxReady === 'true') return;
 
   lightbox.dataset.lightboxReady = 'true';
   let triggerImage = null;
   let baseWidth = 0;
   let baseHeight = 0;
-  let zoom = DEFAULT_IMAGE_ZOOM;
 
   const viewportSnapshot = () => ({
     scrollLeft: viewport.scrollLeft,
@@ -94,11 +76,11 @@ export const initializeImageLightbox = () => {
     if (isFit) {
       fitImageToViewport();
     } else if (baseWidth > 0) {
-      expandedImage.style.width = `${Math.round(baseWidth * zoom)}px`;
+      expandedImage.style.width = `${baseWidth}px`;
     }
-    zoomStatus.textContent = isFit ? '맞춤' : `${Math.round(zoom * 100)}%`;
-    zoomOutButton.disabled = isFit || zoom <= MIN_IMAGE_ZOOM;
-    zoomInButton.disabled = !isFit && zoom >= MAX_IMAGE_ZOOM;
+    sizeToggle.setAttribute('aria-pressed', String(!isFit));
+    sizeToggle.setAttribute('aria-label', isFit ? '원본 크기로 보기' : '화면에 맞추기');
+    sizeIcon.textContent = isFit ? '+' : '−';
   };
 
   const updateZoomPreservingFocus = (previousViewport) => {
@@ -118,18 +100,15 @@ export const initializeImageLightbox = () => {
     triggerImage = image;
     baseWidth = image.naturalWidth || image.width;
     baseHeight = image.naturalHeight || image.height;
-    zoom = DEFAULT_IMAGE_ZOOM;
     expandedImage.src = source;
     expandedImage.alt = image.alt || '확대 이미지';
-    caption.textContent = image.alt || '이미지 원본 보기';
-    originalLink.href = source;
-    lightbox.dataset.lightboxFit = 'false';
-    fitButton.setAttribute('aria-pressed', 'false');
-    updateZoom();
-    viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    caption.textContent = image.alt || '이미지 확대 보기';
+    lightbox.dataset.lightboxFit = 'true';
     document.documentElement.classList.add('image-lightbox-open');
     lightbox.showModal();
-    closeButton.focus();
+    updateZoom();
+    viewport.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    sizeToggle.focus();
   };
 
   document.querySelectorAll('.post-article img').forEach((image) => {
@@ -155,32 +134,15 @@ export const initializeImageLightbox = () => {
     updateZoom();
   });
 
-  const changeZoom = (delta, sourceButton) => {
-    const isFit = lightbox.dataset.lightboxFit === 'true';
-    const next = nextImageZoom({ zoom, delta, isFit });
-    if (!next.exitFit) return;
-
+  sizeToggle.addEventListener('click', () => {
     const previousViewport = viewportSnapshot();
-    zoom = next.zoom;
-    lightbox.dataset.lightboxFit = 'false';
-    fitButton.setAttribute('aria-pressed', 'false');
+    const isFit = lightbox.dataset.lightboxFit === 'true';
+    lightbox.dataset.lightboxFit = String(!isFit);
     updateZoomPreservingFocus(previousViewport);
-    if (sourceButton.disabled) (delta < 0 ? zoomInButton : zoomOutButton).focus();
-  };
-
-  zoomOutButton.addEventListener('click', () => changeZoom(-IMAGE_ZOOM_STEP, zoomOutButton));
-  zoomInButton.addEventListener('click', () => changeZoom(IMAGE_ZOOM_STEP, zoomInButton));
+  });
   window.addEventListener('resize', () => {
     if (lightbox.open && lightbox.dataset.lightboxFit === 'true') updateZoom();
   }, { passive: true });
-
-  fitButton.addEventListener('click', () => {
-    const previousViewport = viewportSnapshot();
-    const isFit = lightbox.dataset.lightboxFit !== 'true';
-    lightbox.dataset.lightboxFit = String(isFit);
-    fitButton.setAttribute('aria-pressed', String(isFit));
-    updateZoomPreservingFocus(previousViewport);
-  });
 
   closeButton.addEventListener('click', () => lightbox.close());
   lightbox.addEventListener('click', (event) => {
@@ -190,7 +152,6 @@ export const initializeImageLightbox = () => {
     document.documentElement.classList.remove('image-lightbox-open');
     expandedImage.removeAttribute('src');
     expandedImage.style.removeProperty('width');
-    originalLink.removeAttribute('href');
     triggerImage?.focus();
     triggerImage = null;
   });
