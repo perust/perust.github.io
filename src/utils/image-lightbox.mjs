@@ -34,9 +34,10 @@ export const initializeImageLightbox = () => {
   const viewport = lightbox?.querySelector('[data-lightbox-viewport]');
   const canvas = lightbox?.querySelector('.image-lightbox__canvas');
   const sizeToggle = lightbox?.querySelector('[data-lightbox-size-toggle]');
-  const sizeIcon = lightbox?.querySelector('[data-lightbox-size-icon]');
+  const originalSizeIcon = lightbox?.querySelector('[data-lightbox-size-icon="original"]');
+  const fitSizeIcon = lightbox?.querySelector('[data-lightbox-size-icon="fit"]');
   const closeButton = lightbox?.querySelector('[data-lightbox-close]');
-  if (!lightbox || !expandedImage || !caption || !viewport || !canvas || !sizeToggle || !sizeIcon || !closeButton) return;
+  if (!lightbox || !expandedImage || !caption || !viewport || !canvas || !sizeToggle || !originalSizeIcon || !fitSizeIcon || !closeButton) return;
   if (lightbox.dataset.lightboxReady === 'true') return;
 
   lightbox.dataset.lightboxReady = 'true';
@@ -79,7 +80,8 @@ export const initializeImageLightbox = () => {
       expandedImage.style.width = `${baseWidth}px`;
     }
     sizeToggle.setAttribute('aria-label', isFit ? '원본 크기로 보기' : '화면에 맞추기');
-    sizeIcon.textContent = isFit ? '+' : '−';
+    originalSizeIcon.toggleAttribute('hidden', !isFit);
+    fitSizeIcon.toggleAttribute('hidden', isFit);
   };
 
   const updateZoomPreservingFocus = (previousViewport) => {

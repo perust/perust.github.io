@@ -23,6 +23,16 @@ const overlaps = (first, second) => (
   && first.y + first.height > second.y
 );
 
+const controlMetrics = (control) => control.evaluate((node) => {
+  const icon = node.querySelector('.image-lightbox__control-icon:not([hidden])');
+  const controlStyle = getComputedStyle(node);
+  const iconStyle = getComputedStyle(icon);
+  return {
+    control: [Number.parseFloat(controlStyle.width), Number.parseFloat(controlStyle.height)],
+    icon: [Number.parseFloat(iconStyle.width), Number.parseFloat(iconStyle.height)],
+  };
+});
+
 const openImage = async ({ page, url, alt, naturalWidth, naturalHeight }) => {
   await page.goto(url);
   const trigger = page.locator(`.post-article img[alt="${alt}"]`);
@@ -68,9 +78,20 @@ test.describe('이미지 라이트박스 런타임 회귀', () => {
     await expect(dialog).toHaveAttribute('data-lightbox-fit', 'true');
     await expect(toggle).toHaveAttribute('aria-label', '원본 크기로 보기');
     await expect(toggle).not.toHaveAttribute('aria-pressed', /.+/);
-    await expect(toggle).toHaveText('+');
+    await expect(toggle.locator('[data-lightbox-size-icon="original"]')).toBeVisible();
+    await expect(toggle.locator('[data-lightbox-size-icon="fit"]')).toBeHidden();
+    await expect(close.locator('[data-lightbox-close-icon]')).toBeVisible();
+    expect(await toggle.evaluate((node) => node.parentElement?.matches('[data-image-lightbox]'))).toBe(true);
     expect(isInside(await box(image), await box(viewport))).toBe(true);
-    expect(isInside(await box(toggle), await box(image))).toBe(true);
+    const toggleBox = await box(toggle);
+    const closeBox = await box(close);
+    expect(await controlMetrics(toggle)).toEqual({ control: [44, 44], icon: [24, 24] });
+    expect(await controlMetrics(close)).toEqual({ control: [44, 44], icon: [24, 24] });
+    expect(Math.abs(toggleBox.x - dialogBox.x - 16)).toBeLessThanOrEqual(2);
+    expect(Math.abs(toggleBox.y - dialogBox.y - 16)).toBeLessThanOrEqual(2);
+    expect(Math.abs(dialogBox.x + dialogBox.width - closeBox.x - closeBox.width - 16)).toBeLessThanOrEqual(2);
+    expect(Math.abs(closeBox.y - dialogBox.y - 16)).toBeLessThanOrEqual(2);
+    expect(overlaps(toggleBox, await box(image))).toBe(false);
     expect(overlaps(await box(toggle), await box(close))).toBe(false);
     await expect(dialog.locator('.image-lightbox__toolbar')).toHaveCount(0);
 
@@ -78,7 +99,8 @@ test.describe('이미지 라이트박스 런타임 회귀', () => {
     await expect(dialog).toHaveAttribute('data-lightbox-fit', 'false');
     await expect(toggle).toHaveAttribute('aria-label', '화면에 맞추기');
     await expect(toggle).not.toHaveAttribute('aria-pressed', /.+/);
-    await expect(toggle).toHaveText('−');
+    await expect(toggle.locator('[data-lightbox-size-icon="original"]')).toBeHidden();
+    await expect(toggle.locator('[data-lightbox-size-icon="fit"]')).toBeVisible();
     const original = await image.evaluate((node) => {
       const rect = node.getBoundingClientRect();
       const viewport = node.closest('[data-lightbox-viewport]');
@@ -94,13 +116,21 @@ test.describe('이미지 라이트박스 런타임 회귀', () => {
     expect(original.hasInternalScroll).toBe(true);
     expect(original.documentOverflow).toBeLessThanOrEqual(0);
     expect(isInside(await box(toggle), dialogBox)).toBe(true);
-    expect(isInside(await box(toggle), await box(image))).toBe(true);
     expect(isInside(await box(close), dialogBox)).toBe(true);
+    const controlsBeforeScroll = { toggle: await box(toggle), close: await box(close) };
+    await viewport.evaluate((node) => node.scrollTo({ left: node.scrollWidth, top: node.scrollHeight, behavior: 'auto' }));
+    await expect.poll(() => viewport.evaluate((node) => [node.scrollLeft, node.scrollTop])).not.toEqual([0, 0]);
+    const controlsAfterScroll = { toggle: await box(toggle), close: await box(close) };
+    expect(Math.abs(controlsAfterScroll.toggle.x - controlsBeforeScroll.toggle.x)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(controlsAfterScroll.toggle.y - controlsBeforeScroll.toggle.y)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(controlsAfterScroll.close.x - controlsBeforeScroll.close.x)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(controlsAfterScroll.close.y - controlsBeforeScroll.close.y)).toBeLessThanOrEqual(0.5);
 
     await toggle.click();
     await expect(dialog).toHaveAttribute('data-lightbox-fit', 'true');
     await expect(toggle).toHaveAttribute('aria-label', '원본 크기로 보기');
-    await expect(toggle).toHaveText('+');
+    await expect(toggle.locator('[data-lightbox-size-icon="original"]')).toBeVisible();
+    await expect(toggle.locator('[data-lightbox-size-icon="fit"]')).toBeHidden();
     expect(isInside(await box(image), await box(viewport))).toBe(true);
     expect(pageErrors).toEqual([]);
     await context.close();
@@ -120,7 +150,15 @@ test.describe('이미지 라이트박스 런타임 회귀', () => {
     expect(Math.abs(dialogBox.width - 390)).toBeLessThanOrEqual(1);
     expect(Math.abs(dialogBox.height - 844)).toBeLessThanOrEqual(1);
     expect(isInside(await box(image), await box(viewport))).toBe(true);
-    expect(isInside(await box(toggle), await box(image))).toBe(true);
+    const toggleBox = await box(toggle);
+    const closeBox = await box(close);
+    expect(await controlMetrics(toggle)).toEqual({ control: [44, 44], icon: [24, 24] });
+    expect(await controlMetrics(close)).toEqual({ control: [44, 44], icon: [24, 24] });
+    expect(Math.abs(toggleBox.x - dialogBox.x - 16)).toBeLessThanOrEqual(2);
+    expect(Math.abs(toggleBox.y - dialogBox.y - 16)).toBeLessThanOrEqual(2);
+    expect(Math.abs(dialogBox.x + dialogBox.width - closeBox.x - closeBox.width - 16)).toBeLessThanOrEqual(2);
+    expect(Math.abs(closeBox.y - dialogBox.y - 16)).toBeLessThanOrEqual(2);
+    expect(overlaps(toggleBox, await box(image))).toBe(false);
     expect(isInside(await box(close), dialogBox)).toBe(true);
     expect(overlaps(await box(toggle), await box(close))).toBe(false);
 
@@ -141,8 +179,15 @@ test.describe('이미지 라이트박스 런타임 회귀', () => {
     expect(original.documentOverflow).toBeLessThanOrEqual(0);
     expect(isInside(await box(toggle), dialogBox)).toBe(true);
     expect(isInside(await box(close), dialogBox)).toBe(true);
-    expect(isInside(await box(toggle), await box(image))).toBe(true);
     expect(overlaps(await box(toggle), await box(close))).toBe(false);
+    const controlsBeforeScroll = { toggle: await box(toggle), close: await box(close) };
+    await viewport.evaluate((node) => node.scrollTo({ left: node.scrollWidth, top: node.scrollHeight, behavior: 'auto' }));
+    await expect.poll(() => viewport.evaluate((node) => [node.scrollLeft, node.scrollTop])).not.toEqual([0, 0]);
+    const controlsAfterScroll = { toggle: await box(toggle), close: await box(close) };
+    expect(Math.abs(controlsAfterScroll.toggle.x - controlsBeforeScroll.toggle.x)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(controlsAfterScroll.toggle.y - controlsBeforeScroll.toggle.y)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(controlsAfterScroll.close.x - controlsBeforeScroll.close.x)).toBeLessThanOrEqual(0.5);
+    expect(Math.abs(controlsAfterScroll.close.y - controlsBeforeScroll.close.y)).toBeLessThanOrEqual(0.5);
     await context.close();
   });
 

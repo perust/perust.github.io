@@ -31,7 +31,14 @@ test('블로그 본문 이미지는 키보드로도 확대 대화상자를 열 �
   const sizeToggleTag = page.match(/<button[^>]*class="image-lightbox__size-toggle"[^>]*data-lightbox-size-toggle[^>]*>/)?.[0] ?? '';
   assert.match(sizeToggleTag, /aria-label="원본 크기로 보기"/);
   assert.doesNotMatch(sizeToggleTag, /aria-pressed=/);
-  assert.match(page, /<span[^>]*data-lightbox-size-icon[^>]*aria-hidden="true"[^>]*>\+<\/span>/);
+  assert.match(page, /<svg[^>]*data-lightbox-size-icon="original"[^>]*aria-hidden="true"[^>]*viewBox="0 0 24 24"/);
+  assert.match(page, /<svg[^>]*data-lightbox-size-icon="fit"[^>]*aria-hidden="true"[^>]*viewBox="0 0 24 24"[^>]*hidden/);
+  assert.match(page, /<svg[^>]*data-lightbox-close-icon[^>]*aria-hidden="true"[^>]*viewBox="0 0 24 24"/);
+  assert.match(page, /<svg[^>]*data-lightbox-size-icon="original"[^>]*>\s*<path d="M12 5v14M5 12h14" \/>\s*<\/svg>/);
+  assert.match(page, /<svg[^>]*data-lightbox-size-icon="fit"[^>]*>\s*<path d="M5 12h14" \/>\s*<\/svg>/);
+  assert.match(page, /<svg[^>]*data-lightbox-close-icon[^>]*>\s*<path d="m6 6 12 12M18 6 6 18" \/>\s*<\/svg>/);
+  assert.doesNotMatch(page, /data-lightbox-size-icon[^>]*>\s*[+−]\s*</);
+  assert.doesNotMatch(page, /data-lightbox-close[^>]*>[\s\S]*?<span[^>]*>×<\/span>/);
   assert.doesNotMatch(page, /image-lightbox__toolbar/);
   assert.doesNotMatch(page, /data-lightbox-zoom-(?:in|out|status)/);
   assert.doesNotMatch(page, /data-lightbox-original/);
@@ -53,7 +60,7 @@ test('확대 대화상자는 닫기와 포커스 복귀를 지원한다', async 
   assert.match(script, /document\.documentElement\.classList\.remove\('image-lightbox-open'\)/);
 });
 
-test('확대 대화상자는 화면 맞춤으로 열리고 반투명 플러스 버튼으로 원본 크기를 전환한다', async () => {
+test('확대 대화상자는 화면 맞춤으로 열리고 왼쪽 상단 표준 아이콘으로 원본 크기를 전환한다', async () => {
   const { page, script } = await readImplementation();
 
   assert.match(script, /lightbox\.dataset\.lightboxFit = 'true'/);
@@ -61,10 +68,15 @@ test('확대 대화상자는 화면 맞춤으로 열리고 반투명 플러스 �
   assert.match(script, /sizeToggle\.addEventListener\('click'/);
   assert.doesNotMatch(script, /aria-pressed/);
   assert.match(script, /sizeToggle\.setAttribute\('aria-label', isFit \? '원본 크기로 보기' : '화면에 맞추기'\)/);
-  assert.match(script, /sizeIcon\.textContent = isFit \? '\+' : '−'/);
-  assert.match(page, /<div class="image-lightbox__frame">[\s\S]*?<img[^>]*data-lightbox-image[^>]*>[\s\S]*?<button[^>]*data-lightbox-size-toggle/);
+  assert.match(script, /originalSizeIcon\.toggleAttribute\('hidden', !isFit\)/);
+  assert.match(script, /fitSizeIcon\.toggleAttribute\('hidden', isFit\)/);
+  assert.match(page, /<div class="image-lightbox__frame">\s*<img[^>]*data-lightbox-image[^>]*\/>\s*<\/div>\s*<\/div>\s*<\/div>\s*<button[^>]*data-lightbox-size-toggle/);
   assert.match(page, /\.image-lightbox__frame\s*\{[\s\S]*?position: relative;[\s\S]*?display: grid;[\s\S]*?width: max-content;/);
-  assert.match(page, /\.image-lightbox__size-toggle\s*\{[\s\S]*?position: sticky;[\s\S]*?grid-area: 1 \/ 1;[\s\S]*?background: rgba\([^)]*\);/);
+  const toggleStyles = page.match(/\.image-lightbox__size-toggle\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.match(toggleStyles, /position: absolute;/);
+  assert.match(toggleStyles, /top: 1rem;/);
+  assert.match(toggleStyles, /left: 1rem;/);
+  assert.doesNotMatch(toggleStyles, /position: sticky|grid-area|margin:/);
 });
 
 test('화면 맞춤은 가로와 세로 여유를 함께 계산해 세로로 긴 이미지도 맞춘다', () => {
@@ -115,11 +127,14 @@ test('대화상자는 원본 크기·화면 맞춤·안정된 스크롤바 레�
   assert.match(script, /calculatePreservedScroll/);
 });
 
-test('원본 크기 토글과 닫기 버튼은 상단 메뉴 없이 보조기술 상태를 제공한다', async () => {
+test('원본 크기 토글과 닫기 버튼은 양쪽 상단의 표준 아이콘으로 보조기술 상태를 제공한다', async () => {
   const { page, script } = await readImplementation();
 
   assert.match(page, /<button[^>]*data-lightbox-close[^>]*aria-label="확대 이미지 닫기"/);
   assert.match(page, /\.image-lightbox__close\s*\{[\s\S]*?position: absolute;/);
+  assert.match(page, /\.image-lightbox__size-toggle,\s*\.image-lightbox__close\s*\{[^}]*width: 2\.75rem;[^}]*height: 2\.75rem;[^}]*\}/);
+  assert.match(page, /\.image-lightbox__control-icon\s*\{[^}]*width: 1\.5rem;[^}]*height: 1\.5rem;[^}]*stroke: currentColor;[^}]*\}/);
+  assert.doesNotMatch(page, /@media \(max-width: 640px\)[\s\S]*?\.image-lightbox__size-toggle,\s*\.image-lightbox__close\s*\{[^}]*width:/);
   assert.doesNotMatch(page, /원본 파일 열기/);
   assert.doesNotMatch(script, /DEFAULT_IMAGE_ZOOM|MIN_IMAGE_ZOOM|MAX_IMAGE_ZOOM|IMAGE_ZOOM_STEP|nextImageZoom/);
 });

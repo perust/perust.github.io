@@ -183,14 +183,21 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       <div class="image-lightbox__canvas">
         <div class="image-lightbox__frame">
           <img class="image-lightbox__image" data-lightbox-image alt="" />
-          <button class="image-lightbox__size-toggle" type="button" data-lightbox-size-toggle aria-label="원본 크기로 보기">
-            <span data-lightbox-size-icon aria-hidden="true">+</span>
-          </button>
         </div>
       </div>
     </div>
+    <button class="image-lightbox__size-toggle" type="button" data-lightbox-size-toggle aria-label="원본 크기로 보기">
+      <svg class="image-lightbox__control-icon" data-lightbox-size-icon="original" aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      <svg class="image-lightbox__control-icon" data-lightbox-size-icon="fit" aria-hidden="true" viewBox="0 0 24 24" hidden focusable="false">
+        <path d="M5 12h14" />
+      </svg>
+    </button>
     <button class="image-lightbox__close" type="button" data-lightbox-close aria-label="확대 이미지 닫기">
-      <span aria-hidden="true">×</span>
+      <svg class="image-lightbox__control-icon" data-lightbox-close-icon aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </svg>
     </button>
   </dialog>
 </BaseLayout>
@@ -512,16 +519,10 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
   }
 
   .image-lightbox__size-toggle {
-    position: sticky;
-    grid-area: 1 / 1;
+    position: absolute;
     top: 1rem;
     left: 1rem;
-    align-self: start;
-    justify-self: start;
-    margin: 1rem;
     background: rgba(15, 23, 42, 0.58);
-    font-size: 1.75rem;
-    font-weight: 500;
   }
 
   .image-lightbox__close {
@@ -529,8 +530,21 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
     top: 1rem;
     right: 1rem;
     background: rgba(15, 23, 42, 0.58);
-    font-size: 1.45rem;
-    font-weight: 400;
+  }
+
+  .image-lightbox__control-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  .image-lightbox__control-icon[hidden] {
+    display: none;
   }
 
   .image-lightbox__size-toggle:hover,
@@ -572,10 +586,5 @@ const jsonLd = faqLd ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, br
       border-radius: 0;
     }
 
-    .image-lightbox__size-toggle,
-    .image-lightbox__close {
-      width: 2.6rem;
-      height: 2.6rem;
-    }
   }
 </style>
