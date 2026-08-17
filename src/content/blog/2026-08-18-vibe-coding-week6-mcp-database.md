@@ -1,6 +1,6 @@
 ---
 title: "[혼자 공부하는 바이브 코딩 with 클로드 코드] 6주차 후기: MCP와 데이터베이스, 어디까지 연결할까"
-description: "MCP로 Claude Code의 도구를 넓히고, 테스트·버전 관리·배포·데이터베이스 흐름을 살펴보며 로컬 저장과 온라인 서비스의 경계를 고민한 6주차 기록입니다."
+description: "AI 공감 다이어리 마음 구슬의 입력·감정·저장 흐름과 MCP로 Claude Code의 도구를 넓히는 과정을 살피며, 로컬 저장과 온라인 서비스의 경계를 고민한 6주차 기록입니다."
 date: "2026-08-18"
 category: "도서 학습 챌린지"
 tags: ["바이브코딩", "ClaudeCode", "MCP", "AI코딩", "회고"]
@@ -9,11 +9,38 @@ valueType: "experience"
 publishPacingException: "deadline-bound-challenge"
 ---
 
-인프런과 한빛미디어에서 진행하는 「혼자 공부하는 바이브 코딩 with 클로드 코드」 챌린지 6주차입니다. 이번에는 8장을 중심으로 읽었습니다. 7장의 에이전트 실습과 AI 공감 다이어리는 [지난 5주차 후기](/blog/2026-08-11-vibe-coding-week5-api-ai-agents/)에 이미 정리해 두었으니, 여기서는 8장을 읽으며 남은 생각만 적으려고 합니다.
+인프런과 한빛미디어에서 진행하는 「혼자 공부하는 바이브 코딩 with 클로드 코드」 챌린지 6주차입니다. 이번에는 8장을 중심으로 읽었고, 6주차 기본 미션으로 만든 AI 공감 다이어리 「마음 구슬」도 짧게 남깁니다. 7장의 에이전트 실습은 [지난 5주차 후기](/blog/2026-08-11-vibe-coding-week5-api-ai-agents/)에 이미 정리해 두었습니다. 여기서는 실제 앱 화면을 간단히 남긴 뒤, 8장을 읽으며 남은 생각을 적으려고 합니다.
 
 이번 장을 읽으며 계속 남은 질문은 하나였습니다. 어디까지 연결하고, 어디부터는 내가 직접 확인해야 하는가.
 
-<figure class="book-page-figure">
+## 7장 PROJECT 10: 마음 구슬을 만든 흐름
+
+6주차 기본 미션으로 AI 공감 다이어리 「마음 구슬」을 만들었습니다. 한 줄로 하루를 적으면 앱이 감정 구슬을 만들고, 이모티콘을 고른 뒤 감정과 세기를 되짚어 볼 수 있었습니다. 저장된 기록은 감정별로 모아 볼 수 있게 되어 있었습니다.
+
+이 세 화면은 그 흐름을 짧게 남긴 것입니다. 결과 문장이 감정을 정확히 판정한다는 뜻으로 보기보다, 앱이 어디까지 보여 주고 저장하는지를 직접 확인한 기록으로 두고 싶었습니다.
+
+<figure class="post-media-figure">
+  <div class="image-carousel-track">
+    <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/05-mind-marble-entry.webp" alt="마음 구슬 앱의 입력 화면. 오늘 하루는 너무 재미있었다라는 문장과 감정 구슬 생성 진행 상태가 보인다." width="1200" height="1102" loading="lazy" decoding="async" />
+  </div>
+  <figcaption>한 줄로 하루를 적은 뒤 감정 구슬을 만드는 입력 화면.</figcaption>
+</figure>
+
+<figure class="post-media-figure">
+  <div class="image-carousel-track">
+    <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/06-mind-marble-result.webp" alt="마음 구슬 앱 결과 화면. 기쁨 이모티콘 선택, 감정 세기 9/10, 공감 문장이 표시된다." width="1200" height="954" loading="lazy" decoding="async" />
+  </div>
+  <figcaption>이모티콘 선택 뒤 기쁨과 감정 세기 9/10이 표시된 결과 화면.</figcaption>
+</figure>
+
+<figure class="post-media-figure">
+  <div class="image-carousel-track">
+    <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/07-mind-marble-memory-store.webp" alt="마음 구슬 앱의 기억 저장소 화면. 감정 필터와 8월 18일에 저장된 세 개의 감정 구슬 카드가 보인다." width="1200" height="424" loading="lazy" decoding="async" />
+  </div>
+  <figcaption>날짜와 감정 기준으로 저장된 기록을 모아 보는 기억 저장소 화면.</figcaption>
+</figure>
+
+<figure class="post-media-figure">
   <div class="image-carousel-track">
     <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/01-chapter-08-overview.webp" alt="노트북 옆에 펼쳐 둔 책의 Chapter 08 시작면. MCP로 클로드 코드의 한계 넘어서기라는 제목과 학습 목표가 보인다." width="1200" height="1600" loading="lazy" decoding="async" />
   </div>
@@ -32,7 +59,7 @@ publishPacingException: "deadline-bound-challenge"
 
 그래서 MCP를 늘릴 때는 이런 걸 먼저 따져봐야겠다고 생각했습니다. 있으면 좋아 보인다고 하나씩 추가하기보다, 이게 내 어떤 반복 작업을 대신하는지, 그에 따라 어떤 권한과 관리 부담이 생기는지를 먼저 보는 쪽으로요. 키나 토큰은 코드에 그대로 두지 않고 `.env` 같은 별도 환경설정 파일로 분리하는 습관이 중요하다는 것도 다시 확인했습니다.
 
-<figure class="book-page-figure">
+<figure class="post-media-figure">
   <div class="image-carousel-track">
     <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/02-mcp-connection.webp" alt="08-1 MCP 이해하고 클로드 코드와 연결하기 페이지. MCP, 클라이언트 서버 모델, 로컬 MCP, 원격 MCP, 인증 핵심 키워드가 보인다." width="1200" height="1600" loading="lazy" decoding="async" />
   </div>
@@ -47,7 +74,7 @@ publishPacingException: "deadline-bound-challenge"
 
 버전 관리도 비슷하게 느껴졌습니다. 커밋과 푸시를 대신 해줄 수 있게 되면 기록은 빠르게 쌓이는데, 그 기록은 나중에 무언가를 되돌릴 때 근거가 되는 것들입니다. 자동으로 쌓인다고 해서 아무 내용이나 남겨도 되는 건 아니겠구나 싶었습니다. 최신 문서를 참고한다고 해도, 가져온 내용이 지금 내가 쓰는 버전과 맞는지는 한 번 더 봐야겠다고 느꼈습니다.
 
-<figure class="book-page-figure">
+<figure class="post-media-figure">
   <div class="image-carousel-track">
     <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/03-automation-workflow.webp" alt="08-2 MCP로 구현하는 완전 자동화 개발 환경 페이지. 테스트, 버전 관리, Context7, Playwright, 원격 저장소, 추가, 커밋, 푸시 키워드가 보인다." width="1200" height="1600" loading="lazy" decoding="async" />
   </div>
@@ -72,7 +99,7 @@ publishPacingException: "deadline-bound-challenge"
 
 사용자가 자기 데이터를 맡긴다면 운영하는 쪽에는 최소한의 유지와 공지, 보호 책임이 생긴다고 봅니다. 로그인과 데이터베이스는 기능 체크리스트에서 하나 더 체크하는 항목이 아니라, 내가 얼마 동안 이걸 책임질 수 있는지에 대한 답에 가깝습니다.
 
-<figure class="book-page-figure">
+<figure class="post-media-figure">
   <div class="image-carousel-track">
     <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/04-service-database.webp" alt="08-3 데이터베이스 연결해 진짜 서비스 만들기 페이지. Vercel, 배포, 로컬 스토리지, 클라우드 스토리지, Supabase, 데이터베이스, 테이블 키워드가 보인다." width="1200" height="1600" loading="lazy" decoding="async" />
   </div>
