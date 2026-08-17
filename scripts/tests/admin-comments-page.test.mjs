@@ -57,6 +57,16 @@ test('an owner article session gates every third-party script before its provide
   assert.doesNotMatch(comments, /<script[^>]+src=["']https:\/\/challenges\.cloudflare\.com/i);
 });
 
+test('a legacy public page clears the owner token before loading its third-party script', () => {
+  const legacyPage = read('public/homepage/gyobo/index.html');
+  const clearIndex = legacyPage.indexOf("sessionStorage.removeItem('lentoludens-comments-admin-token')");
+  const thirdPartyIndex = legacyPage.indexOf('https://ajax.googleapis.com/ajax/libs/jquery');
+
+  assert.ok(thirdPartyIndex >= 0, 'the legacy fixture must retain its external script');
+  assert.ok(clearIndex >= 0, 'the legacy page must clear the owner token');
+  assert.ok(clearIndex < thirdPartyIndex, 'the token must be cleared before the provider URL executes');
+});
+
 test('admin pages are deliberately excluded from sitemap and allowed by the noindex AdSense gate', () => {
   const astroConfig = read('astro.config.mjs');
   const adsenseCheck = read('scripts/check-adsense.mjs');

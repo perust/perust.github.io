@@ -6,6 +6,14 @@
     <title>교보문고 모바일 리디자인 · lentoludens 아카이브</title>
     <link href="css/reset.css" rel="stylesheet" />
     <link href="css/style.css" rel="stylesheet" />
+    <script>
+      // 관리자 원문 보기 세션이 제3자 레거시 스크립트에 노출되지 않게 먼저 제거한다.
+      try {
+        sessionStorage.removeItem('lentoludens-comments-admin-token');
+      } catch (_) {
+        // 저장소 접근이 차단된 환경에서는 별도 처리를 하지 않는다.
+      }
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   </head>
   <body>

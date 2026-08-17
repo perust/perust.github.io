@@ -137,3 +137,20 @@ test('a stale owner session is cleared before retrying the public placeholder vi
   await expect.poll(() => page.evaluate((key) => sessionStorage.getItem(key), storageKey)).toBeNull();
   await expect(page.locator('[data-comments-owner-mode]')).toBeHidden();
 });
+
+test('a legacy page clears the owner token before requesting its third-party script', async ({ page }) => {
+  const thirdPartyRequests = [];
+  page.on('request', (request) => {
+    if (new URL(request.url()).hostname === 'ajax.googleapis.com') thirdPartyRequests.push(request.url());
+  });
+  await page.route('https://ajax.googleapis.com/**', (route) => route.abort());
+  await page.addInitScript(({ key, token }) => sessionStorage.setItem(key, token), {
+    key: storageKey,
+    token: 'correct-admin-token',
+  });
+
+  await page.goto('/homepage/gyobo/');
+
+  expect(thirdPartyRequests).toHaveLength(1);
+  expect(await page.evaluate((key) => sessionStorage.getItem(key), storageKey)).toBeNull();
+});
