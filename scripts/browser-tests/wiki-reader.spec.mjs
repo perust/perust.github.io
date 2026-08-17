@@ -10,13 +10,13 @@ const collectPageErrors = (page) => {
   return errors;
 };
 
-test.describe('위키 전자책 독서 흐름', () => {
-  test('서재 검색은 책과 장 제목을 찾고 책 목차로 이어진다', async ({ page }) => {
+test.describe('인터넷·IT 위키 탐색 흐름', () => {
+  test('위키 검색은 책과 장 제목을 찾고 책 목차로 이어진다', async ({ page }) => {
     const pageErrors = collectPageErrors(page);
     await page.goto(libraryUrl);
 
-    await expect(page.getByRole('heading', { level: 1, name: '무료 전자책' })).toBeVisible();
-    const search = page.getByRole('searchbox', { name: '서재 검색' });
+    await expect(page.getByRole('heading', { level: 1, name: 'Lentoludens Wiki' })).toBeVisible();
+    const search = page.getByRole('searchbox', { name: '위키 검색' });
     const bookCard = page.locator('[data-wiki-search-item]');
     await expect(bookCard).toHaveCount(1);
 

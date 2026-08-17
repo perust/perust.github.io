@@ -1,13 +1,13 @@
 # perust.github.io
 
-lentoludens의 개인 홈페이지이자 Astro 기반 포트폴리오, 블로그, 무료 전자책 위키입니다. 메인 페이지에는 현재 관심사, 프로젝트, 작업 원칙, 과거 퍼블리싱/프론트엔드 실습 결과물을 정리합니다. `/blog`에는 제작기와 실험 기록을 쌓고, `/wiki`에는 공식 출처로 검증한 지식과 실행 방법을 책과 장 순서로 정리합니다.
+lentoludens의 개인 홈페이지이자 Astro 기반 포트폴리오, 블로그, 인터넷·IT 위키입니다. 메인 페이지에는 현재 관심사, 프로젝트, 작업 원칙, 과거 퍼블리싱/프론트엔드 실습 결과물을 정리합니다. `/blog`에는 제작기와 실험 기록을 쌓고, `/wiki`에는 인터넷과 IT 관련 지식과 실행 방법을 책과 장 순서로 정리합니다.
 
 ## 주요 내용
 
 - 개인 소개 및 현재 포커스
 - 진행 중인 프로젝트 카드
 - Markdown 기반 블로그
-- 책, 부, 장 순서로 읽는 Markdown 기반 무료 전자책 위키
+- 책, 부, 장 순서로 읽는 Markdown 기반 인터넷·IT 위키
 - 소개, 문의, 개인정보처리방침 페이지
 - sitemap, robots.txt, RSS 피드(`/rss.xml`) 등 검색·구독 노출을 위한 기본 파일
 - 과거 웹 퍼블리싱·JavaScript 실습 아카이브 보존
@@ -19,8 +19,8 @@ lentoludens의 개인 홈페이지이자 Astro 기반 포트폴리오, 블로그
 .
 ├── src/
 │   ├── content/blog/        # Markdown 블로그 글
-│   ├── content/wiki-books/  # 전자책 메타데이터
-│   ├── content/wiki-pages/  # 전자책 장 Markdown
+│   ├── content/wiki-books/  # 위키 책 메타데이터
+│   ├── content/wiki-pages/  # 위키 장 Markdown
 │   ├── layouts/             # Astro 공통 레이아웃
 │   ├── pages/               # 라우트 페이지
 │   └── styles/              # 전역 스타일

@@ -20,7 +20,7 @@ async function namesOrEmpty(relativePath) {
   }
 }
 
-test('위키는 블로그와 분리된 전자책 컬렉션이며 상단 메뉴에서 접근할 수 있다', async () => {
+test('위키는 블로그와 분리된 책·장 컬렉션이며 상단 메뉴에서 접근할 수 있다', async () => {
   const [layout, wikiLayout, contentConfig, wikiUtils, wikiSchema] = await Promise.all([
     readOrEmpty('src/layouts/BaseLayout.astro'),
     readOrEmpty('src/layouts/WikiLayout.astro'),
@@ -56,7 +56,7 @@ test('위키는 블로그와 분리된 전자책 컬렉션이며 상단 메뉴�
   assert.match(contentConfig, /export const collections = \{[^}]*wikiBooks[^}]*wikiPages[^}]*\}/s);
 });
 
-test('첫 전자책은 큰 범위 한 권 아래 검증된 소수의 장으로 시작한다', async () => {
+test('첫 위키 책은 큰 범위 한 권 아래 검증된 소수의 장으로 시작한다', async () => {
   const bookRaw = await readOrEmpty('src/content/wiki-books/web-building.json');
   assert.ok(bookRaw, '첫 책 메타데이터가 있어야 한다');
 
@@ -80,19 +80,25 @@ test('첫 전자책은 큰 범위 한 권 아래 검증된 소수의 장으로 �
     assert.match(chapter, /^sources:\s*$/m);
     assert.match(chapter, /https:\/\//);
     assert.match(chapter, /^##\s+/m, `${chapterName}: 교재형 본문 소제목이 있어야 한다`);
+    assert.doesNotMatch(chapter, /전자책|서재/, `${chapterName}: 위키를 전자책이나 서재로 부르지 않아야 한다`);
   }
 });
 
-test('빌드된 위키 서재와 책 표지는 책·목차 중심의 정보 구조를 제공한다', async () => {
+test('빌드된 위키 홈과 책 표지는 책·목차 중심의 정보 구조를 제공한다', async () => {
   const [library, book] = await Promise.all([
     readOrEmpty('dist/wiki/index.html'),
     readOrEmpty('dist/wiki/web-building/index.html'),
   ]);
 
-  assert.match(library, /무료 전자책/);
+  assert.match(library, /Lentoludens Wiki/);
+  assert.doesNotMatch(library, /무료 전자책|서재|Free e-books/);
+  assert.doesNotMatch(
+    library,
+    /wiki-library-principles|공식 문서와 1차 자료 우선|수정일과 마지막 검증일 구분|빈 목차보다 확인한 소수의 장/,
+  );
   assert.match(library, /웹사이트 만들기와 운영/);
   assert.match(library, /href="\/wiki\/web-building\/"/);
-  assert.match(library, /<label[^>]*for="wiki-search"[^>]*>서재 검색<\/label>/);
+  assert.match(library, /<label[^>]*for="wiki-search"[^>]*>위키 검색<\/label>/);
   assert.doesNotMatch(library, /<input[^>]*id="wiki-search"[^>]*aria-label=/);
   assert.match(library, /data-wiki-search/);
 

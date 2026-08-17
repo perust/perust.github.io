@@ -8,12 +8,12 @@ const allPages = await getWikiPages();
 const library = books.map((book) => ({ book, pages: pagesForBook(allPages, book.id) }));
 const site = Astro.site ?? new URL('https://perust.github.io');
 const pageUrl = new URL('/wiki/', site).toString();
-const description = '정확한 출처와 실제 검증을 바탕으로 웹·개발 지식을 책과 목차 순서로 정리하는 lentoludens 무료 전자책 서재입니다.';
+const description = '인터넷과 IT 관련 지식을 책과 목차 구조로 정리한 Lentoludens Wiki입니다.';
 
 const collectionLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: 'lentoludens 무료 전자책',
+  name: 'Lentoludens Wiki',
   description,
   url: pageUrl,
   inLanguage: 'ko-KR',
@@ -39,7 +39,7 @@ const breadcrumbLd = {
 };
 ---
 <BaseLayout
-  title="무료 전자책 · lentoludens 위키"
+  title="Lentoludens Wiki"
   description={description}
   canonical="/wiki/"
   jsonLd={[collectionLd, breadcrumbLd]}
@@ -47,27 +47,22 @@ const breadcrumbLd = {
   <main class="wiki-library">
     <section class="wiki-library-hero" aria-labelledby="wiki-library-title">
       <div>
-        <p class="wiki-library-kicker">Wiki · Free e-books</p>
-        <h1 id="wiki-library-title">무료 전자책</h1>
-        <p class="wiki-library-lead">알게 된 지식을 흩어진 메모로 두지 않고, 큰 범위의 책과 순서가 있는 목차로 정리합니다. 확인한 내용만 먼저 싣고 새로운 지식은 기존 책의 장으로 이어서 보완합니다.</p>
+        <p class="wiki-library-kicker">Internet · IT Wiki</p>
+        <h1 id="wiki-library-title">Lentoludens Wiki</h1>
+        <p class="wiki-library-lead">인터넷과 IT에 관한 지식을 주제별 책과 순서가 있는 목차로 정리합니다. 필요한 내용을 검색하거나 처음부터 차례대로 읽을 수 있습니다.</p>
       </div>
-      <ul class="wiki-library-principles" aria-label="위키 작성 원칙">
-        <li><span aria-hidden="true">01</span><strong>공식 문서와 1차 자료 우선</strong></li>
-        <li><span aria-hidden="true">02</span><strong>수정일과 마지막 검증일 구분</strong></li>
-        <li><span aria-hidden="true">03</span><strong>빈 목차보다 확인한 소수의 장</strong></li>
-      </ul>
     </section>
 
-    <section class="wiki-search-panel" aria-label="전자책 검색">
-      <label class="wiki-search-label" for="wiki-search">서재 검색</label>
+    <section class="wiki-search-panel" aria-label="위키 검색">
+      <label class="wiki-search-label" for="wiki-search">위키 검색</label>
       <div class="wiki-search-control">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
         <input id="wiki-search" type="search" placeholder="책 제목이나 장 제목 검색" autocomplete="off" data-wiki-search />
       </div>
-      <p class="wiki-search-status" aria-live="polite" data-wiki-search-status>전자책 {library.length}권 · 공개된 장 {allPages.length}개</p>
+      <p class="wiki-search-status" aria-live="polite" data-wiki-search-status>책 {library.length}권 · 공개된 장 {allPages.length}개</p>
     </section>
 
-    <section class="wiki-book-list" aria-label="전자책 목록">
+    <section class="wiki-book-list" aria-label="위키 책 목록">
       {library.map(({ book, pages }) => (
         <article
           class="wiki-book-card"
@@ -126,7 +121,7 @@ const breadcrumbLd = {
         item.hidden = !matches;
         if (matches) visible += 1;
       });
-      if (status) status.textContent = query ? `검색 결과 ${visible}권` : `전자책 ${items.length}권`;
+      if (status) status.textContent = query ? `검색 결과 ${visible}권` : `책 ${items.length}권`;
       if (empty) empty.hidden = visible !== 0;
     };
 
