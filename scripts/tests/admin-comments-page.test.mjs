@@ -34,6 +34,41 @@ test('the base layout can disable third-party analytics on the admin page', () =
   assert.match(layout, /loadAnalytics\s*&&/);
 });
 
+test('an owner article session gates every third-party script before its provider URL', () => {
+  const layout = read('src/layouts/BaseLayout.astro');
+  const comments = read('src/components/Comments.astro');
+  const storageMarker = 'lentoludens-comments-admin-token';
+  const gateIndex = layout.indexOf(storageMarker);
+
+  assert.notEqual(gateIndex, -1, 'BaseLayout must inspect the owner session before loading third-party scripts');
+  for (const provider of [
+    'pagead2.googlesyndication.com',
+    'www.googletagmanager.com',
+    'www.clarity.ms',
+  ]) {
+    assert.ok(layout.indexOf(provider) > gateIndex, `${provider} must appear after the owner-session gate`);
+  }
+  assert.equal(layout.match(/sessionStorage\.getItem/g)?.length, 1);
+  assert.match(layout, /dataset\.adminSession/);
+  assert.match(layout, /dataset\.adminSession\s*===\s*['"]true['"]/);
+  assert.match(comments, /lentoludens-comments-admin-token/);
+  assert.match(comments, /authorization: `Bearer \$\{token\}`/);
+  assert.doesNotMatch(comments, /authorization: `Bearer \$\{adminToken\}`/);
+  assert.match(comments, /response\.status === 401/);
+  assert.match(comments, /비공개 댓글입니다\./);
+  assert.doesNotMatch(comments, /<script[^>]+src=["']https:\/\/challenges\.cloudflare\.com/i);
+});
+
+test('a legacy public page clears the owner token before loading its third-party script', () => {
+  const legacyPage = read('public/homepage/gyobo/index.html');
+  const clearIndex = legacyPage.indexOf("sessionStorage.removeItem('lentoludens-comments-admin-token')");
+  const thirdPartyIndex = legacyPage.indexOf('https://ajax.googleapis.com/ajax/libs/jquery');
+
+  assert.ok(thirdPartyIndex >= 0, 'the legacy fixture must retain its external script');
+  assert.ok(clearIndex >= 0, 'the legacy page must clear the owner token');
+  assert.ok(clearIndex < thirdPartyIndex, 'the token must be cleared before the provider URL executes');
+});
+
 test('admin pages are deliberately excluded from sitemap and allowed by the noindex AdSense gate', () => {
   const astroConfig = read('astro.config.mjs');
   const adsenseCheck = read('scripts/check-adsense.mjs');

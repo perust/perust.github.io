@@ -117,14 +117,35 @@ async function listComments(request, env, corsHeaders) {
   const postSlug = cleanText(url.searchParams.get('slug'), '', 140);
   if (!postSlug) return json({ error: 'post slug is required' }, 400, corsHeaders);
 
+  const hasAuthorization = Boolean(request.headers.get('authorization'));
+  const canViewPrivate = hasAuthorization && isAdminAuthorized(request, env);
+  const headers = hasAuthorization ? adminHeaders(corsHeaders) : corsHeaders;
+  if (hasAuthorization && !canViewPrivate) return json({ error: 'unauthorized' }, 401, headers);
+
   const rows = await env.DB.prepare(
-    `SELECT id, post_slug AS postSlug, nickname, body, ip_prefix AS ipPrefix, created_at AS createdAt
+    `SELECT id, post_slug AS postSlug, nickname, body, ip_prefix AS ipPrefix,
+            COALESCE(is_private, 0) AS isPrivate, created_at AS createdAt
      FROM comments
-     WHERE post_slug = ? AND status = 'approved' AND COALESCE(is_private, 0) = 0
+     WHERE post_slug = ? AND status = 'approved'
      ORDER BY created_at ASC`
   ).bind(postSlug).all();
 
-  return json({ comments: rows.results || [] }, 200, corsHeaders);
+  const comments = (rows.results || []).map((row) => {
+    const isPrivate = Boolean(row.isPrivate);
+    const isRedacted = isPrivate && !canViewPrivate;
+    return {
+      id: isRedacted ? '' : row.id,
+      postSlug: row.postSlug,
+      nickname: isRedacted ? '비공개' : row.nickname,
+      body: isRedacted ? '비공개 댓글입니다.' : row.body,
+      ipPrefix: isRedacted ? '' : row.ipPrefix,
+      isPrivate,
+      isRedacted,
+      createdAt: row.createdAt,
+    };
+  });
+
+  return json({ comments }, 200, headers);
 }
 
 async function createComment(request, env, corsHeaders) {
@@ -257,8 +278,12 @@ export default {
       return json({ error: 'not found' }, 404, corsHeaders);
     } catch (error) {
       const isAdminRoute = url.pathname.startsWith('/admin/');
-      const headers = isAdminRoute ? adminHeaders(corsHeaders) : corsHeaders;
-      const message = isAdminRoute ? 'server error' : (error instanceof Error ? error.message : 'server error');
+      const isAuthenticatedCommentRead = request.method === 'GET'
+        && url.pathname === '/comments'
+        && Boolean(request.headers.get('authorization'));
+      const isSensitiveRoute = isAdminRoute || isAuthenticatedCommentRead;
+      const headers = isSensitiveRoute ? adminHeaders(corsHeaders) : corsHeaders;
+      const message = isSensitiveRoute ? 'server error' : (error instanceof Error ? error.message : 'server error');
       return json({ error: message }, 500, headers);
     }
   },

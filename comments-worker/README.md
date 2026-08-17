@@ -10,7 +10,8 @@ Astro/GitHub Pages 블로그에 붙일 익명 댓글 API 초안입니다.
 - IP 원문 저장 없음: `ip_hash`와 일부 마스킹된 `ip_prefix`만 저장
 - 기본 상태는 `approved`: 작성 즉시 공개
 - 작성자가 입력한 삭제 비밀번호의 해시를 저장해 본인 삭제를 지원
-- 체크박스로 비공개 댓글을 선택하면 D1에는 저장하지만 공개 목록에는 표시하지 않음
+- 체크박스로 비공개 댓글을 선택하면 공개 목록에는 순서·작성 시각과 `비공개 댓글입니다.` placeholder만 표시
+- 비공개 원문·닉네임·IP 일부값은 서버 projection에서 제거하고, 관리자 인증 요청에만 반환
 
 ## 1. Cloudflare 준비
 
@@ -89,6 +90,9 @@ https://perust.github.io/admin/comments/
 - 입력한 토큰은 URL이나 `localStorage`에 남기지 않고 현재 탭의 `sessionStorage`에만 보관합니다.
 - 공개·비공개·숨김 댓글을 모두 표시하며, 한 번에 50개씩 불러옵니다.
 - 검색엔진·사이트맵·광고·분석 스크립트에서 관리자 경로를 제외합니다.
+- 로그인 후 댓글의 글 제목을 같은 탭에서 열면 해당 글의 비공개 원문을 관리자 모드로 확인할 수 있습니다.
+- 관리자 모드 글에서는 토큰과 비공개 원문을 보호하기 위해 AdSense·Google Analytics·Clarity·Turnstile을 로드하지 않습니다.
+- 관리자 모드 종료 또는 탭 종료 시 글은 다시 공개 placeholder 보기로 돌아갑니다.
 
 ## 6. 댓글 승인/거절
 
@@ -115,7 +119,7 @@ curl -X POST "$PUBLIC_COMMENTS_API_URL/admin/comments" \
 
 ### `GET /comments?slug=<post-slug>`
 
-승인된 댓글만 반환합니다.
+승인된 댓글만 반환합니다. 인증 없는 요청에서도 비공개 댓글의 위치는 유지하지만, 본문은 `비공개 댓글입니다.`, 닉네임은 `비공개`, IP 일부값은 빈 문자열로 서버에서 치환하며 `isRedacted: true`를 표시합니다. 올바른 `Authorization: Bearer ***`가 있는 요청만 비공개 원문을 `isRedacted: false`로 반환하고 `Cache-Control: no-store`를 적용합니다. 잘못된 토큰은 D1 조회 전에 `401`로 거부합니다.
 
 ### `GET /admin/comments?limit=50&offset=0`
 

@@ -24,7 +24,9 @@ if (!existsSync('src/layouts/BaseLayout.astro')) {
   const layout = read('src/layouts/BaseLayout.astro');
   const scriptCount = layout.split(adsenseUrl).length - 1;
   if (scriptCount !== 1) fail(`BaseLayout must include the AdSense script exactly once; found ${scriptCount}.`);
-  if (!/crossorigin=["']anonymous["']/.test(layout)) fail('AdSense script must include crossorigin="anonymous".');
+  const hasAnonymousCrossorigin = /crossorigin=["']anonymous["']/.test(layout)
+    || /\.crossOrigin\s*=\s*["']anonymous["']/.test(layout);
+  if (!hasAnonymousCrossorigin) fail('AdSense script must set crossorigin="anonymous".');
 }
 
 if (!existsSync('src/pages/privacy.astro')) {

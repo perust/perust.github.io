@@ -1083,9 +1083,14 @@ h3 {
 .comments-note, .comments-empty, .comment-form-message { color: var(--muted); font-size: .95rem; }
 .comments-list { display: flex; flex-direction: column; gap: .85rem; margin: 1rem 0 1.2rem; }
 .comment-item { padding: 1rem; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; }
+.comment-item.is-private { border-color: #d8b4fe; background: #faf5ff; }
 .comment-meta { display: flex; flex-wrap: wrap; gap: .45rem .65rem; align-items: center; color: var(--muted); font-size: .86rem; }
 .comment-meta strong { color: var(--ink); }
+.comment-private-badge { padding: .12rem .45rem; border-radius: 999px; color: #6b21a8; font-size: .75rem; font-weight: 800; background: #f3e8ff; }
 .comment-item p { margin: .6rem 0 0; color: #334155; white-space: pre-wrap; }
+.comments-owner-mode { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .7rem; margin: 0 0 1rem; padding: .75rem .9rem; border: 1px solid #c4b5fd; border-radius: var(--radius-sm); color: #5b21b6; font-size: .9rem; font-weight: 800; background: #f5f3ff; }
+.comments-owner-mode button { padding: .45rem .7rem; border: 1px solid #c4b5fd; border-radius: 999px; color: #5b21b6; font: inherit; font-size: .82rem; background: #fff; cursor: pointer; }
+.comments-owner-mode[hidden], .comment-form[hidden] { display: none; }
 .comment-delete { margin-top: .75rem; color: var(--muted); font-size: .88rem; }
 .comment-delete summary { cursor: pointer; width: fit-content; font-weight: 800; }
 .comment-delete form { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .5rem; }
