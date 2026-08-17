@@ -65,6 +65,7 @@ export default defineConfig({
       filter(page) {
         const url = new URL(page);
         if (/\/(contents|homepage|study)\//.test(url.pathname)) return false;
+        if (url.pathname.startsWith('/admin/')) return false;
         // 레거시 카테고리 호환 페이지는 항상 noindex, follow 이므로 sitemap 에서 제외한다.
         const legacyCategory = url.pathname.match(/^\/blog\/category\/([^/]+)\/$/)?.[1];
         if (legacyCategory && LEGACY_COMPAT_SLUGS.has(decodeURIComponent(legacyCategory))) return false;

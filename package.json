@@ -17,6 +17,7 @@
     "check:taxonomy": "node scripts/check-taxonomy.mjs",
     "check:publish-policy": "node scripts/check-publish-policy.mjs",
     "test:publish-policy": "node --test scripts/tests/*.test.mjs",
+    "test:comments-worker": "node --test comments-worker/tests/*.test.mjs",
     "test:browser": "playwright test",
     "verify:browser": "npm run build && npm run test:browser",
     "verify:site": "npm run build && npm run check:seo && npm run check:adsense && npm run check:content-quality && npm run check:taxonomy && npm run check:publish-policy"

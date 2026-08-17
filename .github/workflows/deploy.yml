@@ -47,6 +47,8 @@ jobs:
         run: npm run check:taxonomy
       - name: Test publish policy validator (negative fixtures)
         run: npm run test:publish-policy
+      - name: Test comments Worker API
+        run: npm run test:comments-worker
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
       - name: Test browser interactions

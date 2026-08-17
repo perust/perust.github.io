@@ -77,8 +77,8 @@ if (!existsSync('dist')) {
     const isNoindex = /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(html);
     const expectedCount = isNoindex ? 0 : 1;
     if (count !== expectedCount) badScriptPages.push(`${rel} (expected ${expectedCount}, found ${count})`);
-    const isIntentionalIndexUtility = rel.startsWith('/blog/tag/') || rel.startsWith('/blog/category/');
-    if (!isIntentionalIndexUtility && isNoindex) noindexPages.push(rel);
+    const isIntentionalNoindexPage = rel.startsWith('/blog/tag/') || rel.startsWith('/blog/category/') || rel.startsWith('/admin/');
+    if (!isIntentionalNoindexPage && isNoindex) noindexPages.push(rel);
   }
 
   if (badScriptPages.length) fail(`Indexable Astro pages must include AdSense exactly once and noindex pages must include none. Bad pages: ${badScriptPages.slice(0, 10).join(', ')}${badScriptPages.length > 10 ? `, ... +${badScriptPages.length - 10}` : ''}`);
