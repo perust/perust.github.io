@@ -25,7 +25,7 @@ const comments = [
   },
 ];
 
-test('every article comment section provides a discoverable same-tab entry to the protected admin login', async ({ page }) => {
+test('site footer provides a discoverable same-tab entry to the protected admin login', async ({ page }) => {
   await page.route('**/comments?**', (route) => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -34,11 +34,12 @@ test('every article comment section provides a discoverable same-tab entry to th
 
   await page.goto('/blog/2026-07-01-static-blog-anonymous-comments/');
 
-  const entry = page.getByRole('link', { name: '관리자 로그인' });
+  const entry = page.locator('footer').getByRole('link', { name: '관리자', exact: true });
   await expect(entry).toBeVisible();
   await expect(entry).toHaveAttribute('href', '/admin/comments/');
   await expect(entry).toHaveAttribute('rel', 'nofollow');
   await expect(entry).not.toHaveAttribute('target', '_blank');
+  await expect(page.locator('[data-comments-admin-entry]')).toHaveCount(0);
 
   await entry.click();
   await expect(page).toHaveURL(/\/admin\/comments\/$/);
