@@ -185,7 +185,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
       try {
         let adminToken = readAdminToken();
         const fetchComments = (token) => fetch(`${apiUrl.replace(/\/$/, '')}/comments?slug=${encodeURIComponent(postSlug)}`, token ? {
-          headers: { authorization: `Bearer ${adminToken}` },
+          headers: { authorization: `Bearer ${token}` },
           cache: 'no-store',
           credentials: 'omit',
           referrerPolicy: 'no-referrer',

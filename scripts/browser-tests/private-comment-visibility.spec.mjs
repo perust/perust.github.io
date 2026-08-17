@@ -21,7 +21,7 @@ const publicComments = [
     createdAt: '2026-08-17 10:00:00',
   },
   {
-    id: 'private-comment',
+    id: '',
     postSlug: '2026-07-01-static-blog-anonymous-comments',
     nickname: '비공개',
     body: '비공개 댓글입니다.',

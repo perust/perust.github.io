@@ -133,7 +133,7 @@ test('public GET keeps an approved private comment in order but returns only its
         body: '공개 댓글 본문',
       },
       {
-        id: 'private-comment',
+        id: '',
         isPrivate: true,
         isRedacted: true,
         body: '비공개 댓글입니다.',
@@ -141,7 +141,7 @@ test('public GET keeps an approved private comment in order but returns only its
     ], name);
     assert.equal(data.comments[1].nickname, '비공개', name);
     assert.equal(data.comments[1].ipPrefix, '', name);
-    assert.doesNotMatch(serialized, /절대 공개되면 안 되는 비공개 원문|숨겨야 할 닉네임|118\.235|private-ip-hash|private-delete-hash/, name);
+    assert.doesNotMatch(serialized, /절대 공개되면 안 되는 비공개 원문|숨겨야 할 닉네임|118\.235|private-comment|private-ip-hash|private-delete-hash/, name);
     assert.doesNotMatch(serialized, /대기 댓글 본문|다른 글 댓글 본문/, name);
 
     const listQuery = db.calls.at(0)?.sql || '';

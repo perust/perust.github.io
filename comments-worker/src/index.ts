@@ -178,7 +178,7 @@ async function listComments(request: Request, env: Env, corsHeaders: HeadersInit
     const isPrivate = Boolean(row.isPrivate);
     const isRedacted = isPrivate && !canViewPrivate;
     return {
-      id: row.id,
+      id: isRedacted ? '' : row.id,
       postSlug: row.postSlug,
       nickname: isRedacted ? '비공개' : row.nickname,
       body: isRedacted ? '비공개 댓글입니다.' : row.body,

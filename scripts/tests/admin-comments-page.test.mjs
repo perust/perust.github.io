@@ -48,10 +48,12 @@ test('an owner article session gates every third-party script before its provide
   ]) {
     assert.ok(layout.indexOf(provider) > gateIndex, `${provider} must appear after the owner-session gate`);
   }
-  assert.match(layout, /sessionStorage\.getItem/);
-  assert.match(layout, /if\s*\(\s*hasAdminSession\s*\)\s*return/);
+  assert.equal(layout.match(/sessionStorage\.getItem/g)?.length, 1);
+  assert.match(layout, /dataset\.adminSession/);
+  assert.match(layout, /dataset\.adminSession\s*===\s*['"]true['"]/);
   assert.match(comments, /lentoludens-comments-admin-token/);
-  assert.match(comments, /authorization:\s*`Bearer \$\{adminToken\}`/);
+  assert.match(comments, /authorization: `Bearer \$\{token\}`/);
+  assert.doesNotMatch(comments, /authorization: `Bearer \$\{adminToken\}`/);
   assert.match(comments, /response\.status === 401/);
   assert.match(comments, /비공개 댓글입니다\./);
   assert.doesNotMatch(comments, /<script[^>]+src=["']https:\/\/challenges\.cloudflare\.com/i);
