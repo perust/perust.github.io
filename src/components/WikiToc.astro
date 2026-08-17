@@ -1,0 +1,48 @@
+---
+import type { WikiBook, WikiPage } from '../utils/wiki';
+import { groupPagesByPart, wikiBookPath, wikiPagePath } from '../utils/wiki';
+
+interface Props {
+  book: WikiBook;
+  pages: WikiPage[];
+  currentSlug?: string;
+}
+
+const { book, pages, currentSlug } = Astro.props;
+const groups = groupPagesByPart(pages);
+---
+<aside id="wiki-toc" class="wiki-toc" aria-label="책 목차">
+  <div class="wiki-toc-header">
+    <button class="wiki-toc-close" type="button" aria-label="목차 닫기" data-wiki-toc-close>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+    </button>
+    <a class="wiki-toc-library" href="/wiki/">전자책 서재</a>
+    <a class="wiki-toc-book" href={wikiBookPath(book.id)}>{book.data.title}</a>
+    <p>{book.data.subtitle}</p>
+  </div>
+  <nav aria-label="책 목차">
+    <a class:list={['wiki-toc-overview', { 'is-current': !currentSlug }]} href={wikiBookPath(book.id)} aria-current={!currentSlug ? 'page' : undefined}>
+      <span>책 소개</span>
+      <small>전체 목차와 학습 목표</small>
+    </a>
+    {groups.map((group) => (
+      <section class="wiki-toc-group">
+        <h2>{group.part}</h2>
+        <ol>
+          {group.pages.map((page) => (
+            <li>
+              <a
+                class:list={{ 'is-current': page.data.slug === currentSlug }}
+                href={wikiPagePath(page)}
+                aria-current={page.data.slug === currentSlug ? 'page' : undefined}
+              >
+                <span>{String(page.data.order).padStart(2, '0')}</span>
+                <strong>{page.data.title}</strong>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+  </nav>
+</aside>

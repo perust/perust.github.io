@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import {
+  formatWikiDate,
+  getWikiBooks,
+  getWikiPages,
+  groupPagesByPart,
+  pagesForBook,
+  wikiBookPath,
+  wikiPagePath,
+  type WikiBook,
+  type WikiPage,
+} from '../../../utils/wiki';
+import '../../../styles/wiki.css';
+
+export async function getStaticPaths() {
+  const [books, pages] = await Promise.all([getWikiBooks(), getWikiPages()]);
+  return books.map((book) => ({
+    params: { book: book.id },
+    props: { book, pages: pagesForBook(pages, book.id) },
+  }));
+}
+
+interface Props {
+  book: WikiBook;
+  pages: WikiPage[];
+}
+
+const { book, pages } = Astro.props;
+const groups = groupPagesByPart(pages);
+const site = Astro.site ?? new URL('https://perust.github.io');
+const bookPath = wikiBookPath(book.id);
+const bookUrl = new URL(bookPath, site).toString();
+const updatedISO = book.data.updated.toISOString();
+const firstPage = pages[0];
+
+const bookLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Book',
+  name: book.data.title,
+  alternativeHeadline: book.data.subtitle,
+  description: book.data.description,
+  inLanguage: 'ko-KR',
+  url: bookUrl,
+  bookEdition: book.data.version,
+  dateModified: updatedISO,
+  author: { '@type': 'Organization', name: 'lentoludens', url: site.toString() },
+  publisher: { '@type': 'Organization', name: 'lentoludens', url: site.toString() },
+  hasPart: pages.map((page) => ({
+    '@type': 'Chapter',
+    position: page.data.order,
+    name: page.data.title,
+    url: new URL(wikiPagePath(page), site).toString(),
+  })),
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '홈', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: '위키', item: new URL('/wiki/', site).toString() },
+    { '@type': 'ListItem', position: 3, name: book.data.title, item: bookUrl },
+  ],
+};
+---
+<BaseLayout
+  title={`${book.data.title} · lentoludens 위키`}
+  description={book.data.description}
+  canonical={bookPath}
+  jsonLd={[bookLd, breadcrumbLd]}
+>
+  <main class="wiki-book-page">
+    <nav class="wiki-breadcrumb" aria-label="현재 위치">
+      <a href="/wiki/">위키</a>
+      <span aria-hidden="true">/</span>
+      <span>{book.data.title}</span>
+    </nav>
+
+    <section class="wiki-book-hero" aria-labelledby="wiki-book-title">
+      <div>
+        <div class="wiki-book-card-meta">
+          <span>{book.data.category}</span>
+          <span class="wiki-book-status">{book.data.status === 'growing' ? '내용을 채우는 중' : '완성'}</span>
+        </div>
+        <h1 id="wiki-book-title">{book.data.title}</h1>
+        <p class="wiki-book-subtitle">{book.data.subtitle}</p>
+        <p class="wiki-book-summary">{book.data.description}</p>
+        <div class="wiki-book-intro-meta">
+          <span>버전 {book.data.version}</span>
+          <span>전체 {pages.length}장</span>
+          <span>마지막 수정 {formatWikiDate(book.data.updated)}</span>
+          <span>정보 검증 {formatWikiDate(book.data.lastVerified)}</span>
+        </div>
+        {firstPage && <p style="margin:1.5rem 0 0"><a class="button primary" href={wikiPagePath(firstPage)}>처음부터 읽기</a></p>}
+      </div>
+      <div class="wiki-book-hero-cover" aria-hidden="true">
+        <div class="wiki-book-cover">
+          <span>lentoludens wiki</span>
+          <strong>{book.data.title}</strong>
+          <span>version {book.data.version}</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="wiki-book-grid">
+      <div>
+        <section class="wiki-book-panel" aria-labelledby="wiki-audience-title">
+          <p class="wiki-section-label">Reader</p>
+          <h2 id="wiki-audience-title">이 책의 대상</h2>
+          <p>{book.data.audience}</p>
+        </section>
+        <section class="wiki-book-panel" aria-labelledby="wiki-goals-title" style="margin-top:1rem">
+          <p class="wiki-section-label">Goals</p>
+          <h2 id="wiki-goals-title">읽고 나면 알 수 있는 것</h2>
+          <ul>
+            {book.data.goals.map((goal) => <li>{goal}</li>)}
+          </ul>
+        </section>
+        <section class="wiki-book-panel" aria-labelledby="wiki-policy-title" style="margin-top:1rem">
+          <p class="wiki-section-label">Editorial policy</p>
+          <h2 id="wiki-policy-title">내용을 채우는 기준</h2>
+          <p>처음부터 빈 목차를 늘리지 않습니다. 현재 설명할 수 있고 공식 출처나 실제 실행 결과로 확인한 내용만 공개합니다. 기술 내용이 바뀌면 마지막 검증일과 본문을 함께 갱신합니다.</p>
+        </section>
+      </div>
+
+      <section aria-labelledby="wiki-full-toc-title">
+        <p class="wiki-section-label">Contents</p>
+        <h2 id="wiki-full-toc-title" style="margin:0 0 1rem;font-size:1.7rem">전체 목차</h2>
+        <div class="wiki-book-full-toc">
+          {groups.map((group) => (
+            <section class="wiki-book-part">
+              <h2>{group.part}</h2>
+              <ol>
+                {group.pages.map((page) => (
+                  <li>
+                    <a href={wikiPagePath(page)}>
+                      <span class="wiki-toc-number">{String(page.data.order).padStart(2, '0')}</span>
+                      <span>
+                        <strong>{page.data.title}</strong>
+                        <p>{page.data.description}</p>
+                      </span>
+                      <time datetime={page.data.lastVerified.toISOString()}>검증 {formatWikiDate(page.data.lastVerified)}</time>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))}
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>

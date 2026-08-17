@@ -1,12 +1,13 @@
 # perust.github.io
 
-lentoludens의 개인 홈페이지이자 Astro 기반 포트폴리오/블로그입니다. 메인 페이지에는 현재 관심사, 프로젝트, 작업 원칙, 과거 퍼블리싱/프론트엔드 실습 결과물을 정리하고, `/blog`에는 제작기와 실험 기록을 Markdown으로 쌓습니다.
+lentoludens의 개인 홈페이지이자 Astro 기반 포트폴리오, 블로그, 무료 전자책 위키입니다. 메인 페이지에는 현재 관심사, 프로젝트, 작업 원칙, 과거 퍼블리싱/프론트엔드 실습 결과물을 정리합니다. `/blog`에는 제작기와 실험 기록을 쌓고, `/wiki`에는 공식 출처로 검증한 지식과 실행 방법을 책과 장 순서로 정리합니다.
 
 ## 주요 내용
 
 - 개인 소개 및 현재 포커스
 - 진행 중인 프로젝트 카드
 - Markdown 기반 블로그
+- 책, 부, 장 순서로 읽는 Markdown 기반 무료 전자책 위키
 - 소개, 문의, 개인정보처리방침 페이지
 - sitemap, robots.txt, RSS 피드(`/rss.xml`) 등 검색·구독 노출을 위한 기본 파일
 - 과거 웹 퍼블리싱·JavaScript 실습 아카이브 보존
@@ -18,6 +19,8 @@ lentoludens의 개인 홈페이지이자 Astro 기반 포트폴리오/블로그�
 .
 ├── src/
 │   ├── content/blog/        # Markdown 블로그 글
+│   ├── content/wiki-books/  # 전자책 메타데이터
+│   ├── content/wiki-pages/  # 전자책 장 Markdown
 │   ├── layouts/             # Astro 공통 레이아웃
 │   ├── pages/               # 라우트 페이지
 │   └── styles/              # 전역 스타일
@@ -71,6 +74,22 @@ tags: ["Astro", "GitHub Pages"]
 OG 이미지는 자동 처리됩니다. 글에 `image`를 직접 지정하지 않으면 카테고리 기본 이미지, 없으면 기본 OG 이미지를 사용합니다. 카테고리·태그 목록은 정적 페이지로 자동 생성되고, `updated`가 있으면 sitemap `lastmod`에도 반영됩니다. 배포 전 `npm run verify:seo`로 OG 이미지, JSON-LD, RSS, 카테고리/태그 페이지를 확인합니다.
 
 검색엔진 등록 절차는 [`docs/search-engine-submission-checklist.md`](docs/search-engine-submission-checklist.md)에 정리했습니다. Google Search Console, Bing Webmaster Tools, 네이버 서치어드바이저는 계정 인증이 필요하므로 사용자가 직접 등록합니다.
+
+## 위키 지식 추가
+
+책 정보는 `src/content/wiki-books/`, 장 본문은 `src/content/wiki-pages/{book}/`에 추가합니다. 처음부터 책을 세세하게 나누지 않고 큰 범위의 책 안에서 `part`와 `order`로 주제를 구분합니다.
+
+공개하는 모든 장에는 `published`, `updated`, `lastVerified`, `sources`를 입력합니다. `published`는 최초 공개일로 고정하고 이후 수정 시에는 `updated`만 바꿉니다. `sources`에는 자료명, 기관, 공식 URL, 확인일을 기록하며 최신 공식 문서와 1차 자료를 우선합니다. 확인하지 않은 내용을 목차 채우기 목적으로 추가하지 않습니다.
+
+각 책에는 공개 장이 최소 1개 있어야 하며, 같은 `part`의 장은 전역 `order`에서 연속되어야 합니다. 기존 중간 부에 장을 추가할 때는 이후 장의 순서도 함께 조정합니다.
+
+새 장을 추가한 뒤에는 다음 전체 게이트를 실행합니다.
+
+```bash
+npm run verify:site
+npm run test:publish-policy
+npm run test:browser
+```
 
 ## 배포
 

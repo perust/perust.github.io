@@ -1,5 +1,8 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 import { PUBLISH_PACING_EXCEPTIONS, VALUE_TYPES } from './config/taxonomy.ts';
+import { wikiBookSchema, wikiPageSchema } from './config/wiki-schema.mjs';
 
 const blog = defineCollection({
   schema: z.object({
@@ -25,4 +28,16 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+// 위키는 블로그와 별도로 관리한다. 책 메타데이터와 장 본문을 분리해,
+// 한 권의 목차 아래 지식을 순서대로 추가하면서도 각 장의 출처와 검증일을 강제한다.
+const wikiBooks = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/wiki-books' }),
+  schema: wikiBookSchema,
+});
+
+const wikiPages = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/wiki-pages' }),
+  schema: wikiPageSchema,
+});
+
+export const collections = { blog, wikiBooks, wikiPages };

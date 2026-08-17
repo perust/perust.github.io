@@ -1,0 +1,39 @@
+---
+import { render } from 'astro:content';
+import WikiLayout from '../../../layouts/WikiLayout.astro';
+import {
+  getWikiBooks,
+  getWikiPages,
+  pagesForBook,
+  type WikiBook,
+  type WikiPage,
+} from '../../../utils/wiki';
+
+export async function getStaticPaths() {
+  const [books, allPages] = await Promise.all([getWikiBooks(), getWikiPages()]);
+  const booksById = new Map(books.map((book) => [book.id, book]));
+
+  return allPages.map((page) => {
+    const book = booksById.get(page.data.book);
+    if (!book) {
+      throw new Error(`위키 장 ${page.id}이 존재하지 않는 책 ${page.data.book}을 참조합니다.`);
+    }
+    return {
+      params: { book: page.data.book, chapter: page.data.slug },
+      props: { book, pages: pagesForBook(allPages, book.id), page },
+    };
+  });
+}
+
+interface Props {
+  book: WikiBook;
+  pages: WikiPage[];
+  page: WikiPage;
+}
+
+const { book, pages, page } = Astro.props;
+const { Content } = await render(page);
+---
+<WikiLayout book={book} pages={pages} page={page}>
+  <Content />
+</WikiLayout>

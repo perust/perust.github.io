@@ -1,0 +1,277 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import WikiToc from '../components/WikiToc.astro';
+import type { WikiBook, WikiPage } from '../utils/wiki';
+import { formatWikiDate, wikiBookPath, wikiPagePath } from '../utils/wiki';
+import { getWikiPageDateMetadata } from '../utils/wiki-metadata.mjs';
+import '../styles/wiki.css';
+
+interface Props {
+  book: WikiBook;
+  pages: WikiPage[];
+  page: WikiPage;
+}
+
+const { book, pages, page } = Astro.props;
+const currentIndex = pages.findIndex((entry) => entry.data.slug === page.data.slug);
+const previous = currentIndex > 0 ? pages[currentIndex - 1] : undefined;
+const next = currentIndex >= 0 && currentIndex < pages.length - 1 ? pages[currentIndex + 1] : undefined;
+const site = Astro.site ?? new URL('https://perust.github.io');
+const pagePath = wikiPagePath(page);
+const bookPath = wikiBookPath(book.id);
+const pageUrl = new URL(pagePath, site).toString();
+const bookUrl = new URL(bookPath, site).toString();
+const pageDates = getWikiPageDateMetadata(page.data);
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: page.data.title,
+  description: page.data.description,
+  inLanguage: 'ko-KR',
+  datePublished: pageDates.datePublished,
+  dateModified: pageDates.dateModified,
+  url: pageUrl,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+  isPartOf: { '@type': 'Book', name: book.data.title, url: bookUrl },
+  author: { '@type': 'Organization', name: 'lentoludens', url: site.toString() },
+  publisher: {
+    '@type': 'Organization',
+    name: 'lentoludens',
+    url: site.toString(),
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/icon-512.png', site).toString(),
+      width: 512,
+      height: 512,
+    },
+  },
+  citation: page.data.sources.map((source) => source.url),
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '홈', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: '위키', item: new URL('/wiki/', site).toString() },
+    { '@type': 'ListItem', position: 3, name: book.data.title, item: bookUrl },
+    { '@type': 'ListItem', position: 4, name: page.data.title, item: pageUrl },
+  ],
+};
+---
+<BaseLayout
+  title={`${page.data.title} · ${book.data.title} · lentoludens 위키`}
+  description={page.data.description}
+  canonical={pagePath}
+  ogType="article"
+  jsonLd={[articleLd, breadcrumbLd]}
+  publishedTime={pageDates.datePublished}
+  modifiedTime={pageDates.dateModified}
+  tags={[book.data.category, page.data.part]}
+>
+  <div class="wiki-reading-bar" aria-hidden="true">
+    <span data-reading-progress></span>
+  </div>
+  <main class="wiki-reader" data-wiki-reader>
+    <div class="wiki-mobile-toolbar">
+      <button type="button" aria-controls="wiki-toc" aria-expanded="false" data-wiki-toc-toggle>
+        <span aria-hidden="true">☰</span>
+        목차
+      </button>
+      <span data-wiki-completion>열어 본 장 0 / {pages.length}</span>
+    </div>
+
+    <WikiToc book={book} pages={pages} currentSlug={page.data.slug} />
+    <button class="wiki-toc-overlay" type="button" aria-label="목차 바깥 영역 선택하여 닫기" data-wiki-toc-overlay hidden></button>
+
+    <div class="wiki-reading-pane">
+      <nav class="wiki-breadcrumb" aria-label="현재 위치">
+        <a href="/wiki/">위키</a>
+        <span aria-hidden="true">/</span>
+        <a href={bookPath}>{book.data.title}</a>
+        <span aria-hidden="true">/</span>
+        <span>{page.data.part}</span>
+      </nav>
+
+      <article class="wiki-article" aria-labelledby="wiki-page-title">
+        <header class="wiki-article-header">
+          <p class="wiki-chapter-label">{String(page.data.order).padStart(2, '0')} · {page.data.part}</p>
+          <h1 id="wiki-page-title">{page.data.title}</h1>
+          <p class="wiki-article-description">{page.data.description}</p>
+          <dl class="wiki-article-meta">
+            <div>
+              <dt>마지막 수정</dt>
+              <dd><time datetime={pageDates.dateModified}>{formatWikiDate(page.data.updated)}</time></dd>
+            </div>
+            <div>
+              <dt>정보 검증</dt>
+              <dd><time datetime={pageDates.lastVerified}>{formatWikiDate(page.data.lastVerified)}</time></dd>
+            </div>
+          </dl>
+        </header>
+
+        <div class="wiki-prose">
+          <slot />
+        </div>
+
+        <section class="wiki-sources" aria-labelledby="wiki-sources-title">
+          <div>
+            <p class="wiki-section-label">References</p>
+            <h2 id="wiki-sources-title">공식 출처</h2>
+          </div>
+          <ol>
+            {page.data.sources.map((source) => (
+              <li>
+                <a href={source.url} target="_blank" rel="noreferrer">
+                  <strong>{source.title}</strong>
+                  <span>{source.organization} · {formatWikiDate(source.accessed)}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <nav class="wiki-chapter-pager" aria-label="이전 다음 장 이동">
+          {previous ? (
+            <a class="wiki-pager-link is-previous" href={wikiPagePath(previous)} rel="prev">
+              <span>← 이전 장</span>
+              <strong>{previous.data.title}</strong>
+            </a>
+          ) : <span class="wiki-pager-spacer" aria-hidden="true"></span>}
+          {next ? (
+            <a class="wiki-pager-link is-next" href={wikiPagePath(next)} rel="next">
+              <span>다음 장 →</span>
+              <strong>{next.data.title}</strong>
+            </a>
+          ) : <span class="wiki-pager-spacer" aria-hidden="true"></span>}
+        </nav>
+      </article>
+    </div>
+  </main>
+
+  <script is:inline define:vars={{ bookId: book.id, currentSlug: page.data.slug, pageSlugs: pages.map((entry) => entry.data.slug), totalPages: pages.length }}>
+    const reader = document.querySelector('[data-wiki-reader]');
+    const toggle = document.querySelector('[data-wiki-toc-toggle]');
+    const toc = document.querySelector('#wiki-toc');
+    const close = document.querySelector('[data-wiki-toc-close]');
+    const overlay = document.querySelector('[data-wiki-toc-overlay]');
+    const progressBar = document.querySelector('[data-reading-progress]');
+    const completion = document.querySelector('[data-wiki-completion]');
+    const desktopQuery = window.matchMedia('(min-width: 901px)');
+    const backgroundRegions = [
+      document.querySelector('.site-header'),
+      document.querySelector('.wiki-mobile-toolbar'),
+      document.querySelector('.wiki-reading-pane'),
+      document.querySelector('.footer'),
+    ].filter((element) => element instanceof HTMLElement);
+
+    const setTocOpen = (open) => {
+      if (!reader || !toggle || !toc || !overlay) return;
+      const isMobileOpen = open && !desktopQuery.matches;
+      reader.dataset.tocOpen = String(isMobileOpen);
+      toggle.setAttribute('aria-expanded', String(isMobileOpen));
+      overlay.hidden = !isMobileOpen;
+      document.body.style.overflow = isMobileOpen ? 'hidden' : '';
+
+      toc.inert = !desktopQuery.matches && !isMobileOpen;
+      if (!desktopQuery.matches && !isMobileOpen) {
+        toc.setAttribute('aria-hidden', 'true');
+      } else {
+        toc.removeAttribute('aria-hidden');
+      }
+      if (isMobileOpen) {
+        toc.setAttribute('role', 'dialog');
+        toc.setAttribute('aria-modal', 'true');
+      } else {
+        toc.removeAttribute('role');
+        toc.removeAttribute('aria-modal');
+      }
+      backgroundRegions.forEach((element) => {
+        element.inert = isMobileOpen;
+      });
+
+      if (isMobileOpen) requestAnimationFrame(() => close?.focus());
+    };
+
+    const closeToc = (restoreFocus) => {
+      setTocOpen(false);
+      if (restoreFocus && !desktopQuery.matches) requestAnimationFrame(() => toggle?.focus());
+    };
+
+    desktopQuery.addEventListener('change', (event) => {
+      const wasOpen = toggle?.getAttribute('aria-expanded') === 'true';
+      const hadTocFocus = Boolean(toc?.contains(document.activeElement));
+      closeToc(false);
+      if (event.matches && wasOpen) {
+        requestAnimationFrame(() => toc?.querySelector('[aria-current="page"]')?.focus());
+      } else if (!event.matches && hadTocFocus) {
+        requestAnimationFrame(() => toggle?.focus());
+      }
+    });
+    setTocOpen(false);
+
+    toggle?.addEventListener('click', () => {
+      setTocOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    close?.addEventListener('click', () => closeToc(true));
+    overlay?.addEventListener('click', () => closeToc(true));
+    document.addEventListener('keydown', (event) => {
+      const isOpen = toggle?.getAttribute('aria-expanded') === 'true';
+      if (!isOpen || desktopQuery.matches) return;
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeToc(true);
+        return;
+      }
+      if (event.key !== 'Tab' || !toc) return;
+
+      const focusable = Array.from(
+        toc.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+      ).filter((element) => element instanceof HTMLElement && !element.hidden);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && (active === first || !toc.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || !toc.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    try {
+      const storageKey = `wiki-progress:${bookId}`;
+      const stored = JSON.parse(localStorage.getItem(storageKey) ?? '[]');
+      const knownSlugs = new Set(Array.isArray(pageSlugs) ? pageSlugs : []);
+      const visited = new Set(
+        Array.isArray(stored)
+          ? stored.filter((item) => typeof item === 'string' && knownSlugs.has(item))
+          : [],
+      );
+      visited.add(currentSlug);
+      localStorage.setItem(storageKey, JSON.stringify([...visited]));
+      if (completion) completion.textContent = `열어 본 장 ${visited.size} / ${totalPages}`;
+    } catch {
+      if (completion) completion.textContent = `전체 ${totalPages}장`;
+    }
+
+    const updateReadingProgress = () => {
+      if (!progressBar) return;
+      const article = document.querySelector('.wiki-article');
+      if (!article) return;
+      const start = article.getBoundingClientRect().top + window.scrollY;
+      const distance = Math.max(1, article.scrollHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+      progressBar.style.transform = `scaleX(${progress})`;
+    };
+
+    window.addEventListener('scroll', updateReadingProgress, { passive: true });
+    window.addEventListener('resize', updateReadingProgress, { passive: true });
+    updateReadingProgress();
+  </script>
+</BaseLayout>

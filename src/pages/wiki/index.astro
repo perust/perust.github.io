@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatWikiDate, getWikiBooks, getWikiPages, pagesForBook, wikiBookPath, wikiPagePath } from '../../utils/wiki';
+import '../../styles/wiki.css';
+
+const books = await getWikiBooks();
+const allPages = await getWikiPages();
+const library = books.map((book) => ({ book, pages: pagesForBook(allPages, book.id) }));
+const site = Astro.site ?? new URL('https://perust.github.io');
+const pageUrl = new URL('/wiki/', site).toString();
+const description = '정확한 출처와 실제 검증을 바탕으로 웹·개발 지식을 책과 목차 순서로 정리하는 lentoludens 무료 전자책 서재입니다.';
+
+const collectionLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'lentoludens 무료 전자책',
+  description,
+  url: pageUrl,
+  inLanguage: 'ko-KR',
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: library.length,
+    itemListElement: library.map(({ book }, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: book.data.title,
+      url: new URL(wikiBookPath(book.id), site).toString(),
+    })),
+  },
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '홈', item: site.toString() },
+    { '@type': 'ListItem', position: 2, name: '위키', item: pageUrl },
+  ],
+};
+---
+<BaseLayout
+  title="무료 전자책 · lentoludens 위키"
+  description={description}
+  canonical="/wiki/"
+  jsonLd={[collectionLd, breadcrumbLd]}
+>
+  <main class="wiki-library">
+    <section class="wiki-library-hero" aria-labelledby="wiki-library-title">
+      <div>
+        <p class="wiki-library-kicker">Wiki · Free e-books</p>
+        <h1 id="wiki-library-title">무료 전자책</h1>
+        <p class="wiki-library-lead">알게 된 지식을 흩어진 메모로 두지 않고, 큰 범위의 책과 순서가 있는 목차로 정리합니다. 확인한 내용만 먼저 싣고 새로운 지식은 기존 책의 장으로 이어서 보완합니다.</p>
+      </div>
+      <ul class="wiki-library-principles" aria-label="위키 작성 원칙">
+        <li><span aria-hidden="true">01</span><strong>공식 문서와 1차 자료 우선</strong></li>
+        <li><span aria-hidden="true">02</span><strong>수정일과 마지막 검증일 구분</strong></li>
+        <li><span aria-hidden="true">03</span><strong>빈 목차보다 확인한 소수의 장</strong></li>
+      </ul>
+    </section>
+
+    <section class="wiki-search-panel" aria-label="전자책 검색">
+      <label class="wiki-search-label" for="wiki-search">서재 검색</label>
+      <div class="wiki-search-control">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        <input id="wiki-search" type="search" placeholder="책 제목이나 장 제목 검색" autocomplete="off" data-wiki-search />
+      </div>
+      <p class="wiki-search-status" aria-live="polite" data-wiki-search-status>전자책 {library.length}권 · 공개된 장 {allPages.length}개</p>
+    </section>
+
+    <section class="wiki-book-list" aria-label="전자책 목록">
+      {library.map(({ book, pages }) => (
+        <article
+          class="wiki-book-card"
+          data-wiki-search-item
+          data-search-text={`${book.data.title} ${book.data.subtitle} ${book.data.description} ${book.data.category} ${pages.map((page) => `${page.data.title} ${page.data.part}`).join(' ')}`.toLocaleLowerCase('ko-KR')}
+        >
+          <a class="wiki-book-cover" href={wikiBookPath(book.id)} aria-label={`${book.data.title} 책 소개와 목차 보기`}>
+            <span>lentoludens wiki</span>
+            <strong>{book.data.title}</strong>
+            <span>version {book.data.version}</span>
+          </a>
+          <div class="wiki-book-card-body">
+            <div class="wiki-book-card-meta">
+              <span>{book.data.category}</span>
+              <span class="wiki-book-status">{book.data.status === 'growing' ? '내용을 채우는 중' : '완성'}</span>
+            </div>
+            <h2><a href={wikiBookPath(book.id)}>{book.data.title}</a></h2>
+            <p class="wiki-book-subtitle">{book.data.subtitle}</p>
+            <p class="wiki-book-description">{book.data.description}</p>
+            <div class="wiki-book-facts">
+              <span>전체 {pages.length}장</span>
+              <span>버전 {book.data.version}</span>
+              <span>검증 {formatWikiDate(book.data.lastVerified)}</span>
+            </div>
+          </div>
+          <div class="wiki-book-card-toc">
+            <h3>현재 목차</h3>
+            <ol>
+              {pages.map((page) => (
+                <li>
+                  <a href={wikiPagePath(page)}>
+                    <span>{String(page.data.order).padStart(2, '0')}</span>
+                    <span>{page.data.title}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </article>
+      ))}
+      <p class="wiki-search-empty" data-wiki-search-empty hidden>일치하는 책이나 장이 없습니다.</p>
+    </section>
+  </main>
+
+  <script>
+    const input = document.querySelector('[data-wiki-search]');
+    const items = Array.from(document.querySelectorAll('[data-wiki-search-item]'));
+    const status = document.querySelector('[data-wiki-search-status]');
+    const empty = document.querySelector('[data-wiki-search-empty]');
+
+    const updateResults = () => {
+      const query = input instanceof HTMLInputElement ? input.value.trim().toLocaleLowerCase('ko-KR') : '';
+      let visible = 0;
+      items.forEach((item) => {
+        const matches = !query || (item.dataset.searchText ?? '').includes(query);
+        item.hidden = !matches;
+        if (matches) visible += 1;
+      });
+      if (status) status.textContent = query ? `검색 결과 ${visible}권` : `전자책 ${items.length}권`;
+      if (empty) empty.hidden = visible !== 0;
+    };
+
+    input?.addEventListener('input', updateResults);
+  </script>
+</BaseLayout>
