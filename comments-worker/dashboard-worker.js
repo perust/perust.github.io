@@ -7,6 +7,23 @@ const json = (data, status = 200, corsHeaders = {}) =>
     },
   });
 
+const adminHeaders = (corsHeaders) => ({
+  ...corsHeaders,
+  'cache-control': 'no-store',
+});
+
+function isAdminAuthorized(request, env) {
+  const auth = request.headers.get('authorization') || '';
+  const token = auth.replace(/^Bearer\s+/i, '');
+  return Boolean(env.ADMIN_TOKEN && token === env.ADMIN_TOKEN);
+}
+
+function boundedInteger(value, fallback, min, max) {
+  const parsed = Number.parseInt(value || '', 10);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
 function cors(request, env) {
   const origin = request.headers.get('origin') || '';
   const allowed = env.ALLOWED_ORIGIN || 'https://perust.github.io';
@@ -168,20 +185,61 @@ async function deleteOwnComment(request, env, corsHeaders) {
   return json({ ok: true, message: '댓글을 삭제했습니다.' }, 200, corsHeaders);
 }
 
+async function listAdminComments(request, env, corsHeaders) {
+  const headers = adminHeaders(corsHeaders);
+  if (!isAdminAuthorized(request, env)) return json({ error: 'unauthorized' }, 401, headers);
+
+  const url = new URL(request.url);
+  const limit = boundedInteger(url.searchParams.get('limit'), 50, 1, 100);
+  const offset = boundedInteger(url.searchParams.get('offset'), 0, 0, Number.MAX_SAFE_INTEGER);
+
+  const totalRow = await env.DB.prepare('SELECT COUNT(*) AS total FROM comments').first();
+  const rows = await env.DB.prepare(
+    `SELECT id, post_slug AS postSlug, nickname, body, ip_prefix AS ipPrefix,
+            COALESCE(is_private, 0) AS isPrivate, status,
+            created_at AS createdAt, approved_at AS approvedAt
+     FROM comments
+     ORDER BY created_at DESC, id DESC
+     LIMIT ? OFFSET ?`
+  ).bind(limit, offset).all();
+
+  const total = Number(totalRow?.total || 0);
+  const comments = (rows.results || []).map((row) => ({
+    id: row.id,
+    postSlug: row.postSlug,
+    nickname: row.nickname,
+    body: row.body,
+    ipPrefix: row.ipPrefix,
+    isPrivate: Boolean(row.isPrivate),
+    status: row.status,
+    createdAt: row.createdAt,
+    approvedAt: row.approvedAt,
+  }));
+
+  return json({
+    comments,
+    pagination: {
+      total,
+      limit,
+      offset,
+      hasMore: offset + comments.length < total,
+    },
+  }, 200, headers);
+}
+
 async function adminUpdate(request, env, corsHeaders) {
-  const auth = request.headers.get('authorization') || '';
-  const token = auth.replace(/^Bearer\s+/i, '');
-  if (!env.ADMIN_TOKEN || token !== env.ADMIN_TOKEN) return json({ error: 'unauthorized' }, 401, corsHeaders);
+  const headers = adminHeaders(corsHeaders);
+  if (!isAdminAuthorized(request, env)) return json({ error: 'unauthorized' }, 401, headers);
 
   const body = await request.json().catch(() => ({}));
   if (!body.id || !body.status || !['approved', 'rejected'].includes(body.status)) {
-    return json({ error: 'id and status are required' }, 400, corsHeaders);
+    return json({ error: 'id and status are required' }, 400, headers);
   }
 
   await env.DB.prepare(`UPDATE comments SET status = ?, approved_at = datetime('now') WHERE id = ?`)
     .bind(body.status, body.id)
     .run();
-  return json({ ok: true }, 200, corsHeaders);
+  return json({ ok: true }, 200, headers);
 }
 
 export default {
@@ -191,13 +249,17 @@ export default {
 
     const url = new URL(request.url);
     try {
-      if (request.method === 'GET' && url.pathname === '/comments') return listComments(request, env, corsHeaders);
-      if (request.method === 'POST' && url.pathname === '/comments') return createComment(request, env, corsHeaders);
-      if (request.method === 'POST' && url.pathname === '/comments/delete') return deleteOwnComment(request, env, corsHeaders);
-      if (request.method === 'POST' && url.pathname === '/admin/comments') return adminUpdate(request, env, corsHeaders);
+      if (request.method === 'GET' && url.pathname === '/comments') return await listComments(request, env, corsHeaders);
+      if (request.method === 'POST' && url.pathname === '/comments') return await createComment(request, env, corsHeaders);
+      if (request.method === 'POST' && url.pathname === '/comments/delete') return await deleteOwnComment(request, env, corsHeaders);
+      if (request.method === 'GET' && url.pathname === '/admin/comments') return await listAdminComments(request, env, corsHeaders);
+      if (request.method === 'POST' && url.pathname === '/admin/comments') return await adminUpdate(request, env, corsHeaders);
       return json({ error: 'not found' }, 404, corsHeaders);
     } catch (error) {
-      return json({ error: error instanceof Error ? error.message : 'server error' }, 500, corsHeaders);
+      const isAdminRoute = url.pathname.startsWith('/admin/');
+      const headers = isAdminRoute ? adminHeaders(corsHeaders) : corsHeaders;
+      const message = isAdminRoute ? 'server error' : (error instanceof Error ? error.message : 'server error');
+      return json({ error: message }, 500, headers);
     }
   },
 };

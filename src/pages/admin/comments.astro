@@ -1,0 +1,581 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllPosts } from '../../utils/blog';
+
+const commentsApiUrl = import.meta.env.PUBLIC_COMMENTS_API_URL || '';
+const postTitlesJson = JSON.stringify(Object.fromEntries(
+  getAllPosts().map((post) => [post.slug, post.title]),
+)).replace(/</g, '\\u003c');
+---
+<BaseLayout
+  title="댓글 관리 · lentoludens"
+  description="lentoludens 블로그의 공개·비공개 댓글을 한곳에서 확인하는 관리자 페이지입니다."
+  canonical="/admin/comments/"
+  robots="noindex, nofollow"
+  loadAnalytics={false}
+>
+  <meta slot="head" name="referrer" content="no-referrer" />
+
+  <main class="admin-comments-page" data-admin-comments-root data-api-url={commentsApiUrl}>
+    <section class="admin-comments-shell" aria-labelledby="admin-comments-title">
+      <p class="section-kicker">Private admin</p>
+      <h1 id="admin-comments-title">댓글 관리</h1>
+      <p class="admin-comments-intro">
+        모든 글의 공개·비공개·숨김 댓글을 최신순으로 확인합니다. 댓글 데이터는 관리자 암호를 확인한 뒤에만 불러옵니다.
+      </p>
+
+      <section class="admin-login-card" data-admin-login aria-labelledby="admin-login-title">
+        <div>
+          <h2 id="admin-login-title">관리자 확인</h2>
+          <p>암호는 서버에 전송해 권한만 확인하며, 브라우저의 현재 탭 세션에만 보관합니다.</p>
+        </div>
+        <form class="admin-login-form" data-admin-login-form>
+          <label for="admin-token">관리자 암호</label>
+          <div class="admin-login-row">
+            <input
+              id="admin-token"
+              name="adminToken"
+              type="password"
+              autocomplete="current-password"
+              spellcheck="false"
+              required
+            />
+            <button type="submit">댓글 확인</button>
+          </div>
+        </form>
+      </section>
+
+      <p class="admin-message" data-admin-message role="status" aria-live="polite"></p>
+
+      <section class="admin-comments-panel" data-admin-panel hidden aria-labelledby="admin-list-title">
+        <header class="admin-comments-toolbar">
+          <div>
+            <p class="section-kicker">All comments</p>
+            <h2 id="admin-list-title">전체 댓글</h2>
+            <p class="admin-comments-count" data-admin-count></p>
+          </div>
+          <div class="admin-comments-actions">
+            <button type="button" class="admin-secondary-button" data-admin-refresh>새로고침</button>
+            <button type="button" class="admin-secondary-button" data-admin-logout>로그아웃</button>
+          </div>
+        </header>
+
+        <div class="admin-comments-list" data-admin-comments-list hidden></div>
+        <button type="button" class="admin-load-more" data-admin-load-more hidden>댓글 더 보기</button>
+      </section>
+    </section>
+  </main>
+
+  <script id="admin-post-titles" type="application/json" is:inline set:html={postTitlesJson}></script>
+</BaseLayout>
+
+<script>
+  const root = document.querySelector('[data-admin-comments-root]');
+
+  if (root instanceof HTMLElement) {
+    const apiUrl = (root.dataset.apiUrl || '').replace(/\/$/, '');
+    const storageKey = 'lentoludens-comments-admin-token';
+    const pageSize = 50;
+    const login = root.querySelector('[data-admin-login]');
+    const loginForm = root.querySelector('[data-admin-login-form]');
+    const tokenInput = root.querySelector('#admin-token');
+    const message = root.querySelector('[data-admin-message]');
+    const panel = root.querySelector('[data-admin-panel]');
+    const list = root.querySelector('[data-admin-comments-list]');
+    const count = root.querySelector('[data-admin-count]');
+    const refreshButton = root.querySelector('[data-admin-refresh]');
+    const logoutButton = root.querySelector('[data-admin-logout]');
+    const loadMoreButton = root.querySelector('[data-admin-load-more]');
+    const titlesElement = document.querySelector('#admin-post-titles');
+    const postTitles = titlesElement?.textContent ? JSON.parse(titlesElement.textContent) : {};
+
+    let adminToken = '';
+    let loadedComments = [];
+    let pagination = { total: 0, limit: pageSize, offset: 0, hasMore: false };
+    let requestVersion = 0;
+    let activeRequestController = null;
+
+    const setMessage = (value) => {
+      if (message) message.textContent = value;
+    };
+
+    const normalizeDate = (value) => {
+      const text = String(value || '');
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(text)) {
+        return `${text.replace(' ', 'T')}Z`;
+      }
+      return text;
+    };
+
+    const formatDate = (value) => {
+      const date = new Date(normalizeDate(value));
+      if (Number.isNaN(date.valueOf())) return String(value || '');
+      return date.toLocaleString('ko-KR', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone: 'Asia/Seoul',
+      });
+    };
+
+    const statusLabel = (status) => ({
+      approved: '공개중',
+      rejected: '숨김',
+      pending: '대기',
+    })[status] || status || '상태 없음';
+
+    const badge = (label, className) => {
+      const element = document.createElement('span');
+      element.className = `admin-comment-badge ${className}`;
+      element.textContent = label;
+      return element;
+    };
+
+    const renderComments = () => {
+      if (!(list instanceof HTMLElement)) return;
+      list.replaceChildren();
+
+      if (!loadedComments.length) {
+        const empty = document.createElement('p');
+        empty.className = 'admin-comments-empty';
+        empty.textContent = '저장된 댓글이 없습니다.';
+        list.append(empty);
+      }
+
+      for (const comment of loadedComments) {
+        const article = document.createElement('article');
+        article.className = 'admin-comment-card';
+        article.dataset.adminComment = '';
+
+        const heading = document.createElement('div');
+        heading.className = 'admin-comment-heading';
+
+        const postLink = document.createElement('a');
+        postLink.className = 'admin-comment-post-link';
+        postLink.href = `/blog/${encodeURIComponent(comment.postSlug)}/`;
+        postLink.target = '_blank';
+        postLink.rel = 'noopener';
+        postLink.textContent = postTitles[comment.postSlug] || comment.postSlug;
+        heading.append(postLink);
+
+        const badges = document.createElement('div');
+        badges.className = 'admin-comment-badges';
+        badges.append(badge(comment.isPrivate ? '비공개' : '공개', comment.isPrivate ? 'is-private' : 'is-public'));
+        badges.append(badge(statusLabel(comment.status), `is-${comment.status || 'unknown'}`));
+        heading.append(badges);
+
+        const meta = document.createElement('p');
+        meta.className = 'admin-comment-meta';
+        const nickname = comment.nickname || '익명';
+        const ipPrefix = comment.ipPrefix || 'IP 정보 없음';
+        meta.textContent = `${nickname} · ${ipPrefix} · ${formatDate(comment.createdAt)}`;
+
+        const body = document.createElement('p');
+        body.className = 'admin-comment-body';
+        body.textContent = comment.body || '';
+
+        article.append(heading, meta, body);
+        list.append(article);
+      }
+
+      list.hidden = false;
+      if (count) count.textContent = `전체 ${pagination.total}개 · 불러온 댓글 ${loadedComments.length}개`;
+      if (loadMoreButton instanceof HTMLButtonElement) {
+        loadMoreButton.hidden = !pagination.hasMore;
+        loadMoreButton.disabled = false;
+      }
+    };
+
+    const showLogin = () => {
+      if (login instanceof HTMLElement) login.hidden = false;
+      if (panel instanceof HTMLElement) panel.hidden = true;
+      if (list instanceof HTMLElement) list.hidden = true;
+    };
+
+    const clearRenderedComments = () => {
+      if (list instanceof HTMLElement) {
+        list.replaceChildren();
+        list.hidden = true;
+      }
+      if (count) count.textContent = '';
+      if (loadMoreButton instanceof HTMLButtonElement) {
+        loadMoreButton.hidden = true;
+        loadMoreButton.disabled = false;
+      }
+    };
+
+    const clearSession = () => {
+      requestVersion += 1;
+      activeRequestController?.abort();
+      activeRequestController = null;
+      adminToken = '';
+      loadedComments = [];
+      pagination = { total: 0, limit: pageSize, offset: 0, hasMore: false };
+      sessionStorage.removeItem(storageKey);
+      if (tokenInput instanceof HTMLInputElement) tokenInput.value = '';
+      clearRenderedComments();
+      showLogin();
+    };
+
+    const loadComments = async ({ reset = false, token = adminToken } = {}) => {
+      if (!apiUrl) {
+        setMessage('댓글 API가 연결되지 않았습니다.');
+        showLogin();
+        return;
+      }
+
+      if (!token) {
+        showLogin();
+        return;
+      }
+
+      const offset = reset ? 0 : loadedComments.length;
+      const currentRequestVersion = ++requestVersion;
+      activeRequestController?.abort();
+      const requestController = new AbortController();
+      activeRequestController = requestController;
+      setMessage(reset ? '댓글을 불러오는 중입니다.' : '댓글을 더 불러오는 중입니다.');
+      if (loadMoreButton instanceof HTMLButtonElement) loadMoreButton.disabled = true;
+
+      try {
+        const response = await fetch(`${apiUrl}/admin/comments?limit=${pageSize}&offset=${offset}`, {
+          headers: { authorization: `Bearer ${token}` },
+          cache: 'no-store',
+          credentials: 'omit',
+          referrerPolicy: 'no-referrer',
+          signal: requestController.signal,
+        });
+        const data = await response.json().catch(() => ({}));
+        if (currentRequestVersion !== requestVersion || requestController.signal.aborted) return;
+
+        if (response.status === 401) {
+          clearSession();
+          setMessage('관리자 암호가 맞지 않습니다.');
+          return;
+        }
+        if (!response.ok) throw new Error(data.error || '댓글을 불러오지 못했습니다.');
+
+        adminToken = token;
+        sessionStorage.setItem(storageKey, token);
+        loadedComments = reset ? (data.comments || []) : [...loadedComments, ...(data.comments || [])];
+        pagination = data.pagination || { total: loadedComments.length, limit: pageSize, offset, hasMore: false };
+
+        if (login instanceof HTMLElement) login.hidden = true;
+        if (panel instanceof HTMLElement) panel.hidden = false;
+        renderComments();
+        setMessage('');
+      } catch (error) {
+        if (currentRequestVersion !== requestVersion || requestController.signal.aborted) return;
+        setMessage(error instanceof Error ? error.message : '댓글을 불러오지 못했습니다.');
+        if (loadMoreButton instanceof HTMLButtonElement) loadMoreButton.disabled = false;
+      } finally {
+        if (activeRequestController === requestController) activeRequestController = null;
+      }
+    };
+
+    loginForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!(tokenInput instanceof HTMLInputElement)) return;
+      const token = tokenInput.value.trim();
+      if (!token) return;
+      void loadComments({ reset: true, token });
+    });
+
+    refreshButton?.addEventListener('click', () => {
+      void loadComments({ reset: true });
+    });
+
+    loadMoreButton?.addEventListener('click', () => {
+      void loadComments({ reset: false });
+    });
+
+    logoutButton?.addEventListener('click', () => {
+      clearSession();
+      setMessage('로그아웃했습니다.');
+      if (tokenInput instanceof HTMLInputElement) tokenInput.focus();
+    });
+
+    const storedToken = sessionStorage.getItem(storageKey) || '';
+    if (storedToken) {
+      adminToken = storedToken;
+      void loadComments({ reset: true, token: storedToken });
+    } else {
+      showLogin();
+    }
+  }
+</script>
+
+<style is:global>
+  .admin-comments-page {
+    min-height: calc(100vh - 12rem);
+  }
+
+  .admin-comments-shell {
+    width: min(calc(100% - 2rem), 920px);
+    margin: 0 auto;
+    padding: 5rem 0 6rem;
+  }
+
+  .admin-comments-shell > h1 {
+    margin-bottom: 0.8rem;
+  }
+
+  .admin-comments-intro {
+    max-width: 720px;
+    margin-bottom: 2rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+  }
+
+  .admin-login-card,
+  .admin-comments-panel {
+    padding: clamp(1.2rem, 3vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: var(--shadow);
+  }
+
+  .admin-login-card {
+    display: grid;
+    gap: 1.2rem;
+    max-width: 660px;
+  }
+
+  .admin-login-card[hidden],
+  .admin-comments-panel[hidden],
+  .admin-comments-list[hidden],
+  .admin-load-more[hidden] {
+    display: none;
+  }
+
+  .admin-login-card h2,
+  .admin-comments-toolbar h2 {
+    margin-bottom: 0.35rem;
+  }
+
+  .admin-login-card p,
+  .admin-comments-count {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  .admin-login-form {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .admin-login-form label {
+    font-weight: 800;
+  }
+
+  .admin-login-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.65rem;
+  }
+
+  .admin-login-row input {
+    min-width: 0;
+    padding: 0.82rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    font: inherit;
+    background: #fff;
+  }
+
+  .admin-login-row button,
+  .admin-load-more {
+    padding: 0.8rem 1.1rem;
+    border: 0;
+    border-radius: 999px;
+    color: #fff;
+    font: inherit;
+    font-weight: 800;
+    background: var(--primary);
+    cursor: pointer;
+  }
+
+  .admin-message {
+    margin: 0.8rem 0 0;
+    color: #b91c1c !important;
+    font-weight: 700;
+  }
+
+  .admin-message:empty {
+    display: none;
+  }
+
+  .admin-comments-toolbar {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .admin-comments-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .admin-secondary-button {
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+    font: inherit;
+    font-weight: 800;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .admin-comments-list {
+    display: grid;
+    gap: 0.9rem;
+    margin-top: 1.2rem;
+  }
+
+  .admin-comment-card {
+    min-width: 0;
+    padding: 1.05rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: #fff;
+  }
+
+  .admin-comment-heading {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .admin-comment-post-link {
+    color: var(--primary);
+    font-weight: 800;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-comment-post-link:hover,
+  .admin-comment-post-link:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .admin-comment-badges {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.35rem;
+  }
+
+  .admin-comment-badge {
+    display: inline-flex;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+  }
+
+  .admin-comment-badge.is-private {
+    color: #7c3aed;
+    background: #f3e8ff;
+  }
+
+  .admin-comment-badge.is-public,
+  .admin-comment-badge.is-approved {
+    color: #047857;
+    background: #d1fae5;
+  }
+
+  .admin-comment-badge.is-rejected {
+    color: #b91c1c;
+    background: #fee2e2;
+  }
+
+  .admin-comment-badge.is-pending,
+  .admin-comment-badge.is-unknown {
+    color: #92400e;
+    background: #fef3c7;
+  }
+
+  .admin-comment-meta {
+    margin: 0.6rem 0 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-comment-body {
+    margin: 0.75rem 0 0;
+    color: #334155;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-comments-empty {
+    margin: 0;
+    padding: 1.5rem;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .admin-load-more {
+    display: block;
+    margin: 1.25rem auto 0;
+  }
+
+  button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+  }
+
+  @media (max-width: 640px) {
+    .admin-comments-shell {
+      width: min(calc(100% - 1.25rem), 920px);
+      padding: 3.2rem 0 4rem;
+    }
+
+    .admin-login-row,
+    .admin-comments-toolbar {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-login-row {
+      display: grid;
+    }
+
+    .admin-login-row button {
+      width: 100%;
+    }
+
+    .admin-comments-toolbar {
+      display: grid;
+      align-items: start;
+    }
+
+    .admin-comments-actions {
+      width: 100%;
+    }
+
+    .admin-secondary-button {
+      flex: 1 1 auto;
+    }
+
+    .admin-comment-heading {
+      display: grid;
+    }
+
+    .admin-comment-badges {
+      justify-content: flex-start;
+    }
+  }
+</style>

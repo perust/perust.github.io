@@ -13,6 +13,7 @@ interface Props {
   tags?: string[];
   // OG/트위터 카드 이미지(루트 기준 경로). 없으면 /og/default.png 로 대체된다.
   image?: string;
+  loadAnalytics?: boolean;
 }
 
 const {
@@ -26,6 +27,7 @@ const {
   modifiedTime,
   tags = [],
   image = '/og/default.png',
+  loadAnalytics = true,
 } = Astro.props;
 const site = Astro.site ?? new URL('https://perust.github.io');
 const canonicalUrl = new URL(canonical, site).toString();
@@ -58,22 +60,26 @@ const isCurrent = (href: string) => href === '/' ? Astro.url.pathname === '/' : 
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1573639772192057" crossorigin="anonymous"></script>
       </>
     )}
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HLB0E46BLH"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){window.dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-HLB0E46BLH');
-    </script>
-    <!-- Microsoft Clarity tracking code -->
-    <script is:inline>
-      (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window, document, "clarity", "script", "xfwvbc1z9a");
-    </script>
+    {loadAnalytics && (
+      <>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-HLB0E46BLH"></script>
+        <script is:inline>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){window.dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-HLB0E46BLH');
+        </script>
+        <!-- Microsoft Clarity tracking code -->
+        <script is:inline>
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "xfwvbc1z9a");
+        </script>
+      </>
+    )}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />

@@ -25,16 +25,30 @@ npx wrangler d1 create slowave_blog_comments
 
 ## 2. DB 스키마 적용
 
+새 원격 DB에만 전체 스키마를 적용합니다.
+
 ```bash
-npx wrangler d1 execute slowave_blog_comments --file=./schema.sql
+npx wrangler d1 execute slowave_blog_comments --remote --file=./schema.sql
 ```
 
-이미 DB를 만든 뒤 삭제 비밀번호 기능을 추가하는 경우에는 D1 콘솔에서 아래 SQL을 한 번 실행합니다.
+`schema.sql`의 `CREATE TABLE IF NOT EXISTS`는 기존 테이블에 새 열을 추가하지 않습니다. 기존 DB는 먼저 D1 콘솔이나 Wrangler에서 실제 열을 확인합니다.
 
 ```sql
-ALTER TABLE comments ADD COLUMN delete_hash TEXT;
-ALTER TABLE comments ADD COLUMN is_private INTEGER NOT NULL DEFAULT 0;
+PRAGMA table_info(comments);
 ```
+
+```bash
+npx wrangler d1 execute slowave_blog_comments --remote --command="PRAGMA table_info(comments);"
+```
+
+결과에 `is_private`가 없을 때만 아래의 검증된 일회성 마이그레이션을 적용합니다. 이미 `is_private`가 있으면 이 마이그레이션을 실행하지 않습니다.
+
+```bash
+npx wrangler d1 execute slowave_blog_comments --remote \
+  --file=./manual-migrations/2026-06-30-add-is-private.sql
+```
+
+실행 후 `PRAGMA table_info(comments);`를 다시 확인하고 Worker를 배포합니다.
 
 ## 3. Secret 설정
 
@@ -45,7 +59,7 @@ npx wrangler secret put TURNSTILE_SECRET_KEY
 ```
 
 - `IP_SALT`: IP 해시에 섞을 긴 랜덤 문자열
-- `ADMIN_TOKEN`: 댓글 승인/거절 API 호출용 관리자 토큰
+- `ADMIN_TOKEN`: 전체 댓글 조회와 승인/거절 API 호출용 관리자 토큰. 정적 사이트 코드나 GitHub 변수에 넣지 않습니다.
 - `TURNSTILE_SECRET_KEY`: Cloudflare Turnstile secret key. 개발 중에는 생략 가능하지만 운영에서는 권장
 
 ## 4. 배포
@@ -63,13 +77,27 @@ PUBLIC_TURNSTILE_SITE_KEY=<turnstile-site-key>
 
 GitHub Pages Actions에서 빌드한다면 repository secrets/variables에 위 값을 넣어야 합니다.
 
-## 5. 댓글 승인/거절
+## 5. 댓글 관리자 페이지
+
+블로그 빌드·Worker 배포 후 아래 경로에서 전체 댓글을 최신순으로 확인할 수 있습니다.
+
+```text
+https://perust.github.io/admin/comments/
+```
+
+- 페이지 HTML 자체는 GitHub Pages에서 공개될 수 있지만, 댓글 데이터는 `ADMIN_TOKEN`을 확인한 뒤에만 반환됩니다.
+- 입력한 토큰은 URL이나 `localStorage`에 남기지 않고 현재 탭의 `sessionStorage`에만 보관합니다.
+- 공개·비공개·숨김 댓글을 모두 표시하며, 한 번에 50개씩 불러옵니다.
+- 검색엔진·사이트맵·광고·분석 스크립트에서 관리자 경로를 제외합니다.
+
+## 6. 댓글 승인/거절
 
 댓글은 기본적으로 `approved` 상태라 작성 즉시 공개됩니다. 문제가 있는 댓글만 아래 API나 D1 콘솔에서 `rejected`로 숨기면 됩니다.
 
 ```bash
 # Authorization 헤더에는 Cloudflare secret으로 설정한 관리자 값을 넣습니다.
 curl -X POST "$PUBLIC_COMMENTS_API_URL/admin/comments" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"id":"COMMENT_ID","status":"approved"}'
 ```
@@ -78,6 +106,7 @@ curl -X POST "$PUBLIC_COMMENTS_API_URL/admin/comments" \
 
 ```bash
 curl -X POST "$PUBLIC_COMMENTS_API_URL/admin/comments" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"id":"COMMENT_ID","status":"rejected"}'
 ```
@@ -87,6 +116,10 @@ curl -X POST "$PUBLIC_COMMENTS_API_URL/admin/comments" \
 ### `GET /comments?slug=<post-slug>`
 
 승인된 댓글만 반환합니다.
+
+### `GET /admin/comments?limit=50&offset=0`
+
+`Authorization: Bearer <ADMIN_TOKEN>` 인증이 필요합니다. 공개·비공개·숨김 댓글을 최신순으로 반환하고, 응답의 `pagination.hasMore`로 다음 페이지 존재 여부를 알 수 있습니다. 응답에는 삭제 비밀번호 해시와 전체 IP 해시를 포함하지 않으며 `Cache-Control: no-store`를 적용합니다.
 
 ### `POST /comments`
 
