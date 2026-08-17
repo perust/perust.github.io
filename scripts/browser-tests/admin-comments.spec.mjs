@@ -25,6 +25,26 @@ const comments = [
   },
 ];
 
+test('every article comment section provides a discoverable same-tab entry to the protected admin login', async ({ page }) => {
+  await page.route('**/comments?**', (route) => route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({ comments: [] }),
+  }));
+
+  await page.goto('/blog/2026-07-01-static-blog-anonymous-comments/');
+
+  const entry = page.getByRole('link', { name: '관리자 로그인' });
+  await expect(entry).toBeVisible();
+  await expect(entry).toHaveAttribute('href', '/admin/comments/');
+  await expect(entry).toHaveAttribute('rel', 'nofollow');
+  await expect(entry).not.toHaveAttribute('target', '_blank');
+
+  await entry.click();
+  await expect(page).toHaveURL(/\/admin\/comments\/$/);
+  await expect(page.getByLabel('관리자 암호')).toBeVisible();
+});
+
 test('admin token unlocks the complete comment list and remains only in session storage', async ({ page }) => {
   let authorization = '';
   await page.route('**/admin/comments?**', async (route) => {

@@ -1091,6 +1091,11 @@ h3 {
 .comments-owner-mode { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .7rem; margin: 0 0 1rem; padding: .75rem .9rem; border: 1px solid #c4b5fd; border-radius: var(--radius-sm); color: #5b21b6; font-size: .9rem; font-weight: 800; background: #f5f3ff; }
 .comments-owner-mode button { padding: .45rem .7rem; border: 1px solid #c4b5fd; border-radius: 999px; color: #5b21b6; font: inherit; font-size: .82rem; background: #fff; cursor: pointer; }
 .comments-owner-mode[hidden], .comment-form[hidden] { display: none; }
+.comments-admin-entry { display: flex; justify-content: flex-end; gap: .55rem; align-items: center; margin: 0 0 1rem; }
+.comments-admin-entry span { color: var(--muted); font-size: .84rem; }
+.comments-admin-entry a { display: inline-flex; align-items: center; min-height: 2.25rem; padding: .35rem .7rem; border: 1px solid rgba(37,99,235,.34); border-radius: 999px; color: var(--primary); font-size: .84rem; font-weight: 800; background: rgba(37,99,235,.06); }
+.comments-admin-entry a:hover, .comments-admin-entry a:focus-visible { border-color: var(--primary); color: var(--primary-dark); background: rgba(37,99,235,.12); }
+.comments-admin-entry a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 .comment-delete { margin-top: .75rem; color: var(--muted); font-size: .88rem; }
 .comment-delete summary { cursor: pointer; width: fit-content; font-weight: 800; }
 .comment-delete form { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .5rem; }
