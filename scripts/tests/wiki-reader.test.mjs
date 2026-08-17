@@ -129,6 +129,10 @@ test('위키 독서 화면은 모바일 목차와 인쇄용 레이아웃을 갖�
   const css = await readOrEmpty('src/styles/wiki.css');
   const layout = await readOrEmpty('src/layouts/WikiLayout.astro');
 
+  assert.match(
+    css,
+    /\.wiki-library-hero h1\s*\{[^}]*font-size:\s*clamp\(2\.35rem,\s*4\.5vw,\s*4\.7rem\)/s,
+  );
   assert.match(layout, /aria-controls="wiki-toc"/);
   assert.match(layout, /data-wiki-toc-toggle/);
   assert.match(css, /@media \(max-width:\s*900px\)/);

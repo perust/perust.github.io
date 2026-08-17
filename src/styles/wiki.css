@@ -41,10 +41,17 @@
 .wiki-book-hero h1 {
   max-width: none;
   margin: 0 0 1rem;
-  font-size: clamp(2.35rem, 5.5vw, 4.7rem);
   font-weight: 700;
   line-height: 1.06;
   letter-spacing: -0.055em;
+}
+
+.wiki-library-hero h1 {
+  font-size: clamp(2.35rem, 4.5vw, 4.7rem);
+}
+
+.wiki-book-hero h1 {
+  font-size: clamp(2.35rem, 5.5vw, 4.7rem);
 }
 
 .wiki-library-lead,
