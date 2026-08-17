@@ -20,6 +20,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
     <p class="comments-empty">댓글을 불러오는 중입니다.</p>
   </div>
 
+  <div class="comments-owner-mode" data-comments-owner-mode hidden>
+    <span>관리자 모드 · 비공개 댓글 원문 표시 중</span>
+    <button type="button" data-comments-owner-logout>관리자 모드 종료</button>
+  </div>
+
   <form class="comment-form" data-comment-form>
     <label>
       <span>닉네임</span>
@@ -43,7 +48,6 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
   </form>
 </section>
 
-{turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
 <script>
   const root = document.querySelector('[data-comments-root]');
 
@@ -53,13 +57,41 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
     const list = root.querySelector('[data-comments-list]');
     const form = root.querySelector('[data-comment-form]');
     const message = root.querySelector('[data-comment-message]');
+    const ownerMode = root.querySelector('[data-comments-owner-mode]');
+    const ownerLogout = root.querySelector('[data-comments-owner-logout]');
+    const turnstileSiteKey = root.getAttribute('data-turnstile-site-key') || '';
+    const adminTokenStorageKey = 'lentoludens-comments-admin-token';
 
-    const escapeHtml = (value) => String(value || '')
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#039;');
+    const readAdminToken = () => {
+      try {
+        return sessionStorage.getItem(adminTokenStorageKey)?.trim() || '';
+      } catch (_) {
+        return '';
+      }
+    };
+
+    const clearAdminToken = () => {
+      try {
+        sessionStorage.removeItem(adminTokenStorageKey);
+      } catch (_) {
+        // 저장소 접근이 막힌 환경에서도 공개 댓글로 계속 동작한다.
+      }
+    };
+
+    const setOwnerMode = (active) => {
+      if (ownerMode) ownerMode.toggleAttribute('hidden', !active);
+      if (form) form.toggleAttribute('hidden', active || !apiUrl);
+    };
+
+    const loadTurnstile = () => {
+      if (!turnstileSiteKey || readAdminToken() || document.querySelector('[data-comments-turnstile-loader]')) return;
+      const loader = document.createElement('script');
+      loader.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      loader.async = true;
+      loader.defer = true;
+      loader.dataset.commentsTurnstileLoader = 'true';
+      document.head.append(loader);
+    };
 
     const formatDate = (value) => {
       try {
@@ -71,43 +103,120 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
 
     const renderComments = (comments) => {
       if (!list) return;
+      list.replaceChildren();
       if (!comments.length) {
-        list.innerHTML = '<p class="comments-empty">아직 댓글이 없습니다.</p>';
+        const empty = document.createElement('p');
+        empty.className = 'comments-empty';
+        empty.textContent = '아직 댓글이 없습니다.';
+        list.append(empty);
         return;
       }
-      list.innerHTML = comments.map((comment) => `
-        <article class="comment-item">
-          <div class="comment-meta">
-            <strong>${escapeHtml(comment.nickname || '익명')}</strong>
-            <span>${escapeHtml(comment.ipPrefix || '')}</span>
-            <time>${escapeHtml(formatDate(comment.createdAt))}</time>
-          </div>
-          <p>${escapeHtml(comment.body).replaceAll('\n', '<br />')}</p>
-          <details class="comment-delete">
-            <summary>삭제</summary>
-            <form data-delete-form data-comment-id="${escapeHtml(comment.id)}">
-              <input name="deletePassword" type="password" minlength="4" maxlength="80" placeholder="삭제 비밀번호" required />
-              <button type="submit">삭제하기</button>
-            </form>
-          </details>
-        </article>
-      `).join('');
+
+      for (const comment of comments) {
+        const isRedacted = Boolean(comment.isPrivate && comment.isRedacted);
+        const article = document.createElement('article');
+        article.className = `comment-item${comment.isPrivate ? ' is-private' : ''}`;
+        article.dataset.commentItem = 'true';
+        article.dataset.privateRedacted = String(isRedacted);
+
+        const meta = document.createElement('div');
+        meta.className = 'comment-meta';
+        const nickname = document.createElement('strong');
+        nickname.textContent = String(comment.nickname || '익명');
+        meta.append(nickname);
+        if (comment.isPrivate) {
+          const badge = document.createElement('span');
+          badge.className = 'comment-private-badge';
+          badge.textContent = '비공개';
+          meta.append(badge);
+        }
+        if (comment.ipPrefix) {
+          const ipPrefix = document.createElement('span');
+          ipPrefix.textContent = String(comment.ipPrefix);
+          meta.append(ipPrefix);
+        }
+        const time = document.createElement('time');
+        time.textContent = String(formatDate(comment.createdAt));
+        meta.append(time);
+
+        const body = document.createElement('p');
+        body.textContent = String(isRedacted ? '비공개 댓글입니다.' : (comment.body || ''));
+        article.append(meta, body);
+
+        if (!isRedacted) {
+          const details = document.createElement('details');
+          details.className = 'comment-delete';
+          const summary = document.createElement('summary');
+          summary.textContent = '삭제';
+          const deleteForm = document.createElement('form');
+          deleteForm.dataset.deleteForm = 'true';
+          deleteForm.dataset.commentId = String(comment.id || '');
+          const password = document.createElement('input');
+          password.name = 'deletePassword';
+          password.type = 'password';
+          password.minLength = 4;
+          password.maxLength = 80;
+          password.placeholder = '삭제 비밀번호';
+          password.required = true;
+          const deleteButton = document.createElement('button');
+          deleteButton.type = 'submit';
+          deleteButton.textContent = '삭제하기';
+          deleteForm.append(password, deleteButton);
+          details.append(summary, deleteForm);
+          article.append(details);
+        }
+
+        list.append(article);
+      }
     };
 
     const loadComments = async () => {
       if (!apiUrl) {
-        if (list) list.innerHTML = '<p class="comments-empty">댓글 API 설정이 아직 연결되지 않았습니다.</p>';
+        if (list) {
+          list.replaceChildren();
+          const empty = document.createElement('p');
+          empty.className = 'comments-empty';
+          empty.textContent = '댓글 API 설정이 아직 연결되지 않았습니다.';
+          list.append(empty);
+        }
         if (form) form.setAttribute('hidden', 'true');
         return;
       }
       try {
-        const response = await fetch(`${apiUrl.replace(/\/$/, '')}/comments?slug=${encodeURIComponent(postSlug)}`);
+        let adminToken = readAdminToken();
+        const fetchComments = (token) => fetch(`${apiUrl.replace(/\/$/, '')}/comments?slug=${encodeURIComponent(postSlug)}`, token ? {
+          headers: { authorization: `Bearer ${adminToken}` },
+          cache: 'no-store',
+          credentials: 'omit',
+          referrerPolicy: 'no-referrer',
+        } : { credentials: 'omit' });
+
+        let response = await fetchComments(adminToken);
+        if (response.status === 401 && adminToken) {
+          clearAdminToken();
+          adminToken = '';
+          response = await fetchComments('');
+        }
         const data = await response.json();
+        if (!response.ok) throw new Error(data.error || '댓글을 불러오지 못했습니다.');
+        setOwnerMode(Boolean(adminToken));
+        if (!adminToken) loadTurnstile();
         renderComments(data.comments || []);
       } catch (error) {
-        if (list) list.innerHTML = '<p class="comments-empty">댓글을 불러오지 못했습니다.</p>';
+        if (list) {
+          list.replaceChildren();
+          const empty = document.createElement('p');
+          empty.className = 'comments-empty';
+          empty.textContent = '댓글을 불러오지 못했습니다.';
+          list.append(empty);
+        }
       }
     };
+
+    ownerLogout?.addEventListener('click', () => {
+      clearAdminToken();
+      window.location.reload();
+    });
 
     form?.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -176,6 +285,8 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '';
       }
     });
 
+    setOwnerMode(false);
+    if (!readAdminToken()) loadTurnstile();
     loadComments();
   }
 </script>

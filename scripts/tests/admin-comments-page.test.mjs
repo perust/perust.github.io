@@ -34,6 +34,29 @@ test('the base layout can disable third-party analytics on the admin page', () =
   assert.match(layout, /loadAnalytics\s*&&/);
 });
 
+test('an owner article session gates every third-party script before its provider URL', () => {
+  const layout = read('src/layouts/BaseLayout.astro');
+  const comments = read('src/components/Comments.astro');
+  const storageMarker = 'lentoludens-comments-admin-token';
+  const gateIndex = layout.indexOf(storageMarker);
+
+  assert.notEqual(gateIndex, -1, 'BaseLayout must inspect the owner session before loading third-party scripts');
+  for (const provider of [
+    'pagead2.googlesyndication.com',
+    'www.googletagmanager.com',
+    'www.clarity.ms',
+  ]) {
+    assert.ok(layout.indexOf(provider) > gateIndex, `${provider} must appear after the owner-session gate`);
+  }
+  assert.match(layout, /sessionStorage\.getItem/);
+  assert.match(layout, /if\s*\(\s*hasAdminSession\s*\)\s*return/);
+  assert.match(comments, /lentoludens-comments-admin-token/);
+  assert.match(comments, /authorization:\s*`Bearer \$\{adminToken\}`/);
+  assert.match(comments, /response\.status === 401/);
+  assert.match(comments, /비공개 댓글입니다\./);
+  assert.doesNotMatch(comments, /<script[^>]+src=["']https:\/\/challenges\.cloudflare\.com/i);
+});
+
 test('admin pages are deliberately excluded from sitemap and allowed by the noindex AdSense gate', () => {
   const astroConfig = read('astro.config.mjs');
   const adsenseCheck = read('scripts/check-adsense.mjs');

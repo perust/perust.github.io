@@ -48,7 +48,9 @@ test('admin token unlocks the complete comment list and remains only in session 
   await expect.poll(() => authorization).toBe('Bearer correct-token');
   await expect(page.locator('[data-admin-comments-list]')).toBeVisible();
   await expect(page.locator('[data-admin-comment]')).toHaveCount(2);
-  await expect(page.getByRole('link', { name: '깃허브 블로그 댓글 기능 만들기: Cloudflare Worker와 D1로 익명 댓글 구현' })).toHaveAttribute('href', '/blog/2026-07-01-static-blog-anonymous-comments/');
+  const postLink = page.getByRole('link', { name: '깃허브 블로그 댓글 기능 만들기: Cloudflare Worker와 D1로 익명 댓글 구현' });
+  await expect(postLink).toHaveAttribute('href', '/blog/2026-07-01-static-blog-anonymous-comments/');
+  await expect(postLink).not.toHaveAttribute('target', '_blank');
   await expect(page.getByText('비공개', { exact: true })).toBeVisible();
   await expect(page.getByText('숨김', { exact: true })).toBeVisible();
   await expect(page.locator('.admin-comment-badge.is-private')).toHaveCSS('background-color', 'rgb(243, 232, 255)');

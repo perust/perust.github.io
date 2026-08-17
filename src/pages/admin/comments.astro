@@ -152,8 +152,6 @@ const postTitlesJson = JSON.stringify(Object.fromEntries(
         const postLink = document.createElement('a');
         postLink.className = 'admin-comment-post-link';
         postLink.href = `/blog/${encodeURIComponent(comment.postSlug)}/`;
-        postLink.target = '_blank';
-        postLink.rel = 'noopener';
         postLink.textContent = postTitles[comment.postSlug] || comment.postSlug;
         heading.append(postLink);
 
