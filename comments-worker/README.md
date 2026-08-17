@@ -25,16 +25,30 @@ npx wrangler d1 create slowave_blog_comments
 
 ## 2. DB 스키마 적용
 
+새 원격 DB에만 전체 스키마를 적용합니다.
+
 ```bash
-npx wrangler d1 execute slowave_blog_comments --file=./schema.sql
+npx wrangler d1 execute slowave_blog_comments --remote --file=./schema.sql
 ```
 
-이미 DB를 만든 뒤 삭제 비밀번호 기능을 추가하는 경우에는 D1 콘솔에서 아래 SQL을 한 번 실행합니다.
+`schema.sql`의 `CREATE TABLE IF NOT EXISTS`는 기존 테이블에 새 열을 추가하지 않습니다. 기존 DB는 먼저 D1 콘솔이나 Wrangler에서 실제 열을 확인합니다.
 
 ```sql
-ALTER TABLE comments ADD COLUMN delete_hash TEXT;
-ALTER TABLE comments ADD COLUMN is_private INTEGER NOT NULL DEFAULT 0;
+PRAGMA table_info(comments);
 ```
+
+```bash
+npx wrangler d1 execute slowave_blog_comments --remote --command="PRAGMA table_info(comments);"
+```
+
+결과에 `is_private`가 없을 때만 아래의 검증된 일회성 마이그레이션을 적용합니다. 이미 `is_private`가 있으면 이 마이그레이션을 실행하지 않습니다.
+
+```bash
+npx wrangler d1 execute slowave_blog_comments --remote \
+  --file=./manual-migrations/2026-06-30-add-is-private.sql
+```
+
+실행 후 `PRAGMA table_info(comments);`를 다시 확인하고 Worker를 배포합니다.
 
 ## 3. Secret 설정
 
