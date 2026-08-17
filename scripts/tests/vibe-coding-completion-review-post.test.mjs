@@ -126,3 +126,45 @@ test('별도 완독 후기의 사용자 제공 이미지 5장은 실제 PNG와 f
     await access(new URL(`${imageDir}${image.file}`, root));
   }
 });
+
+test('완독 후기 마지막에는 공개된 제작 프로그램 네 개의 실행 링크 카드를 둔다', async () => {
+  const post = await readFile(postPath, 'utf8');
+  const heading = '## 만든 프로그램 직접 실행하기';
+  const headingIndex = post.indexOf(heading);
+  const reflectionIndex = post.indexOf('이번에도 또!');
+  const cards = [
+    {
+      href: 'https://ai-empathy-diary-sigma.vercel.app/',
+      ariaLabel: '마음 구슬 AI 공감 다이어리 실행 페이지로 이동',
+      label: '마음 구슬 실행하기',
+    },
+    {
+      href: '/contents/digit-recognizer/',
+      ariaLabel: '손글씨 숫자 인식기 실행 페이지로 이동',
+      label: '손글씨 숫자 인식기 실행하기',
+    },
+    {
+      href: 'https://perust.github.io/quiz-by-quiz/',
+      ariaLabel: 'quiz by quiz 실행 페이지로 이동',
+      label: 'quiz by quiz 실행하기',
+    },
+    {
+      href: '/my-what-todo/',
+      ariaLabel: 'My What Todo 실행 페이지로 이동',
+      label: 'My What Todo 실행하기',
+    },
+  ];
+
+  assert.ok(headingIndex > reflectionIndex, '링크 카드 묶음은 마무리 소감 뒤에 있어야 한다');
+  assert.equal((post.match(/class="app-launch-button"/g) ?? []).length, cards.length);
+
+  for (const card of cards) {
+    const cardPattern = new RegExp(
+      `<a href="${escapeRegex(card.href)}" class="app-launch-button" aria-label="${escapeRegex(card.ariaLabel)}">` +
+        `<span class="app-launch-button__label">${escapeRegex(card.label)}<\\/span>` +
+        `<span class="app-launch-button__action">바로가기 <span aria-hidden="true">→<\\/span><\\/span><\\/a>`,
+    );
+    assert.match(post, cardPattern, `${card.label} 카드의 목적지·접근성 이름·행동 표기가 필요하다`);
+    assert.ok(post.indexOf(`href="${card.href}"`) > headingIndex, `${card.label} 카드는 실행 섹션 안에 있어야 한다`);
+  }
+});

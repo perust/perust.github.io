@@ -123,3 +123,15 @@ MCP로 도구를 연결하고 테스트, 버전 관리, 배포, 데이터베이�
 </figure>
 
 이번에도 또! 5-6주차가 되면서 시간을 많이 투자를 못해서 집중력이 떨어졌는데, 3-4주차에 그런 고민들을 해보면서 서비스를 만들어봤던 것이 가장 크게 도움이 된 것 같다.
+
+## 만든 프로그램 직접 실행하기
+
+직접 실행해 볼 수 있는 프로그램은 아래에 링크로 남겨둔다.
+
+<a href="https://ai-empathy-diary-sigma.vercel.app/" class="app-launch-button" aria-label="마음 구슬 AI 공감 다이어리 실행 페이지로 이동"><span class="app-launch-button__label">마음 구슬 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+
+<a href="/contents/digit-recognizer/" class="app-launch-button" aria-label="손글씨 숫자 인식기 실행 페이지로 이동"><span class="app-launch-button__label">손글씨 숫자 인식기 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+
+<a href="https://perust.github.io/quiz-by-quiz/" class="app-launch-button" aria-label="quiz by quiz 실행 페이지로 이동"><span class="app-launch-button__label">quiz by quiz 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+
+<a href="/my-what-todo/" class="app-launch-button" aria-label="My What Todo 실행 페이지로 이동"><span class="app-launch-button__label">My What Todo 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
