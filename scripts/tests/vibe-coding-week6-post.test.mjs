@@ -64,7 +64,25 @@ const bookPhotos = [
   },
 ];
 
-const photos = [...appScreenshots, ...bookPhotos];
+// 사용자가 「6주차 사진만 추가」라고 승인한 두 화면. 본문·frontmatter·절 구조는 바꾸지 않는다.
+const additionalScreenshots = [
+  {
+    file: '08-shopping-list-local.webp',
+    caption: '로컬 저장 상태와 태그별 목록을 보여 주는 쇼핑 리스트 화면.',
+    alt: '짙은 배경의 쇼핑 리스트 화면. 로컬 저장중 표시, 태그 입력, 다이소·이마트·CU·GS 필터와 네 개의 항목이 보인다.',
+    width: 1200,
+    height: 1052,
+  },
+  {
+    file: '09-quiz-by-quiz-lobby.webp',
+    caption: '카테고리와 온라인 메뉴가 보이는 quiz by quiz 시작 화면.',
+    alt: 'quiz by quiz 시작 화면. 퀴즈왕 프로필 카드, 캐릭터·랭킹·온라인 카드와 한국사·과학 등 카테고리가 보인다.',
+    width: 1200,
+    height: 674,
+  },
+];
+
+const photos = [...appScreenshots, ...bookPhotos, ...additionalScreenshots];
 
 test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터베이스 흐름을 여섯 절로 정리한다', async () => {
   const post = await readFile(postPath, 'utf8');
@@ -118,18 +136,18 @@ test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터�
   assert.doesNotMatch(post, /service_role|SUPABASE_[A-Z_]*KEY|ANON_KEY|API_KEY\s*=/);
 });
 
-test('교재 사진 4장과 마음 구슬 캡처 3장은 캐러셀 제어 없이 figure/figcaption 으로 들어간다', async () => {
+test('교재 사진 4장과 앱 캡처 5장은 캐러셀 제어 없이 figure/figcaption 으로 들어간다', async () => {
   const post = await readFile(postPath, 'utf8');
 
   const imageRefs = [...post.matchAll(/\/images\/posts\/2026-08-18-vibe-coding-week6-mcp-database\/[^"')\s]+\.webp/g)]
     .map((match) => match[0]);
-  assert.equal(imageRefs.length, 7);
-  assert.equal(new Set(imageRefs).size, 7);
+  assert.equal(imageRefs.length, 9);
+  assert.equal(new Set(imageRefs).size, 9);
   assert.deepEqual(imageRefs.map((ref) => ref.split('/').at(-1)), photos.map((photo) => photo.file));
 
   const imgTags = [...post.matchAll(/<img\s[^>]*>/g)].map((match) => match[0]);
-  assert.equal(imgTags.length, 7);
-  assert.equal((post.match(/\salt="[^"]+"/g) ?? []).length, 7);
+  assert.equal(imgTags.length, 9);
+  assert.equal((post.match(/\salt="[^"]+"/g) ?? []).length, 9);
   for (const [index, tag] of imgTags.entries()) {
     const photo = photos[index];
     assert.match(tag, new RegExp(`width="${photo.width}"`));
@@ -138,10 +156,10 @@ test('교재 사진 4장과 마음 구슬 캡처 3장은 캐러셀 제어 없이
     assert.match(tag, /decoding="async"/);
   }
 
-  assert.equal((post.match(/<figure class="post-media-figure">/g) ?? []).length, 7);
-  assert.equal((post.match(/<\/figure>/g) ?? []).length, 7);
-  assert.equal((post.match(/<figcaption>/g) ?? []).length, 7);
-  assert.equal((post.match(/<\/figcaption>/g) ?? []).length, 7);
+  assert.equal((post.match(/<figure class="post-media-figure">/g) ?? []).length, 9);
+  assert.equal((post.match(/<\/figure>/g) ?? []).length, 9);
+  assert.equal((post.match(/<figcaption>/g) ?? []).length, 9);
+  assert.equal((post.match(/<\/figcaption>/g) ?? []).length, 9);
 
   for (const photo of photos) {
     assert.ok(post.includes(`<figcaption>${photo.caption}</figcaption>`), `${photo.file} 캡션이 있어야 한다`);
@@ -153,7 +171,21 @@ test('교재 사진 4장과 마음 구슬 캡처 3장은 캐러셀 제어 없이
   assert.doesNotMatch(post, /image-carousel-controls|image-carousel-status/);
 });
 
-test('6주차 사진 7장이 실제 WebP 파일로 저장소에 있다', async () => {
+test('추가 사진 2장은 기존 문장을 고치지 않고 로컬 저장·온라인 기대 문단 뒤에 각각 놓인다', async () => {
+  const post = await readFile(postPath, 'utf8');
+  const localStorageAnchor = '처음에는 로컬 스토리지와 내보내기 기능 정도로 시작하고';
+  const userExpectationAnchor = '이용자 입장에서 보면 로그인과 동기화는 너무 당연한 것이기 때문입니다.';
+  const closingAnchor = '8장을 읽고 나서 답을 얻었다기보다는';
+  const shoppingImage = '/08-shopping-list-local.webp';
+  const quizImage = '/09-quiz-by-quiz-lobby.webp';
+
+  assert.ok(post.indexOf(localStorageAnchor) < post.indexOf(shoppingImage));
+  assert.ok(post.indexOf(shoppingImage) < post.indexOf(userExpectationAnchor));
+  assert.ok(post.indexOf(userExpectationAnchor) < post.indexOf(quizImage));
+  assert.ok(post.indexOf(quizImage) < post.indexOf(closingAnchor));
+});
+
+test('6주차 사진 9장이 실제 WebP 파일로 저장소에 있다', async () => {
   await Promise.all(
     photos.map(async (photo) => {
       const fileUrl = new URL(`${imageDir}${photo.file}`, root);

@@ -110,6 +110,20 @@ publishPacingException: "deadline-bound-challenge"
 
 그래서 요즘 생각하는 순서는 이렇습니다. 처음에는 로컬 스토리지와 내보내기 기능 정도로 시작하고, 서비스가 어느 정도 형태를 갖추고 실제로 필요하다는 게 확인되고 제가 운영할 수 있겠다는 판단이 서면 그때 로그인과 데이터베이스를 붙이는 것.
 
+<figure class="post-media-figure">
+  <div class="image-carousel-track">
+    <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/08-shopping-list-local.webp" alt="짙은 배경의 쇼핑 리스트 화면. 로컬 저장중 표시, 태그 입력, 다이소·이마트·CU·GS 필터와 네 개의 항목이 보인다." width="1200" height="1052" loading="lazy" decoding="async" />
+  </div>
+  <figcaption>로컬 저장 상태와 태그별 목록을 보여 주는 쇼핑 리스트 화면.</figcaption>
+</figure>
+
 다만 이 결론이 깔끔하지는 않습니다. 이용자 입장에서 보면 로그인과 동기화는 너무 당연한 것이기 때문입니다. 기기를 바꿔도 내 데이터가 따라오는 건 기본에 가깝고, 내보내기 기능만으로 다른 기기 연동을 맡기는 방식이 이용자에게 충분한지도 자신이 없습니다. 만드는 쪽의 신중함과 쓰는 쪽의 기대가 어디에서 만나야 하는지는 아직 모르겠습니다.
+
+<figure class="post-media-figure">
+  <div class="image-carousel-track">
+    <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/09-quiz-by-quiz-lobby.webp" alt="quiz by quiz 시작 화면. 퀴즈왕 프로필 카드, 캐릭터·랭킹·온라인 카드와 한국사·과학 등 카테고리가 보인다." width="1200" height="674" loading="lazy" decoding="async" />
+  </div>
+  <figcaption>카테고리와 온라인 메뉴가 보이는 quiz by quiz 시작 화면.</figcaption>
+</figure>
 
 8장을 읽고 나서 답을 얻었다기보다는, 질문이 조금 더 구체적으로 남았습니다. 무엇을 연결할 수 있는지보다, 연결한 뒤에 제가 계속 책임질 수 있는지를 묻게 됐습니다. 당분간은 이 질문을 계속 가지고 가려고 합니다.
