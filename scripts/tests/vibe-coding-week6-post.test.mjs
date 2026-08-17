@@ -108,15 +108,24 @@ test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터�
   // 7장 PROJECT 10의 실제 화면은 짧게, 8장의 핵심 다섯 절은 원래 순서대로 남긴다.
   const headings = [...post.matchAll(/^## (.+)$/gm)].map((match) => match[1]);
   assert.deepEqual(headings, [
-    '7장 PROJECT 10: 마음 구슬을 만든 흐름',
-    '설치를 맡길 수 있다는 것과, 안다는 것',
-    "'자동화'라는 말이 실제로 요구한 것",
-    '편해진 설정과, 그래도 남는 확인',
-    '로그인과 데이터베이스는 기능이 아니었습니다',
-    '아직 정리되지 않은 채로',
+    '7장 PROJECT 10: 마음 구슬을 만든 기록',
+    'MCP가 어디와 연결되는지',
+    '자동화에도 사람이 정할 일',
+    '설정이 편해져도 남는 확인',
+    '붙일 수 있으니까 붙였던 데이터베이스',
+    '아직 결론을 못 낸 채로',
   ]);
   assert.ok(post.includes('6주차 기본 미션으로 AI 공감 다이어리 「마음 구슬」을 만들었습니다.'));
-  assert.ok(post.includes('앱이 어디까지 보여 주고 저장하는지를 직접 확인한 기록으로 두고 싶었습니다.'));
+  assert.ok(post.includes('앱이 어디까지 보여 주고 저장하는지 직접 확인한 기록으로 남기고 싶었습니다.'));
+  assert.ok(
+    post.includes(
+      '로그인과 데이터베이스는 기능 체크리스트에서 하나 더 체크하는 항목이 아니라, 내가 얼마 동안 이걸 책임질 수 있는지에 대한 답에 가깝습니다.',
+    ),
+  );
+  // 사실은 유지하되, 초안의 발표문 같은 연결 문구는 남기지 않는다.
+  assert.doesNotMatch(post, /읽으면서 정리한 건,/);
+  assert.doesNotMatch(post, /그런데 여기서 걸리는 게 있었습니다\./);
+  assert.doesNotMatch(post, /그래서 요즘 생각하는 순서는 이렇습니다\./);
 
   // 7장 에이전트 실습의 상세 기록은 여전히 5주차 내부 링크로 이어진다.
   assert.ok(
@@ -171,11 +180,11 @@ test('교재 사진 4장과 앱 캡처 5장은 캐러셀 제어 없이 figure/fi
   assert.doesNotMatch(post, /image-carousel-controls|image-carousel-status/);
 });
 
-test('추가 사진 2장은 기존 문장을 고치지 않고 로컬 저장·온라인 기대 문단 뒤에 각각 놓인다', async () => {
+test('추가 사진 2장은 로컬 저장의 잠정 순서와 로그인·동기화의 미해결 문단 뒤에 각각 놓인다', async () => {
   const post = await readFile(postPath, 'utf8');
-  const localStorageAnchor = '처음에는 로컬 스토리지와 내보내기 기능 정도로 시작하고';
-  const userExpectationAnchor = '이용자 입장에서 보면 로그인과 동기화는 너무 당연한 것이기 때문입니다.';
-  const closingAnchor = '8장을 읽고 나서 답을 얻었다기보다는';
+  const localStorageAnchor = '지금은 로컬 스토리지와 내보내기 기능 정도로 시작해 보려고 합니다.';
+  const userExpectationAnchor = '다만 이 결론이 깔끔하지 않은 건, 이용자 입장에서 로그인과 동기화가 너무 당연하기 때문입니다.';
+  const closingAnchor = '8장을 읽고 나서도 답을 얻지는 못했습니다.';
   const shoppingImage = '/08-shopping-list-local.webp';
   const quizImage = '/09-quiz-by-quiz-lobby.webp';
 
