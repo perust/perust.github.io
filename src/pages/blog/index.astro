@@ -42,7 +42,7 @@ const postBySlug = new Map(posts.map((post) => [post.slug, post]));
 const makerPosts = FEATURED_MAKER_SLUGS.map((slug) => postBySlug.get(slug)).filter(Boolean);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
-const blogDescription = '프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 다루는 개인 블로그.';
+const blogDescription = 'IT/AI/경제 정보, 그리고 개인 작업 블로그.';
 const blogLd = {
   '@context': 'https://schema.org',
   '@type': 'Blog',
@@ -60,12 +60,12 @@ const blogLd = {
   })),
 };
 ---
-<BaseLayout title="lentoludens 블로그 · AI, 자동화, 투자 데이터 기록" description={blogDescription} jsonLd={blogLd}>
+<BaseLayout title="lentoludens 블로그 · AI, 자동화, 경제" description={blogDescription} jsonLd={blogLd}>
   <main>
     <section class="section-shell blog-hero blog-hero-compact">
       <p class="section-kicker">Blog</p>
       <h1>블로그</h1>
-      <p class="hero-description">프로젝트 제작기, AI 자동화, 투자 데이터, 회고 시스템을 글로 정리합니다.</p>
+      <p class="hero-description">IT/AI/경제 정보, 그리고 개인 작업을 글로 정리합니다.</p>
     </section>
 
     <section class="section-shell" aria-labelledby="topic-hubs-title" style="padding-top:0">
@@ -89,8 +89,8 @@ const blogLd = {
     <section class="section-shell" aria-labelledby="maker-title" style="padding-top:0">
       <div class="section-heading">
         <p class="section-kicker">Hands-on</p>
-        <h2 id="maker-title">직접 만들고 자동화한 기록</h2>
-        <p>공식 자료를 정리한 글보다 먼저 볼 만한, 직접 만들고 운영하며 겪은 제작기와 회고입니다.</p>
+        <h2 id="maker-title">직접 만들어보기</h2>
+        <p>직접 만들며 남긴 기록들입니다.</p>
       </div>
       <div class="post-list">
         {makerPosts.map((post) => (
