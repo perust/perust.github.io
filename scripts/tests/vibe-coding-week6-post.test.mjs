@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const root = new URL('../../', import.meta.url);
 const postPath = new URL('src/content/blog/2026-08-18-vibe-coding-week6-mcp-database.md', root);
+const workPagePath = new URL('src/pages/work/index.astro', root);
 const globalCssPath = new URL('src/styles/global.css', root);
 const imageDir = 'public/images/posts/2026-08-18-vibe-coding-week6-mcp-database/';
 
@@ -11,21 +12,21 @@ const imageDir = 'public/images/posts/2026-08-18-vibe-coding-week6-mcp-database/
 const appScreenshots = [
   {
     file: '05-mind-marble-entry.webp',
-    caption: '한 줄로 하루를 적은 뒤 감정 구슬을 만드는 입력 화면.',
-    alt: '마음 구슬 앱의 입력 화면. 오늘 하루는 너무 재미있었다라는 문장과 감정 구슬 생성 진행 상태가 보인다.',
+    caption: '한 줄로 하루를 적은 뒤 감정 구슬을 만드는 중인 입력 화면.',
+    alt: "마음 구슬 앱의 입력 화면. '오늘 하루는 너무 재미있었다'라는 문장을 입력하고, 감정 구슬 생성 진행 중인 화면.",
     width: 1200,
     height: 1102,
   },
   {
     file: '06-mind-marble-result.webp',
-    caption: '이모티콘 선택 뒤 기쁨과 감정 세기 9/10이 표시된 결과 화면.',
+    caption: '이모티콘 선택 뒤 기쁨이라는 감정과 감정 세기 9/10이 표시되어 있는 결과 화면. 현재는 글자나 이모티콘을 직접 타이핑하도록 바꾸었다.',
     alt: '마음 구슬 앱 결과 화면. 기쁨 이모티콘 선택, 감정 세기 9/10, 공감 문장이 표시된다.',
     width: 1200,
     height: 954,
   },
   {
     file: '07-mind-marble-memory-store.webp',
-    caption: '날짜와 감정 기준으로 저장된 기록을 모아 보는 기억 저장소 화면.',
+    caption: '날짜와 감정 기준으로 저장된 기록을 모아 보는 기억 저장소 화면. 타이핑한 내용이 구슬 안에 보인다.',
     alt: '마음 구슬 앱의 기억 저장소 화면. 감정 필터와 8월 18일에 저장된 세 개의 감정 구슬 카드가 보인다.',
     width: 1200,
     height: 424,
@@ -84,7 +85,25 @@ const additionalScreenshots = [
 
 const photos = [...appScreenshots, ...bookPhotos, ...additionalScreenshots];
 
-test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터베이스 흐름을 여섯 절로 정리한다', async () => {
+const launchCards = [
+  {
+    href: 'https://ai-empathy-diary-sigma.vercel.app/',
+    ariaLabel: '마음 구슬 AI 공감 다이어리 실행 페이지로 이동',
+    label: '마음 구슬 실행하기',
+  },
+  {
+    href: 'https://perust.github.io/shopping-listapp/shopping-list/',
+    ariaLabel: '쇼핑 리스트 실행 페이지로 이동',
+    label: '쇼핑 리스트 실행하기',
+  },
+  {
+    href: 'https://ai-empathy-diary-sigma.vercel.app/index_pdf.html',
+    ariaLabel: 'PDF AI 요약 실행 페이지로 이동',
+    label: 'PDF AI 요약 실행하기',
+  },
+];
+
+test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터베이스 흐름 및 최종 실행 링크를 정리한다', async () => {
   const post = await readFile(postPath, 'utf8');
 
   assert.ok(
@@ -93,7 +112,7 @@ test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터�
     ),
     'title 은 초안 frontmatter 와 글자 단위로 같아야 한다',
   );
-  assert.match(post, /^date: "2026-08-18"$/m);
+  assert.match(post, /^date: "2026-08-16"$/m);
   assert.match(post, /^category: "도서 학습 챌린지"$/m);
   assert.match(post, /^editorialReview: true$/m);
   assert.match(post, /^valueType: "experience"$/m);
@@ -105,21 +124,22 @@ test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터�
   assert.deepEqual(JSON.parse(tagsLine[1]), ['바이브코딩', 'ClaudeCode', 'MCP', 'AI코딩', '회고']);
   assert.equal(JSON.parse(tagsLine[1]).length, 5);
 
-  // 7장 PROJECT 10의 실제 화면은 짧게, 8장의 핵심 다섯 절은 원래 순서대로 남긴다.
+  // 7장 PROJECT 10의 실제 화면과 8장의 핵심 다섯 절 뒤에 실행 링크 절을 둔다.
   const headings = [...post.matchAll(/^## (.+)$/gm)].map((match) => match[1]);
   assert.deepEqual(headings, [
-    '7장 PROJECT 10: 마음 구슬을 만든 기록',
+    "7장 PROJECT 10: AI 공감 다이어리, '마음 구슬'",
     'MCP가 어디와 연결되는지',
-    '자동화에도 사람이 정할 일',
-    '설정이 편해져도 남는 확인',
-    '붙일 수 있으니까 붙였던 데이터베이스',
-    '아직 결론을 못 낸 채로',
+    '자동화라도 사람이 정할 일은 있다',
+    '설정이 편해져도 확인은 필요',
+    '붙일 수 있으니까 붙였던 데이터베이스지만..',
+    '마지막으로.. ',
+    '직접 사용해보기',
   ]);
-  assert.ok(post.includes('6주차 기본 미션으로 AI 공감 다이어리 「마음 구슬」을 만들었습니다.'));
-  assert.ok(post.includes('앱이 어디까지 보여 주고 저장하는지 직접 확인한 기록으로 남기고 싶었습니다.'));
+  assert.ok(post.includes('6주차 프로젝트로 AI 공감 다이어리 「마음 구슬」을 만들었습니다.'));
+  assert.ok(post.includes("만들어본 '마음 구슬' 서비스 화면을 간단하게 남겨보겠습니다."));
   assert.ok(
     post.includes(
-      '로그인과 데이터베이스는 기능 체크리스트에서 하나 더 체크하는 항목이 아니라, 내가 얼마 동안 이걸 책임질 수 있는지에 대한 답에 가깝습니다.',
+      '로그인과 데이터베이스는 기능 체크리스트에서 하나 더 체크하는 항목이 아니라, 내가 얼마 동안 이걸 책임질 수 있는지에 대한 답에 가까운 것 같습니다.',
     ),
   );
   // 사실은 유지하되, 초안의 발표문 같은 연결 문구는 남기지 않는다.
@@ -182,9 +202,9 @@ test('교재 사진 4장과 앱 캡처 5장은 캐러셀 제어 없이 figure/fi
 
 test('추가 사진 2장은 로컬 저장의 잠정 순서와 로그인·동기화의 미해결 문단 뒤에 각각 놓인다', async () => {
   const post = await readFile(postPath, 'utf8');
-  const localStorageAnchor = '지금은 로컬 스토리지와 내보내기 기능 정도로 시작해 보려고 합니다.';
-  const userExpectationAnchor = '다만 이 결론이 깔끔하지 않은 건, 이용자 입장에서 로그인과 동기화가 너무 당연하기 때문입니다.';
-  const closingAnchor = '8장을 읽고 나서도 답을 얻지는 못했습니다.';
+  const localStorageAnchor = '그래서 생각한 것은 로컬 스토리지와 내보내기 기능 정도로 시작해 보려고 합니다.';
+  const userExpectationAnchor = '다만 꼭 맞다고 생각이 들지 않는 것은, 이용자 입장에서 로그인과 동기화가 너무 당연하게 느껴지기도 하기 때문입니다.';
+  const closingAnchor = '8장을 읽으면서 생각해봐야할 질문은 생겼습니다.';
   const shoppingImage = '/08-shopping-list-local.webp';
   const quizImage = '/09-quiz-by-quiz-lobby.webp';
 
@@ -192,6 +212,46 @@ test('추가 사진 2장은 로컬 저장의 잠정 순서와 로그인·동기�
   assert.ok(post.indexOf(shoppingImage) < post.indexOf(userExpectationAnchor));
   assert.ok(post.indexOf(userExpectationAnchor) < post.indexOf(quizImage));
   assert.ok(post.indexOf(quizImage) < post.indexOf(closingAnchor));
+});
+
+test('최종 직접 사용해보기 절은 접근 가능한 실행 카드 세 개만 승인된 순서로 제공한다', async () => {
+  const post = await readFile(postPath, 'utf8');
+  const closingParagraph = '8장을 읽으면서 생각해봐야할 질문은 생겼습니다. 무엇을 연결하고 만들 수 있는지보다, 연결하고 만들어낸 뒤에 제가 계속 책임질 수 있는지를 생각해봐야 할 것입니다.';
+  const finalHeading = '## 직접 사용해보기';
+  const cardPattern = /<a href="([^"]+)" class="app-launch-button" aria-label="([^"]+)"><span class="app-launch-button__label">([^<]+)<\/span><span class="app-launch-button__action">(바로가기) <span aria-hidden="true">(→)<\/span><\/span><\/a>/g;
+  const cards = [...post.matchAll(cardPattern)].map((match) => ({
+    href: match[1],
+    ariaLabel: match[2],
+    label: match[3],
+    action: match[4],
+    arrow: match[5],
+  }));
+
+  assert.equal((post.match(/class="app-launch-button"/g) ?? []).length, 3);
+  assert.equal((post.match(/^## 직접 사용해보기$/gm) ?? []).length, 1);
+  assert.ok(post.includes(`${closingParagraph}\n\n${finalHeading}\n\n`));
+  assert.deepEqual(
+    cards,
+    launchCards.map((card) => ({ ...card, action: '바로가기', arrow: '→' })),
+  );
+  assert.equal((post.match(/<span aria-hidden="true">→<\/span>/g) ?? []).length, 3);
+
+  const pdfCard = launchCards.at(-1);
+  const finalCardMarkup = `<a href="${pdfCard.href}" class="app-launch-button" aria-label="${pdfCard.ariaLabel}"><span class="app-launch-button__label">${pdfCard.label}</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>`;
+  assert.ok(post.trimEnd().endsWith(finalCardMarkup));
+});
+
+test('작업 페이지는 사용자가 OpenRouter API 키를 입력하는 외부 PDF AI 요약 항목을 한 번 제공한다', async () => {
+  const workPage = await readFile(workPagePath, 'utf8');
+  const mindMarbleTitle = "title: '감정 일기 마음 구슬'";
+  const pdfTitle = "title: 'PDF AI 요약'";
+  const digitRecognizerTitle = "title: '손글씨 숫자 인식기'";
+  const pdfItem = "{ type: 'Contents', category: 'data-ai', created: '2026.02.16', updated: '2026.02.16', title: 'PDF AI 요약', desc: 'PDF 문서 업로드 · AI 핵심 내용 요약 · 사용자가 자신의 OpenRouter API 키를 직접 입력해 사용', href: 'https://ai-empathy-diary-sigma.vercel.app/index_pdf.html', external: true, status: '바로 사용' },";
+
+  assert.equal((workPage.match(/title: 'PDF AI 요약'/g) ?? []).length, 1);
+  assert.ok(workPage.includes(pdfItem));
+  assert.ok(workPage.indexOf(mindMarbleTitle) < workPage.indexOf(pdfTitle));
+  assert.ok(workPage.indexOf(pdfTitle) < workPage.indexOf(digitRecognizerTitle));
 });
 
 test('6주차 사진 9장이 실제 WebP 파일로 저장소에 있다', async () => {

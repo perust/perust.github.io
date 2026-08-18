@@ -127,3 +127,11 @@ MCP를 늘릴 때는 있으면 좋아 보인다고 하나씩 추가하기보다�
 </figure>
 
 8장을 읽으면서 생각해봐야할 질문은 생겼습니다. 무엇을 연결하고 만들 수 있는지보다, 연결하고 만들어낸 뒤에 제가 계속 책임질 수 있는지를 생각해봐야 할 것입니다.
+
+## 직접 사용해보기
+
+<a href="https://ai-empathy-diary-sigma.vercel.app/" class="app-launch-button" aria-label="마음 구슬 AI 공감 다이어리 실행 페이지로 이동"><span class="app-launch-button__label">마음 구슬 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+
+<a href="https://perust.github.io/shopping-listapp/shopping-list/" class="app-launch-button" aria-label="쇼핑 리스트 실행 페이지로 이동"><span class="app-launch-button__label">쇼핑 리스트 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+
+<a href="https://ai-empathy-diary-sigma.vercel.app/index_pdf.html" class="app-launch-button" aria-label="PDF AI 요약 실행 페이지로 이동"><span class="app-launch-button__label">PDF AI 요약 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
