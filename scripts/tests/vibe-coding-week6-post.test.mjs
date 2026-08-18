@@ -43,6 +43,16 @@ const mindMarbleMotion = {
   height: 404,
 };
 
+// 공개 quiz by quiz 시작 화면에서 실제 방향키 입력으로 걷는 캐릭터를 캡처한 GIF.
+const quizByQuizMotion = {
+  file: '09a-quiz-by-quiz-walker-motion.gif',
+  poster: '09a-quiz-by-quiz-walker-motion-still.webp',
+  caption: '시작 화면에서 방향키로 캐릭터를 옮길 때, 파란 캐릭터가 점프하듯 움직이는 모습.',
+  alt: 'quiz by quiz 시작 화면에서 파란 캐릭터가 내 캐릭터 카드와 랭킹 보기 카드 사이를 좌우로 이동하며 점프하듯 걷는 애니메이션 GIF.',
+  width: 960,
+  height: 540,
+};
+
 // 초안(02_Claude_초안.md)의 교재 사진 주석 4개가 그대로 옮겨진 값.
 const bookPhotos = [
   {
@@ -94,7 +104,8 @@ const additionalScreenshots = [
 ];
 
 const photos = [...appScreenshots, ...bookPhotos, ...additionalScreenshots];
-const renderedMedia = [...appScreenshots, mindMarbleMotion, ...bookPhotos, ...additionalScreenshots];
+const motions = [mindMarbleMotion, quizByQuizMotion];
+const renderedMedia = [...appScreenshots, mindMarbleMotion, ...bookPhotos, ...additionalScreenshots, quizByQuizMotion];
 
 const launchCards = [
   {
@@ -176,13 +187,13 @@ test('6주차 후기는 PROJECT 10 증거와 8장의 MCP·자동화·데이터�
   assert.doesNotMatch(post, /service_role|SUPABASE_[A-Z_]*KEY|ANON_KEY|API_KEY\s*=/);
 });
 
-test('교재 사진 4장과 앱 화면 5장, 실제 구슬 모션 GIF는 캐러셀 제어 없이 figure/figcaption 으로 들어간다', async () => {
+test('교재 사진 4장과 앱 화면 5장, 실제 앱 모션 GIF 두 개는 캐러셀 제어 없이 figure/figcaption 으로 들어간다', async () => {
   const post = await readFile(postPath, 'utf8');
 
   const imageRefs = [...post.matchAll(/\/images\/posts\/2026-08-18-vibe-coding-week6-mcp-database\/[^"')\s]+\.(?:webp|gif)/g)]
     .map((match) => match[0]);
-  assert.equal(imageRefs.length, 11);
-  assert.equal(new Set(imageRefs).size, 11);
+  assert.equal(imageRefs.length, 13);
+  assert.equal(new Set(imageRefs).size, 13);
   assert.deepEqual(
     imageRefs.map((ref) => ref.split('/').at(-1)),
     [
@@ -191,12 +202,14 @@ test('교재 사진 4장과 앱 화면 5장, 실제 구슬 모션 GIF는 캐러�
       mindMarbleMotion.file,
       ...bookPhotos.map((photo) => photo.file),
       ...additionalScreenshots.map((photo) => photo.file),
+      quizByQuizMotion.poster,
+      quizByQuizMotion.file,
     ],
   );
 
   const imgTags = [...post.matchAll(/<img\s[^>]*>/g)].map((match) => match[0]);
-  assert.equal(imgTags.length, 10);
-  assert.equal((post.match(/\salt="[^"]+"/g) ?? []).length, 10);
+  assert.equal(imgTags.length, 11);
+  assert.equal((post.match(/\salt="[^"]+"/g) ?? []).length, 11);
   for (const [index, tag] of imgTags.entries()) {
     const photo = renderedMedia[index];
     assert.match(tag, new RegExp(`width="${photo.width}"`));
@@ -205,33 +218,38 @@ test('교재 사진 4장과 앱 화면 5장, 실제 구슬 모션 GIF는 캐러�
     assert.match(tag, /decoding="async"/);
   }
 
-  assert.equal((post.match(/<figure class="post-media-figure">/g) ?? []).length, 10);
-  assert.equal((post.match(/<\/figure>/g) ?? []).length, 10);
-  assert.equal((post.match(/<figcaption>/g) ?? []).length, 10);
-  assert.equal((post.match(/<\/figcaption>/g) ?? []).length, 10);
+  assert.equal((post.match(/<figure class="post-media-figure">/g) ?? []).length, 11);
+  assert.equal((post.match(/<\/figure>/g) ?? []).length, 11);
+  assert.equal((post.match(/<figcaption>/g) ?? []).length, 11);
+  assert.equal((post.match(/<\/figcaption>/g) ?? []).length, 11);
 
   for (const photo of photos) {
     assert.ok(post.includes(`<figcaption>${photo.caption}</figcaption>`), `${photo.file} 캡션이 있어야 한다`);
     assert.ok(post.includes(`alt="${photo.alt}"`), `${photo.file} alt 가 승인된 설명과 같아야 한다`);
   }
 
-  const motionImage = `<img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/${mindMarbleMotion.file}" alt="${mindMarbleMotion.alt}" width="${mindMarbleMotion.width}" height="${mindMarbleMotion.height}" loading="lazy" decoding="async" />`;
-  assert.ok(post.includes(motionImage), '일반 환경에는 실제 애니메이션 GIF를 제공해야 한다');
-  assert.ok(
-    post.includes(`<source media="(prefers-reduced-motion: reduce)" srcset="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/${mindMarbleMotion.poster}" type="image/webp" />`),
-    'reduced-motion 환경에는 GIF 대신 정지 WebP를 제공해야 한다',
-  );
-  assert.ok(post.includes(`<figcaption>${mindMarbleMotion.caption}</figcaption>`));
+  for (const motion of motions) {
+    const motionImage = `<img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/${motion.file}" alt="${motion.alt}" width="${motion.width}" height="${motion.height}" loading="lazy" decoding="async" />`;
+    assert.ok(post.includes(motionImage), `${motion.file} 일반 환경에는 실제 애니메이션 GIF를 제공해야 한다`);
+    assert.ok(
+      post.includes(`<source media="(prefers-reduced-motion: reduce)" srcset="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/${motion.poster}" type="image/webp" />`),
+      `${motion.file} reduced-motion 환경에는 GIF 대신 정지 WebP를 제공해야 한다`,
+    );
+    assert.ok(post.includes(`<figcaption>${motion.caption}</figcaption>`));
+  }
 
   // 한 장짜리 figure 라 캐러셀 제어 버튼·상태 표시는 넣지 않는다.
   assert.doesNotMatch(post, /data-image-carousel|data-carousel-prev|data-carousel-next|data-carousel-status/);
   assert.doesNotMatch(post, /image-carousel-controls|image-carousel-status/);
 });
 
-test('구슬 모션 GIF는 기존 기억 저장소 정지 화면 직후, MCP 절 이전에 놓인다', async () => {
+test('두 모션 GIF는 각각 기존 정지 화면 바로 뒤에 놓인다', async () => {
   const post = await readFile(postPath, 'utf8');
+  const closingAnchor = '8장을 읽으면서 생각해봐야할 질문은 생겼습니다.';
   assert.ok(post.indexOf('/07-mind-marble-memory-store.webp') < post.indexOf(`/${mindMarbleMotion.file}`));
   assert.ok(post.indexOf(`/${mindMarbleMotion.file}`) < post.indexOf('## MCP가 어디와 연결되는지'));
+  assert.ok(post.indexOf('/09-quiz-by-quiz-lobby.webp') < post.indexOf(`/${quizByQuizMotion.file}`));
+  assert.ok(post.indexOf(`/${quizByQuizMotion.file}`) < post.indexOf(closingAnchor));
 });
 
 test('추가 사진 2장은 로컬 저장의 잠정 순서와 로그인·동기화의 미해결 문단 뒤에 각각 놓인다', async () => {
@@ -241,11 +259,13 @@ test('추가 사진 2장은 로컬 저장의 잠정 순서와 로그인·동기�
   const closingAnchor = '8장을 읽으면서 생각해봐야할 질문은 생겼습니다.';
   const shoppingImage = '/08-shopping-list-local.webp';
   const quizImage = '/09-quiz-by-quiz-lobby.webp';
+  const quizMotion = `/${quizByQuizMotion.file}`;
 
   assert.ok(post.indexOf(localStorageAnchor) < post.indexOf(shoppingImage));
   assert.ok(post.indexOf(shoppingImage) < post.indexOf(userExpectationAnchor));
   assert.ok(post.indexOf(userExpectationAnchor) < post.indexOf(quizImage));
-  assert.ok(post.indexOf(quizImage) < post.indexOf(closingAnchor));
+  assert.ok(post.indexOf(quizImage) < post.indexOf(quizMotion));
+  assert.ok(post.indexOf(quizMotion) < post.indexOf(closingAnchor));
 });
 
 test('최종 직접 사용해보기 절은 접근 가능한 실행 카드 세 개만 승인된 순서로 제공한다', async () => {
@@ -288,9 +308,9 @@ test('작업 페이지는 사용자가 OpenRouter API 키를 입력하는 외부
   assert.ok(workPage.indexOf(pdfTitle) < workPage.indexOf(digitRecognizerTitle));
 });
 
-test('6주차 정지 사진 9장과 reduced-motion 포스터는 실제 WebP 파일로 저장소에 있다', async () => {
+test('6주차 정지 사진 9장과 reduced-motion 포스터 2장은 실제 WebP 파일로 저장소에 있다', async () => {
   await Promise.all(
-    [...photos, { file: mindMarbleMotion.poster }].map(async (photo) => {
+    [...photos, ...motions.map((motion) => ({ file: motion.poster }))].map(async (photo) => {
       const fileUrl = new URL(`${imageDir}${photo.file}`, root);
       await access(fileUrl);
       const bytes = await readFile(fileUrl);
@@ -300,12 +320,14 @@ test('6주차 정지 사진 9장과 reduced-motion 포스터는 실제 WebP 파�
   );
 });
 
-test('구슬 모션 GIF가 실제 GIF89a 애니메이션 파일로 저장소에 있다', async () => {
-  const fileUrl = new URL(`${imageDir}${mindMarbleMotion.file}`, root);
-  await access(fileUrl);
-  const bytes = await readFile(fileUrl);
-  assert.equal(bytes.subarray(0, 6).toString('latin1'), 'GIF89a');
-  assert.ok(bytes.length > 20_000, '빈 GIF가 아니라 실제 캡처 프레임이 있어야 한다');
+test('두 모션 GIF가 실제 GIF89a 애니메이션 파일로 저장소에 있다', async () => {
+  await Promise.all(motions.map(async (motion) => {
+    const fileUrl = new URL(`${imageDir}${motion.file}`, root);
+    await access(fileUrl);
+    const bytes = await readFile(fileUrl);
+    assert.equal(bytes.subarray(0, 6).toString('latin1'), 'GIF89a');
+    assert.ok(bytes.length > 20_000, `${motion.file} 은 빈 GIF가 아니라 실제 캡처 프레임이 있어야 한다`);
+  }));
 });
 
 test('global.css 에 한 장짜리 게시물 media figure 전용 규칙이 있다', async () => {

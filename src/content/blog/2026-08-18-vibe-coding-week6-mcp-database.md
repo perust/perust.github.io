@@ -136,6 +136,16 @@ MCP를 늘릴 때는 있으면 좋아 보인다고 하나씩 추가하기보다�
   <figcaption>카테고리와 온라인 메뉴가 보이는 quiz by quiz 시작 화면.</figcaption>
 </figure>
 
+<figure class="post-media-figure">
+  <div class="image-carousel-track">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/09a-quiz-by-quiz-walker-motion-still.webp" type="image/webp" />
+      <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/09a-quiz-by-quiz-walker-motion.gif" alt="quiz by quiz 시작 화면에서 파란 캐릭터가 내 캐릭터 카드와 랭킹 보기 카드 사이를 좌우로 이동하며 점프하듯 걷는 애니메이션 GIF." width="960" height="540" loading="lazy" decoding="async" />
+    </picture>
+  </div>
+  <figcaption>시작 화면에서 방향키로 캐릭터를 옮길 때, 파란 캐릭터가 점프하듯 움직이는 모습.</figcaption>
+</figure>
+
 8장을 읽으면서 생각해봐야할 질문은 생겼습니다. 무엇을 연결하고 만들 수 있는지보다, 연결하고 만들어낸 뒤에 제가 계속 책임질 수 있는지를 생각해봐야 할 것입니다.
 
 ## 직접 사용해보기
