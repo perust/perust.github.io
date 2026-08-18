@@ -107,7 +107,7 @@ IT 관련된 일을 하면서도 개발 일을 하지는 않았기 때문에, �
 
 이번에는 정리를 하기도 했지만, 정리 하는 것에 집중하는 것이 아니라 책을 일단 읽어보고 생각할 것이 있나 보는 것에 중점을 뒀습니다. 개념들을 하나하나 정리를 하면서 시간 소비가 많이 되는 것 같아, 개념들을 전부 정리하는 것이 아니라 정말 간단하게 요약하면서 최대한 책을 읽는 것에 집중했습니다.
 
-읽어보고 실습을 하며, 실습 프롬프트대로 하고 끝이 아니라 뭔가 좀 더 서비스같은 프로그램을 만들려고 했었습니다. 퀴즈 게임을 진짜 게임처럼 만들고 싶어서 실제 캐릭터가 뛰어다니며 움직이고, 다른 사람과 함께 뛰어다니며 게임을 즐길 수 있도록 온라인 메뉴도 만들어서 방을 만들어보기도 하며 구체화를 시켜봤습니다.
+읽어보고 실습을 하며, 실습 프롬프트대로 하고 끝이 아니라 뭔가 좀 더 서비스같은 프로그램을 만들려고 했었습니다. 퀴즈 게임을 진짜 게임처럼 만들고 싶어서 실제 캐릭터가 뛰어다니며 움직이게 만들고, 다른 사람과 함께 즐기는 모습을 떠올리며 온라인 메뉴도 만들어봤습니다. 방을 만들고 참여하는 흐름까지 생각해보며 구체화해봤습니다.
 
 <figure class="book-page-figure">
   <div class="image-carousel-track">
@@ -131,10 +131,10 @@ IT 관련된 일을 하면서도 개발 일을 하지는 않았기 때문에, �
 
 이번 챌린지 동안 만들었던 프로그램들을 직접 실행해 볼 수 있도록 링크로 남겨두었습니다.
 
-<a href="https://ai-empathy-diary-sigma.vercel.app/" class="app-launch-button" aria-label="마음 구슬, AI 공감 다이어리"><span class="app-launch-button__label">마음 구슬, AI 공감 다이어리 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+<a href="https://ai-empathy-diary-sigma.vercel.app/" class="app-launch-button" aria-label="마음 구슬, AI 공감 다이어리 실행하기"><span class="app-launch-button__label">마음 구슬, AI 공감 다이어리 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
 
-<a href="/contents/digit-recognizer/" class="app-launch-button" aria-label="손글씨 숫자 인식기"><span class="app-launch-button__label">손글씨 숫자 인식기 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+<a href="/contents/digit-recognizer/" class="app-launch-button" aria-label="손글씨 숫자 인식기 실행하기"><span class="app-launch-button__label">손글씨 숫자 인식기 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
 
-<a href="https://perust.github.io/quiz-by-quiz/" class="app-launch-button" aria-label="quiz by quiz, 퀴즈 게임"><span class="app-launch-button__label">quiz by quiz 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+<a href="https://perust.github.io/quiz-by-quiz/" class="app-launch-button" aria-label="quiz by quiz, 퀴즈 게임 실행하기"><span class="app-launch-button__label">quiz by quiz 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
 
-<a href="/my-what-todo/" class="app-launch-button" aria-label="My What Todo, 할 일 관리 프로그램"><span class="app-launch-button__label">My What Todo 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>
+<a href="/my-what-todo/" class="app-launch-button" aria-label="My What Todo, 할 일 관리 프로그램 실행하기"><span class="app-launch-button__label">My What Todo 실행하기</span><span class="app-launch-button__action">바로가기 <span aria-hidden="true">→</span></span></a>

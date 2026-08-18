@@ -4,22 +4,22 @@ const postUrl = '/blog/2026-08-18-vibe-coding-completion-review/';
 const launchCards = [
   {
     href: 'https://ai-empathy-diary-sigma.vercel.app/',
-    name: '마음 구슬 AI 공감 다이어리 실행 페이지로 이동',
-    text: '마음 구슬 실행하기',
+    name: '마음 구슬, AI 공감 다이어리 실행하기',
+    text: '마음 구슬, AI 공감 다이어리 실행하기',
   },
   {
     href: '/contents/digit-recognizer/',
-    name: '손글씨 숫자 인식기 실행 페이지로 이동',
+    name: '손글씨 숫자 인식기 실행하기',
     text: '손글씨 숫자 인식기 실행하기',
   },
   {
     href: 'https://perust.github.io/quiz-by-quiz/',
-    name: 'quiz by quiz 실행 페이지로 이동',
+    name: 'quiz by quiz, 퀴즈 게임 실행하기',
     text: 'quiz by quiz 실행하기',
   },
   {
     href: '/my-what-todo/',
-    name: 'My What Todo 실행 페이지로 이동',
+    name: 'My What Todo, 할 일 관리 프로그램 실행하기',
     text: 'My What Todo 실행하기',
   },
 ];
@@ -49,7 +49,7 @@ test('완독 후기 끝의 제작 프로그램 카드는 목적지와 행동 표
   await page.goto(postUrl);
 
   const article = page.locator('.post-article');
-  const heading = article.getByRole('heading', { level: 2, name: '만든 프로그램 직접 실행하기' });
+  const heading = article.getByRole('heading', { level: 2, name: '만들어본 프로그램들,' });
   const cards = article.locator('.app-launch-button');
 
   await expect(heading).toBeVisible();
@@ -84,7 +84,7 @@ test('390px 모바일에서도 제작 프로그램 카드가 가로 넘침 없�
 
   try {
     await page.goto(postUrl);
-    await expect(page.getByRole('heading', { level: 2, name: '만든 프로그램 직접 실행하기' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '만들어본 프로그램들,' })).toBeVisible();
     const cards = page.locator('.post-article .app-launch-button');
     await expect(cards).toHaveCount(launchCards.length);
 

@@ -12,7 +12,7 @@ const images = [
     width: 1556,
     height: 1430,
     alt: '마음 구슬 앱에서 오늘의 하루를 한 줄로 입력하고 감정을 읽는 중인 화면. 서버 연결 상태와 감정 구슬 생성 안내가 보인다.',
-    captionPhrase: '한 줄의 기록',
+    captionPhrase: '기록에서 감정',
   },
   {
     file: '02-empathy-diary-result.png',
@@ -77,15 +77,18 @@ test('별도 완독 후기는 새 slug와 정책 frontmatter, 1~8장 요약을 �
   assert.match(post, /^valueType: "review"$/m);
   assert.match(post, /^publishPacingException: "deadline-bound-challenge"$/m);
 
-  assert.match(post, /^## 1장부터 8장까지, 아주 짧게 정리하면$/m);
+  assert.match(post, /^## 1장부터 8장까지, 간단히 정리$/m);
   for (let chapter = 1; chapter <= 8; chapter += 1) {
     assert.match(post, new RegExp(`^### ${chapter}장`, 'm'), `${chapter}장 소제목이 있어야 한다`);
   }
 
-  assert.match(post, /6주 챌린지를 완료하고 완독 후기를 남기게 되었다/);
-  assert.match(post, /원체 공부를 시작하는 장벽이 높게 느껴졌던지라/);
-  assert.match(post, /어린애가 장난감 다루듯이/);
-  assert.match(post, /이번에도 또!/);
+  assert.match(post, /^## 챌린지를 신청한 이유$/m);
+  assert.match(post, /^## 배우고 직접 해보고$/m);
+  assert.match(post, /^## 모델이 좋아지고 바이브 코딩을 알아갈수록 더 생겨나는 고민들$/m);
+  assert.match(post, /^## 이번에는 조금 다르게 해본 실습$/m);
+  assert.match(post, /AI 감성 일기 앱/);
+  assert.match(post, /방을 만들고 참여하는 흐름까지 생각해보며 구체화해봤습니다/);
+  assert.doesNotMatch(post, /다른 사람과 함께 뛰어다니며 게임을 즐길 수 있도록/);
 
   // 기존 Ch 08 후기는 별도 글로 보존한다. 새 글이 기존 이미지 경로를 재사용하면 안 된다.
   assert.doesNotMatch(post, /\/images\/posts\/2026-08-18-vibe-coding-week6-mcp-database\//);
@@ -129,28 +132,28 @@ test('별도 완독 후기의 사용자 제공 이미지 5장은 실제 PNG와 f
 
 test('완독 후기 마지막에는 공개된 제작 프로그램 네 개의 실행 링크 카드를 둔다', async () => {
   const post = await readFile(postPath, 'utf8');
-  const heading = '## 만든 프로그램 직접 실행하기';
+  const heading = '## 만들어본 프로그램들,';
   const headingIndex = post.indexOf(heading);
-  const reflectionIndex = post.indexOf('이번에도 또!');
+  const reflectionIndex = post.indexOf('이번에도 5-6주차');
   const cards = [
     {
       href: 'https://ai-empathy-diary-sigma.vercel.app/',
-      ariaLabel: '마음 구슬 AI 공감 다이어리 실행 페이지로 이동',
-      label: '마음 구슬 실행하기',
+      ariaLabel: '마음 구슬, AI 공감 다이어리 실행하기',
+      label: '마음 구슬, AI 공감 다이어리 실행하기',
     },
     {
       href: '/contents/digit-recognizer/',
-      ariaLabel: '손글씨 숫자 인식기 실행 페이지로 이동',
+      ariaLabel: '손글씨 숫자 인식기 실행하기',
       label: '손글씨 숫자 인식기 실행하기',
     },
     {
       href: 'https://perust.github.io/quiz-by-quiz/',
-      ariaLabel: 'quiz by quiz 실행 페이지로 이동',
+      ariaLabel: 'quiz by quiz, 퀴즈 게임 실행하기',
       label: 'quiz by quiz 실행하기',
     },
     {
       href: '/my-what-todo/',
-      ariaLabel: 'My What Todo 실행 페이지로 이동',
+      ariaLabel: 'My What Todo, 할 일 관리 프로그램 실행하기',
       label: 'My What Todo 실행하기',
     },
   ];
