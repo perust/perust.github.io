@@ -44,7 +44,46 @@ const images = [
   },
 ];
 
+// GIF는 실제 앱 UI를 캡처한 보충 자료다. 움직임을 피하는 독자에게는 동일 프레임의 WebP를 준다.
+const motionMedia = [
+  {
+    file: '03a-empathy-diary-memory-motion.gif',
+    poster: '03a-empathy-diary-memory-motion-still.webp',
+    width: 600,
+    height: 303,
+    maxBytes: 2_000_000,
+    alt: '마음 구슬 앱의 기억 저장소에서 세 감정 구슬 안의 이모티콘과 짧은 글자가 서로 다른 박자로 흔들리고 세 구슬이 위아래로 움직이는 애니메이션 GIF.',
+    caption: '저장한 이모티콘과 글자가 구슬 안에서 흔들리고, 구슬도 둥실둥실 움직이는 모습.',
+    previous: '/03-empathy-diary-memory.png',
+    next: '## 모델이 좋아지고 바이브 코딩을 알아갈수록 더 생겨나는 고민들',
+  },
+  {
+    file: '04a-quiz-by-quiz-walker-motion.gif',
+    poster: '04a-quiz-by-quiz-walker-motion-still.webp',
+    width: 960,
+    height: 540,
+    maxBytes: 500_000,
+    alt: 'quiz by quiz 시작 화면에서 파란 캐릭터가 내 캐릭터 카드와 랭킹 보기 카드 사이를 좌우로 이동하며 점프하듯 걷는 애니메이션 GIF.',
+    caption: '시작 화면에서 방향키로 캐릭터를 옮길 때, 파란 캐릭터가 점프하듯 움직이는 모습.',
+    previous: '/04-quiz-by-quiz-online-menu.png',
+    next: '할 일 목록 앱을 만들때는',
+  },
+  {
+    file: '05a-my-what-todo-pomodoro-motion.gif',
+    poster: '05a-my-what-todo-pomodoro-motion-still.webp',
+    width: 640,
+    height: 424,
+    maxBytes: 3_000_000,
+    alt: 'My What Todo 앱에서 GIF 데모 장면 확인 할 일을 추가한 뒤 뽀모도로 타이머를 시작하고 큰 원형 시계를 펼친 화면. 24분대 남은 시간이 줄어드는 애니메이션 GIF.',
+    caption: '할 일을 추가하고 뽀모도로를 시작한 뒤, 펼친 원형 시계에서 시간이 흐르는 모습.',
+    previous: '/05-my-what-todo-pomodoro.png',
+    next: '이번에도 5-6주차가 되면서',
+  },
+];
+
 const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+const gifSignature = Buffer.from('GIF89a', 'ascii');
+const webpSignature = Buffer.from('RIFF', 'ascii');
 
 function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -116,8 +155,8 @@ test('별도 완독 후기의 사용자 제공 이미지 5장은 실제 PNG와 f
     .map((match) => match[0]);
 
   assert.deepEqual(imageRefs.map((ref) => ref.split('/').at(-1)), images.map((image) => image.file));
-  assert.equal((post.match(/<figure class="book-page-figure">/g) ?? []).length, 5);
-  assert.equal((post.match(/<figcaption>/g) ?? []).length, 5);
+  assert.equal((post.match(/<figure class="book-page-figure">/g) ?? []).length, images.length + motionMedia.length);
+  assert.equal((post.match(/<figcaption>/g) ?? []).length, images.length + motionMedia.length);
   assert.doesNotMatch(post, /data-image-carousel|data-carousel-prev|data-carousel-next|data-carousel-status/);
 
   for (const image of images) {
@@ -139,6 +178,42 @@ test('별도 완독 후기의 사용자 제공 이미지 5장은 실제 PNG와 f
       assert.ok(!chunkTypes.includes(forbiddenChunk), `${image.file}은 ${forbiddenChunk} 메타데이터를 포함하면 안 된다`);
     }
     await access(new URL(`${imageDir}${image.file}`, root));
+  }
+});
+
+test('완독 후기의 세 실제 앱 GIF는 정지 PNG 바로 뒤에서 움직임·대체 프레임·접근성 설명을 함께 제공한다', async () => {
+  const post = await readFile(postPath, 'utf8');
+
+  for (const media of motionMedia) {
+    const motionSource = `/images/posts/2026-08-18-vibe-coding-completion-review/${media.file}`;
+    const posterSource = `/images/posts/2026-08-18-vibe-coding-completion-review/${media.poster}`;
+    const motionIndex = post.indexOf(motionSource);
+    const figureStart = post.lastIndexOf('<figure class="book-page-figure">', motionIndex);
+    const figureEnd = post.indexOf('</figure>', motionIndex) + '</figure>'.length;
+    const figure = post.slice(figureStart, figureEnd);
+
+    assert.ok(figureStart >= 0 && figureEnd > figureStart, `${media.file}은 독립된 figure 안에 있어야 한다`);
+    assert.ok(figure.includes('<picture>'), `${media.file}은 WebP 대체 프레임을 picture로 감싸야 한다`);
+    assert.ok(figure.includes(`<source media="(prefers-reduced-motion: reduce)" srcset="${posterSource}" type="image/webp" />`), `${media.file}은 reduced-motion WebP를 제공해야 한다`);
+    assert.ok(figure.includes(`<img src="${motionSource}" alt="${media.alt}" width="${media.width}" height="${media.height}" loading="lazy" decoding="async" />`), `${media.file}은 GIF·alt·크기 선언을 함께 제공해야 한다`);
+    assert.ok(figure.includes(`<figcaption>${media.caption}</figcaption>`), `${media.file}은 맥락을 설명하는 caption을 제공해야 한다`);
+
+    const gifBytes = await readFile(new URL(`${imageDir}${media.file}`, root));
+    assert.deepEqual(gifBytes.subarray(0, gifSignature.length), gifSignature, `${media.file}은 GIF89a 데이터여야 한다`);
+    assert.equal(gifBytes.readUInt16LE(6), media.width, `${media.file} GIF 폭이 선언값과 같아야 한다`);
+    assert.equal(gifBytes.readUInt16LE(8), media.height, `${media.file} GIF 높이가 선언값과 같아야 한다`);
+    assert.ok(gifBytes.byteLength <= media.maxBytes, `${media.file}은 게시물 성능 예산 안에 있어야 한다`);
+    await access(new URL(`${imageDir}${media.file}`, root));
+
+    const posterBytes = await readFile(new URL(`${imageDir}${media.poster}`, root));
+    assert.deepEqual(posterBytes.subarray(0, webpSignature.length), webpSignature, `${media.poster}는 WebP RIFF 데이터여야 한다`);
+    assert.equal(posterBytes.subarray(8, 12).toString('ascii'), 'WEBP', `${media.poster}는 WebP 데이터여야 한다`);
+    await access(new URL(`${imageDir}${media.poster}`, root));
+
+    const previousIndex = post.indexOf(media.previous);
+    const flowMotionIndex = post.indexOf(`/${media.file}`);
+    const nextIndex = post.indexOf(media.next);
+    assert.ok(previousIndex >= 0 && previousIndex < flowMotionIndex && flowMotionIndex < nextIndex, `${media.file}은 관련 정지 화면 바로 뒤에만 둔다`);
   }
 });
 

@@ -95,6 +95,16 @@ IT 관련된 일을 하면서도 개발 일을 하지는 않았기 때문에, �
   <figcaption>마음 구슬들을 기록을 모아 보는 기억 저장소.</figcaption>
 </figure>
 
+<figure class="book-page-figure">
+  <div class="image-carousel-track">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset="/images/posts/2026-08-18-vibe-coding-completion-review/03a-empathy-diary-memory-motion-still.webp" type="image/webp" />
+      <img src="/images/posts/2026-08-18-vibe-coding-completion-review/03a-empathy-diary-memory-motion.gif" alt="마음 구슬 앱의 기억 저장소에서 세 감정 구슬 안의 이모티콘과 짧은 글자가 서로 다른 박자로 흔들리고 세 구슬이 위아래로 움직이는 애니메이션 GIF." width="600" height="303" loading="lazy" decoding="async" />
+    </picture>
+  </div>
+  <figcaption>저장한 이모티콘과 글자가 구슬 안에서 흔들리고, 구슬도 둥실둥실 움직이는 모습.</figcaption>
+</figure>
+
 ## 모델이 좋아지고 바이브 코딩을 알아갈수록 더 생겨나는 고민들
 
 이제는 모델들도 많이 좋아지고 바이브 코딩을 할 수 있는 범위도 꽤 넓어졌는데, 오히려 그럴수록 개발자의 역량이 더 중요하게 느껴집니다. 처음 바이브 코딩을 할 때는 어디까지 만들 수 있는지 이것저것 만들어보고 어린애가 장난감 다루듯이 가지고 놀았다면, 지금은 그 이후의 작업까지 생각해보니 결코 쉬운 것이 아님을 점점 더 뼈저리게 느끼고 있는 것 같습니다. 데이터베이스를 연결하고, 서버에 올리고, 보안에 신경 쓰고, 메모리나 스토리지, 데이터 보안, 병목, API 등등 신경 쓸 게 너무 많아, 앱이나 서비스를 출시한다는게 정말 어려운 거구나 라는 생각이 들기도 합니다.
@@ -116,6 +126,16 @@ IT 관련된 일을 하면서도 개발 일을 하지는 않았기 때문에, �
   <figcaption>단순 문제 풀이를 넘어 게임 화면과 온라인 흐름까지 고민해 본 퀴즈 앱.</figcaption>
 </figure>
 
+<figure class="book-page-figure">
+  <div class="image-carousel-track">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset="/images/posts/2026-08-18-vibe-coding-completion-review/04a-quiz-by-quiz-walker-motion-still.webp" type="image/webp" />
+      <img src="/images/posts/2026-08-18-vibe-coding-completion-review/04a-quiz-by-quiz-walker-motion.gif" alt="quiz by quiz 시작 화면에서 파란 캐릭터가 내 캐릭터 카드와 랭킹 보기 카드 사이를 좌우로 이동하며 점프하듯 걷는 애니메이션 GIF." width="960" height="540" loading="lazy" decoding="async" />
+    </picture>
+  </div>
+  <figcaption>시작 화면에서 방향키로 캐릭터를 옮길 때, 파란 캐릭터가 점프하듯 움직이는 모습.</figcaption>
+</figure>
+
 할 일 목록 앱을 만들때는 To do list 만이 아니라, 할 일을 관리하면서 필요할 법한 기능들을 생각해보고 포모도로 타이머같은 기능을 붙여보고, 어떻게 하면 이 할 일들을 여러 기기에서 편하게 왔다갔다하면서 관리할 수 있을까 그런 것들도 고민하게 됐었습니다. 그 과정에서 내가 만들고 싶은 기능과 한계점 등등을 느끼며 개발자로서의 역량의 한계를 좀 느꼈던 것 같습니다.
 
 <figure class="book-page-figure">
@@ -123,6 +143,16 @@ IT 관련된 일을 하면서도 개발 일을 하지는 않았기 때문에, �
     <img src="/images/posts/2026-08-18-vibe-coding-completion-review/05-my-what-todo-pomodoro.png" alt="다크 모드의 My What Todo 앱. 24분 56초 집중 중인 원형 뽀모도로 타이머와 할 일 입력·분류 화면이 보인다." width="1872" height="1434" loading="lazy" decoding="async" />
   </div>
   <figcaption>하위 할 일과 집중 시간을 함께 관리하도록 확장한 할 일 앱.</figcaption>
+</figure>
+
+<figure class="book-page-figure">
+  <div class="image-carousel-track">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset="/images/posts/2026-08-18-vibe-coding-completion-review/05a-my-what-todo-pomodoro-motion-still.webp" type="image/webp" />
+      <img src="/images/posts/2026-08-18-vibe-coding-completion-review/05a-my-what-todo-pomodoro-motion.gif" alt="My What Todo 앱에서 GIF 데모 장면 확인 할 일을 추가한 뒤 뽀모도로 타이머를 시작하고 큰 원형 시계를 펼친 화면. 24분대 남은 시간이 줄어드는 애니메이션 GIF." width="640" height="424" loading="lazy" decoding="async" />
+    </picture>
+  </div>
+  <figcaption>할 일을 추가하고 뽀모도로를 시작한 뒤, 펼친 원형 시계에서 시간이 흐르는 모습.</figcaption>
 </figure>
 
 이번에도 5-6주차가 되면서 시간을 많이 투자를 못해서 집중력이 떨어졌는데, 3-4주차에 그런 고민들을 해보면서 서비스를 만들어봤던 것이 가장 크게 도움이 된 것 같습니다.
