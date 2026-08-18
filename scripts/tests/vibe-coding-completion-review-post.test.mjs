@@ -78,9 +78,21 @@ test('별도 완독 후기는 새 slug와 정책 frontmatter, 1~8장 요약을 �
   assert.match(post, /^publishPacingException: "deadline-bound-challenge"$/m);
 
   assert.match(post, /^## 1장부터 8장까지, 간단히 정리$/m);
-  for (let chapter = 1; chapter <= 8; chapter += 1) {
-    assert.match(post, new RegExp(`^### ${chapter}장`, 'm'), `${chapter}장 소제목이 있어야 한다`);
-  }
+  const chapterHeadings = [
+    '1장 - 나의 첫 바이브 코딩',
+    '2장 - 효과적인 프롬프트로 AI 200% 활용하기',
+    '3장 - 클로드 코드 시작하기',
+    '4장 - 클로드 코드 실전 활용',
+    '5장 - 게임 제작으로 배우는 체계적인 개발과 관리',
+    '6장 - 클로드 코드에 API 날개 달기',
+    '7장 - 클로드 코드 AI 에이전트로 개발팀 구성하기',
+    '8장 - MCP로 클로드 코드의 한계 넘어서기',
+  ];
+  assert.deepEqual(
+    [...post.matchAll(/^### (.+)$/gm)].map((match) => match[1]),
+    chapterHeadings,
+    '1~8장은 독자가 범위를 바로 알 수 있는 장별 부제를 가져야 한다',
+  );
 
   assert.match(post, /^## 챌린지를 신청한 이유$/m);
   assert.match(post, /^## 배우고 직접 해보고$/m);

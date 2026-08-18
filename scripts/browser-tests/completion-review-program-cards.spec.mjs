@@ -24,6 +24,17 @@ const launchCards = [
   },
 ];
 
+const chapterHeadings = [
+  '1장 - 나의 첫 바이브 코딩',
+  '2장 - 효과적인 프롬프트로 AI 200% 활용하기',
+  '3장 - 클로드 코드 시작하기',
+  '4장 - 클로드 코드 실전 활용',
+  '5장 - 게임 제작으로 배우는 체계적인 개발과 관리',
+  '6장 - 클로드 코드에 API 날개 달기',
+  '7장 - 클로드 코드 AI 에이전트로 개발팀 구성하기',
+  '8장 - MCP로 클로드 코드의 한계 넘어서기',
+];
+
 const collectPageErrors = (page) => {
   const errors = [];
   page.on('pageerror', (error) => errors.push(String(error)));
@@ -43,6 +54,59 @@ const readLaunchCardLayout = (page) => page.evaluate(() => ({
     };
   }),
 }));
+
+const readChapterHeadingLayout = (page) => page.evaluate((summaryHeadingText) => {
+  const summaryHeading = [...document.querySelectorAll('.post-article h2')]
+    .find((element) => element.textContent?.trim() === summaryHeadingText);
+  if (!summaryHeading) return null;
+
+  const headings = [];
+  for (let sibling = summaryHeading.nextElementSibling; sibling; sibling = sibling.nextElementSibling) {
+    if (sibling.tagName === 'H2') break;
+    if (sibling.tagName !== 'H3') continue;
+
+    const rect = sibling.getBoundingClientRect();
+    headings.push({
+      left: rect.left,
+      right: rect.right,
+      text: sibling.textContent?.replace(/\s+/g, ' ').trim(),
+    });
+  }
+
+  return {
+    clientWidth: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    headings,
+  };
+}, '1장부터 8장까지, 간단히 정리');
+
+test('완독 후기 1~8장은 사용자가 제공한 장별 부제를 390px 폭에서도 온전히 표시한다', async ({ browser, baseURL }) => {
+  const context = await browser.newContext({
+    baseURL,
+    colorScheme: 'light',
+    locale: 'ko-KR',
+    reducedMotion: 'reduce',
+    viewport: { width: 390, height: 844 },
+  });
+  const page = await context.newPage();
+  const pageErrors = collectPageErrors(page);
+
+  try {
+    await page.goto(postUrl);
+    const summaryHeading = page.getByRole('heading', { level: 2, name: '1장부터 8장까지, 간단히 정리' });
+    await expect(summaryHeading).toBeVisible();
+
+    const layout = await readChapterHeadingLayout(page);
+    expect(layout).not.toBeNull();
+    expect(layout.headings.map((heading) => heading.text)).toEqual(chapterHeadings);
+    expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
+    expect(layout.headings).toHaveLength(chapterHeadings.length);
+    expect(layout.headings.every((heading) => heading.left >= 0 && heading.right <= layout.clientWidth)).toBe(true);
+    expect(pageErrors).toEqual([]);
+  } finally {
+    await context.close();
+  }
+});
 
 test('완독 후기 끝의 제작 프로그램 카드는 목적지와 행동 표기를 제공한다', async ({ page }) => {
   const pageErrors = collectPageErrors(page);
