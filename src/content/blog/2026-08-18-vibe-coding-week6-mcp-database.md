@@ -40,6 +40,10 @@ publishPacingException: "deadline-bound-challenge"
   <figcaption>날짜와 감정 기준으로 저장된 기록을 모아 보는 기억 저장소 화면. 타이핑한 내용이 구슬 안에 보인다.</figcaption>
 </figure>
 
+## MCP가 어디와 연결되는지
+
+08-1은 MCP가 무엇인지, 로컬 MCP와 원격 MCP가 어떻게 다른지, Claude Code와 어떻게 연결하는지 다룹니다.
+
 <figure class="post-media-figure">
   <div class="image-carousel-track">
     <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/01-chapter-08-overview.webp" alt="노트북 옆에 펼쳐 둔 책의 Chapter 08 시작면. MCP로 클로드 코드의 한계 넘어서기라는 제목과 학습 목표가 보인다." width="1200" height="1600" loading="lazy" decoding="async" />
@@ -47,13 +51,9 @@ publishPacingException: "deadline-bound-challenge"
   <figcaption>8장은 MCP로 Claude Code의 도구 범위를 넓히는 흐름으로 시작한다.</figcaption>
 </figure>
 
-## MCP가 어디와 연결되는지
+저번에는 책의 내용처럼 한번 페이지로 들어가 명령어로 설치를 해봤었기 때문에, 이번에는 Claude Code에게 자연어로 요청해 MCP를 설치까지 진행할 수 있었습니다. 확실히 편했습니다만, 편한 만큼 내가 한번 공부를 안해봤으면 그냥 대충 지나가겠구나 생각이 들었습니다.
 
-08-1은 MCP가 무엇인지, 로컬 MCP와 원격 MCP가 어떻게 다른지, Claude Code와 어떻게 연결하는지 다룹니다.
-
-저는 Claude Code에 자연어로 부탁해 MCP를 붙이는 과정까지 도움을 받을 수 있었습니다. 확실히 편했으나, 편한 만큼 내가 모르고 지나가는 구간도 더 많이질 수 있습니다.
-
-읽으면서 설치를 맡기는 일과 그 MCP에 대해새 이해하는 것은 다르다고 느꼈습니다. 어떤 MCP들이 있는지, 그게 어떤 외부 서비스와 연결되는지, 인증이나 API 키가 필요한지는 결국 내가 알고 판단해야 하는 부분입니다. AI에게 간단히 설치를 맡길 수 있어도 결과까지 대신 책임져 주지는 않습니다.
+설치를 맡기는 일과 그 MCP에 대해서 이해하는 것은 다르다고 느꼈습니다. 어떤 MCP들이 있는지, 그게 어떤 외부 서비스와 연결되는지, 인증이나 API 키를 발급하고 넣는 일은 결국 내가 알고 해야 하는 부분입니다. AI에게 간단히 설치를 맡길 수 있어도 결과까지 대신 책임져 주지는 않습니다.
 
 외부 서비스에 연결하는 MCP라면 어떤 권한을 요구하는지는 사람이 보고 정해야 한다고 느꼈습니다. 설치가 매끄럽게 끝날수록 이 부분을 건너뛰기 쉬워진다는 점도 신경 쓰였습니다.
 
