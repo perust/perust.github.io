@@ -1,7 +1,7 @@
 ---
 title: "[혼자 공부하는 바이브 코딩 with 클로드 코드] 6주차 후기: MCP와 데이터베이스, 어디까지 연결할까"
 description: "AI 공감 다이어리 마음 구슬의 입력·감정·저장 흐름과 MCP로 Claude Code의 도구를 넓히는 과정을 살피며, 로컬 저장과 온라인 서비스의 경계를 고민한 6주차 기록입니다."
-date: "2026-08-18"
+date: "2026-08-16"
 category: "도서 학습 챌린지"
 tags: ["바이브코딩", "ClaudeCode", "MCP", "AI코딩", "회고"]
 editorialReview: true
@@ -9,35 +9,35 @@ valueType: "experience"
 publishPacingException: "deadline-bound-challenge"
 ---
 
-인프런과 한빛미디어에서 진행하는 「혼자 공부하는 바이브 코딩 with 클로드 코드」 챌린지 6주차입니다. 이번에는 8장을 중심으로 읽었고, 6주차 기본 미션으로 만든 AI 공감 다이어리 「마음 구슬」도 짧게 남깁니다. 7장의 에이전트 실습은 [지난 5주차 후기](/blog/2026-08-11-vibe-coding-week5-api-ai-agents/)에 이미 정리해 두었습니다. 실제 앱 화면을 먼저 남기고, 8장을 읽으며 든 생각을 적어보려고 합니다.
+인프런과 한빛미디어에서 진행하는 「혼자 공부하는 바이브 코딩 with 클로드 코드」 챌린지 6주차입니다. 이번주차는 7-8장 커리큘럼이었으나, 저번주에 7장까지 진행해서 이번주에는 8장을 중심으로 진행했습니다. 6주차 실습으로 AI 공감 다이어리 「마음 구슬」도 만들어 봤습니다. 7장의 에이전트 실습은 [지난 5주차 후기](/blog/2026-08-11-vibe-coding-week5-api-ai-agents/)에 정리해 두었습니다.
 
-8장을 읽으면서 어디까지 연결하고, 어디부터는 내가 직접 확인해야 하는지 계속 생각했습니다.
+이번 8장을 읽으면서 MCP와 데이터베이스에 대해 공부해보고, 데이터베이스와 온라인 연동에서 대해서 어디까지 연결을 해봐야할지도 생각해보게 되었습니다.
 
-## 7장 PROJECT 10: 마음 구슬을 만든 기록
+## 7장 PROJECT 10: AI 공감 다이어리, '마음 구슬'
 
-6주차 기본 미션으로 AI 공감 다이어리 「마음 구슬」을 만들었습니다. 한 줄로 하루를 적으면 앱이 감정 구슬을 만들고, 이모티콘을 고른 뒤 감정과 세기를 되짚어 볼 수 있었습니다. 저장된 기록은 감정별로 모아 볼 수 있었습니다.
+6주차 프로젝트로 AI 공감 다이어리 「마음 구슬」을 만들었습니다. 간단한 하루 일기를 적으면 앱이 감정 구슬을 만들고, 감정과 세기를 측정해줄 수 있었습니다. 구슬안에는 이모티콘이나 원하는 글자를 적어서 해당 구슬에 대해서 간단하게 나마 표현할 수 있도록 구현했습니다. 저장된 기록은 날짜별로 정렬되며, 감정별로도 모아 볼 수 있었습니다.
 
-이 세 화면으로 그 과정을 짧게 남겼습니다. 결과 문장이 감정을 정확히 판정한다는 뜻은 아닙니다. 앱이 어디까지 보여 주고 저장하는지 직접 확인한 기록으로 남기고 싶었습니다.
+만들어본 '마음 구슬' 서비스 화면을 간단하게 남겨보겠습니다.
 
 <figure class="post-media-figure">
   <div class="image-carousel-track">
-    <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/05-mind-marble-entry.webp" alt="마음 구슬 앱의 입력 화면. 오늘 하루는 너무 재미있었다라는 문장과 감정 구슬 생성 진행 상태가 보인다." width="1200" height="1102" loading="lazy" decoding="async" />
+    <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/05-mind-marble-entry.webp" alt="마음 구슬 앱의 입력 화면. '오늘 하루는 너무 재미있었다'라는 문장을 입력하고, 감정 구슬 생성 진행 중인 화면." width="1200" height="1102" loading="lazy" decoding="async" />
   </div>
-  <figcaption>한 줄로 하루를 적은 뒤 감정 구슬을 만드는 입력 화면.</figcaption>
+  <figcaption>한 줄로 하루를 적은 뒤 감정 구슬을 만드는 중인 입력 화면.</figcaption>
 </figure>
 
 <figure class="post-media-figure">
   <div class="image-carousel-track">
     <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/06-mind-marble-result.webp" alt="마음 구슬 앱 결과 화면. 기쁨 이모티콘 선택, 감정 세기 9/10, 공감 문장이 표시된다." width="1200" height="954" loading="lazy" decoding="async" />
   </div>
-  <figcaption>이모티콘 선택 뒤 기쁨과 감정 세기 9/10이 표시된 결과 화면.</figcaption>
+  <figcaption>이모티콘 선택 뒤 기쁨이라는 감정과 감정 세기 9/10이 표시되어 있는 결과 화면. 현재는 글자나 이모티콘을 직접 타이핑하도록 바꾸었다.</figcaption>
 </figure>
 
 <figure class="post-media-figure">
   <div class="image-carousel-track">
     <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/07-mind-marble-memory-store.webp" alt="마음 구슬 앱의 기억 저장소 화면. 감정 필터와 8월 18일에 저장된 세 개의 감정 구슬 카드가 보인다." width="1200" height="424" loading="lazy" decoding="async" />
   </div>
-  <figcaption>날짜와 감정 기준으로 저장된 기록을 모아 보는 기억 저장소 화면.</figcaption>
+  <figcaption>날짜와 감정 기준으로 저장된 기록을 모아 보는 기억 저장소 화면. 타이핑한 내용이 구슬 안에 보인다.</figcaption>
 </figure>
 
 <figure class="post-media-figure">
@@ -51,9 +51,9 @@ publishPacingException: "deadline-bound-challenge"
 
 08-1은 MCP가 무엇인지, 로컬 MCP와 원격 MCP가 어떻게 다른지, Claude Code와 어떻게 연결하는지 다룹니다.
 
-이번에 확인한 흐름에서는 Claude Code에 자연어로 부탁해 MCP를 붙이는 과정까지 도움을 받을 수 있었습니다. 확실히 편합니다. 그런데 편한 만큼 내가 모르고 지나가는 구간도 같이 생깁니다.
+저는 Claude Code에 자연어로 부탁해 MCP를 붙이는 과정까지 도움을 받을 수 있었습니다. 확실히 편했으나, 편한 만큼 내가 모르고 지나가는 구간도 더 많이질 수 있습니다.
 
-읽으면서 설치를 맡기는 일과 그 MCP가 무엇에 닿아 있는지 아는 일은 다르다고 느꼈습니다. 어떤 MCP들이 있는지, 그게 어떤 외부 서비스와 연결되는지, 인증이나 API 키가 필요한지는 결국 내가 알고 판단해야 하는 부분입니다. AI에게 설치를 맡길 수 있어도 무엇을 열어주는 결정인지까지 대신 책임져 주지는 않으니까요.
+읽으면서 설치를 맡기는 일과 그 MCP에 대해새 이해하는 것은 다르다고 느꼈습니다. 어떤 MCP들이 있는지, 그게 어떤 외부 서비스와 연결되는지, 인증이나 API 키가 필요한지는 결국 내가 알고 판단해야 하는 부분입니다. AI에게 간단히 설치를 맡길 수 있어도 결과까지 대신 책임져 주지는 않습니다.
 
 외부 서비스에 연결하는 MCP라면 어떤 권한을 요구하는지는 사람이 보고 정해야 한다고 느꼈습니다. 설치가 매끄럽게 끝날수록 이 부분을 건너뛰기 쉬워진다는 점도 신경 쓰였습니다.
 
