@@ -40,6 +40,16 @@ publishPacingException: "deadline-bound-challenge"
   <figcaption>날짜와 감정 기준으로 저장된 기록을 모아 보는 기억 저장소 화면. 타이핑한 내용이 구슬 안에 보인다.</figcaption>
 </figure>
 
+<figure class="post-media-figure">
+  <div class="image-carousel-track">
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/07a-mind-marble-orb-motion-still.webp" type="image/webp" />
+      <img src="/images/posts/2026-08-18-vibe-coding-week6-mcp-database/07a-mind-marble-orb-motion.gif" alt="마음 구슬 앱의 기억 저장소. 노랑, 보라, 주황 감정 구슬 안에 웃는 얼굴, 반짝임, 꽃, 하트 이모티콘이 움직이는 애니메이션 GIF." width="960" height="404" loading="lazy" decoding="async" />
+    </picture>
+  </div>
+  <figcaption>구슬 안에 넣은 이모티콘이 서로 다른 박자로 흔들리고, 구슬도 위아래로 움직이는 모습.</figcaption>
+</figure>
+
 ## MCP가 어디와 연결되는지
 
 08-1은 MCP가 무엇인지, 로컬 MCP와 원격 MCP가 어떻게 다른지, Claude Code와 어떻게 연결하는지 다룹니다.

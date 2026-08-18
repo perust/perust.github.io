@@ -1024,6 +1024,7 @@ h3 {
 /* 한 장짜리 게시물 이미지 — figure 기본 좌우 들여쓰기만 없애고 캡션을 본문보다 작고 흐리게 둔다.
    사진 크기 제한은 안쪽 .image-carousel-track 의 기존 규칙을 그대로 쓴다(캐러셀 제어는 붙이지 않는다). */
 .post-article .post-media-figure { margin-block: 1.6rem 1.8rem; margin-inline: 0; }
+.post-article .post-media-figure picture { display: block; }
 .post-article .post-media-figure figcaption { margin-top: .45rem; color: var(--muted); font-size: .86rem; line-height: 1.5; }
 .post-article small { display: block; margin: 0 0 1.4rem; color: var(--muted); font-size: .86rem; line-height: 1.5; }
 .post-article .video-embed {
