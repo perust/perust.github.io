@@ -3,7 +3,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { categoryPath, tagPath } from '../../utils/blog';
 import {
   CANONICAL_CATEGORIES,
-  FEATURED_MAKER_SLUGS,
   TOPIC_HUBS,
   canonicalCategoryFor,
   isIndexableTag,
@@ -36,10 +35,6 @@ const popularTags = Array.from(tagCounts.entries())
   .sort(([tagA, countA], [tagB, countB]) => countB - countA || tagA.localeCompare(tagB, 'ko'))
   .slice(0, 15)
   .map(([tag]) => tag);
-
-// 직접 만들고 자동화하며 겪은 기록(src/config/taxonomy.ts 의 큐레이션 SSOT)을 최신순 목록보다 먼저 보여준다.
-const postBySlug = new Map(posts.map((post) => [post.slug, post]));
-const makerPosts = FEATURED_MAKER_SLUGS.map((slug) => postBySlug.get(slug)).filter(Boolean);
 
 const site = Astro.site ?? new URL('https://perust.github.io');
 const blogDescription = 'IT/AI/경제 정보, 그리고 개인 작업 블로그.';
@@ -84,28 +79,6 @@ const blogLd = {
           </li>
         ))}
       </ul>
-    </section>
-
-    <section class="section-shell" aria-labelledby="maker-title" style="padding-top:0">
-      <div class="section-heading">
-        <p class="section-kicker">Hands-on</p>
-        <h2 id="maker-title">직접 만들어보기</h2>
-        <p>직접 만들며 남긴 기록들입니다.</p>
-      </div>
-      <div class="post-list">
-        {makerPosts.map((post) => (
-          <a class="post-list-item blog-post-entry" href={`/blog/${post.slug}/`}>
-            <div class="post-list-meta">
-              <span>{post.category}</span>
-              <time datetime={new Date(post.date).toISOString()}>{new Date(post.date).toLocaleDateString('ko-KR')}</time>
-            </div>
-            <div>
-              <h3>{post.title}</h3>
-              <p>{post.description}</p>
-            </div>
-          </a>
-        ))}
-      </div>
     </section>
 
     <section class="section-shell blog-page" aria-label="블로그 글 목록">

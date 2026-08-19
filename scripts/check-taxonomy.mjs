@@ -381,9 +381,9 @@ for (const hub of TOPIC_HUBS) {
   );
 }
 
-// --- 홈·블로그 큐레이션(FEATURED_MAKER_SLUGS) ---
+// --- 홈 큐레이션(FEATURED_MAKER_SLUGS) ---
 // 큐레이션 슬러그가 실제 공개 글이어야 하고(페이지 구현은 없는 슬러그를 filter(Boolean)로 조용히
-// 숨기므로 독립 검사가 필요), 홈과 블로그 인덱스 양쪽에서 눈에 띄게 링크되어야 한다.
+// 숨기므로 독립 검사가 필요), 홈에서 눈에 띄게 링크되어야 한다.
 const homeHtml = existsSync(join(DIST, 'index.html')) ? readFileSync(join(DIST, 'index.html'), 'utf8') : '';
 report(homeHtml !== '', 'dist/index.html 이 있어야 함');
 const missingFeatured = FEATURED_MAKER_SLUGS.filter((slug) => !sourceSlugs.has(slug));
@@ -394,7 +394,6 @@ report(
 for (const slug of FEATURED_MAKER_SLUGS) {
   if (!sourceSlugs.has(slug)) continue;
   report(homeHtml.includes(`href="/blog/${slug}/"`), `홈(/)에서 큐레이션 글 /blog/${slug}/ 링크가 보여야 함`);
-  report(blogIndexHtml.includes(`href="/blog/${slug}/"`), `블로그 인덱스(/blog/)에서 큐레이션 글 /blog/${slug}/ 링크가 보여야 함`);
 }
 
 // --- 5. 내부 분류 UI 비노출 + 독자용 카테고리 링크/검색엔진용 BreadcrumbList 유지 ---
