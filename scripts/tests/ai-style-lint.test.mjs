@@ -418,6 +418,84 @@ test('defined shortcut reference link는 source로 세고 기존 inline/full/col
   assert.equal(unresolved.stats.uniqueExternalSourceCount, 0);
 });
 
+test('EQL-P1 renderer-bound raw HTML attribute shortcut link는 source가 아니다', () => {
+  const result = qualityLint([
+    '<div title="[공식 원문]">일반 본문</div>',
+    '',
+    '[공식 원문]: https://example.com/attribute-source',
+  ].join('\n'), { valueType: 'verified-guide' });
+
+  assert.equal(result.stats.uniqueExternalSourceCount, 0);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+});
+
+test('EQL-P1 renderer-bound raw HTML attribute shortcut image는 media가 아니다', () => {
+  const result = qualityLint([
+    '<div data-evidence="![실행 화면]">일반 본문</div>',
+    '',
+    '[실행 화면]: /images/attribute.png',
+  ].join('\n'), { valueType: 'experience' });
+
+  assert.equal(result.stats.bodyMediaCount, 0);
+  assert.equal(result.stats.uniqueExternalSourceCount, 0);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+});
+
+test('EQL-P1 renderer-bound raw HTML template definition은 outside shortcut link를 resolve하지 않는다', () => {
+  const result = qualityLint([
+    '<template>',
+    '[공식 원문]: https://example.com/template-source',
+    '</template>',
+    '',
+    '[공식 원문]',
+  ].join('\n'), { valueType: 'verified-guide' });
+
+  assert.equal(result.stats.uniqueExternalSourceCount, 0);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+});
+
+test('EQL-P1 renderer-bound raw HTML pre definition은 outside shortcut image를 resolve하지 않는다', () => {
+  const result = qualityLint([
+    '<pre>',
+    '[실행 화면]: /images/pre.png',
+    '</pre>',
+    '',
+    '![실행 화면]',
+  ].join('\n'), { valueType: 'experience' });
+
+  assert.equal(result.stats.bodyMediaCount, 0);
+  assert.equal(result.stats.uniqueExternalSourceCount, 0);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+});
+
+test('EQL-P1 renderer-bound raw HTML 종료 뒤 Markdown과 paragraph-inline child text는 보존한다', () => {
+  const definition = '[공식 원문]: https://example.com/resumed-source';
+  const terminatedBlocks = [
+    ['type 1', ['<pre>', '<div>', '</pre>', '[공식 원문]', '', definition]],
+    ['type 2', ['<!--', '<div>', '-->', '[공식 원문]', '', definition]],
+    ['type 3', ['<?probe', '<div>', '?>', '[공식 원문]', '', definition]],
+    ['type 4', ['<!PROBE', '<div>', '>', '[공식 원문]', '', definition]],
+    ['type 5', ['<![CDATA[', '<div>', ']]>', '[공식 원문]', '', definition]],
+    ['type 6 blank', ['<div>', '<pre>', '', '[공식 원문]', '', definition]],
+    ['type 7 blank', ['<x-probe>', '<pre>', '', '[공식 원문]', '', definition]],
+  ];
+
+  for (const [name, lines] of terminatedBlocks) {
+    const result = qualityLint(lines.join('\n'), { valueType: 'verified-guide' });
+    assert.equal(result.stats.uniqueExternalSourceCount, 1, name);
+    assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), name);
+  }
+
+  const paragraphInline = qualityLint([
+    '문단을 이어 쓰는 본문입니다.',
+    '<span title="비교 결과는 1 > 0">[공식 원문]</span>',
+    '',
+    definition,
+  ].join('\n'), { valueType: 'verified-guide' });
+  assert.equal(paragraphInline.stats.uniqueExternalSourceCount, 1);
+  assert.ok(!paragraphInline.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+});
+
 test('reference definition-only line은 source/media/editorial prose로 세지 않는다', () => {
   const terms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
   const body = [

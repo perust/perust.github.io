@@ -68,6 +68,57 @@ function normalizeReferenceLabel(label) {
   return label.trim().replace(/\s+/g, ' ').toLowerCase();
 }
 
+const RAW_HTML_TYPE_1_ELEMENTS = new Set(['pre', 'script', 'style', 'textarea']);
+const RAW_HTML_TYPE_6_ELEMENTS = new Set([
+  'address', 'article', 'aside', 'base', 'basefont', 'blockquote', 'body', 'caption', 'center',
+  'col', 'colgroup', 'dd', 'details', 'dialog', 'dir', 'div', 'dl', 'dt', 'fieldset',
+  'figcaption', 'figure', 'footer', 'form', 'frame', 'frameset', 'h1', 'h2', 'h3', 'h4',
+  'h5', 'h6', 'head', 'header', 'hr', 'html', 'iframe', 'legend', 'li', 'link', 'main',
+  'menu', 'menuitem', 'nav', 'noframes', 'ol', 'optgroup', 'option', 'p', 'param', 'search',
+  'section', 'summary', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'title', 'tr',
+  'track', 'ul',
+]);
+const COMPLETE_HTML_OPEN_TAG = /^<([A-Za-z][A-Za-z0-9-]*)(?:[ \t]+[A-Za-z_:][A-Za-z0-9_.:-]*(?:[ \t]*=[ \t]*(?:[^ \t"'=<>`]+|'[^']*'|"[^"]*"))?)*[ \t]*\/?>[ \t]*$/;
+const COMPLETE_HTML_CLOSING_TAG = /^<\/[A-Za-z][A-Za-z0-9-]*[ \t]*>[ \t]*$/;
+
+/** CommonMark HTML block의 일곱 start/end class만 source/media projection에 적용한다. */
+function rawHtmlBlockStart(raw, paragraphOpen) {
+  const blockStart = raw.match(/^ {0,3}(.*)$/)?.[1];
+  if (blockStart === undefined) return undefined;
+
+  if (/^<(?:pre|script|style|textarea)(?=[ \t>]|$)/i.test(blockStart)) {
+    return { endPattern: /<\/(?:pre|script|style|textarea)>/i };
+  }
+  if (blockStart.startsWith('<!--')) return { endPattern: /-->/ };
+  if (blockStart.startsWith('<?')) return { endPattern: /\?>/ };
+  if (/^<![A-Za-z]/.test(blockStart)) return { endPattern: />/ };
+  if (blockStart.startsWith('<![CDATA[')) return { endPattern: /\]\]>/ };
+
+  const type6Tag = blockStart.match(/^<\/?([A-Za-z][A-Za-z0-9-]*)(?=[ \t/>]|$)/)?.[1]?.toLowerCase();
+  if (type6Tag && RAW_HTML_TYPE_6_ELEMENTS.has(type6Tag)) return { endsOnBlank: true };
+  if (paragraphOpen) return undefined;
+
+  const type7OpenTag = blockStart.match(COMPLETE_HTML_OPEN_TAG)?.[1]?.toLowerCase();
+  if (type7OpenTag && !RAW_HTML_TYPE_1_ELEMENTS.has(type7OpenTag)) return { endsOnBlank: true };
+  if (COMPLETE_HTML_CLOSING_TAG.test(blockStart)) return { endsOnBlank: true };
+  return undefined;
+}
+
+function rawHtmlBlockEnds(block, raw) {
+  return block.endsOnBlank ? raw.trim() === '' : block.endPattern.test(raw);
+}
+
+/** Type 7 HTML block이 일반 문단을 interrupt하지 않도록 필요한 최소 block-boundary bit. */
+function opensMarkdownParagraph(raw) {
+  const blockStart = raw.match(/^ {0,3}(.*)$/)?.[1];
+  if (blockStart === undefined || !blockStart.trim()) return false;
+  if (/^#{1,6}(?:[ \t]+|$)/.test(blockStart)) return false;
+  if (/^(?:[-+*]|\d{1,9}[.)])[ \t]+/.test(blockStart)) return false;
+  if (/^(?:=+|-+)[ \t]*$/.test(blockStart)) return false;
+  if (/^(?:(?:\*[ \t]*){3,}|(?:_[ \t]*){3,}|(?:-[ \t]*){3,})$/.test(blockStart)) return false;
+  return true;
+}
+
 /**
  * frontmatter·fence·comment·quote·code를 제외하되, source/media 신호를 읽을 수 있도록
  * Markdown/HTML markup은 보존한 body line을 만든다.
@@ -84,6 +135,8 @@ function scanMarkdownBody(markdown) {
   let inComment = false;
   let codeFenceCount = 0;
   let frontmatterLines = [];
+  let rawHtmlBlock;
+  let paragraphOpen = false;
   const referenceDefinitions = new Map();
 
   if (sourceLines[0]?.trim() === '---') {
@@ -110,17 +163,36 @@ function scanMarkdownBody(markdown) {
       continue;
     }
 
-    // Markdown block syntax는 원본 줄 시작 위치에서만 성립한다. 주석을 먼저 제거하면
-    // `<!-- ... -->```/`> `/4-space marker가 새로 줄 시작에 나타나 blocker를 숨길 수 있다.
-    const openingFence = raw.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
-    if (openingFence && (openingFence[1][0] === '~' || !openingFence[2].includes('`'))) {
-      inFence = true;
-      fenceMarker = openingFence[1][0];
-      fenceLength = openingFence[1].length;
-      fenceHasContent = false;
-      continue;
+    let rawHtmlBlockLine = false;
+    if (rawHtmlBlock) {
+      rawHtmlBlockLine = true;
+      paragraphOpen = false;
+      if (rawHtmlBlockEnds(rawHtmlBlock, raw)) rawHtmlBlock = undefined;
+    } else {
+      // Markdown block syntax는 원본 줄 시작 위치에서만 성립한다. 주석을 먼저 제거하면
+      // `<!-- ... -->```/`> `/4-space marker가 새로 줄 시작에 나타나 blocker를 숨길 수 있다.
+      const openingFence = raw.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+      if (openingFence && (openingFence[1][0] === '~' || !openingFence[2].includes('`'))) {
+        inFence = true;
+        fenceMarker = openingFence[1][0];
+        fenceLength = openingFence[1].length;
+        fenceHasContent = false;
+        paragraphOpen = false;
+        continue;
+      }
+      if (/^(?: {4}|\t)/.test(raw) || /^\s*>/.test(raw)) {
+        if (/^\s*>/.test(raw)) paragraphOpen = false;
+        continue;
+      }
+
+      const openedRawHtmlBlock = rawHtmlBlockStart(raw, paragraphOpen);
+      if (openedRawHtmlBlock) {
+        rawHtmlBlock = openedRawHtmlBlock;
+        rawHtmlBlockLine = true;
+        paragraphOpen = false;
+        if (rawHtmlBlockEnds(rawHtmlBlock, raw)) rawHtmlBlock = undefined;
+      }
     }
-    if (/^(?: {4}|\t)/.test(raw) || /^\s*>/.test(raw)) continue;
 
     // 주석 조각만 제거한다. 인라인 주석 앞뒤의 독자에게 보이는 본문은 계속 검사한다.
     let uncommented = '';
@@ -149,16 +221,23 @@ function scanMarkdownBody(markdown) {
     const referenceDefinition = uncommented.match(/^\s*\[([^\]]+)\]:\s*(?:<([^>\s]+)>|(\S+))/);
     if (referenceDefinition) {
       const [, label, angleDestination, bareDestination] = referenceDefinition;
-      referenceDefinitions.set(normalizeReferenceLabel(label), angleDestination ?? bareDestination);
+      if (!rawHtmlBlockLine) {
+        referenceDefinitions.set(normalizeReferenceLabel(label), angleDestination ?? bareDestination);
+      }
+      paragraphOpen = false;
       continue;
     }
+
+    const markupText = uncommented.replace(/`+[^`]*`+/g, '');
 
     bodyLines.push({
       line: index + 1,
       raw,
       uncommented,
-      markupText: uncommented.replace(/`+[^`]*`+/g, ''),
+      markupText,
+      markdownMarkupText: rawHtmlBlockLine ? markupText.replace(/[^ \t]/g, ' ') : markupText,
     });
+    if (!rawHtmlBlockLine) paragraphOpen = opensMarkdownParagraph(raw);
   }
 
   return { bodyLines, codeFenceCount, frontmatterLines, referenceDefinitions };
@@ -271,8 +350,8 @@ const VOID_HTML_ELEMENTS = new Set([
 ]);
 const HIDDEN_HTML_ATTRIBUTE = /(?:\s+hidden(?=\s|=|\/?>)|\s+style\s*=\s*(?:"[^"]*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"]*"|'[^']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^']*'))/i;
 
-function visibleBodyMarkup(bodyLines) {
-  const markup = bodyLines.map(({ markupText }) => markupText).join('\n');
+function visibleBodyMarkup(bodyLines, projection) {
+  const markup = bodyLines.map((entry) => entry[projection]).join('\n');
   const stack = [];
   let cursor = 0;
   let hiddenDepth = 0;
@@ -307,10 +386,58 @@ function visibleBodyMarkup(bodyLines) {
   return visible;
 }
 
+/** HTML tag lexeme만 지우고 child text, autolink, 줄 경계는 그대로 둔다. */
+function maskHtmlTagLexemes(markup) {
+  let masked = '';
+  let cursor = 0;
+  while (cursor < markup.length) {
+    const start = markup.indexOf('<', cursor);
+    if (start === -1) {
+      masked += markup.slice(cursor);
+      break;
+    }
+    masked += markup.slice(cursor, start);
+
+    let nameStart = start + 1;
+    if (markup[nameStart] === '/') nameStart += 1;
+    if (!/[A-Za-z]/.test(markup[nameStart] ?? '')) {
+      masked += '<';
+      cursor = start + 1;
+      continue;
+    }
+
+    let quote;
+    let end = -1;
+    for (let index = nameStart + 1; index < markup.length; index += 1) {
+      const character = markup[index];
+      if (quote) {
+        if (character === quote) quote = undefined;
+      } else if (character === '"' || character === "'") {
+        quote = character;
+      } else if (character === '>') {
+        end = index;
+        break;
+      }
+    }
+    if (end === -1) {
+      masked += markup.slice(start);
+      break;
+    }
+
+    const tagLexeme = markup.slice(start, end + 1);
+    masked += /^<https?:\/\/[^<>\s]+>$/i.test(tagLexeme)
+      ? tagLexeme
+      : tagLexeme.replace(/[^\n]/g, ' ');
+    cursor = end + 1;
+  }
+  return masked;
+}
+
 function externalBodySources(bodyLines, referenceDefinitions) {
   const sources = new Set();
-  const markupText = visibleBodyMarkup(bodyLines);
-  const markdownWithoutImages = markupText
+  const visibleHtmlMarkup = visibleBodyMarkup(bodyLines, 'markupText');
+  const visibleMarkdownMarkup = maskHtmlTagLexemes(visibleBodyMarkup(bodyLines, 'markdownMarkupText'));
+  const markdownWithoutImages = visibleMarkdownMarkup
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/!\[[^\]]*\]\s*\[[^\]]*\]/g, '');
   for (const match of markdownWithoutImages.matchAll(/(?<!!)\[([^\]]+)\]\(\s*(https?:\/\/[^\s)]+)(?:\s+["'][^)]*["'])?\s*\)/gi)) {
@@ -331,27 +458,28 @@ function externalBodySources(bodyLines, referenceDefinitions) {
       sources.add(destination);
     }
   }
-  for (const match of markupText.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)'|(https?:\/\/[^\s"'`=<>]+))[^>]*>([\s\S]*?)<\/a>/gi)) {
+  for (const match of visibleHtmlMarkup.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)'|(https?:\/\/[^\s"'`=<>]+))[^>]*>([\s\S]*?)<\/a>/gi)) {
     const destination = match[1] ?? match[2] ?? match[3];
     if (visibleAnchorLabel(match[4])) sources.add(destination);
   }
-  for (const match of markupText.matchAll(/<(https?:\/\/[^<>\s]+)>/gi)) sources.add(match[1]);
+  for (const match of visibleMarkdownMarkup.matchAll(/<(https?:\/\/[^<>\s]+)>/gi)) sources.add(match[1]);
   return sources;
 }
 
 function bodyMediaCount(bodyLines, referenceDefinitions) {
-  const markupText = visibleBodyMarkup(bodyLines);
-  const inlineImages = [...markupText.matchAll(/!\[[^\]]*\]\([^)]*\)/g)].length;
-  const referenceImages = [...markupText.matchAll(/!\[([^\]]*)\]\s*\[([^\]]*)\]/g)]
+  const visibleHtmlMarkup = visibleBodyMarkup(bodyLines, 'markupText');
+  const visibleMarkdownMarkup = maskHtmlTagLexemes(visibleBodyMarkup(bodyLines, 'markdownMarkupText'));
+  const inlineImages = [...visibleMarkdownMarkup.matchAll(/!\[[^\]]*\]\([^)]*\)/g)].length;
+  const referenceImages = [...visibleMarkdownMarkup.matchAll(/!\[([^\]]*)\]\s*\[([^\]]*)\]/g)]
     .filter((match) => referenceDefinitions.has(normalizeReferenceLabel(match[2] || match[1])))
     .length;
-  const shortcutImageMarkup = markupText
+  const shortcutImageMarkup = visibleMarkdownMarkup
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/!\[[^\]]*\]\s*\[[^\]]*\]/g, '');
   const shortcutImages = [...shortcutImageMarkup.matchAll(/(?<!\\)!\[([^\]]+)\](?!\s*[\[(])/g)]
     .filter((match) => referenceDefinitions.has(normalizeReferenceLabel(match[1])))
     .length;
-  const htmlMedia = [...markupText.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
+  const htmlMedia = [...visibleHtmlMarkup.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
   return inlineImages + referenceImages + shortcutImages + htmlMedia;
 }
 
