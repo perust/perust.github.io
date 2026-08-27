@@ -322,6 +322,15 @@ function externalBodySources(bodyLines, referenceDefinitions) {
       sources.add(destination);
     }
   }
+  const shortcutLinkMarkup = markdownWithoutImages
+    .replace(/(?<!!)\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/(?<!!)\[[^\]]*\]\s*\[[^\]]*\]/g, '');
+  for (const match of shortcutLinkMarkup.matchAll(/(?<![!\\])\[([^\]]+)\](?!\s*[\[(])/g)) {
+    const destination = referenceDefinitions.get(normalizeReferenceLabel(match[1]));
+    if (destination && /^https?:\/\//i.test(destination) && visibleAnchorLabel(match[1])) {
+      sources.add(destination);
+    }
+  }
   for (const match of markupText.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)'|(https?:\/\/[^\s"'`=<>]+))[^>]*>([\s\S]*?)<\/a>/gi)) {
     const destination = match[1] ?? match[2] ?? match[3];
     if (visibleAnchorLabel(match[4])) sources.add(destination);
@@ -336,22 +345,30 @@ function bodyMediaCount(bodyLines, referenceDefinitions) {
   const referenceImages = [...markupText.matchAll(/!\[([^\]]*)\]\s*\[([^\]]*)\]/g)]
     .filter((match) => referenceDefinitions.has(normalizeReferenceLabel(match[2] || match[1])))
     .length;
+  const shortcutImageMarkup = markupText
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/!\[[^\]]*\]\s*\[[^\]]*\]/g, '');
+  const shortcutImages = [...shortcutImageMarkup.matchAll(/(?<!\\)!\[([^\]]+)\](?!\s*[\[(])/g)]
+    .filter((match) => referenceDefinitions.has(normalizeReferenceLabel(match[1])))
+    .length;
   const htmlMedia = [...markupText.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
-  return inlineImages + referenceImages + htmlMedia;
+  return inlineImages + referenceImages + shortcutImages + htmlMedia;
 }
 
-function isStandaloneEditorialProse(entry) {
+function isStandaloneEditorialProse(entry, referenceDefinitions) {
   const raw = entry.raw.trim();
   const htmlMarkup = entry.markupText;
   if (!entry.editorialText.trim()) return false;
   if (/^#{1,6}(?:\s|$)/.test(raw)) return false;
   if (/^(?:[-*+] |\d+[.)] )/.test(raw)) return false;
   if (/^!?\[[^\]]*\](?:\([^)]*\)|\[[^\]]*\])\s*[.!?]?$/s.test(raw)) return false;
+  const shortcutReference = raw.match(/^!?\[([^\]]+)\]\s*[.!?]?$/s);
+  if (shortcutReference && referenceDefinitions.has(normalizeReferenceLabel(shortcutReference[1]))) return false;
   if (/^\s*<a\b[\s\S]*<\/a>\s*$/i.test(htmlMarkup)) return false;
   return true;
 }
 
-function normalizedProseBlocks(lines) {
+function normalizedProseBlocks(lines, referenceDefinitions) {
   const blocks = [];
   let current = [];
   const finish = () => {
@@ -367,7 +384,7 @@ function normalizedProseBlocks(lines) {
     current = [];
   };
 
-  for (const entry of lines.filter(isStandaloneEditorialProse)) {
+  for (const entry of lines.filter((line) => isStandaloneEditorialProse(line, referenceDefinitions))) {
     if (current.length && entry.line !== current[current.length - 1].line + 1) finish();
     current.push(entry);
   }
@@ -472,8 +489,8 @@ export function lintMarkdownEditorialQuality(markdown, { valueType, category } =
     warnings.push(issue('warning', 'repeated-directive-ending', lines[0]?.line ?? 1, `"확인/봐/준비해야 합니다" 계열이 ${repeatedDirectiveEndings}회 반복됩니다. 독자에게 판단을 떠넘기는 문장이 많은지 확인하세요`, lines[0]?.raw ?? ''));
   }
 
-  const editorialLines = lines.filter(isStandaloneEditorialProse);
-  const proseBlocks = normalizedProseBlocks(lines);
+  const editorialLines = lines.filter((line) => isStandaloneEditorialProse(line, scan.referenceDefinitions));
+  const proseBlocks = normalizedProseBlocks(lines, scan.referenceDefinitions);
   const seenBlocks = new Set();
   const duplicateKeys = new Set();
   const duplicateBlocks = [];

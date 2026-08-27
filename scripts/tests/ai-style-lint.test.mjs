@@ -397,6 +397,48 @@ test('defined visible reference-style external link만 research-source-gap을 �
   }
 });
 
+test('defined shortcut reference link는 source로 세고 기존 inline/full/collapsed form을 보존한다', () => {
+  const renderedCases = [
+    ['shortcut', '확인한 자료는 [공식 원문]입니다.\n\n[공식 원문]: https://example.com/shortcut-source'],
+    ['inline', '확인한 자료는 [공식 원문](https://example.com/inline-source)입니다.'],
+    ['full', '확인한 자료는 [공식 원문][source]입니다.\n\n[source]: https://example.com/full-source'],
+    ['collapsed', '확인한 자료는 [공식 원문][]입니다.\n\n[공식 원문]: https://example.com/collapsed-source'],
+  ];
+  for (const [name, body] of renderedCases) {
+    const result = qualityLint(body, { valueType: 'verified-guide' });
+    assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), name);
+    assert.equal(result.stats.uniqueExternalSourceCount, 1, name);
+  }
+
+  const unresolved = qualityLint(
+    '확인한 자료는 [공식 원문]입니다.',
+    { valueType: 'verified-guide' },
+  );
+  assert.ok(unresolved.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+  assert.equal(unresolved.stats.uniqueExternalSourceCount, 0);
+});
+
+test('reference definition-only line은 source/media/editorial prose로 세지 않는다', () => {
+  const terms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
+  const body = [
+    `[${terms}]: https://example.com/definition-only-source`,
+    '[실행 화면]: https://example.com/definition-only-image.png',
+  ].join('\n');
+
+  const research = qualityLint(body, { valueType: 'verified-guide' });
+  assert.ok(research.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+  assert.equal(research.stats.uniqueExternalSourceCount, 0);
+  assert.equal(research.stats.bodyMediaCount, 0);
+  assert.equal(research.stats.proseLines, 0);
+  assert.equal(research.stats.abstractEvaluationCount, 0);
+  assert.equal(research.stats.duplicateProseBlockCount, 0);
+
+  const experience = qualityLint(body, { valueType: 'experience' });
+  assert.ok(experience.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+  assert.equal(experience.stats.uniqueExternalSourceCount, 0);
+  assert.equal(experience.stats.bodyMediaCount, 0);
+});
+
 test('visible unquoted HTML href만 research-source-gap을 해소한다', () => {
   const visibleResult = qualityLint(
     '<a class=source href=https://example.com/unquoted-source>공식 원문</a>',
@@ -510,6 +552,70 @@ test('unresolved reference image는 experience-support-scarcity를 해소하지 
   );
   assert.ok(!resolved.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
   assert.equal(resolved.stats.bodyMediaCount, 1);
+});
+
+test('defined shortcut reference image는 media로만 세고 기존 inline/full/collapsed form을 보존한다', () => {
+  const renderedCases = [
+    ['shortcut', '![실행 화면]\n\n[실행 화면]: https://example.com/shortcut-image.png'],
+    ['inline', '![실행 화면](https://example.com/inline-image.png)'],
+    ['full', '![실행 화면][run]\n\n[run]: https://example.com/full-image.png'],
+    ['collapsed', '![실행 화면][]\n\n[실행 화면]: https://example.com/collapsed-image.png'],
+  ];
+  for (const [name, body] of renderedCases) {
+    const experience = qualityLint(body, { valueType: 'experience' });
+    assert.ok(!experience.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'), name);
+    assert.equal(experience.stats.bodyMediaCount, 1, name);
+    assert.equal(experience.stats.uniqueExternalSourceCount, 0, `${name} image는 source가 아니다`);
+
+    const research = qualityLint(body, { valueType: 'verified-guide' });
+    assert.ok(research.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), `${name} image는 source warning을 해소하지 않는다`);
+    assert.equal(research.stats.uniqueExternalSourceCount, 0, name);
+  }
+
+  for (const [name, body] of [
+    ['shortcut', '![실행 화면]'],
+    ['full', '![실행 화면][missing]'],
+    ['collapsed', '![실행 화면][]'],
+  ]) {
+    const result = qualityLint(body, { valueType: 'experience' });
+    assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'), name);
+    assert.equal(result.stats.bodyMediaCount, 0, name);
+  }
+});
+
+test('defined shortcut token-only line은 editorial prose가 아니고 surrounding visible prose는 유지한다', () => {
+  const sevenTerms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은';
+  const eightTerms = `${sevenTerms} 필요한`;
+  const longShortcutLabel = [
+    eightTerms,
+    '독자가 같은 절차를 반복할 때 입력값과 출력 결과를 비교할 수 있도록 재현 순서와 제한 조건을 빠짐없이 기록한 공식 자료',
+  ].join(' ');
+  assert.equal([...longShortcutLabel.matchAll(/좋은|중요한|필요한/g)].length, 8);
+  assert.ok(longShortcutLabel.length >= 80);
+
+  const shortcutCases = [
+    ['link', `[${longShortcutLabel}]`, `[${longShortcutLabel}]: https://example.com/shortcut-prose-source`],
+    ['image', `![${longShortcutLabel}]`, `[${longShortcutLabel}]: https://example.com/shortcut-prose-image.png`],
+  ];
+  for (const [name, token, definition] of shortcutCases) {
+    const excluded = qualityLint([token, '', token, '', sevenTerms, '', definition].join('\n'));
+    assert.ok(!excluded.warnings.some(({ ruleId }) => ruleId === 'abstract-evaluation-density'), name);
+    assert.ok(!excluded.warnings.some(({ ruleId }) => ruleId === 'duplicate-prose-block'), name);
+    assert.equal(excluded.stats.abstractEvaluationCount, 7, name);
+    assert.equal(excluded.stats.duplicateProseBlockCount, 0, name);
+
+    const visibleAbstract = qualityLint([token, '', eightTerms, '', definition].join('\n'));
+    assert.ok(visibleAbstract.warnings.some(({ ruleId }) => ruleId === 'abstract-evaluation-density'), name);
+    assert.equal(visibleAbstract.stats.abstractEvaluationCount, 8, name);
+
+    const visibleDuplicate = qualityLint([token, '', DUPLICATE_BLOCK, '', DUPLICATE_BLOCK, '', definition].join('\n'));
+    assert.ok(visibleDuplicate.warnings.some(({ ruleId }) => ruleId === 'duplicate-prose-block'), name);
+    assert.equal(visibleDuplicate.stats.duplicateProseBlockCount, 1, name);
+
+    const unresolved = qualityLint(token);
+    assert.ok(unresolved.warnings.some(({ ruleId }) => ruleId === 'abstract-evaluation-density'), name);
+    assert.equal(unresolved.stats.abstractEvaluationCount, 8, name);
+  }
 });
 
 test('frontmatter/inline code/comment의 marker 모양은 experience support가 아니다', () => {
