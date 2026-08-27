@@ -317,19 +317,40 @@ test('grandfathered corpus의 research-source-gap과 legacy flag는 출력하지
   assert.ok(!result.stdout.includes('generic-outline'), result.stdout);
 });
 
-test('editorialReview policy/docs는 legacy boolean이 사람 검토 증거라고 주장하지 않는다', () => {
+test('내부 설정·체크리스트는 legacy flag 비증거와 exact-SHA 검토 기록 절차를 보존한다', () => {
   const contentConfig = readFileSync(join(REPO_ROOT, 'src/content.config.ts'), 'utf8');
   const taxonomy = readFileSync(join(REPO_ROOT, 'src/config/taxonomy.ts'), 'utf8');
-  const policy = readFileSync(join(REPO_ROOT, 'src/pages/editorial-policy.astro'), 'utf8');
   const checklist = readFileSync(join(REPO_ROOT, 'docs/blog-seo-geo-aeo-checklist.md'), 'utf8');
 
   assert.match(contentConfig, /editorialReview[\s\S]{0,240}검토 증거가 아니다/);
   assert.match(taxonomy, /editorialReview[\s\S]{0,240}검토 증거가 아니다/);
-  assert.match(policy, /editorialReview[\s\S]{0,240}검토 증거가 아니/);
-  assert.doesNotMatch(policy, /검토 완료는[\s\S]{0,160}editorialReview: true/);
   assert.doesNotMatch(checklist, /editorialReview: true\s+#.*사람/);
+  assert.match(checklist, /exact-SHA 사람 검토/);
   assert.match(checklist, /head_ref/);
-  assert.match(checklist, /warning.*처리|경고.*처리/);
+  assert.match(checklist, /fresh-session 전체 읽기/);
+  assert.match(checklist, /warning disposition/);
+  assert.match(checklist, /evidence record/);
+  assert.match(checklist, /발행\(publish\)[\s\S]{0,80}수정 후 재검토\(revise\)[\s\S]{0,80}보류\(hold\)/);
+});
+
+test('공개 편집 정책은 독자 대상 약속만 밝히고 내부 실행 용어를 노출하지 않는다', () => {
+  const policy = readFileSync(join(REPO_ROOT, 'src/pages/editorial-policy.astro'), 'utf8');
+
+  assert.match(policy, /이 사이트의 모든 글은[\s\S]{0,120}혼자 쓰고 운영/);
+  assert.match(policy, /발행 전에 사람이[\s\S]{0,80}전체를 읽/);
+  assert.match(policy, /무엇을 근거로 정리했는지 출처를 밝힙니다/);
+  assert.match(policy, /지어내지 않습니다/);
+  assert.match(policy, /단순히 옮기지 않고[\s\S]{0,100}확인·비교·직접 경험/);
+  assert.match(policy, /AI 도구는[\s\S]{0,120}보조 수단[\s\S]{0,120}최종 판단과 책임/);
+  assert.match(policy, /금융·정책 정보의 한계/);
+  assert.match(policy, /매수·매도·가입 권유가 아닙니다/);
+  assert.match(policy, /오류를 확인하면 본문을 수정하고/);
+  assert.match(policy, /수정일\(updated\)을 갱신/);
+  assert.match(policy, /최종 업데이트: 2026\. 8\. 28/);
+  assert.doesNotMatch(
+    policy,
+    /head(?:[_\s-]+)ref|fresh(?:[_\s-]+)session|front(?:[_\s-]*)matter|disposition|evidence(?:[_\s-]+)record|editorial(?:[_\s-]*)review|value(?:[_\s-]*)type|original-analysis|verified-guide|\b(?:experience|firsthand|review|publish|revise|hold|warning)\b|추천\s*판정|수정\s*후\s*재검토|보류|게이트|통제\s*태그|최소\s*본문\s*분량|발행\s*속도\s*정책|승인\s*(?:무효|만료)|\bSHA(?:-?\d+)?\b/i,
+  );
 });
 
 test('게이트를 만족하는 staged 신규 글도 baseline 트리와 비교해 통과한다', (t) => {
