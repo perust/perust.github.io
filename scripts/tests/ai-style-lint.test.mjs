@@ -1,10 +1,27 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { lintMarkdownAiStyle, markdownProseLines } from '../lib/ai-style-lint.mjs';
+import * as lintModule from '../lib/ai-style-lint.mjs';
 
-const lint = (body) => lintMarkdownAiStyle(`---\ntitle: "fixture — metadata"\ndescription: "물론입니다"\n---\n\n${body}\n`);
+const { lintMarkdownAiStyle, markdownProseLines } = lintModule;
+const fixtureMarkdown = (body, frontmatter = []) => [
+  '---',
+  'title: "fixture — metadata"',
+  'description: "물론입니다"',
+  ...frontmatter,
+  '---',
+  '',
+  body,
+  '',
+].join('\n');
+const lint = (body) => lintMarkdownAiStyle(fixtureMarkdown(body));
+// RED에서도 나머지 새 규칙이 실제 assertion failure로 드러나도록, neutral export가 아직 없으면
+// 기존 구현을 호출한다. neutral export 자체는 별도 테스트가 명시적으로 요구한다.
+const qualityLint = (body, context = {}, frontmatter = []) =>
+  (lintModule.lintMarkdownEditorialQuality ?? lintMarkdownAiStyle)(fixtureMarkdown(body, frontmatter), context);
 const failureIds = (body) => lint(body).failures.map(({ ruleId }) => ruleId);
 const warningIds = (body) => lint(body).warnings.map(({ ruleId }) => ruleId);
+const qualityWarningIds = (body, context = {}, frontmatter = []) =>
+  qualityLint(body, context, frontmatter).warnings.map(({ ruleId }) => ruleId);
 
 test('em dash와 제목 이모지는 high-confidence failure다', () => {
   assert.deepEqual(failureIds('평범한 문장 — 덧붙인 문장\n\n## 🚀 빠른 시작'), [
@@ -150,4 +167,230 @@ test('지시형 어미가 여섯 번 이상 반복되면 warning-only다', () =>
 test('prose line은 원본 줄 번호를 보존한다', () => {
   const lines = markdownProseLines('---\ntitle: test\n---\n\n첫 줄\n\n둘째 줄');
   assert.deepEqual(lines.map(({ line }) => line), [5, 7]);
+});
+
+test('neutral editorial-quality export는 compatibility alias와 같은 결과를 낸다', () => {
+  const neutral = lintModule.lintMarkdownEditorialQuality;
+  assert.equal(typeof neutral, 'function');
+  assert.strictEqual(lintMarkdownAiStyle, neutral);
+
+  const markdown = fixtureMarkdown('## 초보 추천도\n\n본문입니다.');
+  assert.deepEqual(
+    neutral(markdown, { valueType: 'review', category: '책 서평' }),
+    lintMarkdownAiStyle(markdown, { valueType: 'review', category: '책 서평' }),
+  );
+});
+
+const DUPLICATE_BLOCK = [
+  '실제 입력과 출력 조건을 함께 기록하고 재현 순서를 구체적으로 설명해,',
+  '독자가 같은 절차를 다시 확인할 때 필수 제한 사항과 관찰 결과를 빠짐없이 비교할 수 있도록 정리했습니다.',
+].join(' ');
+
+test('80자 이상 normalized prose block이 두 번 나오면 duplicate-prose-block을 한 번 경고한다', () => {
+  assert.ok(DUPLICATE_BLOCK.length >= 80, 'fixture prose block은 80자 이상이어야 한다');
+  const duplicateWithWhitespace = DUPLICATE_BLOCK.replaceAll(' ', '   ');
+  const result = qualityLint(`${DUPLICATE_BLOCK}\n\n  ${duplicateWithWhitespace}  `);
+  assert.deepEqual(result.warnings.filter(({ ruleId }) => ruleId === 'duplicate-prose-block').map(({ ruleId }) => ruleId), [
+    'duplicate-prose-block',
+  ]);
+  assert.equal(result.stats.duplicateProseBlockCount, 1);
+});
+
+test('duplicate-prose-block은 비본문 구조와 control/figure/CTA markup을 세지 않는다', () => {
+  const excludedCases = [
+    {
+      name: 'frontmatter',
+      frontmatter: [`noteOne: "${DUPLICATE_BLOCK}"`, `noteTwo: "${DUPLICATE_BLOCK}"`],
+      body: '서로 다른 정상 본문입니다.',
+    },
+    { name: 'fenced code', body: `\`\`\`text\n${DUPLICATE_BLOCK}\n\`\`\`\n\n\`\`\`text\n${DUPLICATE_BLOCK}\n\`\`\`` },
+    { name: 'inline code', body: `\`${DUPLICATE_BLOCK}\`\n\n\`${DUPLICATE_BLOCK}\`` },
+    { name: 'HTML comment', body: `<!-- ${DUPLICATE_BLOCK} -->\n\n<!-- ${DUPLICATE_BLOCK} -->` },
+    { name: 'blockquote', body: `> ${DUPLICATE_BLOCK}\n\n> ${DUPLICATE_BLOCK}` },
+    { name: 'heading', body: `## ${DUPLICATE_BLOCK}\n\n## ${DUPLICATE_BLOCK}` },
+    { name: 'list item/label', body: `- **${DUPLICATE_BLOCK}:**\n\n- **${DUPLICATE_BLOCK}:**` },
+    { name: 'external link markup', body: `[${DUPLICATE_BLOCK}](https://example.com/one)\n\n[${DUPLICATE_BLOCK}](https://example.com/two)` },
+    { name: 'image markup', body: `![${DUPLICATE_BLOCK}](/one.png)\n\n![${DUPLICATE_BLOCK}](/two.png)` },
+    { name: 'internal/hash link markup', body: `[${DUPLICATE_BLOCK}](/inside)\n\n[${DUPLICATE_BLOCK}](#inside)` },
+    { name: 'HTML control', body: `<button>${DUPLICATE_BLOCK}</button>\n\n<button>${DUPLICATE_BLOCK}</button>` },
+    { name: 'figure markup', body: `<figure><figcaption>${DUPLICATE_BLOCK}</figcaption></figure>\n\n<figure><figcaption>${DUPLICATE_BLOCK}</figcaption></figure>` },
+    { name: 'CTA markup', body: `<a class="cta-button" href="/one">${DUPLICATE_BLOCK}</a>\n\n<a class="cta-button" href="/two">${DUPLICATE_BLOCK}</a>` },
+  ];
+
+  for (const { name, body, frontmatter = [] } of excludedCases) {
+    assert.ok(
+      !qualityWarningIds(body, {}, frontmatter).includes('duplicate-prose-block'),
+      `${name}은 duplicate prose로 세면 안 된다`,
+    );
+  }
+});
+
+test('abstract-evaluation-density는 visible exact term 7개는 허용하고 8개부터 한 번 경고한다', () => {
+  const seven = '좋은 중요한 필요한 좋은 중요한 필요한 좋은';
+  const eight = `${seven} 필요한`;
+  assert.ok(!qualityWarningIds(seven).includes('abstract-evaluation-density'));
+
+  const result = qualityLint(eight);
+  assert.deepEqual(result.warnings.filter(({ ruleId }) => ruleId === 'abstract-evaluation-density').map(({ ruleId }) => ruleId), [
+    'abstract-evaluation-density',
+  ]);
+  assert.equal(result.stats.abstractEvaluationCount, 8);
+});
+
+test('abstract-evaluation-density는 frontmatter/code/comment/quote/heading/list의 term을 세지 않는다', () => {
+  const terms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
+  const body = [
+    `\`\`${terms}\`\``,
+    `\`${terms}\``,
+    `<!-- ${terms} -->`,
+    `> ${terms}`,
+    `## ${terms}`,
+    `- ${terms}`,
+    '일반 본문입니다.',
+  ].join('\n\n');
+  const result = qualityLint(body, {}, [`note: "${terms}"`]);
+  assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'abstract-evaluation-density'));
+  assert.equal(result.stats.abstractEvaluationCount, 0);
+});
+
+test('research-source-gap은 researched valueType과 pre-reading category에만 routing한다', () => {
+  const body = '확인할 내용을 독자가 이해할 수 있도록 정리한 본문입니다.';
+  for (const context of [
+    { valueType: 'verified-guide', category: 'AI/IT 정보' },
+    { valueType: 'original-analysis', category: '경제 정보' },
+    { valueType: 'review', category: '미리 알아보는 책 정보' },
+  ]) {
+    assert.ok(qualityWarningIds(body, context).includes('research-source-gap'), JSON.stringify(context));
+  }
+  assert.ok(!qualityWarningIds(body, { valueType: 'review', category: '책 서평' }).includes('research-source-gap'));
+  assert.ok(!qualityWarningIds(body, { valueType: 'experience', category: '도서 학습 챌린지' }).includes('research-source-gap'));
+});
+
+test('visible Markdown/HTML/autolink external body anchor만 research-source-gap을 해소한다', () => {
+  const anchorCases = [
+    ['Markdown', '[공식 원문](https://example.com/source)'],
+    ['HTML', '<a class="source" href="https://example.com/source">공식 원문</a>'],
+    ['autolink', '<https://example.com/source>'],
+  ];
+  for (const [name, anchor] of anchorCases) {
+    const result = qualityLint(`확인한 자료는 ${anchor}입니다.`, { valueType: 'verified-guide' });
+    assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), name);
+    assert.equal(result.stats.uniqueExternalSourceCount, 1, name);
+  }
+});
+
+test('숨은 URL·image·빈/internal/hash link는 research-source-gap을 해소하지 않는다', () => {
+  const body = [
+    '원시 주소 https://example.com/raw 는 anchor가 아닙니다.',
+    '![외부 이미지](https://example.com/image.png)',
+    '[](https://example.com/empty)',
+    '[내부 문서](/inside)',
+    '[같은 문서](#inside)',
+    '<img src="https://example.com/image.png" alt="외부 이미지">',
+    '<video src="https://example.com/video.mp4"></video>',
+    '`[인라인 코드 링크](https://example.com/inline)`',
+    '<!-- [주석 링크](https://example.com/comment) -->',
+    '```markdown',
+    '[코드 링크](https://example.com/code)',
+    '```',
+    '[정의]: https://example.com/reference',
+  ].join('\n\n');
+  const result = qualityLint(body, { valueType: 'original-analysis' }, ['source: "https://example.com/frontmatter"']);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+  assert.equal(result.stats.uniqueExternalSourceCount, 0);
+});
+
+test('experience-support-scarcity는 firsthand pronoun만 있는 experience를 경고한다', () => {
+  const result = qualityLint('나는 직접 써 봤고 내가 느낀 과정을 솔직하게 적었습니다.', { valueType: 'experience' });
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+});
+
+test('네 experience marker class는 scarcity만 해소하고 다른 경고는 그대로 둔다', () => {
+  const abstractTerms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
+  const markerCases = [
+    ['external anchor', '[실행 기록](https://example.com/run)'],
+    ['Markdown image', '![실행 화면](/images/run.png)'],
+    ['HTML video', '<video controls src="/videos/run.mp4"></video>'],
+    ['fenced code/output', '```text\n실행 결과가 출력되었습니다.\n```'],
+    ['numeric/date/unit detail', '처리 시간은 37초였고 기록일은 2026-08-27입니다.'],
+  ];
+  for (const [name, marker] of markerCases) {
+    const ids = qualityWarningIds(`${abstractTerms}\n\n${marker}`, { valueType: 'experience' });
+    assert.ok(!ids.includes('experience-support-scarcity'), name);
+    assert.ok(ids.includes('abstract-evaluation-density'), `${name}은 다른 warning을 suppress하면 안 된다`);
+  }
+});
+
+test('frontmatter/inline code/comment의 marker 모양은 experience support가 아니다', () => {
+  const body = [
+    '`42초 https://example.com/inline`',
+    '<!-- ![실행 화면](/images/run.png) 2026-08-27 -->',
+    '나는 직접 써 본 과정을 글로 적었습니다.',
+  ].join('\n\n');
+  const result = qualityLint(body, { valueType: 'experience' }, [
+    'image: "https://example.com/frontmatter.png"',
+    'metric: "42초"',
+  ]);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+  assert.equal(result.stats.bodyMediaCount, 0);
+  assert.equal(result.stats.numericDetailLineCount, 0);
+});
+
+test('legacy editorialReview flag는 review 증거가 아니며 다른 finding을 suppress하지 않는다', () => {
+  for (const value of ['true', 'false']) {
+    assert.ok(
+      qualityWarningIds('일반 본문입니다.', { valueType: 'review' }, [`editorialReview: ${value}`])
+        .includes('legacy-editorial-review-flag'),
+      value,
+    );
+  }
+
+  const ids = qualityWarningIds(
+    '외부 source anchor가 없는 분석 본문입니다.',
+    { valueType: 'original-analysis' },
+    ['editorialReview: true'],
+  );
+  assert.ok(ids.includes('legacy-editorial-review-flag'));
+  assert.ok(ids.includes('research-source-gap'));
+});
+
+test('text-only review는 research/experience warning을 받지 않는다', () => {
+  const ids = qualityWarningIds('책의 논지를 읽고 느낀 점을 텍스트로 정리했습니다.', {
+    valueType: 'review',
+    category: '책 서평',
+  });
+  assert.ok(!ids.includes('research-source-gap'));
+  assert.ok(!ids.includes('experience-support-scarcity'));
+});
+
+test('editorial finding message는 AI authorship을 주장하지 않는다', () => {
+  const result = qualityLint('## 초보 추천도');
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'generic-outline'));
+  for (const finding of [...result.failures, ...result.warnings]) {
+    assert.doesNotMatch(finding.message, /AI (?:문서|문체|작성|생성)/);
+  }
+});
+
+test('editorial stats는 source/media/fence/numeric/abstract/duplicate 관찰값을 보존한다', () => {
+  const terms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
+  const body = [
+    terms,
+    DUPLICATE_BLOCK,
+    DUPLICATE_BLOCK,
+    '[공식 기록](https://example.com/source)',
+    '<a href="https://example.com/source">같은 공식 기록</a>',
+    '![실행 화면](/images/run.png)',
+    '<video controls src="/videos/run.mp4"></video>',
+    '```text',
+    '실행 출력',
+    '```',
+    '처리 시간은 37초였습니다.',
+  ].join('\n\n');
+  const { stats } = qualityLint(body, { valueType: 'experience' });
+  assert.equal(stats.uniqueExternalSourceCount, 1);
+  assert.equal(stats.bodyMediaCount, 2);
+  assert.equal(stats.codeFenceCount, 1);
+  assert.equal(stats.numericDetailLineCount, 1);
+  assert.equal(stats.abstractEvaluationCount, 8);
+  assert.equal(stats.duplicateProseBlockCount, 1);
 });

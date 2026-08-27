@@ -330,11 +330,12 @@ export const TOPIC_HUBS: TopicHub[] = [
  *   커밋 여부와 무관하게 모든 글에 적용한다. 기준일(포함) 이전 date 의 기존 글은
  *   공개 URL·태그 보존을 위해 제외한다(grandfathering).
  * - Git 신규 파일 게이트(check-publish-policy): date 를 기준일 이전으로 적어도(backdate)
- *   Git 기준 새로 추가된 글이면 품질 게이트(editorialReview/valueType/통제 태그/최소 분량)를
+ *   Git 기준 새로 추가된 글이면 품질 게이트(valueType/통제 태그/최소 분량)를
  *   그대로 적용하고, 하루 발행 상한은 신규 파일 중 date 가 기준일 당일(포함) 이후인 글에
  *   날짜별로 적용한다. CI는 POLICY_GIT_BASELINE을 fail-closed로 명시하고
  *   POLICY_REQUIRE_COMMITTED_DIFF=true를 함께 사용한다. 로컬 checkout만 upstream/origin merge-base,
  *   마지막으로 HEAD 작업 트리 모드로 해석한다.
+ * - editorialReview는 기존 corpus 호환을 위한 legacy metadata이며 사람 검토 증거가 아니다.
  */
 export const NEW_POST_POLICY_BASELINE = '2026-07-21';
 

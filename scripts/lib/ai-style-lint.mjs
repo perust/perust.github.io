@@ -1,5 +1,6 @@
-// 한국어 블로그 원고에서 AI 답변의 편집 잔재를 찾는 보수적인 Markdown 검사기.
-// 외부 패키지 없이 동작하며, frontmatter·코드·URL·HTML 마크업은 검사하지 않는다.
+// 한국어 블로그 원고에서 결정론적인 편집 잔재와 검토 신호를 찾는 보수적인 Markdown 검사기.
+// 외부 패키지 없이 동작한다. blocker text 검사는 frontmatter·코드·URL·HTML 속성을 제외하고,
+// 문맥 warning은 독자에게 보이는 외부 anchor와 body media만 제한적으로 관찰한다.
 
 const CHATBOT_RESIDUE = [
   {
@@ -29,7 +30,7 @@ const CHATBOT_RESIDUE = [
   },
 ];
 
-// 사용자가 실제로 AI스럽다고 교정한 제목만 경고한다.
+// 사용자가 실제로 관용적이라고 교정한 제목만 경고한다.
 // "핵심 요약", "투자자로서의 관점"처럼 의도적으로 쓰는 정보 구조는 제외한다.
 const GENERIC_HEADINGS = [
   /총정리$/,
@@ -59,31 +60,36 @@ const issue = (severity, ruleId, line, message, excerpt) => ({
   excerpt: excerpt.trim().slice(0, 140),
 });
 
+const ABSTRACT_EVALUATION_TERM = /좋은|중요한|필요한/g;
+const PRE_READING_CATEGORY = '미리 알아보는 책 정보';
+const NUMERIC_DETAIL = /\d/;
+
 /**
- * 검사 대상 줄을 만든다. 렌더링용 데이터에서 AI 흔적을 오인하지 않도록 다음은 제외한다.
- * - 문서 맨 앞 YAML frontmatter
- * - fenced code, 들여쓴 code, 인용문, HTML comment, reference link 정의
- * - inline code, 링크 목적지, autolink와 HTML tag/속성
- * 링크 표시 문구와 HTML의 가시 텍스트는 검사하되, 원제 링크의 문장부호는 보존한다.
+ * frontmatter·fence·comment·quote·code를 제외하되, source/media 신호를 읽을 수 있도록
+ * Markdown/HTML markup은 보존한 body line을 만든다.
  */
-export function markdownProseLines(markdown) {
+function scanMarkdownBody(markdown) {
   const source = markdown.replace(/^\uFEFF/, '');
-  const lines = source.split(/\r?\n/);
-  const result = [];
+  const sourceLines = source.split(/\r?\n/);
+  const bodyLines = [];
   let index = 0;
   let inFence = false;
   let fenceMarker = '';
   let fenceLength = 0;
   let inComment = false;
+  let codeFenceCount = 0;
+  let frontmatterLines = [];
 
-  if (lines[0]?.trim() === '---') {
+  if (sourceLines[0]?.trim() === '---') {
     index = 1;
-    while (index < lines.length && lines[index].trim() !== '---') index += 1;
-    if (index < lines.length) index += 1;
+    const frontmatterStart = index;
+    while (index < sourceLines.length && sourceLines[index].trim() !== '---') index += 1;
+    frontmatterLines = sourceLines.slice(frontmatterStart, index);
+    if (index < sourceLines.length) index += 1;
   }
 
-  for (; index < lines.length; index += 1) {
-    const raw = lines[index];
+  for (; index < sourceLines.length; index += 1) {
+    const raw = sourceLines[index];
     if (inFence) {
       const closingFence = raw.match(/^ {0,3}(`{3,}|~{3,})[ \t]*$/);
       if (closingFence && closingFence[1][0] === fenceMarker && closingFence[1].length >= fenceLength) {
@@ -93,14 +99,6 @@ export function markdownProseLines(markdown) {
       }
       continue;
     }
-    const openingFence = raw.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
-    if (openingFence && (openingFence[1][0] === '~' || !openingFence[2].includes('`'))) {
-      inFence = true;
-      fenceMarker = openingFence[1][0];
-      fenceLength = openingFence[1].length;
-      continue;
-    }
-    if (/^(?: {4}|\t)/.test(raw) || /^\s*>/.test(raw)) continue;
 
     // 주석 조각만 제거한다. 인라인 주석 앞뒤의 독자에게 보이는 본문은 계속 검사한다.
     let uncommented = '';
@@ -126,17 +124,39 @@ export function markdownProseLines(markdown) {
       cursor = start + 4;
     }
 
+    const openingFence = uncommented.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+    if (openingFence && (openingFence[1][0] === '~' || !openingFence[2].includes('`'))) {
+      inFence = true;
+      fenceMarker = openingFence[1][0];
+      fenceLength = openingFence[1].length;
+      codeFenceCount += 1;
+      continue;
+    }
+    if (/^(?: {4}|\t)/.test(uncommented) || /^\s*>/.test(uncommented)) continue;
     if (/^\s*\[[^\]]+\]:\s*\S+/.test(uncommented)) continue;
 
-    const withoutInlineCode = uncommented.replace(/`+[^`]*`+/g, '');
-    const text = withoutInlineCode
-      // 링크 목적지는 제외하되 독자에게 보이는 label은 AI 잔재 검사에 남긴다.
+    bodyLines.push({
+      line: index + 1,
+      raw,
+      uncommented,
+      markupText: uncommented.replace(/`+[^`]*`+/g, ''),
+    });
+  }
+
+  return { bodyLines, codeFenceCount, frontmatterLines };
+}
+
+function proseLinesFromScan(bodyLines) {
+  const result = [];
+  for (const entry of bodyLines) {
+    const text = entry.markupText
+      // 링크 목적지는 제외하되 독자에게 보이는 label은 편집 잔재 검사에 남긴다.
       .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
       .replace(/!?\[([^\]]*)\]\[[^\]]*\]/g, '$1')
       .replace(/<https?:\/\/[^>]+>/gi, '')
       .replace(/<[^>]+>/g, '')
       .replace(/https?:\/\/\S+/gi, '');
-    const punctuationText = withoutInlineCode
+    const punctuationText = entry.markupText
       // 외부 원문 URL에 직접 연결된 기사 원제·직접 인용의 문장부호만 그대로 둔다.
       .replace(/!?\[[^\]]*\]\(https?:\/\/[^)]*\)/gi, '')
       .replace(/<a\b(?=[^>]*\bhref=["']https?:\/\/)[^>]*>[\s\S]*?<\/a>/gi, '')
@@ -145,19 +165,100 @@ export function markdownProseLines(markdown) {
       .replace(/https?:\/\/\S+/gi, '');
     if (!text.trim()) continue;
     result.push({
-      line: index + 1,
-      raw,
+      line: entry.line,
+      raw: entry.raw,
       text,
-      markupText: withoutInlineCode,
+      markupText: entry.markupText,
       punctuationText,
-      isHtmlHeading: /^\s*<h[1-6]\b/i.test(uncommented),
+      isHtmlHeading: /^\s*<h[1-6]\b/i.test(entry.uncommented),
     });
   }
   return result;
 }
 
-export function lintMarkdownAiStyle(markdown) {
-  const lines = markdownProseLines(markdown);
+function visibleAnchorLabel(value) {
+  return value
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/[*_~`]/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function externalBodySources(bodyLines) {
+  const sources = new Set();
+  for (const { markupText } of bodyLines) {
+    const markdownWithoutImages = markupText.replace(/!\[[^\]]*\]\([^)]*\)/g, '');
+    for (const match of markdownWithoutImages.matchAll(/(?<!!)\[([^\]]+)\]\(\s*(https?:\/\/[^\s)]+)(?:\s+["'][^)]*["'])?\s*\)/gi)) {
+      if (visibleAnchorLabel(match[1])) sources.add(match[2]);
+    }
+    for (const match of markupText.matchAll(/<a\b[^>]*\bhref\s*=\s*["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+      if (visibleAnchorLabel(match[2])) sources.add(match[1]);
+    }
+    for (const match of markupText.matchAll(/<(https?:\/\/[^<>\s]+)>/gi)) sources.add(match[1]);
+  }
+  return sources;
+}
+
+function bodyMediaCount(bodyLines) {
+  let count = 0;
+  for (const { markupText } of bodyLines) {
+    count += [...markupText.matchAll(/!\[[^\]]*\]\([^)]*\)/g)].length;
+    count += [...markupText.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
+  }
+  return count;
+}
+
+function isStandaloneEditorialProse(entry) {
+  const raw = entry.raw.trim();
+  if (/^#{1,6}(?:\s|$)/.test(raw) || entry.isHtmlHeading) return false;
+  if (/^(?:[-*+] |\d+[.)] )/.test(raw)) return false;
+  if (/^!?\[[^\]]*\](?:\([^)]*\)|\[[^\]]*\])\s*[.!?]?$/s.test(raw)) return false;
+  if (/^<a\b[\s\S]*<\/a>\s*$/i.test(raw)) return false;
+  if (/<(?:button|figure|figcaption|picture|img|video|source|form|input|select|textarea)\b/i.test(raw)) return false;
+  if (/<[^>]+\bclass=["'][^"']*(?:cta|button|control|figure|actions?)[^"']*["']/i.test(raw)) return false;
+  return true;
+}
+
+function normalizedProseBlocks(lines) {
+  const blocks = [];
+  let current = [];
+  const finish = () => {
+    if (!current.length) return;
+    const normalized = current
+      .map(({ text }) => text)
+      .join(' ')
+      .normalize('NFC')
+      .replace(/[*_~]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    blocks.push({ line: current[0].line, raw: current[0].raw, normalized });
+    current = [];
+  };
+
+  for (const entry of lines.filter(isStandaloneEditorialProse)) {
+    if (current.length && entry.line !== current[current.length - 1].line + 1) finish();
+    current.push(entry);
+  }
+  finish();
+  return blocks;
+}
+
+/**
+ * 검사 대상 줄을 만든다. 렌더링용 데이터를 편집 잔재로 오인하지 않도록 다음은 제외한다.
+ * - 문서 맨 앞 YAML frontmatter
+ * - fenced code, 들여쓴 code, 인용문, HTML comment, reference link 정의
+ * - inline code, 링크 목적지, autolink와 HTML tag/속성
+ * 링크 표시 문구와 HTML의 가시 텍스트는 검사하되, 원제 링크의 문장부호는 보존한다.
+ */
+export function markdownProseLines(markdown) {
+  return proseLinesFromScan(scanMarkdownBody(markdown).bodyLines);
+}
+
+export function lintMarkdownEditorialQuality(markdown, { valueType, category } = {}) {
+  const scan = scanMarkdownBody(markdown);
+  const lines = proseLinesFromScan(scan.bodyLines);
   const failures = [];
   const warnings = [];
   const genericHeadings = [];
@@ -221,7 +322,7 @@ export function lintMarkdownAiStyle(markdown) {
     warnings.push(issue('warning', 'bold-label-list', boldLabelLines[0].line, `bold-label 목록이 ${boldLabelLines.length}개입니다. 템플릿형 나열인지 확인하세요`, boldLabelLines[0].raw));
   }
   if (genericHeadings.length >= 1) {
-    warnings.push(issue('warning', 'generic-outline', genericHeadings[0].line, `AI 문서에서 자주 보이는 관용적 제목이 ${genericHeadings.length}개입니다. 더 구체적인 제목인지 검토하세요`, genericHeadings[0].raw));
+    warnings.push(issue('warning', 'generic-outline', genericHeadings[0].line, `관용적인 개요 제목이 ${genericHeadings.length}개입니다. 글의 내용을 드러내는 더 구체적인 제목인지 검토하세요`, genericHeadings[0].raw));
   }
   if (cliches.length >= 2) {
     warnings.push(issue('warning', 'cliche-prose', cliches[0].line, `상투적인 도입·결론 문구가 ${cliches.length}개입니다`, cliches[0].raw));
@@ -235,5 +336,100 @@ export function lintMarkdownAiStyle(markdown) {
     warnings.push(issue('warning', 'repeated-directive-ending', lines[0]?.line ?? 1, `"확인/봐/준비해야 합니다" 계열이 ${repeatedDirectiveEndings}회 반복됩니다. 독자에게 판단을 떠넘기는 문장이 많은지 확인하세요`, lines[0]?.raw ?? ''));
   }
 
-  return { failures, warnings, stats: { proseLines: lines.length, boldCount, boldLabelCount: boldLabelLines.length } };
+  const editorialLines = lines.filter(isStandaloneEditorialProse);
+  const proseBlocks = normalizedProseBlocks(lines);
+  const seenBlocks = new Set();
+  const duplicateKeys = new Set();
+  const duplicateBlocks = [];
+  for (const block of proseBlocks) {
+    if (block.normalized.length < 80) continue;
+    if (seenBlocks.has(block.normalized) && !duplicateKeys.has(block.normalized)) {
+      duplicateKeys.add(block.normalized);
+      duplicateBlocks.push(block);
+    }
+    seenBlocks.add(block.normalized);
+  }
+  if (duplicateBlocks.length) {
+    warnings.push(issue(
+      'warning',
+      'duplicate-prose-block',
+      duplicateBlocks[0].line,
+      `80자 이상 본문 블록 ${duplicateBlocks.length}개가 반복됩니다. 의도하지 않은 중복인지 확인하세요`,
+      duplicateBlocks[0].raw,
+    ));
+  }
+
+  const abstractEvaluationCount = editorialLines.reduce(
+    (total, entry) => total + (entry.text.match(ABSTRACT_EVALUATION_TERM) ?? []).length,
+    0,
+  );
+  if (abstractEvaluationCount >= 8) {
+    warnings.push(issue(
+      'warning',
+      'abstract-evaluation-density',
+      editorialLines[0]?.line ?? 1,
+      `"좋은/중요한/필요한" 표현이 ${abstractEvaluationCount}회입니다. 해당하는 곳은 기능, 수치, 행동, 결과로 더 구체화할 수 있는지 확인하세요`,
+      editorialLines[0]?.raw ?? '',
+    ));
+  }
+
+  const externalSources = externalBodySources(scan.bodyLines);
+  const mediaCount = bodyMediaCount(scan.bodyLines);
+  const numericDetailLines = editorialLines.filter(({ text }) => NUMERIC_DETAIL.test(text));
+  const requiresResearchSource = valueType === 'verified-guide'
+    || valueType === 'original-analysis'
+    || category === PRE_READING_CATEGORY;
+  if (requiresResearchSource && externalSources.size === 0) {
+    warnings.push(issue(
+      'warning',
+      'research-source-gap',
+      lines[0]?.line ?? 1,
+      '본문에 직접 연결된 외부 출처가 없습니다. 해당하는 경우 공식·원문 출처를 추가하거나 직접 관찰에 근거한 내용임을 본문에서 분명히 하세요',
+      lines[0]?.raw ?? '',
+    ));
+  }
+  if (valueType === 'experience'
+    && externalSources.size === 0
+    && mediaCount === 0
+    && scan.codeFenceCount === 0
+    && numericDetailLines.length === 0) {
+    warnings.push(issue(
+      'warning',
+      'experience-support-scarcity',
+      lines[0]?.line ?? 1,
+      '경험 글에 링크·미디어·실행 출력·수치나 날짜 세부 정보가 없습니다. 실제로 존재하는 구체적 예시나 결과물이 있을 때만 추가를 검토하세요',
+      lines[0]?.raw ?? '',
+    ));
+  }
+
+  const legacyEditorialReviewIndex = scan.frontmatterLines.findIndex((line) => /^\s*editorialReview\s*:/.test(line));
+  if (legacyEditorialReviewIndex !== -1) {
+    const legacyLine = scan.frontmatterLines[legacyEditorialReviewIndex];
+    warnings.push(issue(
+      'warning',
+      'legacy-editorial-review-flag',
+      legacyEditorialReviewIndex + 2,
+      'editorialReview는 호환성을 위해 남은 legacy metadata이며 검토 증거가 아닙니다. 새 글에서는 제거하세요',
+      legacyLine,
+    ));
+  }
+
+  return {
+    failures,
+    warnings,
+    stats: {
+      proseLines: lines.length,
+      boldCount,
+      boldLabelCount: boldLabelLines.length,
+      uniqueExternalSourceCount: externalSources.size,
+      bodyMediaCount: mediaCount,
+      codeFenceCount: scan.codeFenceCount,
+      numericDetailLineCount: numericDetailLines.length,
+      abstractEvaluationCount,
+      duplicateProseBlockCount: duplicateBlocks.length,
+    },
+  };
 }
+
+// Deprecated compatibility alias. 새 호출자는 neutral API를 사용한다.
+export const lintMarkdownAiStyle = lintMarkdownEditorialQuality;

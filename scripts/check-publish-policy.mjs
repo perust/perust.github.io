@@ -15,7 +15,8 @@
 //     보관 자산의 공개 URL 경로도 dist HTML 에서 참조되지 않는다. (동등 대체 URL 이 없는 글이므로
 //     redirect 없이 GitHub Pages 일반 404 로 남기는 것이 정책이다.)
 //  4. Git 기준 새로 추가된 글은 date 가 기준일(2026-07-21) 이전이어도(backdate)
-//     editorialReview: true, 유효한 valueType, 통제 태그 1~5개, 본문 최소 분량을 만족해야 한다.
+//     유효한 valueType, 통제 태그 1~5개, 본문 최소 분량을 만족해야 한다.
+//     결정론적 편집 품질 failure는 차단하고 warning은 신규 글에만 출력한다.
 //     신규 글 중 date 가 기준일 당일(포함) 이후인 글은 날짜별 하루 1편 상한을 넘을 수 없다
 //     (기존 파일은 grandfathering — 신규 파일 집합만 센다).
 import { createHash } from 'node:crypto';
@@ -34,7 +35,7 @@ import {
   slugify,
 } from '../src/config/taxonomy.ts';
 import { detectNewPostFiles, gitTrackableState } from './lib/git-policy.mjs';
-import { lintMarkdownAiStyle } from './lib/ai-style-lint.mjs';
+import { lintMarkdownEditorialQuality } from './lib/ai-style-lint.mjs';
 import {
   SECOND_CURATION_MANIFEST_RELPATH,
   loadSecondCurationManifest,
@@ -164,17 +165,18 @@ report(
 const newPostsByDay = new Map();
 for (const file of newFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
-  const aiStyle = lintMarkdownAiStyle(raw);
-  for (const finding of aiStyle.failures) {
-    report(false, `신규 글 ${file}:${finding.line} [${finding.ruleId}] ${finding.message}`);
-  }
-  for (const finding of aiStyle.warnings) {
-    console.log(`[warn] 신규 글 ${file}:${finding.line} [${finding.ruleId}] ${finding.message}`);
-  }
   const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const block = frontmatter?.[1] ?? '';
-
   const category = block.match(/^category:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  const valueType = block.match(/^valueType:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  const editorialQuality = lintMarkdownEditorialQuality(raw, { valueType, category });
+  for (const finding of editorialQuality.failures) {
+    report(false, `신규 글 ${file}:${finding.line} [${finding.ruleId}] ${finding.message}`);
+  }
+  for (const finding of editorialQuality.warnings) {
+    console.log(`[warn] 신규 글 ${file}:${finding.line} [${finding.ruleId}] ${finding.message}`);
+  }
+
   const publishPacingException = block.match(/^publishPacingException:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
   const pacingExempt = isPublishPacingExceptionAllowed(category, publishPacingException);
   report(
@@ -197,11 +199,6 @@ for (const file of newFiles) {
     newPostsByDay.set(day, (newPostsByDay.get(day) || 0) + 1);
   }
 
-  report(
-    /^editorialReview:\s*true\s*$/m.test(block),
-    `신규 글 ${file}: date(${day ?? '?'}) 와 무관하게 editorialReview: true (사람 편집 검토 완료)를 명시해야 함`,
-  );
-  const valueType = block.match(/^valueType:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
   report(
     Boolean(valueType) && VALUE_TYPES.includes(valueType),
     `신규 글 ${file}: valueType 이 ${VALUE_TYPES.join(' | ')} 중 하나여야 함 (현재 "${valueType ?? '없음'}")`,

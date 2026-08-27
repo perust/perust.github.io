@@ -14,7 +14,6 @@ date: "2026-06-28"
 updated: "2026-07-01"   # 본문을 실제로 고친 날만. 없으면 생략 (dateModified는 date로 대체)
 category: "AI/IT 정보"
 tags: ["Astro", "GitHub Pages"]
-editorialReview: true      # 2026-07-21 이후 새 글 필수 — 사람이 개별 검토를 마친 뒤에만 true
 valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | original-analysis | verified-guide | review
 ---
 ```
@@ -24,6 +23,8 @@ valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | o
 - `updated`: 내용을 실제로 고쳤을 때만 추가한다. 형식적으로 날짜만 바꾸지 않는다. `updated`(없으면 `date`)는 sitemap `lastmod`에도 그대로 반영된다.
 - `category`: **반드시 `src/config/taxonomy.ts`의 `CANONICAL_CATEGORIES`에 있는 정식 카테고리명 중 하나**를 그대로 쓴다(책 서평 / 미리 알아보는 책 정보 / 도서 학습 챌린지 / AI/IT 정보 / 경제 정보, 정확히 5개 유지). 새 글은 이 5개 중 가장 가까운 분류를 고른다. 분류 체계를 바꾸려면 `taxonomy.ts`와 `LEGACY_CATEGORY_MAP`, 회귀 검증을 함께 수정한다. 과거 라벨의 일괄 매핑보다 글 내용상 다른 정식 카테고리가 명확히 가까우면 `POST_CATEGORY_OVERRIDES`에 글 슬러그와 예외를 기록한다. `npm run check:taxonomy`가 정식 카테고리가 아닌 값이나 기록된 예외와 다른 값을 쓰면 빌드 검증에서 실패시킨다.
 - `tags`: 글에 실제로 다룬 주제만, **1~5개**(`NEW_POST_MAX_TAGS`). 2026-07-21 이후 새 글은 tags 를 생략하거나 빈 배열로 둘 수 없다(`npm run check:taxonomy`가 실패시킨다). 또한 `src/config/taxonomy.ts`의 `CONTROLLED_TAGS`(통제 태그 어휘)에 있는 태그만 쓸 수 있다 — 새 태그가 필요하면 글 커밋에 `CONTROLLED_TAGS` 추가를 함께 넣는다(`npm run check:taxonomy`가 검증). 태그 페이지는 `INDEXABLE_TAGS` allowlist(약 10개 핵심 주제)에 있고 글이 3개 이상(`TAG_INDEX_MIN_POSTS`) 쌓였을 때만 색인(`index, follow`)되고 sitemap에 포함된다 — 판정 함수는 `isIndexableTag`(`src/config/taxonomy.ts`) 하나다. 그 외 태그 페이지는 URL 접근은 되지만 `noindex, follow`로 남고, 사이트 어디서도 내부 링크를 걸지 않는다(글 상세 사이드바에서는 텍스트로만 표시).
+- `valueType`: 새 글이 제공하는 가치를 `experience | original-analysis | verified-guide | review` 중 하나로 명시한다. 이 값은 출처·구체적 근거 warning의 문맥을 정하지만, 자동 검사 통과가 사람 검토를 대신하지는 않는다.
+- `editorialReview`(legacy, 선택): 기존 글을 읽기 위한 호환 필드일 뿐 사람 검토 증거가 아니다. 새 글에는 넣지 않는다. 값이 있으면 제거를 권하는 warning이 발생할 수 있으며 다른 warning을 해소하지 않는다.
 - `image`(선택): OG 이미지를 글마다 직접 지정할 때만 쓴다. 생략하면 카테고리별 기본 OG 이미지(`public/og/`), 매칭되는 카테고리가 없으면 기본 이미지로 자동 대체된다.
 
 ### 카테고리·태그·주제 허브 색인 정책 (2026-07-21 통합 → 2026-07-22 2차 개편)
@@ -41,15 +42,16 @@ valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | o
 - **발행 속도**: 기준일(`NEW_POST_POLICY_BASELINE` = 2026-07-21) **다음날(2026-07-22)부터의 date** 를 가진 글은 커밋 여부와 무관하게 하루 최대 `MAX_NEW_POSTS_PER_DAY`(1)편(`check:content-quality`). 여기에 더해 Git 기준 **새로 추가된 글**은 date 가 기준일 **당일(2026-07-21, 포함) 이후**면 신규 글끼리 같은 하루 1편 상한을 받는다(`check:publish-policy`). 기준일 당일 포함 그 이전 date 의 **기존 파일**은 공개 URL 보존을 위해 검사하지 않는다(grandfathering) — 기존 글은 상한 집계에 들어가지 않고, 신규 파일만 센다.
 - **본문 분량**: 모든 글 본문은 공백 제외 `MIN_POST_BODY_CHARS`(2,000)자 이상.
 - **태그 어휘**: 기준일 이후 새 글의 태그는 `CONTROLLED_TAGS` 안에서 1~`NEW_POST_MAX_TAGS`(5)개. tags 생략·빈 배열은 `check:taxonomy`가 빌드를 실패시킨다. 태그 아카이브 URL 표면이 글 발행만으로 늘어나지 않게 한다.
-- **사람 편집 검토 + 독자적 가치**: 기준일 이후 새 글은 frontmatter 에 `editorialReview: true`(사람이 한 편씩 개별 검토를 마쳤다는 표시)와 `valueType`(`experience` 직접 경험 / `original-analysis` 독자적 분석 / `verified-guide` 실제 검증 / `review` 서평·리뷰 중 하나)을 반드시 명시해야 하고, 없으면 `check:content-quality`가 빌드를 실패시킨다. 발행 전에 기존 글과 주제 중복·검색의도 잠식이 없는지 확인하고, 겹치면 새 글 대신 기존 글을 보완한다. 단순 뉴스·공식 문서 재서술만 있는 글은 발행하지 않는다 — 직접 경험, 독자적 분석, 실제 검증 중 하나가 반드시 있어야 한다(자세한 원칙은 `/editorial-policy/`).
+- **독자적 가치 + 사람 검토 기록**: 기준일 이후 새 글은 `valueType`(`experience` 직접 경험 / `original-analysis` 독자적 분석 / `verified-guide` 실제 검증 / `review` 서평·리뷰 중 하나)을 반드시 명시해야 하고, 없으면 `check:content-quality`가 빌드를 실패시킨다. 사람 검토는 boolean이 아니라 아래 exact-SHA 절차와 evidence record로 남긴다. 발행 전에 기존 글과 주제 중복·검색의도 잠식이 없는지 확인하고, 겹치면 새 글 대신 기존 글을 보완한다. 단순 뉴스·공식 문서 재서술만 있는 글은 발행하지 않는다 — 직접 경험, 독자적 분석, 실제 검증 중 하나가 반드시 있어야 한다(자세한 원칙은 `/editorial-policy/`).
 - **홈·블로그 큐레이션**: `FEATURED_MAKER_SLUGS`(직접 제작·자동화 기록)가 홈과 블로그 인덱스에서 우선 노출되며, 슬러그 존재와 링크 노출을 `check:taxonomy`가 검증한다.
 - **자기소개성 페이지 정량 주장**: 포트폴리오/소개/작업 페이지에 공개 근거 없는 "+N%", "N% 개선" 류 수치 주장이 들어오면 `check:content-quality`가 실패시킨다.
 
 ### backdate 우회 방지 — Git 신규 글 감지 (`npm run check:publish-policy`)
 
-날짜 게이트만 있으면 새 글의 `date` 를 기준일 이전으로 적는 것(backdate)만으로 편집 검토·통제 태그 게이트를 통과시킬 수 있다. 이를 막기 위해 `scripts/check-publish-policy.mjs` 가 **Git 기준으로 새로 추가된** `src/content/blog/*.md` 를 감지해, date 가 기준일 당일 또는 그 이전이어도 아래를 강제한다(`npm run verify:site` 와 CI 배포 게이트에 포함).
+날짜 게이트만 있으면 새 글의 `date` 를 기준일 이전으로 적는 것(backdate)만으로 가치 유형·통제 태그 게이트를 통과시킬 수 있다. 이를 막기 위해 `scripts/check-publish-policy.mjs` 가 **Git 기준으로 새로 추가된** `src/content/blog/*.md` 를 감지해, date 가 기준일 당일 또는 그 이전이어도 아래를 강제한다(`npm run verify:site` 와 CI 배포 게이트에 포함).
 
-- `editorialReview: true`, 유효한 `valueType`(`VALUE_TYPES`), `CONTROLLED_TAGS` 안의 태그 1~`NEW_POST_MAX_TAGS`(5)개, 본문 `MIN_POST_BODY_CHARS`(2,000)자 이상.
+- 유효한 `valueType`(`VALUE_TYPES`), `CONTROLLED_TAGS` 안의 태그 1~`NEW_POST_MAX_TAGS`(5)개, 본문 `MIN_POST_BODY_CHARS`(2,000)자 이상.
+- 챗봇 서문 같은 고신뢰 잔재는 failure로 차단하고, 반복 문단·추상 평가어·출처/구체적 근거 부족은 warning으로만 출력한다. 자동 검사는 작성 주체나 AI 사용 여부를 판정하지 않는다.
 - 신규 글 중 date 가 기준일 당일(포함) 이후인 글의 date 별 하루 `MAX_NEW_POSTS_PER_DAY`(1)편 상한.
 
 "신규"의 판정은 "지금 작업 트리에 있는데 기준선(baseline) 커밋 트리에 없으면 신규"라서, 아직 커밋 전 untracked 파일, 스테이징된 파일, 이미 커밋된 파일이 모두 잡힌다. 기준선 커밋은 이 순서로 해석한다(`scripts/lib/git-policy.mjs`):
@@ -60,6 +62,14 @@ valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | o
 4. `HEAD` — 원격 없는 저장소(fixture 등). 이때는 커밋 전 변경만 잡힌다.
 
 검증기 자체는 fixture negative 테스트(`npm run test:publish-policy`)가 임시 git 저장소에서 backdate·게이트 누락·상한 초과·보관 변조·재등장 케이스가 실제로 실패하는지 확인한다.
+
+### exact-SHA 사람 검토와 warning 처리
+
+1. **후보 고정**: 검토할 exact Git `head_ref`와 대상 글 경로를 기록한다. 검토 후 후보 bytes가 바뀌면 이전 판정은 만료된다.
+2. **fresh-session 전체 읽기**: 새 세션에서 title, description, frontmatter, 본문, 링크·이미지 문맥을 처음부터 끝까지 읽는다.
+3. **맥락별 근거 확인**: `original-analysis`·`verified-guide`는 핵심 주장과 외부 원문을 대조한다. `experience`는 실제 과정·화면·출력·수치 같은 firsthand 근거를 확인한다. 텍스트 자체가 가치인 `review`에는 불필요한 링크·수치를 만들지 않는다.
+4. **warning disposition**: `duplicate-prose-block`, `abstract-evaluation-density`, `research-source-gap`, `experience-support-scarcity`, `legacy-editorial-review-flag`를 각각 수정, 근거가 있어 유지, 오탐 중 하나로 처리하고 이유를 남긴다. 경고를 없애기 위해 출처·수치·경험을 지어내지 않는다.
+5. **추천과 evidence record**: 발행(publish), 수정 후 재검토(revise), 보류(hold) 중 하나를 정하고, `head_ref`, fresh-session/로그 경로, warning 처리표, 출처 확인 결과를 한 기록에 묶는다.
 
 ### 2차 큐레이션 immutable policy anchor와 보관 선언
 
@@ -129,7 +139,9 @@ valueType: "experience"    # 2026-07-21 이후 새 글 필수 — experience | o
 
 ## 10. 발행 전 확인
 
-- [ ] `npm run build` 통과
+- [ ] exact `head_ref`를 고정하고 fresh-session 전체 읽기 evidence record를 남겼는가
+- [ ] 모든 editorial-quality warning을 수정·근거 유지·오탐 중 하나로 처리하고 이유를 기록했는가
+- [ ] `npm run check`와 `npm run build` 통과
 - [ ] 제목·description·첫 문단이 같은 질문에 답하는가
 - [ ] H2/H3 구조와 섹션별 결론 문장이 있는가
 - [ ] 수치·인용에 1차 출처 링크가 있는가

@@ -13,10 +13,9 @@
 //  6. 편집·운영 원칙 페이지가 존재하고 footer 에서 연결된다.
 //  7. 블로그 글 상세에 작성자 byline(post-byline)이 있다.
 //  8. 공개 HTML 에 보관 슬러그로 가는 내부 링크가 남아 있지 않다.
-//  9. 기준일(NEW_POST_POLICY_BASELINE) 이후 새 글은 frontmatter 에 사람 편집 검토 완료
-//     (editorialReview: true)와 독자적 가치 유형(valueType) 하나를 명시해야 한다.
-// 10. Markdown 원본과 빌드된 글 HTML 모두 AI 문서처럼 보일 수 있는 스마트 따옴표(“”, ‘’)가 없어야 한다.
-// 11. Markdown 본문 prose 에 고신뢰 AI 답변 잔재가 없어야 한다.
+//  9. 기준일(NEW_POST_POLICY_BASELINE) 이후 새 글은 독자적 가치 유형(valueType) 하나를 명시해야 한다.
+// 10. Markdown 원본과 빌드된 글 HTML 모두 스마트 따옴표(“”, ‘’)가 없어야 한다.
+// 11. Markdown 본문 prose 에 고신뢰 편집 잔재가 없어야 한다.
 //     문맥 의존 패턴은 check-publish-policy에서 Git 신규 글에만 warning을 낸다.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -35,7 +34,7 @@ import {
 } from '../src/config/taxonomy.ts';
 import { loadSecondCurationManifest, manifestSlugs } from './lib/second-curation-manifest.mjs';
 import { LEGACY_PREFIXES, htmlFiles, toPosix } from './lib/site-scan.mjs';
-import { lintMarkdownAiStyle } from './lib/ai-style-lint.mjs';
+import { lintMarkdownEditorialQuality } from './lib/ai-style-lint.mjs';
 
 const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DIST = 'dist';
@@ -127,16 +126,19 @@ const tagCountBySlug = new Map();
 const newPostCountByDay = new Map();
 let thinPosts = 0;
 let smartQuoteFailures = 0;
-let aiStyleFailures = 0;
+let editorialQualityFailures = 0;
 let pacingExceptionFailures = 0;
-// 기준일 이후 새 글의 편집 검토 게이트 — content.config.ts 의 선택 필드를 새 글에는 필수로 강제한다.
-// (VALUE_TYPES 는 src/config/taxonomy.ts 의 SSOT 를 그대로 쓴다.)
-let editorialGateFailures = 0;
+// 기준일 이후 새 글의 가치 유형 게이트(VALUE_TYPES 는 src/config/taxonomy.ts 의 SSOT 를 그대로 쓴다).
+let valueTypeGateFailures = 0;
 for (const file of srcFiles) {
   const raw = readFileSync(join(BLOG_SRC, file), 'utf8');
-  const aiStyle = lintMarkdownAiStyle(raw);
-  for (const finding of aiStyle.failures) {
-    aiStyleFailures += 1;
+  const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  const block = frontmatter?.[1] ?? '';
+  const category = block.match(/^category:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  const valueType = block.match(/^valueType:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+  const editorialQuality = lintMarkdownEditorialQuality(raw, { valueType, category });
+  for (const finding of editorialQuality.failures) {
+    editorialQualityFailures += 1;
     console.log(`[FAIL] ${file}:${finding.line} [${finding.ruleId}] ${finding.message} — ${finding.excerpt}`);
   }
 
@@ -145,9 +147,6 @@ for (const file of srcFiles) {
     smartQuoteFailures += smartQuotes.length;
     console.log(`[FAIL] ${file}: 스마트 따옴표 ${smartQuotes.length}개 발견 (키보드 직선 따옴표만 사용)`);
   }
-  const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  const block = frontmatter?.[1] ?? '';
-  const category = block.match(/^category:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
   if (category) {
     const key = slugify(category);
     categoryCountBySlug.set(key, (categoryCountBySlug.get(key) || 0) + 1);
@@ -174,14 +173,9 @@ for (const file of srcFiles) {
           newPostCountByDay.set(day, (newPostCountByDay.get(day) || 0) + 1);
         }
 
-        // 발행 속도 예외와 무관하게 사람 편집 검토와 독자적 가치 유형은 그대로 강제한다.
-        if (!/^editorialReview:\s*true\s*$/m.test(block)) {
-          editorialGateFailures += 1;
-          console.log(`[FAIL] ${file}: 기준일 이후 새 글은 frontmatter 에 editorialReview: true (사람 편집 검토 완료)를 명시해야 함`);
-        }
-        const valueType = block.match(/^valueType:\s*["']?([^"'\n]+)["']?\s*$/m)?.[1]?.trim();
+        // 발행 속도 예외와 무관하게 독자적 가치 유형은 그대로 강제한다.
         if (!valueType || !VALUE_TYPES.includes(valueType)) {
-          editorialGateFailures += 1;
+          valueTypeGateFailures += 1;
           console.log(
             `[FAIL] ${file}: 기준일 이후 새 글은 valueType 이 ${VALUE_TYPES.join(' | ')} 중 하나여야 함 (현재 "${valueType ?? '없음'}")`,
           );
@@ -224,8 +218,8 @@ report(
   `모든 글은 키보드 직선 따옴표만 사용해야 함 (스마트 따옴표 위반 ${smartQuoteFailures}개)`,
 );
 report(
-  aiStyleFailures === 0,
-  `본문 prose 에 고신뢰 AI 문체 흔적이 없어야 함 (차단 ${aiStyleFailures}건)`,
+  editorialQualityFailures === 0,
+  `본문 prose 에 고신뢰 편집 잔재가 없어야 함 (차단 ${editorialQualityFailures}건)`,
 );
 const overPacedDays = [...newPostCountByDay.entries()]
   .filter(([, count]) => count > MAX_NEW_POSTS_PER_DAY)
@@ -239,8 +233,8 @@ report(
   `발행 속도 예외는 ${PUBLISH_PACING_EXCEPTION_CATEGORY}의 기한형 챌린지에서만 사용해야 함 (위반 ${pacingExceptionFailures}건)`,
 );
 report(
-  editorialGateFailures === 0,
-  `기준일(${NEW_POST_POLICY_BASELINE}) 이후 새 글은 editorialReview: true 와 valueType(${VALUE_TYPES.join(' | ')})을 명시해야 함 (위반 ${editorialGateFailures}건)`,
+  valueTypeGateFailures === 0,
+  `기준일(${NEW_POST_POLICY_BASELINE}) 이후 새 글은 valueType(${VALUE_TYPES.join(' | ')})을 명시해야 함 (위반 ${valueTypeGateFailures}건)`,
 );
 
 // --- 2~3. 태그/카테고리 robots 규칙 ---

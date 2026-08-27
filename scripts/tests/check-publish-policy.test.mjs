@@ -64,6 +64,11 @@ function assertFailWith(result, substring) {
     `실패 메시지에 "${substring}" 가 있어야 함:\n${result.stdout}\n${result.stderr}`,
   );
 }
+function assertPassWithWarning(result, ruleId) {
+  assertPass(result);
+  assert.ok(result.stdout.includes('[warn] 신규 글'), `신규 글 warning이어야 함:\n${result.stdout}`);
+  assert.ok(result.stdout.includes(`[${ruleId}]`), `${ruleId} warning이어야 함:\n${result.stdout}`);
+}
 
 const FIXTURE_GITIGNORE = `dist/\n`;
 
@@ -71,7 +76,7 @@ function postSource({
   date = '2026-07-22',
   category = 'AI/IT 정보',
   tags = ['AI'],
-  editorialReview = true,
+  editorialReview = null,
   valueType = 'experience',
   publishPacingException = null,
   bodyChars = MIN_POST_BODY_CHARS + 200,
@@ -251,6 +256,82 @@ test('신규 글의 문맥 의존 AI 문체 신호는 warning만 내고 통과�
   assert.ok(result.stdout.includes('generic-outline'));
 });
 
+test('editorialReview 없는 valid 신규 글은 통과한다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-22-no-legacy-review-flag.md'),
+    postSource({ editorialReview: null, valueType: 'review' }),
+  );
+  const result = runValidator(root);
+  assertPass(result);
+  assert.ok(!result.stdout.includes('legacy-editorial-review-flag'));
+});
+
+test('editorialReview true는 legacy warning이며 research-source-gap을 suppress하지 않는다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-22-legacy-review-research-gap.md'),
+    postSource({ editorialReview: true, valueType: 'original-analysis' }),
+  );
+  const result = runValidator(root);
+  assertPass(result);
+  assert.ok(result.stdout.includes('[legacy-editorial-review-flag]'), result.stdout);
+  assert.ok(result.stdout.includes('[research-source-gap]'), result.stdout);
+});
+
+test('research-source-gap은 warning-only로 출력되고 신규 글을 차단하지 않는다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-22-research-source-gap.md'),
+    postSource({ editorialReview: null, valueType: 'verified-guide' }),
+  );
+  assertPassWithWarning(runValidator(root), 'research-source-gap');
+});
+
+test('experience-support-scarcity는 warning-only로 출력되고 신규 글을 차단하지 않는다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-22-experience-support-scarcity.md'),
+    postSource({ editorialReview: null, valueType: 'experience' }),
+  );
+  assertPassWithWarning(runValidator(root), 'experience-support-scarcity');
+});
+
+test('grandfathered corpus의 research-source-gap과 legacy flag는 출력하지 않는다', (t) => {
+  const root = makeFixture(t);
+  writeFileSync(
+    newPostPath(root, '2026-07-21-grandfathered-post.md'),
+    postSource({
+      date: '2026-07-21',
+      editorialReview: true,
+      valueType: 'original-analysis',
+      body: `## 초보 추천도\n\n${'가'.repeat(MIN_POST_BODY_CHARS + 200)}`,
+    }),
+  );
+  git(root, 'add', 'src/content/blog/2026-07-21-grandfathered-post.md');
+  git(root, 'commit', '-q', '-m', 'grandfathered editorial metadata');
+  const result = runValidator(root);
+  assertPass(result);
+  assert.ok(!result.stdout.includes('research-source-gap'), result.stdout);
+  assert.ok(!result.stdout.includes('legacy-editorial-review-flag'), result.stdout);
+  assert.ok(!result.stdout.includes('generic-outline'), result.stdout);
+});
+
+test('editorialReview policy/docs는 legacy boolean이 사람 검토 증거라고 주장하지 않는다', () => {
+  const contentConfig = readFileSync(join(REPO_ROOT, 'src/content.config.ts'), 'utf8');
+  const taxonomy = readFileSync(join(REPO_ROOT, 'src/config/taxonomy.ts'), 'utf8');
+  const policy = readFileSync(join(REPO_ROOT, 'src/pages/editorial-policy.astro'), 'utf8');
+  const checklist = readFileSync(join(REPO_ROOT, 'docs/blog-seo-geo-aeo-checklist.md'), 'utf8');
+
+  assert.match(contentConfig, /editorialReview[\s\S]{0,240}검토 증거가 아니다/);
+  assert.match(taxonomy, /editorialReview[\s\S]{0,240}검토 증거가 아니다/);
+  assert.match(policy, /editorialReview[\s\S]{0,240}검토 증거가 아니/);
+  assert.doesNotMatch(policy, /검토 완료는[\s\S]{0,160}editorialReview: true/);
+  assert.doesNotMatch(checklist, /editorialReview: true\s+#.*사람/);
+  assert.match(checklist, /head_ref/);
+  assert.match(checklist, /warning.*처리|경고.*처리/);
+});
+
 test('게이트를 만족하는 staged 신규 글도 baseline 트리와 비교해 통과한다', (t) => {
   const root = makeFixture(t);
   writeFileSync(newPostPath(root, '2026-07-22-valid-staged-post.md'), postSource());
@@ -280,13 +361,16 @@ test('backdate(기준일 이전 date) 신규 글도 게이트가 적용되어 �
   );
   const result = runValidator(root);
   assertFailWith(result, '2026-07-15-backdated-new-post.md');
-  assertFailWith(result, 'editorialReview: true');
+  assertFailWith(result, 'valueType');
 });
 
-test('신규 글의 editorialReview 누락은 실패한다', (t) => {
+test('신규 글의 editorialReview false도 legacy warning일 뿐 차단하지 않는다', (t) => {
   const root = makeFixture(t);
-  writeFileSync(newPostPath(root, '2026-07-22-no-review.md'), postSource({ editorialReview: null }));
-  assertFailWith(runValidator(root), 'editorialReview: true');
+  writeFileSync(
+    newPostPath(root, '2026-07-22-false-legacy-review.md'),
+    postSource({ editorialReview: false, valueType: 'review' }),
+  );
+  assertPassWithWarning(runValidator(root), 'legacy-editorial-review-flag');
 });
 
 test('신규 글의 valueType 누락은 실패한다', (t) => {
@@ -363,7 +447,7 @@ test('알 수 없는 기한형 챌린지 예외값은 fail-closed로 거부한�
   assertFailWith(runValidator(root), '도서 학습 챌린지');
 });
 
-test('기한형 챌린지 예외 글도 사람 편집 검토를 생략할 수 없다', (t) => {
+test('기한형 챌린지 발행 예외 글도 editorialReview 없이 통과한다', (t) => {
   const root = makeFixture(t);
   writeFileSync(
     newPostPath(root, '2026-07-22-unreviewed-exception.md'),
@@ -373,7 +457,7 @@ test('기한형 챌린지 예외 글도 사람 편집 검토를 생략할 수 �
       publishPacingException: 'deadline-bound-challenge',
     }),
   );
-  assertFailWith(runValidator(root), 'editorialReview: true');
+  assertPass(runValidator(root));
 });
 
 test('기준일 당일(포함) date 의 신규 글 2편도 하루 상한을 넘어 실패한다', (t) => {
@@ -396,7 +480,7 @@ test('이미 커밋된 신규 글도 POLICY_GIT_BASELINE(CI push 이전 SHA)으�
   const baseSha = git(root, 'rev-parse', 'HEAD');
   writeFileSync(
     newPostPath(root, '2026-07-10-committed-backdate.md'),
-    postSource({ date: '2026-07-10', editorialReview: null }),
+    postSource({ date: '2026-07-10', valueType: null }),
   );
   git(root, 'add', '-A');
   git(root, 'commit', '-q', '-m', 'sneak in backdated post');

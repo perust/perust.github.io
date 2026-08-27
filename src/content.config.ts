@@ -13,8 +13,8 @@ const blog = defineCollection({
     updated: z.coerce.date().optional(),
     category: z.string(),
     tags: z.array(z.string()).default([]),
-    // 발행 전에 사람이 개별 검토를 마쳤다는 표시. 기존 글은 선택이지만,
-    // NEW_POST_POLICY_BASELINE(2026-07-21) 이후 새 글은 check-content-quality 가 true 명시를 강제한다.
+    // editorialReview는 기존 글 호환을 위해 남긴 legacy metadata이며 사람 검토 증거가 아니다.
+    // 새 글은 이 값을 요구하지 않고, 실제 검토는 exact-SHA 절차와 기록으로 증명한다.
     editorialReview: z.boolean().optional(),
     // 이 글이 제공하는 독자적 가치 유형(VALUE_TYPES SSOT). 기준일 이후 새 글은 반드시 하나를 명시해야 한다.
     // experience: 직접 경험 / original-analysis: 독자적 분석 / verified-guide: 실제 검증한 가이드 / review: 서평·리뷰.
