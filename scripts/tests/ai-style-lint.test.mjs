@@ -298,6 +298,55 @@ test('nested HTML heading/list는 duplicate-prose-block prose에서 제외한다
   }
 });
 
+test('multiline HTML heading/list exclusion은 같은 줄의 인접 visible prose를 보존한다', () => {
+  const eightTerms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
+  const body = [
+    '좋은 중요한 필요한 <h2>',
+    eightTerms,
+    '</h2> 좋은 중요한 필요한 좋은',
+    '목록 앞 설명 <ul>',
+    '<li>',
+    eightTerms,
+    '</li>',
+    '</ul> 목록 뒤 설명',
+  ].join('\n');
+  const result = qualityLint(body);
+  assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'abstract-evaluation-density'));
+  assert.equal(result.stats.abstractEvaluationCount, 7);
+
+  const visibleCrossover = qualityLint(`<h2>제외할 제목</h2>\n${eightTerms}`);
+  assert.ok(visibleCrossover.warnings.some(({ ruleId }) => ruleId === 'abstract-evaluation-density'));
+  assert.equal(visibleCrossover.stats.abstractEvaluationCount, 8);
+});
+
+test('multiline HTML control exclusion은 내부 중복만 제외하고 인접 visible prose는 보존한다', () => {
+  const excludedControls = [
+    '<button>',
+    DUPLICATE_BLOCK,
+    '</button>',
+    '',
+    '<button>',
+    DUPLICATE_BLOCK,
+    '</button>',
+  ].join('\n');
+  const excludedResult = qualityLint(excludedControls);
+  assert.ok(!excludedResult.warnings.some(({ ruleId }) => ruleId === 'duplicate-prose-block'));
+  assert.equal(excludedResult.stats.duplicateProseBlockCount, 0);
+
+  const visibleCrossover = [
+    '<button>',
+    '첫 번째 제어 문구',
+    `</button>${DUPLICATE_BLOCK}`,
+    '',
+    '<button>',
+    '두 번째 제어 문구',
+    `</button>${DUPLICATE_BLOCK}`,
+  ].join('\n');
+  const visibleResult = qualityLint(visibleCrossover);
+  assert.ok(visibleResult.warnings.some(({ ruleId }) => ruleId === 'duplicate-prose-block'));
+  assert.equal(visibleResult.stats.duplicateProseBlockCount, 1);
+});
+
 test('research-source-gap은 researched valueType과 pre-reading category에만 routing한다', () => {
   const body = '확인할 내용을 독자가 이해할 수 있도록 정리한 본문입니다.';
   for (const context of [
@@ -323,6 +372,45 @@ test('visible Markdown/HTML/autolink external body anchor만 research-source-gap
     assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), name);
     assert.equal(result.stats.uniqueExternalSourceCount, 1, name);
   }
+});
+
+test('defined visible reference-style external link만 research-source-gap을 해소한다', () => {
+  const definitionOnlyTerms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
+  const definedBody = [
+    '확인한 자료는 [공식 원문][source]입니다.',
+    '',
+    '[source]: https://example.com/reference-source',
+    `[${definitionOnlyTerms}]: https://example.com/definition-only`,
+  ].join('\n');
+  const definedResult = qualityLint(definedBody, { valueType: 'verified-guide' });
+  assert.ok(!definedResult.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+  assert.equal(definedResult.stats.uniqueExternalSourceCount, 1);
+  assert.equal(definedResult.stats.abstractEvaluationCount, 0, 'reference definition은 prose가 아니다');
+
+  for (const [name, anchor] of [
+    ['unresolved reference', '[공식 원문][missing]'],
+    ['empty visible label', '[][source]\n\n[source]: https://example.com/reference-source'],
+  ]) {
+    const result = qualityLint(anchor, { valueType: 'verified-guide' });
+    assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), name);
+    assert.equal(result.stats.uniqueExternalSourceCount, 0, name);
+  }
+});
+
+test('visible unquoted HTML href만 research-source-gap을 해소한다', () => {
+  const visibleResult = qualityLint(
+    '<a class=source href=https://example.com/unquoted-source>공식 원문</a>',
+    { valueType: 'original-analysis' },
+  );
+  assert.ok(!visibleResult.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+  assert.equal(visibleResult.stats.uniqueExternalSourceCount, 1);
+
+  const emptyResult = qualityLint(
+    '<a href=https://example.com/unquoted-source></a>',
+    { valueType: 'original-analysis' },
+  );
+  assert.ok(emptyResult.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+  assert.equal(emptyResult.stats.uniqueExternalSourceCount, 0);
 });
 
 test('hidden/non-rendered HTML anchor는 research-source-gap을 해소하지 않는다', () => {
@@ -406,6 +494,22 @@ test('visible reference-style image는 experience-support-scarcity를 해소한�
   const result = qualityLint(body, { valueType: 'experience' });
   assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
   assert.equal(result.stats.bodyMediaCount, 1);
+});
+
+test('unresolved reference image는 experience-support-scarcity를 해소하지 않는다', () => {
+  const unresolved = qualityLint(
+    '![실행 화면][missing]\n\n직접 실행한 경험을 설명한 본문입니다.',
+    { valueType: 'experience' },
+  );
+  assert.ok(unresolved.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+  assert.equal(unresolved.stats.bodyMediaCount, 0);
+
+  const resolved = qualityLint(
+    '![실행 화면][run]\n\n[run]: /images/run.png\n\n직접 실행한 경험을 설명한 본문입니다.',
+    { valueType: 'experience' },
+  );
+  assert.ok(!resolved.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+  assert.equal(resolved.stats.bodyMediaCount, 1);
 });
 
 test('frontmatter/inline code/comment의 marker 모양은 experience support가 아니다', () => {

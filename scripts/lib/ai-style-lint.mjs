@@ -64,6 +64,10 @@ const ABSTRACT_EVALUATION_TERM = /좋은|중요한|필요한/g;
 const PRE_READING_CATEGORY = '미리 알아보는 책 정보';
 const NUMERIC_DETAIL = /\d/;
 
+function normalizeReferenceLabel(label) {
+  return label.trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
 /**
  * frontmatter·fence·comment·quote·code를 제외하되, source/media 신호를 읽을 수 있도록
  * Markdown/HTML markup은 보존한 body line을 만든다.
@@ -80,6 +84,7 @@ function scanMarkdownBody(markdown) {
   let inComment = false;
   let codeFenceCount = 0;
   let frontmatterLines = [];
+  const referenceDefinitions = new Map();
 
   if (sourceLines[0]?.trim() === '---') {
     index = 1;
@@ -141,7 +146,12 @@ function scanMarkdownBody(markdown) {
       cursor = start + 4;
     }
 
-    if (/^\s*\[[^\]]+\]:\s*\S+/.test(uncommented)) continue;
+    const referenceDefinition = uncommented.match(/^\s*\[([^\]]+)\]:\s*(?:<([^>\s]+)>|(\S+))/);
+    if (referenceDefinition) {
+      const [, label, angleDestination, bareDestination] = referenceDefinition;
+      referenceDefinitions.set(normalizeReferenceLabel(label), angleDestination ?? bareDestination);
+      continue;
+    }
 
     bodyLines.push({
       line: index + 1,
@@ -151,19 +161,77 @@ function scanMarkdownBody(markdown) {
     });
   }
 
-  return { bodyLines, codeFenceCount, frontmatterLines };
+  return { bodyLines, codeFenceCount, frontmatterLines, referenceDefinitions };
+}
+
+function proseTextFromMarkup(markupText) {
+  return markupText
+    // 링크 목적지는 제외하되 독자에게 보이는 label은 편집 잔재 검사에 남긴다.
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/!?\[([^\]]*)\]\[[^\]]*\]/g, '$1')
+    .replace(/<https?:\/\/[^>]+>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/https?:\/\/\S+/gi, '');
+}
+
+const EDITORIAL_EXCLUDED_HTML_ELEMENTS = new Set([
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'menu',
+  'button', 'figure', 'figcaption', 'picture', 'img', 'video', 'source',
+  'form', 'input', 'select', 'textarea',
+]);
+const EDITORIAL_EXCLUDED_HTML_CLASS = /\bclass=["'][^"']*(?:cta|button|control|figure|actions?)[^"']*["']/i;
+
+/**
+ * HTML heading/list/control container의 내용만 줄 경계를 넘어 제외한다. 제거된 구간의
+ * 개행은 보존해 원본 line mapping과 같은 줄의 앞뒤 visible prose를 유지한다.
+ */
+function editorialBodyMarkupLines(bodyLines) {
+  const markup = bodyLines.map(({ markupText }) => markupText).join('\n');
+  const stack = [];
+  let cursor = 0;
+  let excludedDepth = 0;
+  let editorialMarkup = '';
+  const append = (value, include) => {
+    editorialMarkup += include ? value : value.replace(/[^\n]/g, '');
+  };
+
+  for (const match of markup.matchAll(/<\/?([a-z][\w:-]*)\b[^>]*>/gi)) {
+    const rawTag = match[0];
+    // Markdown autolink는 HTML element가 아니므로 visible prose로 그대로 보존한다.
+    if (/^<https?:\/\//i.test(rawTag)) continue;
+
+    append(markup.slice(cursor, match.index), excludedDepth === 0);
+    const tagName = match[1].toLowerCase();
+    const isClosing = /^<\//.test(rawTag);
+
+    if (isClosing) {
+      const openedExcluded = stack.pop();
+      if (openedExcluded) excludedDepth -= 1;
+    } else {
+      const isExcluded = EDITORIAL_EXCLUDED_HTML_ELEMENTS.has(tagName)
+        || EDITORIAL_EXCLUDED_HTML_CLASS.test(rawTag);
+      const isVoid = VOID_HTML_ELEMENTS.has(tagName) || /\/\s*>$/.test(rawTag);
+      if (!isVoid) {
+        stack.push(isExcluded);
+        if (isExcluded) excludedDepth += 1;
+      }
+    }
+
+    append(rawTag, false);
+    cursor = match.index + rawTag.length;
+  }
+
+  append(markup.slice(cursor), excludedDepth === 0);
+  return editorialMarkup.split('\n');
 }
 
 function proseLinesFromScan(bodyLines) {
   const result = [];
-  for (const entry of bodyLines) {
-    const text = entry.markupText
-      // 링크 목적지는 제외하되 독자에게 보이는 label은 편집 잔재 검사에 남긴다.
-      .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
-      .replace(/!?\[([^\]]*)\]\[[^\]]*\]/g, '$1')
-      .replace(/<https?:\/\/[^>]+>/gi, '')
-      .replace(/<[^>]+>/g, '')
-      .replace(/https?:\/\/\S+/gi, '');
+  const editorialMarkupLines = editorialBodyMarkupLines(bodyLines);
+  for (const [index, entry] of bodyLines.entries()) {
+    const text = proseTextFromMarkup(entry.markupText);
+    const editorialText = proseTextFromMarkup(editorialMarkupLines[index] ?? '');
     const punctuationText = entry.markupText
       // 외부 원문 URL에 직접 연결된 기사 원제·직접 인용의 문장부호만 그대로 둔다.
       .replace(/!?\[[^\]]*\]\(https?:\/\/[^)]*\)/gi, '')
@@ -176,6 +244,7 @@ function proseLinesFromScan(bodyLines) {
       line: entry.line,
       raw: entry.raw,
       text,
+      editorialText,
       markupText: entry.markupText,
       punctuationText,
       isHtmlHeading: /^\s*<h[1-6]\b/i.test(entry.uncommented),
@@ -238,7 +307,7 @@ function visibleBodyMarkup(bodyLines) {
   return visible;
 }
 
-function externalBodySources(bodyLines) {
+function externalBodySources(bodyLines, referenceDefinitions) {
   const sources = new Set();
   const markupText = visibleBodyMarkup(bodyLines);
   const markdownWithoutImages = markupText
@@ -247,17 +316,26 @@ function externalBodySources(bodyLines) {
   for (const match of markdownWithoutImages.matchAll(/(?<!!)\[([^\]]+)\]\(\s*(https?:\/\/[^\s)]+)(?:\s+["'][^)]*["'])?\s*\)/gi)) {
     if (visibleAnchorLabel(match[1])) sources.add(match[2]);
   }
-  for (const match of markupText.matchAll(/<a\b[^>]*\bhref\s*=\s*["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
-    if (visibleAnchorLabel(match[2])) sources.add(match[1]);
+  for (const match of markdownWithoutImages.matchAll(/(?<!!)\[([^\]]*)\]\s*\[([^\]]*)\]/g)) {
+    const destination = referenceDefinitions.get(normalizeReferenceLabel(match[2] || match[1]));
+    if (destination && /^https?:\/\//i.test(destination) && visibleAnchorLabel(match[1])) {
+      sources.add(destination);
+    }
+  }
+  for (const match of markupText.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)'|(https?:\/\/[^\s"'`=<>]+))[^>]*>([\s\S]*?)<\/a>/gi)) {
+    const destination = match[1] ?? match[2] ?? match[3];
+    if (visibleAnchorLabel(match[4])) sources.add(destination);
   }
   for (const match of markupText.matchAll(/<(https?:\/\/[^<>\s]+)>/gi)) sources.add(match[1]);
   return sources;
 }
 
-function bodyMediaCount(bodyLines) {
+function bodyMediaCount(bodyLines, referenceDefinitions) {
   const markupText = visibleBodyMarkup(bodyLines);
   const inlineImages = [...markupText.matchAll(/!\[[^\]]*\]\([^)]*\)/g)].length;
-  const referenceImages = [...markupText.matchAll(/!\[[^\]]*\]\s*\[[^\]]*\]/g)].length;
+  const referenceImages = [...markupText.matchAll(/!\[([^\]]*)\]\s*\[([^\]]*)\]/g)]
+    .filter((match) => referenceDefinitions.has(normalizeReferenceLabel(match[2] || match[1])))
+    .length;
   const htmlMedia = [...markupText.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
   return inlineImages + referenceImages + htmlMedia;
 }
@@ -265,13 +343,11 @@ function bodyMediaCount(bodyLines) {
 function isStandaloneEditorialProse(entry) {
   const raw = entry.raw.trim();
   const htmlMarkup = entry.markupText;
-  if (/^#{1,6}(?:\s|$)/.test(raw) || entry.isHtmlHeading) return false;
-  if (/<(?:h[1-6]|ul|ol|li|dl|dt|dd|menu)\b/i.test(htmlMarkup)) return false;
+  if (!entry.editorialText.trim()) return false;
+  if (/^#{1,6}(?:\s|$)/.test(raw)) return false;
   if (/^(?:[-*+] |\d+[.)] )/.test(raw)) return false;
   if (/^!?\[[^\]]*\](?:\([^)]*\)|\[[^\]]*\])\s*[.!?]?$/s.test(raw)) return false;
   if (/^\s*<a\b[\s\S]*<\/a>\s*$/i.test(htmlMarkup)) return false;
-  if (/<(?:button|figure|figcaption|picture|img|video|source|form|input|select|textarea)\b/i.test(htmlMarkup)) return false;
-  if (/<[^>]+\bclass=["'][^"']*(?:cta|button|control|figure|actions?)[^"']*["']/i.test(htmlMarkup)) return false;
   return true;
 }
 
@@ -281,7 +357,7 @@ function normalizedProseBlocks(lines) {
   const finish = () => {
     if (!current.length) return;
     const normalized = current
-      .map(({ text }) => text)
+      .map(({ editorialText }) => editorialText)
       .join(' ')
       .normalize('NFC')
       .replace(/[*_~]/g, '')
@@ -307,7 +383,8 @@ function normalizedProseBlocks(lines) {
  * 링크 표시 문구와 HTML의 가시 텍스트는 검사하되, 원제 링크의 문장부호는 보존한다.
  */
 export function markdownProseLines(markdown) {
-  return proseLinesFromScan(scanMarkdownBody(markdown).bodyLines);
+  return proseLinesFromScan(scanMarkdownBody(markdown).bodyLines)
+    .map(({ editorialText, ...entry }) => entry);
 }
 
 export function lintMarkdownEditorialQuality(markdown, { valueType, category } = {}) {
@@ -419,7 +496,7 @@ export function lintMarkdownEditorialQuality(markdown, { valueType, category } =
   }
 
   const abstractEvaluationCount = editorialLines.reduce(
-    (total, entry) => total + (entry.text.match(ABSTRACT_EVALUATION_TERM) ?? []).length,
+    (total, entry) => total + (entry.editorialText.match(ABSTRACT_EVALUATION_TERM) ?? []).length,
     0,
   );
   if (abstractEvaluationCount >= 8) {
@@ -432,9 +509,9 @@ export function lintMarkdownEditorialQuality(markdown, { valueType, category } =
     ));
   }
 
-  const externalSources = externalBodySources(scan.bodyLines);
-  const mediaCount = bodyMediaCount(scan.bodyLines);
-  const numericDetailLines = editorialLines.filter(({ text }) => NUMERIC_DETAIL.test(text));
+  const externalSources = externalBodySources(scan.bodyLines, scan.referenceDefinitions);
+  const mediaCount = bodyMediaCount(scan.bodyLines, scan.referenceDefinitions);
+  const numericDetailLines = editorialLines.filter(({ editorialText }) => NUMERIC_DETAIL.test(editorialText));
   const requiresResearchSource = valueType === 'verified-guide'
     || valueType === 'original-analysis'
     || category === PRE_READING_CATEGORY;
