@@ -71,6 +71,26 @@ test('인라인 HTML comment는 가시 본문의 high-confidence 흔적을 숨�
   assert.deepEqual(lint('정상 본문 <!-- 물론입니다! — 숨은 메모 --> 이어지는 문장').failures, []);
 });
 
+test('comment prefix 뒤 marker는 fence/quote/indent exclusion으로 재분류되지 않는다', () => {
+  const blockerCases = [
+    ['chatbot-preface', '물론입니다! 요청하신 글입니다.'],
+    ['em-dash', '본문 — 덧붙임'],
+    ['typographic-ellipsis', '본문…'],
+    ['draft-placeholder', '[출처 필요]'],
+  ];
+  const wrappers = [
+    ['fence', (payload) => ['<!-- note -->```text', payload, '```'].join('\n')],
+    ['quote', (payload) => `<!-- note --> > ${payload}`],
+    ['indent', (payload) => `<!-- note -->    ${payload}`],
+  ];
+
+  for (const [syntax, wrap] of wrappers) {
+    for (const [ruleId, payload] of blockerCases) {
+      assert.deepEqual(failureIds(wrap(payload)), [ruleId], `${syntax} / ${ruleId}`);
+    }
+  }
+});
+
 test('링크 표시 문구는 가시 흔적을 검사하되 기사 원제 문장부호는 보존한다', () => {
   const body = [
     '[물론입니다! 요청하신 글입니다.](https://example.com/chatbot)',
@@ -253,6 +273,31 @@ test('abstract-evaluation-density는 frontmatter/code/comment/quote/heading/list
   assert.equal(result.stats.abstractEvaluationCount, 0);
 });
 
+test('nested HTML heading/list는 abstract-evaluation-density prose에서 제외한다', () => {
+  const terms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
+  const cases = [
+    ['heading', `<section><h2>${terms}</h2></section>`],
+    ['list', `<div><ul><li>${terms}</li></ul></div>`],
+  ];
+  for (const [name, body] of cases) {
+    const result = qualityLint(body);
+    assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'abstract-evaluation-density'), name);
+    assert.equal(result.stats.abstractEvaluationCount, 0, name);
+  }
+});
+
+test('nested HTML heading/list는 duplicate-prose-block prose에서 제외한다', () => {
+  const cases = [
+    ['heading', `<section><h2>${DUPLICATE_BLOCK}</h2></section>`],
+    ['list', `<div><ol><li>${DUPLICATE_BLOCK}</li></ol></div>`],
+  ];
+  for (const [name, block] of cases) {
+    const result = qualityLint(`${block}\n\n${block}`);
+    assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'duplicate-prose-block'), name);
+    assert.equal(result.stats.duplicateProseBlockCount, 0, name);
+  }
+});
+
 test('research-source-gap은 researched valueType과 pre-reading category에만 routing한다', () => {
   const body = '확인할 내용을 독자가 이해할 수 있도록 정리한 본문입니다.';
   for (const context of [
@@ -270,12 +315,27 @@ test('visible Markdown/HTML/autolink external body anchor만 research-source-gap
   const anchorCases = [
     ['Markdown', '[공식 원문](https://example.com/source)'],
     ['HTML', '<a class="source" href="https://example.com/source">공식 원문</a>'],
+    ['multiline HTML', ['<a class="source"', '  href="https://example.com/source">', '  <span>공식 원문</span>', '</a>'].join('\n')],
     ['autolink', '<https://example.com/source>'],
   ];
   for (const [name, anchor] of anchorCases) {
     const result = qualityLint(`확인한 자료는 ${anchor}입니다.`, { valueType: 'verified-guide' });
     assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), name);
     assert.equal(result.stats.uniqueExternalSourceCount, 1, name);
+  }
+});
+
+test('hidden/non-rendered HTML anchor는 research-source-gap을 해소하지 않는다', () => {
+  const hiddenCases = [
+    ['hidden anchor', '<a hidden href="https://example.com/source">공식 원문</a>'],
+    ['hidden container', '<div hidden><a href="https://example.com/source">공식 원문</a></div>'],
+    ['display none container', '<div style="display: none"><a href="https://example.com/source">공식 원문</a></div>'],
+    ['template container', '<template><a href="https://example.com/source">공식 원문</a></template>'],
+  ];
+  for (const [name, body] of hiddenCases) {
+    const result = qualityLint(body, { valueType: 'verified-guide' });
+    assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'), name);
+    assert.equal(result.stats.uniqueExternalSourceCount, 0, name);
   }
 });
 
@@ -321,6 +381,33 @@ test('네 experience marker class는 scarcity만 해소하고 다른 경고는 �
   }
 });
 
+test('empty fence는 experience-support-scarcity를 해소하는 output이 아니다', () => {
+  const result = qualityLint('```text\n\n```\n\n직접 실행한 경험을 설명한 본문입니다.', { valueType: 'experience' });
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+  assert.equal(result.stats.codeFenceCount, 0);
+});
+
+test('hidden/non-rendered body media는 experience-support-scarcity를 해소하지 않는다', () => {
+  const hiddenCases = [
+    ['hidden image', '<img hidden src="/images/run.png" alt="실행 화면">'],
+    ['hidden container', '<div hidden><img src="/images/run.png" alt="실행 화면"></div>'],
+    ['display none container', '<div style="display:none"><video src="/videos/run.mp4"></video></div>'],
+    ['template container', '<template><img src="/images/run.png" alt="실행 화면"></template>'],
+  ];
+  for (const [name, marker] of hiddenCases) {
+    const result = qualityLint(`${marker}\n\n직접 실행한 경험을 설명한 본문입니다.`, { valueType: 'experience' });
+    assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'), name);
+    assert.equal(result.stats.bodyMediaCount, 0, name);
+  }
+});
+
+test('visible reference-style image는 experience-support-scarcity를 해소한다', () => {
+  const body = ['![실행 화면][run]', '', '[run]: /images/run.png', '', '직접 실행한 경험을 설명한 본문입니다.'].join('\n');
+  const result = qualityLint(body, { valueType: 'experience' });
+  assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'experience-support-scarcity'));
+  assert.equal(result.stats.bodyMediaCount, 1);
+});
+
 test('frontmatter/inline code/comment의 marker 모양은 experience support가 아니다', () => {
   const body = [
     '`42초 https://example.com/inline`',
@@ -352,6 +439,15 @@ test('legacy editorialReview flag는 review 증거가 아니며 다른 finding�
   );
   assert.ok(ids.includes('legacy-editorial-review-flag'));
   assert.ok(ids.includes('research-source-gap'));
+});
+
+test('quoted YAML editorialReview key도 legacy field presence로 경고한다', () => {
+  for (const key of ['"editorialReview"', "'editorialReview'"]) {
+    const result = qualityLint('일반 본문입니다.', { valueType: 'review' }, [`${key}: true`]);
+    const warning = result.warnings.find(({ ruleId }) => ruleId === 'legacy-editorial-review-flag');
+    assert.ok(warning, key);
+    assert.equal(warning.line, 4, key);
+  }
 });
 
 test('text-only review는 research/experience warning을 받지 않는다', () => {

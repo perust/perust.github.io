@@ -76,6 +76,7 @@ function scanMarkdownBody(markdown) {
   let inFence = false;
   let fenceMarker = '';
   let fenceLength = 0;
+  let fenceHasContent = false;
   let inComment = false;
   let codeFenceCount = 0;
   let frontmatterLines = [];
@@ -93,12 +94,28 @@ function scanMarkdownBody(markdown) {
     if (inFence) {
       const closingFence = raw.match(/^ {0,3}(`{3,}|~{3,})[ \t]*$/);
       if (closingFence && closingFence[1][0] === fenceMarker && closingFence[1].length >= fenceLength) {
+        if (fenceHasContent) codeFenceCount += 1;
         inFence = false;
         fenceMarker = '';
         fenceLength = 0;
+        fenceHasContent = false;
+      } else if (raw.trim()) {
+        fenceHasContent = true;
       }
       continue;
     }
+
+    // Markdown block syntax는 원본 줄 시작 위치에서만 성립한다. 주석을 먼저 제거하면
+    // `<!-- ... -->```/`> `/4-space marker가 새로 줄 시작에 나타나 blocker를 숨길 수 있다.
+    const openingFence = raw.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+    if (openingFence && (openingFence[1][0] === '~' || !openingFence[2].includes('`'))) {
+      inFence = true;
+      fenceMarker = openingFence[1][0];
+      fenceLength = openingFence[1].length;
+      fenceHasContent = false;
+      continue;
+    }
+    if (/^(?: {4}|\t)/.test(raw) || /^\s*>/.test(raw)) continue;
 
     // 주석 조각만 제거한다. 인라인 주석 앞뒤의 독자에게 보이는 본문은 계속 검사한다.
     let uncommented = '';
@@ -124,15 +141,6 @@ function scanMarkdownBody(markdown) {
       cursor = start + 4;
     }
 
-    const openingFence = uncommented.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
-    if (openingFence && (openingFence[1][0] === '~' || !openingFence[2].includes('`'))) {
-      inFence = true;
-      fenceMarker = openingFence[1][0];
-      fenceLength = openingFence[1].length;
-      codeFenceCount += 1;
-      continue;
-    }
-    if (/^(?: {4}|\t)/.test(uncommented) || /^\s*>/.test(uncommented)) continue;
     if (/^\s*\[[^\]]+\]:\s*\S+/.test(uncommented)) continue;
 
     bodyLines.push({
@@ -179,6 +187,7 @@ function proseLinesFromScan(bodyLines) {
 function visibleAnchorLabel(value) {
   return value
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/!\[[^\]]*\]\s*\[[^\]]*\]/g, '')
     .replace(/<[^>]+>/g, '')
     .replace(/[*_~`]/g, '')
     .replace(/&nbsp;/gi, ' ')
@@ -186,38 +195,83 @@ function visibleAnchorLabel(value) {
     .trim();
 }
 
+const NON_RENDERED_HTML_ELEMENTS = new Set(['template', 'script', 'style', 'noscript']);
+const VOID_HTML_ELEMENTS = new Set([
+  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta',
+  'param', 'source', 'track', 'wbr',
+]);
+const HIDDEN_HTML_ATTRIBUTE = /(?:\s+hidden(?=\s|=|\/?>)|\s+style\s*=\s*(?:"[^"]*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"]*"|'[^']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^']*'))/i;
+
+function visibleBodyMarkup(bodyLines) {
+  const markup = bodyLines.map(({ markupText }) => markupText).join('\n');
+  const stack = [];
+  let cursor = 0;
+  let hiddenDepth = 0;
+  let visible = '';
+
+  for (const match of markup.matchAll(/<\/?([a-z][\w:-]*)\b[^>]*>/gi)) {
+    const rawTag = match[0];
+    // Markdown autolink는 HTML element가 아니므로 그대로 보존한다.
+    if (/^<https?:\/\//i.test(rawTag)) continue;
+
+    if (hiddenDepth === 0) visible += markup.slice(cursor, match.index);
+    const tagName = match[1].toLowerCase();
+    const isClosing = /^<\//.test(rawTag);
+
+    if (isClosing) {
+      const openedHidden = stack.pop();
+      if (openedHidden) hiddenDepth -= 1;
+      if (openedHidden === false && hiddenDepth === 0) visible += rawTag;
+    } else {
+      const isHidden = NON_RENDERED_HTML_ELEMENTS.has(tagName) || HIDDEN_HTML_ATTRIBUTE.test(rawTag);
+      if (hiddenDepth === 0 && !isHidden) visible += rawTag;
+      const isVoid = VOID_HTML_ELEMENTS.has(tagName) || /\/\s*>$/.test(rawTag);
+      if (!isVoid) {
+        stack.push(isHidden);
+        if (isHidden) hiddenDepth += 1;
+      }
+    }
+    cursor = match.index + rawTag.length;
+  }
+
+  if (hiddenDepth === 0) visible += markup.slice(cursor);
+  return visible;
+}
+
 function externalBodySources(bodyLines) {
   const sources = new Set();
-  for (const { markupText } of bodyLines) {
-    const markdownWithoutImages = markupText.replace(/!\[[^\]]*\]\([^)]*\)/g, '');
-    for (const match of markdownWithoutImages.matchAll(/(?<!!)\[([^\]]+)\]\(\s*(https?:\/\/[^\s)]+)(?:\s+["'][^)]*["'])?\s*\)/gi)) {
-      if (visibleAnchorLabel(match[1])) sources.add(match[2]);
-    }
-    for (const match of markupText.matchAll(/<a\b[^>]*\bhref\s*=\s*["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
-      if (visibleAnchorLabel(match[2])) sources.add(match[1]);
-    }
-    for (const match of markupText.matchAll(/<(https?:\/\/[^<>\s]+)>/gi)) sources.add(match[1]);
+  const markupText = visibleBodyMarkup(bodyLines);
+  const markdownWithoutImages = markupText
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/!\[[^\]]*\]\s*\[[^\]]*\]/g, '');
+  for (const match of markdownWithoutImages.matchAll(/(?<!!)\[([^\]]+)\]\(\s*(https?:\/\/[^\s)]+)(?:\s+["'][^)]*["'])?\s*\)/gi)) {
+    if (visibleAnchorLabel(match[1])) sources.add(match[2]);
   }
+  for (const match of markupText.matchAll(/<a\b[^>]*\bhref\s*=\s*["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    if (visibleAnchorLabel(match[2])) sources.add(match[1]);
+  }
+  for (const match of markupText.matchAll(/<(https?:\/\/[^<>\s]+)>/gi)) sources.add(match[1]);
   return sources;
 }
 
 function bodyMediaCount(bodyLines) {
-  let count = 0;
-  for (const { markupText } of bodyLines) {
-    count += [...markupText.matchAll(/!\[[^\]]*\]\([^)]*\)/g)].length;
-    count += [...markupText.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
-  }
-  return count;
+  const markupText = visibleBodyMarkup(bodyLines);
+  const inlineImages = [...markupText.matchAll(/!\[[^\]]*\]\([^)]*\)/g)].length;
+  const referenceImages = [...markupText.matchAll(/!\[[^\]]*\]\s*\[[^\]]*\]/g)].length;
+  const htmlMedia = [...markupText.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
+  return inlineImages + referenceImages + htmlMedia;
 }
 
 function isStandaloneEditorialProse(entry) {
   const raw = entry.raw.trim();
+  const htmlMarkup = entry.markupText;
   if (/^#{1,6}(?:\s|$)/.test(raw) || entry.isHtmlHeading) return false;
+  if (/<(?:h[1-6]|ul|ol|li|dl|dt|dd|menu)\b/i.test(htmlMarkup)) return false;
   if (/^(?:[-*+] |\d+[.)] )/.test(raw)) return false;
   if (/^!?\[[^\]]*\](?:\([^)]*\)|\[[^\]]*\])\s*[.!?]?$/s.test(raw)) return false;
-  if (/^<a\b[\s\S]*<\/a>\s*$/i.test(raw)) return false;
-  if (/<(?:button|figure|figcaption|picture|img|video|source|form|input|select|textarea)\b/i.test(raw)) return false;
-  if (/<[^>]+\bclass=["'][^"']*(?:cta|button|control|figure|actions?)[^"']*["']/i.test(raw)) return false;
+  if (/^\s*<a\b[\s\S]*<\/a>\s*$/i.test(htmlMarkup)) return false;
+  if (/<(?:button|figure|figcaption|picture|img|video|source|form|input|select|textarea)\b/i.test(htmlMarkup)) return false;
+  if (/<[^>]+\bclass=["'][^"']*(?:cta|button|control|figure|actions?)[^"']*["']/i.test(htmlMarkup)) return false;
   return true;
 }
 
@@ -287,9 +341,14 @@ export function lintMarkdownEditorialQuality(markdown, { valueType, category } =
       failures.push(issue('failure', 'decorative-heading-emoji', entry.line, '제목의 장식용 이모지를 제거하세요', entry.raw));
     }
 
-    // 인용문/목록 속 실제 발언을 막지 않도록 챗봇 잔재는 독립 문단 모양의 줄에서만 차단한다.
-    if (!/^(?:>|\s*[-*+]\s|\s*\d+[.)]\s)/.test(trimmed)) {
-      const plain = trimmed.replace(/^#{1,6}\s+/, '').replace(/[*_~]/g, '').trim();
+    // 인용문/목록 속 실제 발언을 막지 않도록 원본 줄에서 성립한 block marker만 제외한다.
+    // comment 제거 뒤 새로 선두에 드러난 `>`는 blockquote가 아니므로 잔재를 숨기지 못한다.
+    if (!/^(?:\s*>|\s*[-*+]\s|\s*\d+[.)]\s)/.test(entry.raw)) {
+      const plain = trimmed
+        .replace(/^>\s*/, '')
+        .replace(/^#{1,6}\s+/, '')
+        .replace(/[*_~]/g, '')
+        .trim();
       for (const rule of CHATBOT_RESIDUE) {
         if (rule.pattern.test(plain)) {
           failures.push(issue('failure', rule.id, entry.line, rule.message, entry.raw));
@@ -402,7 +461,9 @@ export function lintMarkdownEditorialQuality(markdown, { valueType, category } =
     ));
   }
 
-  const legacyEditorialReviewIndex = scan.frontmatterLines.findIndex((line) => /^\s*editorialReview\s*:/.test(line));
+  const legacyEditorialReviewIndex = scan.frontmatterLines.findIndex(
+    (line) => /^\s*(?:"editorialReview"|'editorialReview'|editorialReview)\s*:/.test(line),
+  );
   if (legacyEditorialReviewIndex !== -1) {
     const legacyLine = scan.frontmatterLines[legacyEditorialReviewIndex];
     warnings.push(issue(
