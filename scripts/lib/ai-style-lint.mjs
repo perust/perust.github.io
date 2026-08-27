@@ -350,6 +350,49 @@ const VOID_HTML_ELEMENTS = new Set([
 ]);
 const HIDDEN_HTML_ATTRIBUTE = /(?:\s+hidden(?=\s|=|\/?>)|\s+style\s*=\s*(?:"[^"]*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^"]*"|'[^']*(?:display\s*:\s*none|visibility\s*:\s*hidden)[^']*'))/i;
 
+/** 실제 HTML tag의 첫 unquoted `>`까지를 하나의 lexeme으로 읽는다. */
+function htmlTagLexemes(markup) {
+  const lexemes = [];
+  let cursor = 0;
+  while (cursor < markup.length) {
+    const start = markup.indexOf('<', cursor);
+    if (start === -1) break;
+
+    const tagStart = markup.slice(start).match(/^<\/?([a-z][\w:-]*)\b/i);
+    if (!tagStart) {
+      cursor = start + 1;
+      continue;
+    }
+
+    let quote;
+    let end = -1;
+    for (let index = start + tagStart[0].length; index < markup.length; index += 1) {
+      const character = markup[index];
+      if (quote) {
+        if (character === quote) quote = undefined;
+      } else if (character === '"' || character === "'") {
+        quote = character;
+      } else if (character === '>') {
+        end = index + 1;
+        break;
+      }
+    }
+    if (end === -1) break;
+
+    const rawTag = markup.slice(start, end);
+    lexemes.push({
+      start,
+      end,
+      rawTag,
+      tagName: tagStart[1].toLowerCase(),
+      isClosing: /^<\//.test(rawTag),
+      isAutolink: /^<https?:\/\/[^<>\s]+>$/i.test(rawTag),
+    });
+    cursor = end;
+  }
+  return lexemes;
+}
+
 function visibleBodyMarkup(bodyLines, projection) {
   const markup = bodyLines.map((entry) => entry[projection]).join('\n');
   const stack = [];
@@ -357,14 +400,12 @@ function visibleBodyMarkup(bodyLines, projection) {
   let hiddenDepth = 0;
   let visible = '';
 
-  for (const match of markup.matchAll(/<\/?([a-z][\w:-]*)\b[^>]*>/gi)) {
-    const rawTag = match[0];
+  for (const lexeme of htmlTagLexemes(markup)) {
+    const { start, end, rawTag, tagName, isClosing, isAutolink } = lexeme;
     // Markdown autolink는 HTML element가 아니므로 그대로 보존한다.
-    if (/^<https?:\/\//i.test(rawTag)) continue;
+    if (isAutolink) continue;
 
-    if (hiddenDepth === 0) visible += markup.slice(cursor, match.index);
-    const tagName = match[1].toLowerCase();
-    const isClosing = /^<\//.test(rawTag);
+    if (hiddenDepth === 0) visible += markup.slice(cursor, start);
 
     if (isClosing) {
       const openedHidden = stack.pop();
@@ -379,7 +420,7 @@ function visibleBodyMarkup(bodyLines, projection) {
         if (isHidden) hiddenDepth += 1;
       }
     }
-    cursor = match.index + rawTag.length;
+    cursor = end;
   }
 
   if (hiddenDepth === 0) visible += markup.slice(cursor);
@@ -390,46 +431,12 @@ function visibleBodyMarkup(bodyLines, projection) {
 function maskHtmlTagLexemes(markup) {
   let masked = '';
   let cursor = 0;
-  while (cursor < markup.length) {
-    const start = markup.indexOf('<', cursor);
-    if (start === -1) {
-      masked += markup.slice(cursor);
-      break;
-    }
+  for (const { start, end, rawTag, isAutolink } of htmlTagLexemes(markup)) {
     masked += markup.slice(cursor, start);
-
-    let nameStart = start + 1;
-    if (markup[nameStart] === '/') nameStart += 1;
-    if (!/[A-Za-z]/.test(markup[nameStart] ?? '')) {
-      masked += '<';
-      cursor = start + 1;
-      continue;
-    }
-
-    let quote;
-    let end = -1;
-    for (let index = nameStart + 1; index < markup.length; index += 1) {
-      const character = markup[index];
-      if (quote) {
-        if (character === quote) quote = undefined;
-      } else if (character === '"' || character === "'") {
-        quote = character;
-      } else if (character === '>') {
-        end = index;
-        break;
-      }
-    }
-    if (end === -1) {
-      masked += markup.slice(start);
-      break;
-    }
-
-    const tagLexeme = markup.slice(start, end + 1);
-    masked += /^<https?:\/\/[^<>\s]+>$/i.test(tagLexeme)
-      ? tagLexeme
-      : tagLexeme.replace(/[^\n]/g, ' ');
-    cursor = end + 1;
+    masked += isAutolink ? rawTag : rawTag.replace(/[^\n]/g, ' ');
+    cursor = end;
   }
+  masked += markup.slice(cursor);
   return masked;
 }
 
@@ -458,9 +465,19 @@ function externalBodySources(bodyLines, referenceDefinitions) {
       sources.add(destination);
     }
   }
-  for (const match of visibleHtmlMarkup.matchAll(/<a\b[^>]*\bhref\s*=\s*(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)'|(https?:\/\/[^\s"'`=<>]+))[^>]*>([\s\S]*?)<\/a>/gi)) {
-    const destination = match[1] ?? match[2] ?? match[3];
-    if (visibleAnchorLabel(match[4])) sources.add(destination);
+  const htmlLexemes = htmlTagLexemes(visibleHtmlMarkup);
+  for (const [index, opening] of htmlLexemes.entries()) {
+    if (opening.isClosing || opening.isAutolink || opening.tagName !== 'a') continue;
+    const href = opening.rawTag.match(/\bhref\s*=\s*(?:"(https?:\/\/[^"]+)"|'(https?:\/\/[^']+)'|(https?:\/\/[^\s"'`=<>]+))/i);
+    if (!href) continue;
+    const closing = htmlLexemes.slice(index + 1)
+      .find((lexeme) => lexeme.isClosing && lexeme.tagName === 'a');
+    if (!closing) continue;
+
+    const destination = href[1] ?? href[2] ?? href[3];
+    if (visibleAnchorLabel(visibleHtmlMarkup.slice(opening.end, closing.start))) {
+      sources.add(destination);
+    }
   }
   for (const match of visibleMarkdownMarkup.matchAll(/<(https?:\/\/[^<>\s]+)>/gi)) sources.add(match[1]);
   return sources;
@@ -479,7 +496,10 @@ function bodyMediaCount(bodyLines, referenceDefinitions) {
   const shortcutImages = [...shortcutImageMarkup.matchAll(/(?<!\\)!\[([^\]]+)\](?!\s*[\[(])/g)]
     .filter((match) => referenceDefinitions.has(normalizeReferenceLabel(match[1])))
     .length;
-  const htmlMedia = [...visibleHtmlMarkup.matchAll(/<(?:img|video)\b[^>]*>/gi)].length;
+  const htmlMedia = htmlTagLexemes(visibleHtmlMarkup)
+    .filter(({ tagName, isClosing, isAutolink }) =>
+      !isClosing && !isAutolink && (tagName === 'img' || tagName === 'video'))
+    .length;
   return inlineImages + referenceImages + shortcutImages + htmlMedia;
 }
 

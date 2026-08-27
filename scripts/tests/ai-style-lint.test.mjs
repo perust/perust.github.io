@@ -496,6 +496,98 @@ test('EQL-P1 renderer-bound raw HTML 종료 뒤 Markdown과 paragraph-inline chi
   assert.ok(!paragraphInline.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
 });
 
+test('EQL-P1 quoted > visible HTML anchor는 title-before-href에서도 source다', () => {
+  const result = qualityLint([
+    '<div>',
+    '<a title="1 > 0" href="https://example.com/source">공식 원문</a>',
+    '</div>',
+  ].join('\n'), { valueType: 'verified-guide' });
+
+  assert.equal(result.stats.uniqueExternalSourceCount, 1);
+  assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+});
+
+test('EQL-P1 quoted > visible HTML anchor href-before-title control은 source다', () => {
+  const result = qualityLint([
+    '<div>',
+    '<a href="https://example.com/source" title="1 > 0">공식 원문</a>',
+    '</div>',
+  ].join('\n'), { valueType: 'verified-guide' });
+
+  assert.equal(result.stats.uniqueExternalSourceCount, 1);
+  assert.ok(!result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+});
+
+test('EQL-P1 quoted > hidden container는 title-before-hidden에서도 anchor source를 숨긴다', () => {
+  const result = qualityLint([
+    '<div title="1 > 0" hidden>',
+    '<a href="https://example.com/source">공식 원문</a>',
+    '</div>',
+  ].join('\n'), { valueType: 'verified-guide' });
+
+  assert.equal(result.stats.uniqueExternalSourceCount, 0);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+});
+
+test('EQL-P1 quoted > hidden-before-title container control은 anchor source를 숨긴다', () => {
+  const result = qualityLint([
+    '<div hidden title="1 > 0">',
+    '<a href="https://example.com/source">공식 원문</a>',
+    '</div>',
+  ].join('\n'), { valueType: 'verified-guide' });
+
+  assert.equal(result.stats.uniqueExternalSourceCount, 0);
+  assert.ok(result.warnings.some(({ ruleId }) => ruleId === 'research-source-gap'));
+});
+
+test('EQL-P1 quoted > hidden img는 title-before-hidden에서도 media가 아니다', () => {
+  const result = qualityLint([
+    '<img title="1 > 0" hidden src="/images/run.png" alt="실행 화면">',
+    '',
+    '직접 실행한 경험을 설명한 본문입니다.',
+  ].join('\n'), { valueType: 'experience' });
+
+  assert.equal(result.stats.bodyMediaCount, 0);
+});
+
+test('EQL-P1 quoted > hidden video는 single-quoted title-before-hidden에서도 media가 아니다', () => {
+  const result = qualityLint([
+    '<video title=\'1 > 0\' hidden src="/videos/run.mp4"></video>',
+    '',
+    '직접 실행한 경험을 설명한 본문입니다.',
+  ].join('\n'), { valueType: 'experience' });
+
+  assert.equal(result.stats.bodyMediaCount, 0);
+});
+
+test('EQL-P1 quoted > visible img/video는 title-before-src에서도 media다', () => {
+  const visibleMedia = [
+    ['img', '<img title="1 > 0" src="/images/run.png" alt="실행 화면">'],
+    ['video', '<video title=\'1 > 0\' src="/videos/run.mp4"></video>'],
+  ];
+  for (const [name, markup] of visibleMedia) {
+    const result = qualityLint(
+      `${markup}\n\n직접 실행한 경험을 설명한 본문입니다.`,
+      { valueType: 'experience' },
+    );
+    assert.equal(result.stats.bodyMediaCount, 1, name);
+  }
+});
+
+test('EQL-P1 quoted > hidden-before-title img/video control은 media가 아니다', () => {
+  const hiddenMedia = [
+    ['img', '<img hidden title="1 > 0" src="/images/run.png" alt="실행 화면">'],
+    ['video', '<video hidden title=\'1 > 0\' src="/videos/run.mp4"></video>'],
+  ];
+  for (const [name, markup] of hiddenMedia) {
+    const result = qualityLint(
+      `${markup}\n\n직접 실행한 경험을 설명한 본문입니다.`,
+      { valueType: 'experience' },
+    );
+    assert.equal(result.stats.bodyMediaCount, 0, name);
+  }
+});
+
 test('reference definition-only line은 source/media/editorial prose로 세지 않는다', () => {
   const terms = '좋은 중요한 필요한 좋은 중요한 필요한 좋은 필요한';
   const body = [
