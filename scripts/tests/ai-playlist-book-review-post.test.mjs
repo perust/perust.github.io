@@ -73,6 +73,17 @@ test('AI 플레이리스트 서평은 사용자가 직접 수정한 관찰과 �
   assert.doesNotMatch(post, /~/);
 });
 
+test('게시물 사진은 원래 비율을 유지하며 기존 표시 높이의 절반가량으로 줄인다', async () => {
+  const post = await readFile(postPath, 'utf8');
+  const tags = [...post.matchAll(/<img[^>]*src="\/images\/posts\/2026-08-31-ai-playlist-book-review\/[^"\s]+\.webp"[^>]*>/g)]
+    .map((match) => match[0]);
+
+  assert.equal(tags.length, 5);
+  for (const tag of tags) {
+    assert.match(tag, /style="width:\s*50%;\s*max-width:\s*340px;\s*height:\s*auto;\s*margin:\s*1\.5rem auto;"/);
+  }
+});
+
 test('사용자 제공 사진 5장은 순서·alt·실제 WebP 자산을 갖춘다', async () => {
   const post = await readFile(postPath, 'utf8');
   const refs = [...post.matchAll(/\/images\/posts\/2026-08-31-ai-playlist-book-review\/[^"')\s]+\.webp/g)]

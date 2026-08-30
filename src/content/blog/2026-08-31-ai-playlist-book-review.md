@@ -22,7 +22,7 @@ valueType: "review"
 
 <p class="source-link"><a href="https://www.hanbit.co.kr/books/%EC%9C%A0%ED%8A%9C%EB%B8%8C%EC%97%90%EC%84%9C-%EC%9D%8C%EC%9B%90-%EB%B0%9C%EB%A7%A4%EA%B9%8C%EC%A7%80-ai-%ED%94%8C%EB%A0%88%EC%9D%B4%EB%A6%AC%EC%8A%A4%ED%8A%B8-with-%EC%88%98%EB%85%B8-%EC%A0%9C%EB%AF%B8%EB%82%98%EC%9D%B4-%EB%A6%AC%ED%8D%BC-%EC%BA%94%EB%B0%94-%EC%BA%A1%EC%BB%B7-%EC%8A%A4%ED%8F%AC%ED%8B%B0%ED%8C%8C%EC%9D%B4?code=B3492267901" target="_blank" rel="noopener noreferrer">[ 한빛미디어 공식 도서 페이지에서 책 정보와 목차 보기 ]</a></p>
 
-<img src="/images/posts/2026-08-31-ai-playlist-book-review/01-cover.webp" alt="초록색과 검은색으로 구성된 유튜브에서 음원 발매까지 AI 플레이리스트 책 표지" width="1400" height="1866" decoding="async" style="max-width: 680px; margin: 1.5rem auto;" />
+<img src="/images/posts/2026-08-31-ai-playlist-book-review/01-cover.webp" alt="초록색과 검은색으로 구성된 유튜브에서 음원 발매까지 AI 플레이리스트 책 표지" width="1400" height="1866" decoding="async" style="width: 50%; max-width: 340px; height: auto; margin: 1.5rem auto;" />
 
 ## 이 책이 다루는 흐름
 
@@ -30,7 +30,7 @@ AI로 만든 음악으로 유튜브 플레이리스트 채널을 운영하는 �
 
 도구 사용법을 알려주는 것에서 끝나지 않고, 곡을 고르는 기준과 가중치, 플레이리스트 안에서 곡을 배치하는 순서, 다른 채널을 벤치마킹할 때 무엇을 봐야 하는지 같은 판단 기준 등도 함께 알려줍니다.
 
-<img src="/images/posts/2026-08-31-ai-playlist-book-review/02-title-page.webp" alt="유튜브에서 음원 발매까지 AI 플레이리스트라는 제목이 적힌 전자책 반표제지" width="1400" height="1866" loading="lazy" decoding="async" style="max-width: 680px; margin: 1.5rem auto;" />
+<img src="/images/posts/2026-08-31-ai-playlist-book-review/02-title-page.webp" alt="유튜브에서 음원 발매까지 AI 플레이리스트라는 제목이 적힌 전자책 반표제지" width="1400" height="1866" loading="lazy" decoding="async" style="width: 50%; max-width: 340px; height: auto; margin: 1.5rem auto;" />
 
 ## 내가 어떤 플레이리스트를 듣는지부터 생각해보자
 
@@ -52,7 +52,7 @@ AI로 만든 음악으로 유튜브 플레이리스트 채널을 운영하는 �
 
 음악을 분석할 줄 모르는데 어떻게 하냐, 분석 방법도 책에서 알려주고 있습니다. 한 곡을 여러 번 들으면서 베이스만 듣고, 드럼만 들었다가, 멜로디에만 집중해서 들어보고, 그렇게 들은 곡을 분석해서 멜로디 완성도와 사운드 품질, 장르 일관성 등의 기준으로 걸러내고, 곡들을 배치합니다. 만드는 것도 만만치 않지만 듣고 고르는 것도 전혀 쉽지 않겠다는 생각이 들었습니다.
 
-<img src="/images/posts/2026-08-31-ai-playlist-book-review/03-chapter-06-lyrics-prompt.webp" alt="작사 프롬프트 설계 원칙을 다루는 6장 도입부와 학습 목표" width="1400" height="1866" loading="lazy" decoding="async" style="max-width: 680px; margin: 1.5rem auto;" />
+<img src="/images/posts/2026-08-31-ai-playlist-book-review/03-chapter-06-lyrics-prompt.webp" alt="작사 프롬프트 설계 원칙을 다루는 6장 도입부와 학습 목표" width="1400" height="1866" loading="lazy" decoding="async" style="width: 50%; max-width: 340px; height: auto; margin: 1.5rem auto;" />
 
 ## 최신 버전 수노 5.5
 
@@ -64,7 +64,7 @@ AI로 만든 음악으로 유튜브 플레이리스트 채널을 운영하는 �
 
 프롬프트가 비슷하면 비슷한 결의 음악이 나오기 때문에, 노래에 집중하지 않고 비슷한 톤이 나와야하는 작업용으로 사용하는 플레이리스트를 만들기에는 적절할지도 모르겠다는 생각이 들기도 합니다. 어쨌든 프롬프트 이해도를 더 높게 가져가면서 세심하게 다듬어야 하는 방향은 맞는 것 같습니다. 아직은 실습을 조금 해본 정도이고 많이 활용해보지는 못한 입장이기 때문에, 기존 사용자들이 느끼는 불만을 체감하지 못하고 있는 것일 수도 있겠습니다.
 
-<img src="/images/posts/2026-08-31-ai-playlist-book-review/04-cover-detail.webp" alt="초록색 제목과 문태영 지음, 한빛미디어 로고가 보이는 전자책 속표지" width="1400" height="1866" loading="lazy" decoding="async" style="max-width: 680px; margin: 1.5rem auto;" />
+<img src="/images/posts/2026-08-31-ai-playlist-book-review/04-cover-detail.webp" alt="초록색 제목과 문태영 지음, 한빛미디어 로고가 보이는 전자책 속표지" width="1400" height="1866" loading="lazy" decoding="async" style="width: 50%; max-width: 340px; height: auto; margin: 1.5rem auto;" />
 
 ## 플레이리스트 유튜브를 보는 눈이 생겼다
 
@@ -80,7 +80,7 @@ AI로 만든 음악으로 유튜브 플레이리스트 채널을 운영하는 �
 
 한편으로는 이런 생각도 해봤습니다. AI 음악이 마음에 들지 않는 것이라면, 뭐든지 잘 먹는 사람보다 입맛이 까다로운 사람이 요리사에 적합하듯이, 오히려 공부를 더 많이 해서 프롬프트를 정교하게 만들거나 믹싱을 잘 해서 마음에 드는 음악을 만드는 방향도 있지 않을까 싶습니다. 책 후반의 리퍼 파트에서 볼륨을 고르게 맞추고 음질을 보정하는 과정을 다루는데, 불만이 많다면 오히려 이런 단계에서 더 디테일하게 작업을 해서 퀄리티를 높일 수 있을 것 같습니다.
 
-<img src="/images/posts/2026-08-31-ai-playlist-book-review/05-chapter-12-reaper.webp" alt="리퍼 시작하기를 다루는 12장 도입부와 플레이리스트 편집 학습 목표" width="1400" height="1866" loading="lazy" decoding="async" style="max-width: 680px; margin: 1.5rem auto;" />
+<img src="/images/posts/2026-08-31-ai-playlist-book-review/05-chapter-12-reaper.webp" alt="리퍼 시작하기를 다루는 12장 도입부와 플레이리스트 편집 학습 목표" width="1400" height="1866" loading="lazy" decoding="async" style="width: 50%; max-width: 340px; height: auto; margin: 1.5rem auto;" />
 
 간단한 프롬프트로 곡을 순식간에 만들어낼 수 있는 것은 맞지만, 사람들의 마음에 들도록 만드는 것과는 전혀 다른 차원의 일이구나 라는 것을 느끼게 되었습니다.
 
